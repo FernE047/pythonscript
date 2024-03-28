@@ -1,0 +1,1 @@
+cabelo,orelha,testa, bochecha,labioSup,labioInf,queixo,narizAteTesta,olhos

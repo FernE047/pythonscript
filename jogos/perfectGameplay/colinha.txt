@@ -1,0 +1,25 @@
+def save(): salva
+
+def load(): carrega e aguarda 1 sec
+    
+def abrir(): abre e dá retry
+
+def espere(secs=1/2,mensagem=True): aguarda 1/2 e dá mensagem
+
+def setaVermelha(step): conversa uma quantidade de setas vermelhas
+
+def ultimaConversa(coordenadas): procura o cinzaMenu na ultima fala
+
+def conversaCompleta(setas,coordenadas): setaVermelha e ultimaConversa combinados
+
+def fim(): returna pro python
+
+def apertePor(tecla,tempo=1/15,mensagem=True): aperta botão por determinado tempo
+
+def andePassos(direction,steps=1): anda para uma direção por x passos
+
+def esperePor(coordenadas,cor,pressed=0): aguarda uma cor numa coordenada, segurando um botão
+
+def transicao(): transiciona de uma tela pra outra e aguarda 2 sec
+
+def caminhada(lista): andePassos de uma lista ou transicao

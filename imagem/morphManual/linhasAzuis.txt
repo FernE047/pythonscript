@@ -1,0 +1,15 @@
+NEW VERSIONS
+
+200 inicio
+255 linha
+
+OLD VERSIONS
+
+255 254 253
+252 XXX 251
+250 249 248
+
+7 6 5
+4 X 3
+2 1 0
+

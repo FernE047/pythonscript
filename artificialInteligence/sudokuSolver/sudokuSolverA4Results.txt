@@ -1,0 +1,462 @@
+s01a.txt
+
+
+
+tentativas: 503
+
+0.02000117301940918 segundos
+
+
+
+s01b.txt
+
+
+
+tentativas: 98
+
+0.004000186920166016 segundos
+
+
+
+s01c.txt
+
+
+
+tentativas: 2900
+
+0.11400651931762695 segundos
+
+
+
+s02a.txt
+
+
+
+tentativas: 1377
+
+0.05400276184082031 segundos
+
+
+
+s02b.txt
+
+
+
+tentativas: 702
+
+0.09000515937805176 segundos
+
+
+
+s02c.txt
+
+
+
+tentativas: 4818
+
+0.30101728439331055 segundos
+
+
+
+s03a.txt
+
+
+
+tentativas: 2198
+
+0.10700631141662598 segundos
+
+
+
+s03b.txt
+
+
+
+tentativas: 6605
+
+0.25701475143432617 segundos
+
+
+
+s03c.txt
+
+
+
+tentativas: 2803
+
+0.13100743293762207 segundos
+
+
+
+s04a.txt
+
+
+
+tentativas: 19134
+
+0.7450428009033203 segundos
+
+
+
+s04b.txt
+
+
+
+tentativas: 1316
+
+0.05300307273864746 segundos
+
+
+
+s04c.txt
+
+
+
+tentativas: 141
+
+0.01300048828125 segundos
+
+
+
+s05a.txt
+
+
+
+tentativas: 944
+
+0.08400487899780273 segundos
+
+
+
+s05b.txt
+
+
+
+tentativas: 2588
+
+0.23201346397399902 segundos
+
+
+
+s05c.txt
+
+
+
+tentativas: 8656
+
+0.476027250289917 segundos
+
+
+
+s06a.txt
+
+
+
+tentativas: 87
+
+0.005000591278076172 segundos
+
+
+
+s06b.txt
+
+
+
+tentativas: 43
+
+0.003000497817993164 segundos
+
+
+
+s06c.txt
+
+
+
+tentativas: 88
+
+0.00500035285949707 segundos
+
+
+
+s07a.txt
+
+
+
+tentativas: 22442
+
+0.9420537948608398 segundos
+
+
+
+s07b.txt
+
+
+
+tentativas: 222484
+
+8.89050817489624 segundos
+
+
+
+s07c.txt
+
+
+
+tentativas: 18420
+
+0.7030401229858398 segundos
+
+
+
+s08a.txt
+
+
+
+tentativas: 7378
+
+0.29901719093322754 segundos
+
+
+
+s08b.txt
+
+
+
+tentativas: 12687
+
+0.48302769660949707 segundos
+
+
+
+s08c.txt
+
+
+
+tentativas: 10645
+
+0.4210238456726074 segundos
+
+
+
+s09a.txt
+
+
+
+tentativas: 21394
+
+0.9690554141998291 segundos
+
+
+
+s09b.txt
+
+
+
+tentativas: 101130
+
+3.9982287883758545 segundos
+
+
+
+s09c.txt
+
+
+
+tentativas: 520170
+
+21.516230583190918 segundos
+
+
+
+s10a.txt
+
+
+
+tentativas: 2008
+
+0.0760040283203125 segundos
+
+
+
+s10b.txt
+
+
+
+tentativas: 658
+
+0.02500152587890625 segundos
+
+
+
+s10c.txt
+
+
+
+tentativas: 307
+
+0.012000799179077148 segundos
+
+
+
+s11a.txt
+
+
+
+tentativas: 39955
+
+1.676095724105835 segundos
+
+
+
+s11b.txt
+
+
+
+tentativas: 26457
+
+1.0340590476989746 segundos
+
+
+
+s11c.txt
+
+
+
+tentativas: 7821
+
+0.31201791763305664 segundos
+
+
+
+s12a.txt
+
+
+
+tentativas: 1774
+
+0.07100391387939453 segundos
+
+
+
+s12b.txt
+
+
+
+tentativas: 5740
+
+0.597034215927124 segundos
+
+
+
+s12c.txt
+
+
+
+tentativas: 1415
+
+0.14700841903686523 segundos
+
+
+
+s13a.txt
+
+
+
+tentativas: 224
+
+0.02200150489807129 segundos
+
+
+
+s13b.txt
+
+
+
+tentativas: 280
+
+0.029001712799072266 segundos
+
+
+
+s13c.txt
+
+
+
+tentativas: 72
+
+0.00800013542175293 segundos
+
+
+
+s14a.txt
+
+
+
+tentativas: 3271
+
+0.2870163917541504 segundos
+
+
+
+s14b.txt
+
+
+
+tentativas: 1092
+
+0.04500246047973633 segundos
+
+
+
+s14c.txt
+
+
+
+tentativas: 3024
+
+0.12100696563720703 segundos
+
+
+
+s15a.txt
+
+
+
+tentativas: 15559
+
+0.706040620803833 segundos
+
+
+
+s15b.txt
+
+
+
+tentativas: 15226
+
+0.6460368633270264 segundos
+
+
+
+s15c.txt
+
+
+
+tentativas: 47821
+
+1.9081089496612549 segundos
+
+
+
+s16.txt
+
+
+
+tentativas: 8969
+
+0.35702037811279297 segundos
+
+
+
+
+48.99580216407776 segundos

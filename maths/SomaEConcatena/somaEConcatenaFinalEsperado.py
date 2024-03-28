@@ -1,0 +1,47 @@
+def chegaAFim(termo,limite):
+    termos=[termo]
+    while(len(termo)<limite):
+        termo=proximoTermo(termo)
+        if(termo in termos):
+            termos.append(termo)
+            break
+        else:
+            termos.append(termo)
+    if(len(termo)>=limite):
+        return([False,termos])
+    else:
+        return([True,termos])
+
+def proximoTermo(termo):
+    resultado=[]
+    if(len(termo)<=1):
+        return(termo)
+    for indice in range(len(termo)-1):
+        digito1=termo[indice]
+        digito2=termo[indice+1]
+        soma=int(digito1)+int(digito2)
+        bidigito=str(soma)
+        resultado.append(bidigito)
+    if(not(resultado)):
+        resultado=[str(numeroTeste)]
+    termo=''.join(resultado)
+    return(termo)
+
+def fazMensagem(numeroTeste,termos):
+    print('\n'+str(numeroTeste)+' chega a um fim em '+str(len(termos)-1)+' passos')
+    print(','.join(termos))
+
+limite=100
+while True:
+    modo='4'
+    numeroTeste=0
+    while True:
+        try:
+            termo=str(numeroTeste)
+            sucesso,termos=chegaAFim(termo,limite)
+            if(str(numeroTeste)==termos[-1]):
+                print('\n'+str(numeroTeste)+' chega a um fim em '+str(len(termos)-1)+' passos')
+                print(','.join(termos))
+            numeroTeste+=1
+        except:
+            print(numeroTeste)

@@ -1,0 +1,59 @@
+limpaSopa - limpa sopas:
+	separaPalavras - PEGA texto RETORNA lista de palavras
+	separaLinhas - PEGA texto RETORNA lista de linhas
+	tudoMinuscula - PEGA texto RETORNA texto minusculo
+	tiraEspaco - PEGA texto, tiraTudo=True RETORNA texto sem nenhum espaço ou sem espaço adicional
+	limpaNomeArquivo - PEGA texto RETORNA texto sem os caracteres que não podem usar nos arquivos
+	fazNomeArquivo - PEGA texto RETORNA texto adaptado para ser nome de um arquivo
+	embelezeTempo - PEGA tempo(string) RETORNA tempo em horas, minutos e segundos
+
+
+
+internet - funções para internet:
+	ondeComecaHttp - PEGA texto RETORNA indice onde começa o primeiro http
+	encontraSite - PEGA texto RETORNA primeiro site que encontrar
+	qualSite - PEGA site(string) RETORNA nome do site
+	conecta - PEGA site(string) RETORNA site(baixado)
+	pesquisaGoogle - PEGA texto,adicao* RETORNA google resultados(informação)
+	siteProcura - PEGA site(string),html(elemento) RETORNA informação
+	achaSite - PEGA informação,site(string) RETORNA siteCompleto(string)
+	resultadosGoogle - PEGA texto,adicao* RETORNA sites
+	pegaTodosSites - PEGA informação RETORNA sites
+	baixaImagem - PEGA nome, args RETORNA 100 imagens na pasta de imagens do python script
+
+
+
+textos - função para string
+	tudoMinuscula - PEGA texto RETORNA texto com tudo minuculo
+	tiraEspaco - PEGA texto RETORNA texto sem espaços adicionais
+	limpa - PEGA sopa RETORNA apenas texto alphanum sem espaços adicionais com tudo minusculo
+	separaPalavras - PEGA texto RETORNA lista de palavras
+	separaLinhas - PEGA texto RETORNA lista de linhas
+	tiraEspacoBranco - PEGA texto RETORNA texto sem espaço em branco (' ','\n','\t')
+	limpaNomeArquivo - PEGA texto RETORNA texto que possa ser nome de arquivo
+	fazNomeArquivo - PEGA texto RETORNA nome bonito para arquivo
+	embelezeTempo - PEGA tempo RETORNA texto com tempo em segundo, minutos, horas e etc...
+
+
+
+automation - função para automação
+	wait - PEGA n mensagem=True FAZ espera segundos e imprime quanto esperamos
+	pressFor - PEGA tecla, n, mensagem=True FAZ aperta tecla por n segundos e exibe tecla e tempo esperado
+	pressUntil - PEGA tecla, coord, cor FAZ aperta tecla até a cor aparecer nas coordenadas
+	waitFor - PEGA coord, cor FAZ espera até a cor aparecer nas coordenadas
+
+
+
+userUtil - validação de entrada do Usuario
+	cadaMusicaFaca - funcao feita para o Earworm
+	entradaNaLista - PEGA lista  RETORNA um item da lista
+	listaDeInteiros - RETORNA uma lista de inteiros
+    	pegaFloat - RETORNA float
+    	pegaImagem - RETORNA imagem
+    	pegaInteiro - RETORNA inteiro
+    	pegaMusicaLetra - RETORNA letra de musica 
+    	pegaNomeImagem - RETORNA nome de imagem
+    	pegaPixel - RETORNA pixel
+    	pegaSitesMusicas - funcao feita para o Earworm
+    	pegaString - RETORNA uma string
+    	simOuNao -  pergunta sim ou não

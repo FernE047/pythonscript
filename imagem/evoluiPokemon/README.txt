@@ -1,0 +1,1 @@
+This is a implementation of the morph algorythim simplified to only pokemons :)

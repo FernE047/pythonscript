@@ -1,0 +1,28 @@
+40 Pesquisas
+
+Termos="casa torrada pão biscoito livro jeans caju banda vestido jogo polar gelo frio garrafa mesa troca vampiro magia alien triceratops cobra galinha geladeira chinelo brasil internacional amigos casal pedra coração peixes signo você eu sozinho amor aventura luta combate guerra"
+
+1 : 1 : 0.2570694087403599%
+2 : 1 : 0.2570694087403599%
+3 : 6 : 1.5424164524421593%
+4 : 16 : 4.113110539845758%
+5 : 35 : 8.997429305912597%
+6 : 63 : 16.195372750642672%
+7 : 49 : 12.596401028277635%
+8 : 33 : 8.483290488431876%
+9 : 30 : 7.712082262210797%
+10 : 28 : 7.197943444730077%
+11 : 39 : 10.025706940874036%
+12 : 37 : 9.511568123393316%
+13 : 30 : 7.712082262210797%
+14 : 15 : 3.8560411311053984%
+15 : 5 : 1.2853470437017995%
+17 : 1 : 0.2570694087403599%
+total : 389
+
+
+population = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,17]
+
+weight = [1,1,6,16,35,63,49,33,30,28,39,37,30,15,5,1]
+
+{1:1,2:1,3:6,4:16,5:35,6:63,7:49,8:33,9:30,10:28,11:39,12:37,13:30,14:15,15:5,17:1}

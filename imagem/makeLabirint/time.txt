@@ -1,0 +1,19 @@
+caminhos testados : 115840
+iterações feitas : 531763
+29.351678609848022 segundos
+
+caminhos testados : 115840
+iterações feitas : 387377
+24.36639380455017 segundos
+
+caminhos testados : 115840
+iterações feitas : 329144
+24.984429121017456 segundos
+
+caminhos testados : 115840
+iterações feitas : 259823
+19.147095441818237 segundos
+
+caminhos testados : 59212
+iterações feitas : 132333
+9.841562747955322 segundos

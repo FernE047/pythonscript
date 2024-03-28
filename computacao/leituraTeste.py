@@ -1,0 +1,11 @@
+file = open('vazio.txt')
+print(file)
+linha = file.readline()
+while(linha):
+    print(linha)
+    linha = file.readline()
+file.close()
+file = open('escritaTeste.txt','w')
+file.write('hello world')
+file.write('\n')
+file.close()

@@ -1,0 +1,18 @@
+4 5 6
+3 X 7
+2 1 0
+
+0 1 2
+3 X 3
+2 1 0
+
+0 : Vermelho
+7 : Laranja
+6 : Verde Limão
+5 : Verde Abacate
+4 : Azul Claro
+3 : Azul
+2 : Roxo
+1 : Rosa
+
+8 : Preto

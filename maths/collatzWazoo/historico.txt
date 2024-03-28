@@ -1,0 +1,43 @@
+dia 12/10/2019 11:57:43
+
+collatz 3 e 4 calculados 
+
+tempo gasto:
+
+7 minutos
+
+
+
+
+
+dia 16/10/2019 20:05:27
+
+collatz 3 e 4 recalculados 
+
+tempo gasto: 0.4430253505706787 segundos
+
+espaço HD: 253.952 bytes (248 KB)
+
+
+
+
+
+dia 16/10/2019 20:11:58
+
+collatz 5 calculado 
+
+tempo gasto: 6.420367479324341 segundos
+
+espaço HD: 1.810.432 bytes (1.72MB)
+
+
+
+
+
+dia 16/10/2019 20:17:10
+
+collatz 6 calculado
+
+tempo gasto: 2 minutos, 33.1497597694397 segundos
+
+espaço HD: 16.805.888 bytes (16MB)

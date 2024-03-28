@@ -1,0 +1,3 @@
+@echo off
+python c:\pythonscript\th3.py %*
+pause
