@@ -2,514 +2,521 @@ import shelve
 from typing import Optional, TypedDict, cast
 
 
-class SistemaData(TypedDict):
-    db_quantia: Optional[int]
-    categorias: list[str]
+class SystemData(TypedDict):
+    db_quantity: Optional[int]
+    categories: list[str]
 
 
-LivroData = tuple[str, str, str, str, str, int, int, str]
+BookData = tuple[str, str, str, str, str, int, int, str]
 
-sistema_shelf = None
-
-
-def open_sistema() -> SistemaData:
-    global sistema_shelf
-    sistema_shelf = shelve.open("./sistema/sistema")
-    return cast(SistemaData, sistema_shelf)
+system_shelf = None
 
 
-def close_sistema() -> None:
-    global sistema_shelf
-    if sistema_shelf is not None:
-        sistema_shelf.close()
-        sistema_shelf = None
+def open_system() -> SystemData:
+    global system_shelf
+    system_shelf = shelve.open("./system/system")
+    return cast(SystemData, system_shelf)
 
 
-def fazer_menu(options: list[str] | list[LivroData]) -> int:
-    escolha = -1
+def close_system() -> None:
+    global system_shelf
+    if system_shelf is not None:
+        system_shelf.close()
+        system_shelf = None
+
+
+def make_menu(options: list[str] | list[BookData]) -> int:
+    user_choice = -1
     while True:
-        print("escolha:")
-        for item in range(len(options)):
-            print(str(item + 1) + "-" + str(options[item]))
-        print("0-voltar\n")
+        print("Choose:")
+        for index, item in enumerate(options):
+            print(f"{index + 1}-{item}")
+        print("0-back\n")
         try:
-            escolha = int(input())
+            user_choice = int(input())
         except ValueError:
-            print("\nsomente inteiros\n")
-        if escolha not in range(len(options) + 1):
-            print("\nvocê digitou um valor invalido\n")
+            print("\nintegers only\n")
+        if user_choice not in range(len(options) + 1):
+            print("\nyou entered an invalid value\n")
         else:
             print("\n")
-            return escolha
+            return user_choice
 
 
-def apresenta_categorias() -> None:
-    global sistema
-    categorias = sistema["categorias"]
-    for indice in range(len(categorias)):
-        print(str(indice) + "-" + categorias[indice])
+def show_category_list() -> None:
+    global system
+    categories = system["categories"]
+    for index, category in enumerate(categories):
+        print(f"{index}-{category}")
 
 
 def menu() -> None:
     while True:
-        escolha = fazer_menu(["consulta", "adicionar livros", "emprestimo", "sistema"])
-        if escolha == 1:
-            consulta_menu()
-        elif escolha == 2:
+        user_choice = make_menu(["display books", "add books", "loan", "system"])
+        if user_choice == 1:
+            display_book_query_menu()
+        elif user_choice == 2:
             while True:
-                if not (adicionar_livro()):
+                if not (insert_book()):
                     break
-        elif escolha == 3:
-            emprestimo()
-        elif escolha == 4:
-            altera_sistema()
+        elif user_choice == 3:
+            process_loan()
+        elif user_choice == 4:
+            manage_system()
         else:
             break
 
 
-def livro_por_local(livro_local: list[tuple[int, int]]) -> list[LivroData]:
-    livros: list[LivroData] = []
-    if livro_local:
-        for locais in livro_local:
-            BD = shelve.open(f"./livrosBD/livro_db{locais[0]:04d}")
-            livros.append(BD["livros"][locais[1]])
-    return livros
+def get_books_by_location(book_locations: list[tuple[int, int]]) -> list[BookData]:
+    books: list[BookData] = []
+    if book_locations:
+        for locations in book_locations:
+            database = shelve.open(f"./books_database/book_db{locations[0]:04d}")
+            books.append(database["books"][locations[1]])
+            database.close()
+    return books
 
 
-def apresenta_livro(livros: list[LivroData]) -> None:
-    if not livros:
-        print("nenhum livro encontrado\n")
-    for livro in livros:
-        print("titulo:" + livro[0])
-        print("categoria:" + livro[1])
-        print("autor:" + livro[2])
-        print("editora:" + livro[3])
-        print("sinopse:" + livro[4])
-        print("ano:" + str(livro[5]))
-        print("paginas:" + str(livro[6]))
-        print("local:" + livro[7])
-        print("\n")
+def display_books(books: list[BookData]) -> None:
+    if not books:
+        print("No books found\n")
+    for book in books:
+        print(f"Title: {book[0]}")
+        print(f"Category: {book[1]}")
+        print(f"Author: {book[2]}")
+        print(f"Publisher: {book[3]}")
+        print(f"Synopsis: {book[4]}")
+        print(f"Year: {str(book[5])}")
+        print(f"Pages: {str(book[6])}")
+        print(f"Location: {book[7]}\n")
 
 
-# referente a consulta
+# book queries
 
 
-def consulta_menu() -> tuple[list[LivroData], list[tuple[int, int]]] | None:
-    global sistema
-    db_quantia = sistema.get("db_quantia", None)
-    if db_quantia is None:
-        print("não há livros para apresentar")
+def display_book_query_menu() -> tuple[list[BookData], list[tuple[int, int]]] | None:
+    global system
+    db_quantity = system.get("db_quantity", None)
+    if db_quantity is None:
+        print("no books in the database\n")
         return None
     while True:
-        escolha = fazer_menu(
+        user_choice = make_menu(
             [
-                "todos os livros",
-                "consulta por nome",
-                "consulta por categoria",
-                "consulta por autor",
-                "consulta por editora",
-                "consulta por palavra chave",
-                "consulta por ano",
-                "consulta por paginas",
-                "consulta por local",
+                "all books",
+                "query by name",
+                "query by category",
+                "query by author",
+                "query by publisher",
+                "query by keyword",
+                "query by year",
+                "query by pages",
+                "query by location",
             ]
         )
-        listas: tuple[list[LivroData], list[tuple[int, int]]] = ([], [])
-        if escolha == 1:
-            livro_local = procura("", 0, 0)
-            livros = livro_por_local(livro_local)
-            apresenta_livro(livros)
-            listas = (livros, livro_local)
-        elif (escolha >= 2) and (escolha <= 9):
-            result = consulta(escolha - 2)
+        book_data_result: tuple[list[BookData], list[tuple[int, int]]] = ([], [])
+        if user_choice == 1:
+            book_locations = search_books("", 0, 0)
+            books = get_books_by_location(book_locations)
+            display_books(books)
+            book_data_result = (books, book_locations)
+        elif (user_choice >= 2) and (user_choice <= 9):
+            result = query_books(user_choice - 2)
             if result is None:
-                raise ValueError("consulta returned None")
-            listas = result
-        return listas
+                raise ValueError("query returned None")
+            book_data_result = result
+        return book_data_result
 
 
-def procura(
-    value: str | int, coluna: int, comparacao: int = 2
+def search_books(
+    value: str | int, column: int, comparison_type: int = 2
 ) -> list[tuple[int, int]]:
-    global sistema
-    db_quantia = sistema.get("db_quantia", None)
-    if db_quantia is None:
-        raise ValueError("db_quantia is not set in sistema")
-    lista_livros: list[tuple[int, int]] = []
-    for indice in range(db_quantia + 1):
-        BD = shelve.open(f"./livrosBD/livro_db{indice:04d}")
-        livros = BD["livros"]
-        for livro_index in range(len(livros)):
-            if comparacao == 1:
-                if livros[livro_index][coluna] <= value:
-                    lista_livros.append((indice, livro_index))
-            elif comparacao == 2:
-                if livros[livro_index][coluna] == value:
-                    lista_livros.append((indice, livro_index))
-            elif comparacao == 3:
-                if livros[livro_index][coluna] >= value:
-                    lista_livros.append((indice, livro_index))
+    global system
+    db_quantity = system.get("db_quantity", None)
+    if db_quantity is None:
+        raise ValueError("db_quantity is not set in system")
+    found_books: list[tuple[int, int]] = []
+    for index in range(db_quantity + 1):
+        database = shelve.open(f"./books_database/book_db{index:04d}")
+        books = database["books"]
+        for book_index, book in enumerate(books):
+            if comparison_type == 1:
+                if book[column] <= value:
+                    found_books.append((index, book_index))
+            elif comparison_type == 2:
+                if book[column] == value:
+                    found_books.append((index, book_index))
+            elif comparison_type == 3:
+                if book[column] >= value:
+                    found_books.append((index, book_index))
             else:
-                if livros[livro_index][coluna] != "":
-                    lista_livros.append((indice, livro_index))
-    return lista_livros
+                if book[column] != "":
+                    found_books.append((index, book_index))
+    return found_books
 
 
-def consulta(item: int) -> tuple[list[LivroData], list[tuple[int, int]]] | None:
-    global sistema
-    categorias = sistema["categorias"]
-    livro_local: list[tuple[int, int]] = []
+def query_books(item: int) -> tuple[list[BookData], list[tuple[int, int]]] | None:
+    global system
+    categories = system["categories"]
+    book_locations: list[tuple[int, int]] = []
     if item == 0:
-        print("qual o nome do livro?")
+        print("what is the name of the book?")
     elif item == 1:
-        print("qual a categoria do livro?")
+        print("what is the category of the book?")
         while True:
-            apresenta_categorias()
-            print(str(len(categorias)) + "-indefinido")
+            show_category_list()
+            print(f"{len(categories)}-undefined")
             try:
-                escolha = int(input())
+                user_choice = int(input())
             except ValueError:
-                print("\nsomente inteiros\n")
+                print("\nonly integers\n")
                 continue
-            if escolha == len(categorias):
-                livro_local = procura("indefinido", item)
+            if user_choice == len(categories):
+                book_locations = search_books("undefined", item)
                 break
-            elif escolha not in range(len(categorias)):
-                print("\nvocê digitou um valor invalido\n")
+            elif user_choice not in range(len(categories)):
+                print("\nyou entered an invalid value\n")
             else:
-                livro_local = procura(categorias[escolha], item)
+                book_locations = search_books(categories[user_choice], item)
                 break
     elif item == 2:
-        print("qual o autor do livro?")
+        print("what is the author of the book?")
     elif item == 3:
-        print("qual o editora do livro?")
+        print("what is the publisher of the book?")
     elif item == 4:
-        print("uma palavra chave do livro")
+        print("what is a keyword of the book?")
     elif item == 5:
-        print("de qual ano o livro é?")
+        print("what is the year of the book?")
     elif item == 6:
-        print("quantas paginas o livro tem?")
+        print("how many pages does the book have?")
     elif item == 7:
-        print("qual o local do livro?")
+        print("what is the location of the book?")
     if item in [0, 2, 3, 7]:
-        valor = input()
-        livro_local = procura(valor, item)
+        value = input()
+        book_locations = search_books(value, item)
     elif item == 4:
-        print("ainda não temos essa opção\n")
+        print("we don't have this option yet\n")
         return None
     elif (item == 6) or (item == 5):
-        escolha = fazer_menu(["menor", "igual", "maior"])
-        paginas = 0
+        user_choice = make_menu(["less", "equal", "greater"])
+        pages = 0
         while True:
-            print("comparado a")
+            print("compared to what value?")
             try:
-                paginas = int(input())
-                if paginas < 1:
-                    print("\nsomente inteiros positivos\n")
+                pages = int(input())
+                if pages < 1:
+                    print("\nonly positive integers\n")
                     continue
             except ValueError:
-                print("\nsomente inteiros\n")
+                print("\nonly integers\n")
             break
-        livro_local = procura(paginas, item, comparacao=escolha)
-    livro = livro_por_local(livro_local)
-    apresenta_livro(livro)
-    return (livro, livro_local)
+        book_locations = search_books(pages, item, comparison_type=user_choice)
+    books = get_books_by_location(book_locations)
+    display_books(books)
+    return (books, book_locations)
 
 
-# adicionar livros
+# add book
 
 
-def adicionar_livro() -> bool:
-    global sistema
-    db_quantia = sistema.get("db_quantia", 0)
-    if db_quantia is None:
-        db_quantia = 0
-    database = shelve.open(f"./livrosBD/livro_db{db_quantia:04d}")
-    livro_db: list[LivroData] = database.get("livros", [])
-    if len(livro_db) >= 10:
-        database = shelve.open(f"./livrosBD/livro_db{db_quantia + 1:04d}")
-        livro_db = []
-        db_quantia += 1
-    categorias = sistema.get("categorias", [])
-    if not categorias:
-        print("\nnão há categorias para apresentar\n")
+def insert_book() -> bool:
+    global system
+    db_quantity = system.get("db_quantity", 0)
+    if db_quantity is None:
+        db_quantity = 0
+    database = shelve.open(f"./books_database/book_db{db_quantity:04d}")
+    book_database: list[BookData] = database.get("books", [])
+    if len(book_database) >= 10:
+        database = shelve.open(f"./books_database/book_db{db_quantity + 1:04d}")
+        book_database = []
+        db_quantity += 1
+    categories = system.get("categories", [])
+    if not categories:
+        print("\nno categories to display\n")
         return False
-    print("titulo")
-    titulo = input()
-    print("Categoria:")
+    print("title")
+    title = input()
+    print("Category:")
     while True:
-        apresenta_categorias()
-        print(str(len(categorias)) + "-adicionar categoria")
+        show_category_list()
+        print(str(len(categories)) + "-add category")
         try:
-            escolha = int(input())
+            user_choice = int(input())
         except ValueError:
-            print("\nsomente inteiros\n")
+            print("\nonly integers\n")
             continue
-        if escolha == len(categorias):
-            adicionar_categoria()
-            categorias = sistema.get("categorias", [])
+        if user_choice == len(categories):
+            add_category()
+            categories = system.get("categories", [])
             continue
-        if escolha not in range(len(categorias)):
-            print("\nvocê digitou um valor invalido\n")
+        if user_choice not in range(len(categories)):
+            print("\nyou entered an invalid value\n")
         else:
             break
-    categoria = categorias[escolha]
-    print("autor")
-    autor = input()
-    print("editora")
-    editora = input()
-    print("sinopse")
-    sinopse = input()
+    category = categories[user_choice]
+    print("author")
+    author_name = input()
+    print("publisher")
+    publisher = input()
+    print("synopsis")
+    synopsis = input()
     while True:
-        print("ano")
+        print("year")
         try:
-            ano = int(input())
+            year = int(input())
         except ValueError:
-            print("\nsomente inteiros\n")
+            print("\nonly integers\n")
             continue
-        if (ano > 2100) or (ano < 1500):
-            print("esse ano não existe")
+        if (year > 2100) or (year < 1500):
+            print("this year does not exist")
             continue
         break
-    paginas = 0
+    pages = 0
     while True:
-        print("paginas")
+        print("pages")
         try:
-            paginas = int(input())
+            pages = int(input())
         except ValueError:
-            print("\nsomente inteiros\n")
-        if paginas < 0:
-            print("\nsomente inteiros positivos\n")
+            print("\nonly integers\n")
+        if pages < 0:
+            print("\nonly positive integers\n")
         break
-    print("local")
-    local = input()
-    esse_livro = (titulo, categoria, autor, editora, sinopse, ano, paginas, local)
-    livro_db.append(esse_livro)
-    database["livros"] = livro_db
+    print("location")
+    location = input()
+    book = (title, category, author_name, publisher, synopsis, year, pages, location)
+    book_database.append(book)
+    database["books"] = book_database
     database.close()
-    sistema["db_quantia"] = db_quantia
-    close_sistema()
-    sistema = open_sistema()
-    print("adicionar outro?s/n")
-    tecla = input()
-    return tecla == "s"
+    system["db_quantity"] = db_quantity
+    close_system()
+    system = open_system()
+    print("add another? y/n")
+    continue_input = input()
+    return continue_input == "y"
 
 
-# emprestimo
+# loan
 
 
-def emprestimo() -> None:
-    livro_lugar = consulta_menu()
-    if not livro_lugar:
+def process_loan() -> None:
+    book_location = display_book_query_menu()
+    if not book_location:
         return
-    livro_mudar = fazer_menu(livro_lugar[0])
-    if not livro_mudar:
+    book_change = make_menu(book_location[0])
+    if not book_change:
         return
-    endereco = livro_lugar[1][livro_mudar - 1]
-    muda(endereco, 7)
+    location = book_location[1][book_change - 1]
+    update_book_details(location, 7)
 
 
-# referente ao sistema
+# regarding the system
 
 
-def altera_sistema() -> None:
+def manage_system() -> None:
     while True:
-        escolha = fazer_menu(
+        user_choice = make_menu(
             [
-                "adicionar categoria",
-                "alterar categoria",
-                "remover categoria",
-                "alterar livro",
-                "remover livro",
+                "add category",
+                "change category",
+                "remove category",
+                "change book",
+                "remove book",
             ]
         )
-        if escolha == 1:
-            adicionar_categoria()
-        elif escolha == 2:
-            altera_categoria()
-        elif escolha == 3:
-            retira_categoria()
-        elif escolha == 4:
-            altera_livro()
-        elif escolha == 5:
-            retira_livro()
+        if user_choice == 1:
+            add_category()
+        elif user_choice == 2:
+            update_category()
+        elif user_choice == 3:
+            remove_category()
+        elif user_choice == 4:
+            update_book()
+        elif user_choice == 5:
+            remove_book()
         else:
             return
 
 
-def adicionar_categoria() -> None:
-    global sistema
-    categorias = sistema.get("categorias", [])
-    print("digite 0 qualquer momento para sair")
+def add_category() -> None:
+    global system
+    categories = system.get("categories", [])
+    print("type 0 at any time to exit")
     while True:
-        print("digite o nome da nova categoria")
-        categoria_nome = input()
-        if categoria_nome == "0":
+        print("type the name of the new category")
+        category_name = input()
+        if category_name == "0":
             break
-        categorias.append(categoria_nome)
-    sistema["categorias"] = categorias
-    close_sistema()
-    sistema = open_sistema()
-    return
+        categories.append(category_name)
+    system["categories"] = categories
+    close_system()
+    system = open_system()
 
 
-def altera_livro() -> None:
-    livro_lugar = consulta_menu()
-    if not livro_lugar:
+def update_book() -> None:
+    book_location = display_book_query_menu()
+    if not book_location:
         return
-    livro_mudar = fazer_menu(livro_lugar[0])
-    if not livro_mudar:
+    book_change = make_menu(book_location[0])
+    if not book_change:
         return
-    endereco = livro_lugar[1][livro_mudar - 1]
-    item_index = fazer_menu(
-        ["nome", "categoria", "autor", "editora", "sinopse", "ano", "paginas", "local"]
+    location = book_location[1][book_change - 1]
+    item_index = make_menu(
+        [
+            "name",
+            "category",
+            "author",
+            "publisher",
+            "synopsis",
+            "year",
+            "pages",
+            "location",
+        ]
     )
     if not item_index:
         return
-    muda(endereco, item_index - 1)
+    update_book_details(location, item_index - 1)
 
 
-def muda(endereco: tuple[int, int], item_index: int) -> None:
-    global sistema
-    categorias = sistema.get("categorias", [])
-    if not categorias:
-        print("\nnão há categorias para apresentar\n")
+def update_book_details(location: tuple[int, int], item_index: int) -> None:
+    global system
+    categories = system.get("categories", [])
+    if not categories:
+        print("\nno categories to display\n")
         return
-    mudancas = [
-        "nome",
-        "categoria",
-        "autor",
-        "editora",
-        "sinopse",
-        "ano",
-        "paginas",
-        "local",
+    changes = [
+        "name",
+        "category",
+        "author",
+        "publisher",
+        "synopsis",
+        "year",
+        "pages",
+        "location",
     ]
-    BD = shelve.open(f"./livrosBD/livro_db{endereco[0]:04d}")
-    livros = BD["livros"]
-    novo_livro = livros[endereco[1]]
-    apresenta_livro([novo_livro])
-    print("\n digite " + mudancas[item_index] + " alterado:")
-    valor: int | str = 0
+    database = shelve.open(f"./books_database/book_db{location[0]:04d}")
+    books = database["books"]
+    novo_book = books[location[1]]
+    display_books([novo_book])
+    print(f"\n type the changed {changes[item_index]}:")
+    updated_value: int | str = 0
     if item_index in [0, 2, 3, 4, 7]:
-        valor = input()
+        updated_value = input()
     elif item_index == 1:
         while True:
-            apresenta_categorias()
-            print(str(len(categorias)) + "-adicionar categoria")
+            show_category_list()
+            print(f"{len(categories)}-add category")
             try:
-                escolha = int(input())
+                user_choice = int(input())
             except ValueError:
-                print("\nsomente inteiros\n")
+                print("\nonly integers\n")
                 continue
-            if escolha == len(categorias):
-                adicionar_categoria()
-                categorias = sistema["categorias"]
+            if user_choice == len(categories):
+                add_category()
+                categories = system["categories"]
                 continue
-            if escolha not in range(len(categorias)):
-                print("\nvocê digitou um valor invalido\n")
+            if user_choice not in range(len(categories)):
+                print("\nyou entered an invalid value\n")
             else:
                 break
-        valor = categorias[escolha]
+        updated_value = categories[user_choice]
     elif item_index == 5:
         while True:
             try:
-                valor = int(input())
+                updated_value = int(input())
             except ValueError:
-                print("\nsomente inteiros\n")
+                print("\nonly integers\n")
                 continue
-            if (valor > 2100) or (valor < 1500):
-                print("esse ano não existe")
+            if (updated_value > 2100) or (updated_value < 1500):
+                print("this year does not exist")
                 continue
             break
     elif item_index == 6:
         while True:
             try:
-                valor = int(input())
+                updated_value = int(input())
             except ValueError:
-                print("\nsomente inteiros\n")
+                print("\nonly integers\n")
                 continue
-            if valor < 0:
-                print("\nsomente inteiros positivos\n")
+            if updated_value < 0:
+                print("\nonly positive integers\n")
                 continue
             break
-    novo_livro[item_index] = valor
-    livros[endereco[1]] = novo_livro
-    BD["livros"] = livros
-    BD.close()
+    novo_book[item_index] = updated_value
+    books[location[1]] = novo_book
+    database["books"] = books
+    database.close()
 
 
-def altera_categoria() -> None:
-    global sistema
-    categorias = sistema.get("categorias", [])
-    if not categorias:
-        print("\nnão há categorias para apresentar\n")
+def update_category() -> None:
+    global system
+    categories = system.get("categories", [])
+    if not categories:
+        print("\nno categories to display\n")
         return
     while True:
-        escolha = fazer_menu(categorias)
-        if not escolha:
-            sistema["categorias"] = categorias
-            close_sistema()
-            sistema = open_sistema()
+        choice = make_menu(categories)
+        if not choice:
+            system["categories"] = categories
+            close_system()
+            system = open_system()
             return
-        print("escreva o novo nome")
-        novo_nome = input()
-        velho_nome = categorias[escolha - 1]
-        categorias[int(escolha - 1)] = novo_nome
-        substituir_categoria(velho_nome, novo_nome)
+        print("write the new name")
+        new_name = input()
+        old_name = categories[choice - 1]
+        categories[int(choice - 1)] = new_name
+        substituir_categoria(old_name, new_name)
 
 
-def substituir_categoria(velho_nome: str, novo_nome: str) -> None:
-    global sistema
-    db_quantia = sistema["db_quantia"]
-    if db_quantia is None:
-        raise ValueError("db_quantia is not set in sistema")
-    for indice in range(db_quantia + 1):
-        BD = shelve.open(f"./livrosBD/livro_db{indice:04d}")
-        livros = BD["livros"]
-        for livro in range(len(livros)):
-            if livros[livro][1] == velho_nome:
-                livros[livro][1] = novo_nome
-        BD["livros"] = livros
-        BD.close()
+def substituir_categoria(old_name: str, new_name: str) -> None:
+    global system
+    db_quantity = system["db_quantity"]
+    if db_quantity is None:
+        raise ValueError("db_quantity is not set in system")
+    for index in range(db_quantity + 1):
+        database = shelve.open(f"./books_database/book_db{index:04d}")
+        books = database["books"]
+        for book in books:
+            if book[1] == old_name:
+                book[1] = new_name
+        database["books"] = books
+        database.close()
 
 
-def retira_categoria() -> None:
-    global sistema
-    categorias = sistema.get("categorias", [])
-    if not categorias:
-        print("\nnão há categorias para apresentar\n")
+def remove_category() -> None:
+    global system
+    categories = system.get("categories", [])
+    if not categories:
+        print("\nno categories to display\n")
         return
     while True:
-        print(categorias)
-        escolha = fazer_menu(categorias)
-        if not escolha:
+        print(categories)
+        choice = make_menu(categories)
+        if not choice:
             return
-        else:
-            velho_nome = categorias[escolha - 1]
-            del categorias[escolha - 1]
-            substituir_categoria(velho_nome, "indefinido")
-            sistema["categorias"] = categorias
-            print(sistema["categorias"])
-            close_sistema()
-            sistema = open_sistema()
+        old_name = categories[choice - 1]
+        del categories[choice - 1]
+        substituir_categoria(old_name, "undefined")
+        system["categories"] = categories
+        print(system["categories"])
+        close_system()
+        system = open_system()
 
 
-def retira_livro() -> None:
-    livro_lugar = consulta_menu()
-    if not livro_lugar:
+def remove_book() -> None:
+    book_location = display_book_query_menu()
+    if not book_location:
         return
-    livro_mudar = fazer_menu(livro_lugar[0])
-    if not livro_mudar:
+    book_change = make_menu(book_location[0])
+    if not book_change:
         return
-    endereco = livro_lugar[1][livro_mudar - 1]
-    BD = shelve.open(f"./livrosBD/livro_db{endereco[0]:04d}")
-    livros = BD["livros"]
-    del livros[endereco[1]]
-    BD["livros"] = livros
-    BD.close()
+    address = book_location[1][book_change - 1]
+    database = shelve.open(f"./books_database/book_db{address[0]:04d}")
+    books = database["books"]
+    del books[address[1]]
+    database["books"] = books
+    database.close()
 
 
-sistema = open_sistema()
+system = open_system()
 menu()
-close_sistema()
+close_system()
