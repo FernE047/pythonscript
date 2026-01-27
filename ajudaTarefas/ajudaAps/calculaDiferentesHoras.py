@@ -3,26 +3,18 @@ from typing import Literal
 
 
 def define_limit(factor: int, total: int, add: int = 0) -> int:
-    num = 0
-    while factor * num + add <= total:
-        num += 1
-    limit = num
-    return limit
+    remaining = total - add
+    if remaining < 0:
+        return 0
+    return remaining // factor + 1
 
 
 def get_integer_input(message: str) -> int:
-    print(message)
-    number_text = input()
-    is_converted = False
-    number = 0
-    while not (is_converted):
+    while True:
         try:
-            number = int(number_text)
-            is_converted = True
-        except Exception as _:
-            print(message)
-            number_text = input()
-    return number
+            return int(input(f"{message}\n").strip())
+        except ValueError:
+            pass
 
 
 def prompt_for_yes_no(message: str) -> Literal["y", "n", "0"]:
