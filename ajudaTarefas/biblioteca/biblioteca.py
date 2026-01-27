@@ -3,7 +3,7 @@ from typing import Optional, TypedDict, cast
 
 
 class SistemaData(TypedDict):
-    BDquantia: Optional[int]
+    db_quantia: Optional[int]
     categorias: list[str]
 
 
@@ -25,7 +25,7 @@ def close_sistema() -> None:
         sistema_shelf = None
 
 
-def fazerMenu(options: list[str] | list[LivroData]) -> int:
+def fazer_menu(options: list[str] | list[LivroData]) -> int:
     escolha = -1
     while True:
         print("escolha:")
@@ -43,7 +43,7 @@ def fazerMenu(options: list[str] | list[LivroData]) -> int:
             return escolha
 
 
-def apresentaCategorias() -> None:
+def apresenta_categorias() -> None:
     global sistema
     categorias = sistema["categorias"]
     for indice in range(len(categorias)):
@@ -52,12 +52,12 @@ def apresentaCategorias() -> None:
 
 def menu() -> None:
     while True:
-        escolha = fazerMenu(["consulta", "adicionar livros", "emprestimo", "sistema"])
+        escolha = fazer_menu(["consulta", "adicionar livros", "emprestimo", "sistema"])
         if escolha == 1:
-            consultaMenu()
+            consulta_menu()
         elif escolha == 2:
             while True:
-                if not (adicionarLivro()):
+                if not (adicionar_livro()):
                     break
         elif escolha == 3:
             emprestimo()
@@ -67,16 +67,16 @@ def menu() -> None:
             break
 
 
-def livroPorLocal(livroLocal: list[tuple[int, int]]) -> list[LivroData]:
+def livro_por_local(livro_local: list[tuple[int, int]]) -> list[LivroData]:
     livros: list[LivroData] = []
-    if livroLocal:
-        for locais in livroLocal:
-            BD = shelve.open("./livrosBD/livrobd{0:04d}".format(locais[0]))
+    if livro_local:
+        for locais in livro_local:
+            BD = shelve.open("./livrosBD/livro_db{0:04d}".format(locais[0]))
             livros.append(BD["livros"][locais[1]])
     return livros
 
 
-def apresentaLivro(livros: list[LivroData]) -> None:
+def apresenta_livro(livros: list[LivroData]) -> None:
     if not livros:
         print("nenhum livro encontrado\n")
     for livro in livros:
@@ -94,14 +94,14 @@ def apresentaLivro(livros: list[LivroData]) -> None:
 # referente a consulta
 
 
-def consultaMenu() -> tuple[list[LivroData], list[tuple[int, int]]] | None:
+def consulta_menu() -> tuple[list[LivroData], list[tuple[int, int]]] | None:
     global sistema
-    BDquantia = sistema.get("BDquantia", None)
-    if BDquantia is None:
+    db_quantia = sistema.get("db_quantia", None)
+    if db_quantia is None:
         print("não há livros para apresentar")
         return None
     while True:
-        escolha = fazerMenu(
+        escolha = fazer_menu(
             [
                 "todos os livros",
                 "consulta por nome",
@@ -116,10 +116,10 @@ def consultaMenu() -> tuple[list[LivroData], list[tuple[int, int]]] | None:
         )
         listas: tuple[list[LivroData], list[tuple[int, int]]] = ([], [])
         if escolha == 1:
-            livroLocal = procura("", 0, 0)
-            livros = livroPorLocal(livroLocal)
-            apresentaLivro(livros)
-            listas = (livros, livroLocal)
+            livro_local = procura("", 0, 0)
+            livros = livro_por_local(livro_local)
+            apresenta_livro(livros)
+            listas = (livros, livro_local)
         elif (escolha >= 2) and (escolha <= 9):
             result = consulta(escolha - 2)
             if result is None:
@@ -132,39 +132,39 @@ def procura(
     value: str | int, coluna: int, comparacao: int = 2
 ) -> list[tuple[int, int]]:
     global sistema
-    BDquantia = sistema.get("BDquantia", None)
-    if BDquantia is None:
-        raise ValueError("BDquantia is not set in sistema")
-    listaLivros: list[tuple[int, int]] = []
-    for indice in range(BDquantia + 1):
-        BD = shelve.open("./livrosBD/livrobd{0:04d}".format(indice))
+    db_quantia = sistema.get("db_quantia", None)
+    if db_quantia is None:
+        raise ValueError("db_quantia is not set in sistema")
+    lista_livros: list[tuple[int, int]] = []
+    for indice in range(db_quantia + 1):
+        BD = shelve.open("./livrosBD/livro_db{0:04d}".format(indice))
         livros = BD["livros"]
         for livro_index in range(len(livros)):
             if comparacao == 1:
                 if livros[livro_index][coluna] <= value:
-                    listaLivros.append((indice, livro_index))
+                    lista_livros.append((indice, livro_index))
             elif comparacao == 2:
                 if livros[livro_index][coluna] == value:
-                    listaLivros.append((indice, livro_index))
+                    lista_livros.append((indice, livro_index))
             elif comparacao == 3:
                 if livros[livro_index][coluna] >= value:
-                    listaLivros.append((indice, livro_index))
+                    lista_livros.append((indice, livro_index))
             else:
                 if livros[livro_index][coluna] != "":
-                    listaLivros.append((indice, livro_index))
-    return listaLivros
+                    lista_livros.append((indice, livro_index))
+    return lista_livros
 
 
 def consulta(item: int) -> tuple[list[LivroData], list[tuple[int, int]]] | None:
     global sistema
     categorias = sistema["categorias"]
-    livroLocal: list[tuple[int, int]] = []
+    livro_local: list[tuple[int, int]] = []
     if item == 0:
         print("qual o nome do livro?")
     elif item == 1:
         print("qual a categoria do livro?")
         while True:
-            apresentaCategorias()
+            apresenta_categorias()
             print(str(len(categorias)) + "-indefinido")
             try:
                 escolha = int(input())
@@ -172,12 +172,12 @@ def consulta(item: int) -> tuple[list[LivroData], list[tuple[int, int]]] | None:
                 print("\nsomente inteiros\n")
                 continue
             if escolha == len(categorias):
-                livroLocal = procura("indefinido", item)
+                livro_local = procura("indefinido", item)
                 break
             elif escolha not in range(len(categorias)):
                 print("\nvocê digitou um valor invalido\n")
             else:
-                livroLocal = procura(categorias[escolha], item)
+                livro_local = procura(categorias[escolha], item)
                 break
     elif item == 2:
         print("qual o autor do livro?")
@@ -193,12 +193,12 @@ def consulta(item: int) -> tuple[list[LivroData], list[tuple[int, int]]] | None:
         print("qual o local do livro?")
     if item in [0, 2, 3, 7]:
         valor = input()
-        livroLocal = procura(valor, item)
+        livro_local = procura(valor, item)
     elif item == 4:
         print("ainda não temos essa opção\n")
         return None
     elif (item == 6) or (item == 5):
-        escolha = fazerMenu(["menor", "igual", "maior"])
+        escolha = fazer_menu(["menor", "igual", "maior"])
         paginas = 0
         while True:
             print("comparado a")
@@ -210,26 +210,26 @@ def consulta(item: int) -> tuple[list[LivroData], list[tuple[int, int]]] | None:
             except ValueError:
                 print("\nsomente inteiros\n")
             break
-        livroLocal = procura(paginas, item, comparacao=escolha)
-    livro = livroPorLocal(livroLocal)
-    apresentaLivro(livro)
-    return (livro, livroLocal)
+        livro_local = procura(paginas, item, comparacao=escolha)
+    livro = livro_por_local(livro_local)
+    apresenta_livro(livro)
+    return (livro, livro_local)
 
 
 # adicionar livros
 
 
-def adicionarLivro() -> bool:
+def adicionar_livro() -> bool:
     global sistema
-    BD_quantia = sistema.get("BDquantia", 0)
-    if BD_quantia is None:
-        BD_quantia = 0
-    database = shelve.open("./livrosBD/livrobd{0:04d}".format(BD_quantia))
-    livroBD: list[LivroData] = database.get("livros", [])
-    if len(livroBD) >= 10:
-        database = shelve.open("./livrosBD/livrobd{0:04d}".format(BD_quantia + 1))
-        livroBD = []
-        BD_quantia += 1
+    db_quantia = sistema.get("db_quantia", 0)
+    if db_quantia is None:
+        db_quantia = 0
+    database = shelve.open("./livrosBD/livro_db{0:04d}".format(db_quantia))
+    livro_db: list[LivroData] = database.get("livros", [])
+    if len(livro_db) >= 10:
+        database = shelve.open("./livrosBD/livro_db{0:04d}".format(db_quantia + 1))
+        livro_db = []
+        db_quantia += 1
     categorias = sistema.get("categorias", [])
     if not categorias:
         print("\nnão há categorias para apresentar\n")
@@ -238,7 +238,7 @@ def adicionarLivro() -> bool:
     titulo = input()
     print("Categoria:")
     while True:
-        apresentaCategorias()
+        apresenta_categorias()
         print(str(len(categorias)) + "-adicionar categoria")
         try:
             escolha = int(input())
@@ -283,11 +283,11 @@ def adicionarLivro() -> bool:
         break
     print("local")
     local = input()
-    esseLivro = (titulo, categoria, autor, editora, sinopse, ano, paginas, local)
-    livroBD.append(esseLivro)
-    database["livros"] = livroBD
+    esse_livro = (titulo, categoria, autor, editora, sinopse, ano, paginas, local)
+    livro_db.append(esse_livro)
+    database["livros"] = livro_db
     database.close()
-    sistema["BDquantia"] = BD_quantia
+    sistema["db_quantia"] = db_quantia
     close_sistema()
     sistema = open_sistema()
     print("adicionar outro?s/n")
@@ -299,13 +299,13 @@ def adicionarLivro() -> bool:
 
 
 def emprestimo() -> None:
-    livroLugar = consultaMenu()
-    if not livroLugar:
+    livro_lugar = consulta_menu()
+    if not livro_lugar:
         return
-    livroMudar = fazerMenu(livroLugar[0])
-    if not livroMudar:
+    livro_mudar = fazer_menu(livro_lugar[0])
+    if not livro_mudar:
         return
-    endereco = livroLugar[1][livroMudar - 1]
+    endereco = livro_lugar[1][livro_mudar - 1]
     muda(endereco, 7)
 
 
@@ -314,7 +314,7 @@ def emprestimo() -> None:
 
 def altera_sistema() -> None:
     while True:
-        escolha = fazerMenu(
+        escolha = fazer_menu(
             [
                 "adicionar categoria",
                 "alterar categoria",
@@ -343,10 +343,10 @@ def adicionar_categoria() -> None:
     print("digite 0 qualquer momento para sair")
     while True:
         print("digite o nome da nova categoria")
-        nomeCategoria = input()
-        if nomeCategoria == "0":
+        categoria_nome = input()
+        if categoria_nome == "0":
             break
-        categorias.append(nomeCategoria)
+        categorias.append(categoria_nome)
     sistema["categorias"] = categorias
     close_sistema()
     sistema = open_sistema()
@@ -354,22 +354,22 @@ def adicionar_categoria() -> None:
 
 
 def altera_livro() -> None:
-    livroLugar = consultaMenu()
-    if not livroLugar:
+    livro_lugar = consulta_menu()
+    if not livro_lugar:
         return
-    livroMudar = fazerMenu(livroLugar[0])
-    if not livroMudar:
+    livro_mudar = fazer_menu(livro_lugar[0])
+    if not livro_mudar:
         return
-    endereco = livroLugar[1][livroMudar - 1]
-    itemMudar = fazerMenu(
+    endereco = livro_lugar[1][livro_mudar - 1]
+    item_index = fazer_menu(
         ["nome", "categoria", "autor", "editora", "sinopse", "ano", "paginas", "local"]
     )
-    if not itemMudar:
+    if not item_index:
         return
-    muda(endereco, itemMudar - 1)
+    muda(endereco, item_index - 1)
 
 
-def muda(endereco: tuple[int, int], itemMudar: int) -> None:
+def muda(endereco: tuple[int, int], item_index: int) -> None:
     global sistema
     categorias = sistema.get("categorias", [])
     if not categorias:
@@ -385,17 +385,17 @@ def muda(endereco: tuple[int, int], itemMudar: int) -> None:
         "paginas",
         "local",
     ]
-    BD = shelve.open("./livrosBD/livrobd{0:04d}".format(endereco[0]))
+    BD = shelve.open("./livrosBD/livro_db{0:04d}".format(endereco[0]))
     livros = BD["livros"]
-    novoLivro = livros[endereco[1]]
-    apresentaLivro([novoLivro])
-    print("\n digite " + mudancas[itemMudar] + " alterado:")
+    novo_livro = livros[endereco[1]]
+    apresenta_livro([novo_livro])
+    print("\n digite " + mudancas[item_index] + " alterado:")
     valor: int | str = 0
-    if itemMudar in [0, 2, 3, 4, 7]:
+    if item_index in [0, 2, 3, 4, 7]:
         valor = input()
-    elif itemMudar == 1:
+    elif item_index == 1:
         while True:
-            apresentaCategorias()
+            apresenta_categorias()
             print(str(len(categorias)) + "-adicionar categoria")
             try:
                 escolha = int(input())
@@ -411,7 +411,7 @@ def muda(endereco: tuple[int, int], itemMudar: int) -> None:
             else:
                 break
         valor = categorias[escolha]
-    elif itemMudar == 5:
+    elif item_index == 5:
         while True:
             try:
                 valor = int(input())
@@ -422,7 +422,7 @@ def muda(endereco: tuple[int, int], itemMudar: int) -> None:
                 print("esse ano não existe")
                 continue
             break
-    elif itemMudar == 6:
+    elif item_index == 6:
         while True:
             try:
                 valor = int(input())
@@ -433,8 +433,8 @@ def muda(endereco: tuple[int, int], itemMudar: int) -> None:
                 print("\nsomente inteiros positivos\n")
                 continue
             break
-    novoLivro[itemMudar] = valor
-    livros[endereco[1]] = novoLivro
+    novo_livro[item_index] = valor
+    livros[endereco[1]] = novo_livro
     BD["livros"] = livros
     BD.close()
 
@@ -446,30 +446,30 @@ def altera_categoria() -> None:
         print("\nnão há categorias para apresentar\n")
         return
     while True:
-        escolha = fazerMenu(categorias)
+        escolha = fazer_menu(categorias)
         if not escolha:
             sistema["categorias"] = categorias
             close_sistema()
             sistema = open_sistema()
             return
         print("escreva o novo nome")
-        novoNome = input()
-        velhoNome = categorias[escolha - 1]
-        categorias[int(escolha - 1)] = novoNome
-        substituirCategoria(velhoNome, novoNome)
+        novo_nome = input()
+        velho_nome = categorias[escolha - 1]
+        categorias[int(escolha - 1)] = novo_nome
+        substituir_categoria(velho_nome, novo_nome)
 
 
-def substituirCategoria(velhoNome: str, novoNome: str) -> None:
+def substituir_categoria(velho_nome: str, novo_nome: str) -> None:
     global sistema
-    BDquantia = sistema["BDquantia"]
-    if BDquantia is None:
-        raise ValueError("BDquantia is not set in sistema")
-    for indice in range(BDquantia + 1):
-        BD = shelve.open("./livrosBD/livrobd{0:04d}".format(indice))
+    db_quantia = sistema["db_quantia"]
+    if db_quantia is None:
+        raise ValueError("db_quantia is not set in sistema")
+    for indice in range(db_quantia + 1):
+        BD = shelve.open("./livrosBD/livro_db{0:04d}".format(indice))
         livros = BD["livros"]
         for livro in range(len(livros)):
-            if livros[livro][1] == velhoNome:
-                livros[livro][1] = novoNome
+            if livros[livro][1] == velho_nome:
+                livros[livro][1] = novo_nome
         BD["livros"] = livros
         BD.close()
 
@@ -482,13 +482,13 @@ def retira_categoria() -> None:
         return
     while True:
         print(categorias)
-        escolha = fazerMenu(categorias)
+        escolha = fazer_menu(categorias)
         if not escolha:
             return
         else:
-            velhoNome = categorias[escolha - 1]
+            velho_nome = categorias[escolha - 1]
             del categorias[escolha - 1]
-            substituirCategoria(velhoNome, "indefinido")
+            substituir_categoria(velho_nome, "indefinido")
             sistema["categorias"] = categorias
             print(sistema["categorias"])
             close_sistema()
@@ -496,14 +496,14 @@ def retira_categoria() -> None:
 
 
 def retira_livro() -> None:
-    livroLugar = consultaMenu()
-    if not livroLugar:
+    livro_lugar = consulta_menu()
+    if not livro_lugar:
         return
-    livroMudar = fazerMenu(livroLugar[0])
-    if not livroMudar:
+    livro_mudar = fazer_menu(livro_lugar[0])
+    if not livro_mudar:
         return
-    endereco = livroLugar[1][livroMudar - 1]
-    BD = shelve.open("./livrosBD/livrobd{0:04d}".format(endereco[0]))
+    endereco = livro_lugar[1][livro_mudar - 1]
+    BD = shelve.open("./livrosBD/livro_db{0:04d}".format(endereco[0]))
     livros = BD["livros"]
     del livros[endereco[1]]
     BD["livros"] = livros
