@@ -35,17 +35,7 @@ def entradaDeSN(mensagem: str) -> Literal["s", "n", "0"]:
 
 def impressaoLista(lista: list[tuple[int, int, int, int]]) -> None:
     for fatores in lista:
-        print(
-            "4*"
-            + str(fatores[0])
-            + "+3*"
-            + str(fatores[1])
-            + "+2*"
-            + str(fatores[2])
-            + "+1*"
-            + str(fatores[3])
-        )
-
+        print(f"4*{fatores[0]}+3*{fatores[1]}+2*{fatores[2]}+1*{fatores[3]}")
 
 HORAS_A = 4
 HORAS_B = 3
