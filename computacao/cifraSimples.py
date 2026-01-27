@@ -23,7 +23,7 @@ def cifra(texto, n):
 def todasCifras(texto):
     print(texto,end="\n\n")
     for n in range(1,26):
-        print("{:02d}:".format(n))
+        print(f"{n:02d}:")
         print(cifra(texto,n),end="\n\n")
             
 texto=pegaString("digite alguma coisa e cifraremos")

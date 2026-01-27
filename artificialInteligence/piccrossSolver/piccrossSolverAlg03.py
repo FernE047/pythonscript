@@ -121,4 +121,4 @@ for a in range(9):
     jogo = [tabuleiro,dicas]
     resolveUmTabuleiro(jogo)
     print('\n'+embelezeTempo(tempoTotal)+'\n')
-    salva(tabuleiro,"piccross//B{0:03d}".format(a))
+    salva(tabuleiro,f"piccross//B{a:03d}")

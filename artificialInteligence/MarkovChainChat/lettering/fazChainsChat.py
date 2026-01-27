@@ -14,8 +14,8 @@ def alteraChainFile(n,termo):
     if termo == "":
         print(n)
     fileWrite = open("chain//c.txt",'w',encoding='utf-8')
-    if "{0:03d}.txt".format(n) in os.listdir("chain"):
-        fileRead = open("chain//{0:03d}.txt".format(n),'r',encoding='utf-8')
+    if f"{n:03d}.txt" in os.listdir("chain"):
+        fileRead = open(f"chain//{n:03d}.txt",'r',encoding='utf-8')
         linha = fileRead.readline()
         encontrou = False
         indice = len(termo)
@@ -33,7 +33,7 @@ def alteraChainFile(n,termo):
     else :
         fileWrite.write(termo + " 1\n")
     fileWrite.close()
-    renome("chain//c.txt","chain//{0:03d}.txt".format(n))
+    renome("chain//c.txt",f"chain//{n:03d}.txt")
 
 file = open('sohMensagens.txt',encoding='utf-8')
 mensagem = file.readline()[1:]

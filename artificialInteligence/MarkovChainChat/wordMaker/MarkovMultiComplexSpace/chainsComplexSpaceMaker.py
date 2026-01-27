@@ -2,8 +2,8 @@ import os
 
 def renome(name,destinoName):
     global enc
-    origem = open(nome+"//c.txt",'r',encoding = "UTF-8")
-    destino = open(nome+destinoName,'w',encoding = "UTF-8")
+    origem = open(f"{name}//c.txt",'r',encoding = "UTF-8")
+    destino = open(f"{name}{destinoName}",'w',encoding = "UTF-8")
     linha = origem.readline()
     while linha:
         destino.write(linha)
@@ -12,9 +12,9 @@ def renome(name,destinoName):
     destino.close()
 
 def alteraChainFile(nome,n,termo):
-    fileWrite = open(nome+"//c.txt",'w',encoding = "UTF-8")
-    if "{0:03d}.txt".format(n) in os.listdir(nome):
-        fileRead = open(nome+"//{0:03d}.txt".format(n),'r',encoding = "UTF-8")
+    fileWrite = open(f"{nome}//c.txt",'w',encoding = "UTF-8")
+    if f"{n:03d}.txt" in os.listdir(nome):
+        fileRead = open(f"{nome}//{n:03d}.txt",'r',encoding = "UTF-8")
         linha = fileRead.readline()
         encontrou = False
         indice = len(termo)
@@ -32,7 +32,7 @@ def alteraChainFile(nome,n,termo):
     else :
         fileWrite.write(termo + " 1\n")
     fileWrite.close()
-    renome(nome,"//{0:03d}.txt".format(n))
+    renome(nome,f"//{n:03d}.txt")
 
 notSuccess = True
 while notSuccess:

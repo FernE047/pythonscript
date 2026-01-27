@@ -21,9 +21,9 @@ for a in range(args.repeat+1):
     if args.hi:
         print('hi')
     if args.verbosity == 2:
-        print("the square of {} equals {}".format(args.square, answer))
+        print(f"the square of {args.square} equals {answer}")
     elif args.verbosity == 1:
-        print("{}^2 == {}".format(args.square, answer))
+        print(f"{args.square}^2 == {answer}")
     else:
         print(answer)
 return answer

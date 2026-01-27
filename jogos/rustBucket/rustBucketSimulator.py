@@ -220,13 +220,13 @@ def leMapa(mapa):
             if (cor[0] == 255) and (cor[2] == 255) and (cor[1] < 255):
                 tom = cor[1]
                 if tom in range(128,132):
-                    elementos.append(Elemento("porco{0:03d}".format(cor[1]),coord))
+                    elementos.append(Elemento(f"porco{cor[1]:03d}",coord))
                 elif tom in range(88,92):
-                    elementos.append(Elemento("porcoMetal{0:03d}".format(cor[1]),coord))
+                    elementos.append(Elemento(f"porcoMetal{cor[1]:03d}",coord))
                 elif tom in range(48,52):
-                    elementos.append(Elemento("porcoOuro{0:03d}".format(cor[1]),coord))
+                    elementos.append(Elemento(f"porcoOuro{cor[1]:03d}",coord))
                 elif tom in range(0,4):
-                    elementos.append(Elemento("porcoEstatua{0:03d}".format(cor[1]),coord))
+                    elementos.append(Elemento(f"porcoEstatua{cor[1]:03d}",coord))
             if (cor[0] == 0) and (cor[1] == 255) and (cor[2] == 255):
                 elementos.append(Elemento("fantasma",coord))
             if (cor[0] == 0) and (cor[1] == 127) and (cor[2] == 255):

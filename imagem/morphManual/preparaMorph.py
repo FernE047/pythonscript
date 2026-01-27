@@ -17,7 +17,7 @@ def salvaLayers(nome,pasta):
     new_im.close()
     for n in range(1,len(layeredImage.layers)):
         new_im = Image.fromarray(layeredImage.layers[n].image)
-        new_im.save(pasta + "\\{0:03d}".format(n-1) + ".png")
+        new_im.save(f"{pasta}\\{n-1:03d}.png")
         new_im.close()
 
 limpaPasta('C:\\pythonscript\\imagem\\morphManual\\partes\\iniciais')

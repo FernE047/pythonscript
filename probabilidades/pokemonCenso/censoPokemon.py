@@ -115,7 +115,7 @@ try:
             alolan=(informacao[2].find('/')!=-1)
         else:
             alolan=False
-        BD["{0:03d}".format(a)]=pokemonDados
+        BD[f"{a:03d}"]=pokemonDados
         debugImprime(pokemonDados,a)
         if(alolan):
             pokemonDados=capturaDados(informacao,alolan=alolan)
@@ -124,7 +124,7 @@ try:
             pokemonDados['name']='Alolan '+pokemonDados['name']
             pokemonDados['tipo']=tipo
             pokemonDados['alola']=alolan
-            BD["{0:03d}Alolan".format(a)]=pokemonDados
+            BD[f"{a:03d}Alolan"]=pokemonDados
             debugImprime(pokemonDados,a)
         else:
             if((mega[0])or(mega[1])):
@@ -150,7 +150,7 @@ try:
                         tipo=procuraTipo(imgTag,False,mega=True)
                         pokemonDados['tipo']=tipo
                         pokemonDados['mega']=True
-                        BD["{0:03d}".format(a)+add]=pokemonDados
+                        BD[f"{a:03d}{add}"]=pokemonDados
                         debugImprime(pokemonDados,a)
         duracao=time()-inicio
         print(textos.embelezeTempo(duracao))

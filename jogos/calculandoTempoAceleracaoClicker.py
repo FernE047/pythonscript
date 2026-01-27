@@ -36,4 +36,4 @@ quantidadeProdutora=1
 quantidadeProduzida=1
 precoProducao=1000
 tempo=tempoDemoraProducao(1,0.001,1000,1000)
-print("\nquantidadeProdutora : {}\n".format(quantidadeProdutora)+textos.embelezeTempo(tempo))
+print(f"\nquantidadeProdutora : {quantidadeProdutora}\n{textos.embelezeTempo(tempo)}\n")

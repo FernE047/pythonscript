@@ -348,7 +348,8 @@ def imprimeBlob(blob,imagem):
             cor = tuple([randint(0,255) for a in range(3)])
             for coord in linha:
                 imagem.putpixel(coord,cor)
-    imagem.save("C:\\pythonscript\\imagem\\morphManual\\partesConfig\\debugBlob{0:03d}.png".format(len(os.listdir('C:\\pythonscript\\imagem\\morphManual\\partesConfig'))))
+    path = "C:\\pythonscript\\imagem\\morphManual\\partesConfig"
+    imagem.save(f"{path}\\debugBlob{len(os.listdir(path)):03d}.png")
 
 '''
 
@@ -361,7 +362,7 @@ def configPart(data):
     print("Fazendo Parte : " + str(n))
     parteInicial = Image.fromarray(imagemInicial)
     parteFinal = Image.fromarray(imagemFinal)
-    fileConfig = open('partesConfig\\parte{0:02d}Config.txt'.format(n),'w')
+    fileConfig = open(f'partesConfig\\parte{n:02d}Config.txt','w')
     if n == 1:
         fazFundo(fileConfig,parteInicial,parteFinal)
     else:

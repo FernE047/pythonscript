@@ -37,15 +37,15 @@ class Formato:
         self.varApresentacao = str(letra)
 
     def textoSimples(self, k: str) -> str:
-        texto = "{}*{}".format(self.divisor, k)
+        texto = f"{self.divisor}*{k}"
         if self.resto:
-            texto += "+{}".format(self.resto)
+            texto += f"+{self.resto}"
         return texto
 
     def textoComposto(self, k: int) -> str:
-        texto = "{}".format(self.divisor * k)
+        texto = f"{self.divisor * k}"
         if self.resto:
-            texto += "+{}".format(self.resto)
+            texto += f"+{self.resto}"
         return texto
 
     def setDivisor(self, novoDivisor: int) -> None:
@@ -64,21 +64,21 @@ class Formato:
         a = formula.a
         b = formula.b
         c = formula.c
-        texto += "({}x+{})/{}=y\n".format(a, b, c)
+        texto += f"({a}x+{b})/{c}=y\n"
         e0 = self.divisor
         d0 = self.resto
         e1 = formato2.divisor
         d1 = formato2.resto
-        texto += "{}({}k+{})+{}={}({}n+{})\n".format(a, e0, d0, b, c, e1, d1)
+        texto += f"{a}({e0}k+{d0})+{b}={c}({e1}n+{d1})\n"
         e2 = a * e0
         d2 = a * d0 + b
         e3 = c * e1
         d3 = c * d1
-        texto += "{}k+{}={}n+{}\n".format(e2, d2, e3, d3)
+        texto += f"{e2}k+{d2}={e3}n+{d3}\n"
         d4 = (d3 - d2) % e3
-        texto += "{}k={}n+{}\n".format(e2, e3, d4)
+        texto += f"{e2}k={e3}n+{d4}\n"
         j = mdc([e2, e3, d4])
-        texto += "j = mdc({},{},{}) = {}\n".format(e2, e3, d4, j)
+        texto += f"j = mdc({e2},{e3},{d4}) = {j}\n"
         e6 = e2 // j
         e5 = e3 // j
         d5 = d4 // j
@@ -86,7 +86,7 @@ class Formato:
         d8 = 1
         e9 = 1
         d9 = 1
-        texto += "{}k={}n+{}\n".format(e6, e5, d5)
+        texto += f"{e6}k={e5}n+{d5}\n"
         if (e5 % e6 == 0) and (d5 % e6 == 0):
             e8 = e5 // e6
             d8 = d5 // e6
@@ -97,7 +97,7 @@ class Formato:
                 e8 = e7 * e5
                 d8 = e5 * d7 + d5
                 if (e8 % e6 == 0) and (d8 % e6 == 0):
-                    texto += "{}k={}({}m+{})+{}\n".format(e6, e5, e7, d7, d5)
+                    texto += f"{e6}k={e5}({e7}m+{d7})+{d5}\n"
                     right = True
                     break
             if not (right):
@@ -108,19 +108,19 @@ class Formato:
                     saida.write(texto)  # type: ignore
                 return None
         if e6 != 1:
-            texto += "{}k={}n+{}\n".format(e6, e8, d8)
+            texto += f"{e6}k={e8}n+{d8}\n"
             if (e8 % e6 == 0) and (d8 % e6 == 0):
                 e9 = e8 // e6
                 d9 = d8 // e6
                 e6 = 1
-                texto += "{}k={}n+{}\n".format(e6, e9, d9)
+                texto += f"{e6}k={e9}n+{d9}\n"
         else:
             e9 = e8
             d9 = d8
-        texto += "x={}({}n+{})+{}\n".format(e0, e9, d9, d0)
+        texto += f"x={e0}({e9}n+{d9})+{d0}\n"
         e10 = e0 * e9
         d10 = e0 * d9 + d0
-        texto += "x={}n+{}\n\n".format(e10, d10)
+        texto += f"x={e10}n+{d10}\n\n"
         if saida == "padrao":
             print(texto)
         else:
@@ -310,7 +310,7 @@ class Regra:
         return self.getFormato().puro() + self.getFormula().pura()
 
     def __str__(self) -> str:
-        return "{:20} : {:20}".format(str(self.getFormato()), str(self.getFormula()))
+        return f"{str(self.getFormato()):20} : {str(self.getFormula()):20}"
 
 
 class Funcao:
@@ -446,7 +446,7 @@ class Funcao:
         for tipo in self.getTipos():
             for regra in self.getRegras([tipo]):
                 lista.append((regra.pura(), tipo))
-        BD["collatz{}".format(indice)] = lista
+        BD[f"collatz{indice}"] = lista
         BD.close()
 
     def apresentacao(self)-> str:
@@ -455,12 +455,10 @@ class Funcao:
         for tipo in self.getTipos():
             texto += "\n" + tipo + "\n\n"
             for regra in self.getRegras([tipo]):
-                texto += "{:03d} : ".format(index)
+                texto += f"{index:03d} : "
                 formato = regra.getFormato()
-                texto += "2^{:02d}k+{}".format(
-                    int(log(formato.divisor, 2)), formato.resto
-                )
-                texto += "{} : {}".format(index, str(regra)) + "\n"
+                texto += f"2^{int(log(formato.divisor, 2)):02d}k+{formato.resto}"
+                texto += f"{index} : {str(regra)}\n"
                 index += 1
         return texto
 
@@ -470,7 +468,7 @@ class Funcao:
         for tipo in self.getTipos():
             texto += "\n" + tipo + "\n\n"
             for regra in self.getRegras([tipo]):
-                texto += "{:02d} : {}".format(index, str(regra)) + "\n"
+                texto += f"{index:02d} : {str(regra)}\n"
                 index += 1
         return texto
 
@@ -478,7 +476,7 @@ class Funcao:
 def Collatz(indice:int) -> Funcao:
     BD = shelve.open("collatzRegras")
     collatz = Funcao()
-    for regraSimples in BD["collatz{}".format(indice)]:
+    for regraSimples in BD[f"collatz{indice}"]:
         argumento = regraSimples[0]
         tipoArg = regraSimples[1]
         collatz.addRegra(argumento, tipo=tipoArg)
@@ -537,5 +535,5 @@ def mdc(lista:list[int]) -> int:
 
 if __name__ == "__main__":
     for a in range(7):
-        print("\n\ncollatz {}\n\n".format(a))
+        print(f"\n\ncollatz {a}\n\n")
         print(Collatz(a))

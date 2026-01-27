@@ -30,7 +30,7 @@ def salvaLayers(nome,pasta):
                 continue
         if fundo:
             n -= 1
-        new_im.save(pasta+"\\parte{0:02d}".format(n-1)+nome[:-4]+".png")
+        new_im.save(f"{pasta}\\parte{n-1:02d}{nome[:-4]}.png")
         new_im.close()
 
 limpaPasta('C:\\pythonscript\\imagem\\morphManual\\partes\\partesIniciais')

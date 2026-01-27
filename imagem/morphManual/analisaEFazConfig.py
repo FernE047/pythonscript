@@ -264,7 +264,7 @@ class Linha:
             else:
                 transparencia = 255
         directory = "C:\\pythonscript\\imagem\\morphManual\\debug"
-        name = directory + "\\{0:03d}.png".format(len(os.listdir(directory)))
+        name = f"{directory}\\{len(os.listdir(directory)):03d}.png"
         imagem.save(name)
                 
     def copy(self,other = None):
@@ -384,7 +384,8 @@ class Area:
                 cor = tuple([randint(0,255) for a in range(3)])
                 for coord in linha.pontos:
                     imagem.putpixel(coord,cor)
-        imagem.save("C:\\pythonscript\\imagem\\morphManual\\partesConfig\\debugArea{0:03d}.png".format(len(os.listdir('C:\\pythonscript\\imagem\\morphManual\\partesConfig'))))
+        path = "C:\\pythonscript\\imagem\\morphManual\\partesConfig"
+        imagem.save(f"{path}\\debugArea{len(os.listdir(path)):03d}.png")
         
     def escreve(self,other,file):
         if(len(self) == len(other)):
@@ -493,7 +494,7 @@ class AreaVermelha: #maybe add a separation for larger areas
                     self.imagem.putpixel(coord,tuple(cor+[transparencia]))
                     if transparencia:
                         transparencia -= 1
-        self.imagem.save("C:\\pythonscript\\imagem\\morphManual\\debug\\{0:03d}".format(indice) + nome + ".png")
+        self.imagem.save(f"C:\\pythonscript\\imagem\\morphManual\\debug\\{indice:03d}" + nome + ".png")
 
     def imprimeCamadas(self,nome): 
         maximoLinhas = self.tamanhoMaiorRegiao()
@@ -511,7 +512,8 @@ class AreaVermelha: #maybe add a separation for larger areas
                             transparencia = 255
         directory = "C:\\pythonscript\\imagem\\morphManual\\debug"
         name = directory 
-        name += "\\{0:03d}".format(sum([1 if file.find(nome)!=-1 else 0 for file in os.listdir(directory)]))
+        index = sum([1 if file.find(nome)!=-1 else 0 for file in os.listdir(directory)])
+        name += f"\\{index:03d}"
         name += nome + ".png"
         self.imagem.save(name)
         
@@ -618,9 +620,9 @@ def distancia(pontoA,pontoB):
 
 def configPart(indice):
     print("Fazendo Parte : " + str(indice))
-    parteInicial = ImagemParte("C:\\pythonscript\\imagem\\morphManual\\partes\\iniciais\\{0:03d}.png".format(indice))
-    parteFinal = ImagemParte("C:\\pythonscript\\imagem\\morphManual\\partes\\finais\\{0:03d}.png".format(indice))
-    fileConfig = open('C:\\pythonscript\\imagem\\morphManual\\partes\\config\\{0:03d}.txt'.format(indice),'w')
+    parteInicial = ImagemParte(f"C:\\pythonscript\\imagem\\morphManual\\partes\\iniciais\\{indice:03d}.png")
+    parteFinal = ImagemParte(f"C:\\pythonscript\\imagem\\morphManual\\partes\\finais\\{indice:03d}.png")
+    fileConfig = open(f'C:\\pythonscript\\imagem\\morphManual\\partes\\config\\{indice:03d}.txt','w')
     parteInicial.escreveArea(parteFinal,fileConfig)
     print("\tParte Terminada : " + str(indice))
     fileConfig.close()

@@ -12,5 +12,5 @@ for rodada in range(jogos):
     valores[sorteado]+=1
 for numero in valores:
     if(valores[numero]!=0):
-        print("{0:03d}".format(numero)+" : "+str(valores[numero]*100/jogos)+"%")
+        print(f"{numero:03d} : {valores[numero]*100/jogos}%")
     

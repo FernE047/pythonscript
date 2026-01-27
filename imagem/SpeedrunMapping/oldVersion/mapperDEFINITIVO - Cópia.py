@@ -145,7 +145,7 @@ try:
                     mapa,posicao = ampliaMapa(mapa,frameAtual,posicao,adds)
                     remove(diretorioFrames + frame)
                     #send2trash(diretorioFrames + frame)
-                    print("{0:02d}:{1:02d}:{2:02d}.{3:02d}".format(hora,minuto,segundo,n))
+                    print(f"{hora:02d}:{minuto:02d}:{segundo:02d}.{n:02d}")
                 fim = time()
                 duracao = fim-inicio
                 inicio = time()
@@ -153,7 +153,7 @@ try:
                 print(eT(duracao*(horas*3600+minutos*60+segundos-hora*3600-minuto*60-segundo)))
 except:
     print(posicao)
-    print("{0:02d}:{1:02d}:{2:02d}.{3:02d}".format(hora,minuto,segundo,n))
+    print(f"{hora:02d}:{minuto:02d}:{segundo:02d}.{n:02d}")
 frameAtual.close()
 fimTotal = time()
 duracao = fimTotal-inicioTotal

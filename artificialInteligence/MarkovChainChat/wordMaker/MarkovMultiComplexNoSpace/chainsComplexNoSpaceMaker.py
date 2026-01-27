@@ -5,8 +5,8 @@ from textos import embelezeTempo
 
 def renome(name,destinoName):
     global enc
-    origem = open(nome+"//c.txt",'r',encoding = "UTF-8")
-    destino = open(nome+destinoName,'w',encoding = "UTF-8")
+    origem = open(f"{nome}//c.txt",'r',encoding = "UTF-8")
+    destino = open(f"{nome}{destinoName}",'w',encoding = "UTF-8")
     linha = origem.readline()
     while linha:
         destino.write(linha)
@@ -15,10 +15,10 @@ def renome(name,destinoName):
     destino.close()
 
 def alteraChainFile(nome,n,termos):
-    fileWrite = open(nome+"//c.txt",'w',encoding = "UTF-8")
+    fileWrite = open(f"{nome}//c.txt",'w',encoding = "UTF-8")
     amount = Counter([str(a) for a in termos])
-    if "{0:03d}.txt".format(n) in os.listdir(nome):
-        fileRead = open(nome+"//{0:03d}.txt".format(n),'r',encoding = "UTF-8")
+    if f"{n:03d}.txt" in os.listdir(nome):
+        fileRead = open(f"{nome}//{n:03d}.txt",'r',encoding = "UTF-8")
         linha = fileRead.readline()[:-1]
         while linha:
             palavras = linha.split()
@@ -45,7 +45,7 @@ def alteraChainFile(nome,n,termos):
                 fileWrite.write(" ".join(termo+[str(amount[str(termo)])]) + "\n")
                 used.append(termo)
     fileWrite.close()
-    renome(nome,"//{0:03d}.txt".format(n))
+    renome(nome,f"//{n:03d}.txt")
 
 def alteraFiles(nome,alterations):
     for n in alterations:

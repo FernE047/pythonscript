@@ -48,10 +48,10 @@ while temPreto:
             if viz in range(1,4):
                 if (max(coordAtual)<200) and (min(coordAtual)>-1) :
                     proximoFrame.putpixel(coordAtual,(0,0,0))
-    print("imagemOutput{0:03d}.png".format(a))
-    proximoFrame.save("imagemOutput{0:03d}.png".format(a))
+    print(f"imagemOutput{a:03d}.png")
+    proximoFrame.save(f"imagemOutput{a:03d}.png")
     proximoFrame.close()
     imagemOrigem.close()
-    imagemOrigem = Image.open("imagemOutput{0:03d}.png".format(a))
+    imagemOrigem = Image.open(f"imagemOutput{a:03d}.png")
     a += 1
 imagemOrigem.close()

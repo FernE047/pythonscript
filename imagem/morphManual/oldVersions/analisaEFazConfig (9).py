@@ -263,7 +263,8 @@ class Area:
                 cor = tuple([randint(0,255) for a in range(3)])
                 for coord in linha.pontos:
                     imagem.putpixel(coord,cor)
-        imagem.save("C:\\pythonscript\\imagem\\morphManual\\partesConfig\\debugArea{0:03d}.png".format(len(os.listdir('C:\\pythonscript\\imagem\\morphManual\\partesConfig'))))
+        path = "C:\\pythonscript\\imagem\\morphManual\\partesConfig"
+        imagem.save(f"{path}\\debugArea{len(os.listdir(path)):03d}.png")
         
     def escreve(self,other,file):
         if(len(self) == len(other)):

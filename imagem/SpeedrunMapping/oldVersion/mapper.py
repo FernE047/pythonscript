@@ -119,7 +119,7 @@ for n in range(150,framesTotais):
     adds = comparaFrames(ultimoFrame,frameAtual)
     mapa,posicao = ampliaMapa(mapa,frameAtual,posicao,adds)
     ultimoFrame,_ = ampliaMapa(ultimoFrame,frameAtual,[0,0],adds)
-    ultimoFrame.save("results\\frame{0:04d}.png".format(n))
+    ultimoFrame.save(f"results\\frame{n:04d}.png")
     ultimoFrame.close()
     ultimoFrame = frameAtual
     fim = time()

@@ -32,7 +32,7 @@ for (i, rect) in enumerate(rects):
 	(x, y, w, h) = face_utils.rect_to_bb(rect)
 	cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
 	# show the face number
-	cv2.putText(image, "Face #{}".format(i + 1), (x - 10, y - 10),
+	cv2.putText(image, f"Face #{i + 1}", (x - 10, y - 10),
 		cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 	# loop over the (x, y)-coordinates for the facial landmarks
 	# and draw them on the image
@@ -40,6 +40,7 @@ for (i, rect) in enumerate(rects):
 		cv2.circle(image, (x, y), 1, (0, 0, 255), -1)
 # show the output image with the face detections + facial landmarks
 #cv2.imshow("Output", image)
-nome = "C:\\pythonscript\\imagem\\projetoFaces\\faces\\reconhecidas\\output{0:04d}.png"
-cv2.imwrite(nome.format(len(os.listdir("C:\\pythonscript\\imagem\\projetoFaces\\faces\\reconhecidas"))),image)
+path = "C:\\pythonscript\\imagem\\projetoFaces\\faces\\reconhecidas"
+nome = f"{path}\\output{len(os.listdir(path)):04d}.png"
+cv2.imwrite(nome,image)
 cv2.waitKey(0)

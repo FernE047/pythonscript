@@ -68,5 +68,5 @@ for a in range(1000):
     word = []
     subWorldQuant = choice([b for b in range(1,len(palavraStats)+1)],1,p=palavraStats)[0]
     for b in range(subWorldQuant):
-        word.append(doAWord(nome + "//{0:03d}.txt".format(b)))
+        word.append(doAWord(f"{nome}//{b:03d}.txt"))
     print(" ".join(word),end='\n')

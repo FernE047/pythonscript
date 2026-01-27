@@ -336,16 +336,16 @@ def bulk_download(search_keyword,suffix_keywords,limit,main_directory,delay_time
                         if '?' in image_name:
                             image_name = image_name[:image_name.find('?')]
                         if ".jpg" in image_name or ".JPG" in image_name or ".gif" in image_name or ".png" in image_name or ".bmp" in image_name or ".svg" in image_name or ".webp" in image_name or ".ico" in image_name:
-                            output_file = open(main_directory + "/" + dir_name + "/{0:03d}. ".format(success_count + 1) + image_name, 'wb')
+                            output_file = open(f"{main_directory}/{dir_name}/{success_count + 1:03d}. {image_name}", 'wb')
                         else:
                             if args.format:
                                 output_file = open(
-                                    main_directory + "/" + dir_name + "/{0:03d}. ".format(success_count + 1) + image_name + "." + args.format,
+                                    f"{main_directory}/{dir_name}/{success_count + 1:03d}. {image_name}.{args.format}",
                                     'wb')
                                 image_name = image_name + "." + args.format
                             else:
                                 output_file = open(
-                                    main_directory + "/" + dir_name + "/{0:03d}. ".format(success_count + 1) + image_name + ".jpg", 'wb')
+                                    f"{main_directory}/{dir_name}/{success_count + 1:03d}. {image_name}.jpg", 'wb')
                                 image_name = image_name + ".jpg"
 
                         data = response.read()

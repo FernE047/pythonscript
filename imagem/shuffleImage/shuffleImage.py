@@ -93,12 +93,12 @@ for porc in range(100,-1,-1):
     shuffledImage=meioAMeio(imagem,porc)
     fim=time()
     tempo=fim-inicio
-    print("porcentagem de aleatoridade:{}%\n{}\n".format(porc,eT(tempo)))
-    shuffledImage.save("output{:03d}.png".format(porc))
+    print(f"porcentagem de aleatoridade:{porc}%\n{eT(tempo)}\n")
+    shuffledImage.save(f"output{porc:03d}.png")
     tempos.append(tempo)
-    BD["tempos{:03d}".format(porc)]=tempos
+    BD[f"tempos{porc:03d}"]=tempos
     BD.close()
 temposOrdenados=sorted(tempos)
 print("Resultados : ")
 for tempo in temposOrdenados:
-    print("{}% : {}".format(tempos.index(tempo),tempo))
+    print(f"{tempos.index(tempo)}% : {tempo}")

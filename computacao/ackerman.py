@@ -1,7 +1,7 @@
 def ackerman(m,n):
     global nivel
     nivel+=1
-    print("ackerman({},{})\tnivel={}".format(m,n,nivel))
+    print(f"ackerman({m},{n})\tnivel={nivel}")
     if(m<=0):
         return(n+1)
     if((m>0)and(n<=0)):

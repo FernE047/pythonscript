@@ -55,7 +55,7 @@ fruto=1
 passos=[0 for i in range(2)]
 while(fruto!=0):
     passos=[collatz(fruto,i) for i in range(3)]
-    print("passos:{0:4d},{1:4d},{2:4d}\n".format(passos[0],passos[1],passos[2]));
+    print(f"passos:{passos[0]:4d},{passos[1]:4d},{passos[2]:4d}\n")
     fruto=int(input())
 
 

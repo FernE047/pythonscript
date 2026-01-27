@@ -11,10 +11,10 @@ def renome(origemName,destinoName):
     destino.close()
 
 def alteraMonoChainFile(nome,termo,indice):
-    nomeTemp = nome + "//c.txt"
-    nomeReal = nome + "//{0:03d}.txt".format(indice)
+    nomeTemp = f"{nome}//c.txt"
+    nomeReal = f"{nome}//{indice:03d}.txt"
     fileWrite = open(nomeTemp,'w',encoding = "UTF-8")
-    if "{0:03d}.txt".format(indice) in os.listdir(nome):
+    if f"{indice:03d}.txt" in os.listdir(nome):
         fileRead = open(nomeReal,'r',encoding = "UTF-8")
         linha = fileRead.readline()
         encontrou = False
@@ -44,7 +44,7 @@ while notSuccess:
         file = open(nome + '.txt','r')#, encoding = "UTF-8")
         notSuccess = False
         try:
-            arqInput = open(nome+"//c.txt",'w',encoding = "UTF-8")
+            arqInput = open(f"{nome}//c.txt",'w',encoding = "UTF-8")
             arqInput.close()
         except:
             os.mkdir(nome)

@@ -6,7 +6,7 @@ def isInteger(elemento,tamanho):
 def imprime():
     global matriz
     global iterations
-    print("Iteracoes Totais {:,}".format(iterations))
+    print(f"Iteracoes Totais {iterations:,}")
     if matriz:
         for linha in matriz:
             print(' '.join([str(elemento)+' '*(30-len(str(elemento))) for elemento in linha]))

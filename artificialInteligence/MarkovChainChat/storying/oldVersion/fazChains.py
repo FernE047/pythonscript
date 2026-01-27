@@ -18,7 +18,7 @@ def alteraChainFile(n,termo,isTitulo):
     nomeTemp = diretorio + "//c.txt"
     nomeReal = diretorio + "//{0:03d}.txt"
     fileWrite = open(nomeTemp,'w')
-    if "{0:03d}.txt".format(n) in os.listdir(diretorio):
+    if f"{n:03d}.txt" in os.listdir(diretorio):
         fileRead = open(nomeReal.format(n),'r')
         linha = fileRead.readline()
         encontrou = False

@@ -71,7 +71,7 @@ def livro_por_local(livro_local: list[tuple[int, int]]) -> list[LivroData]:
     livros: list[LivroData] = []
     if livro_local:
         for locais in livro_local:
-            BD = shelve.open("./livrosBD/livro_db{0:04d}".format(locais[0]))
+            BD = shelve.open(f"./livrosBD/livro_db{locais[0]:04d}")
             livros.append(BD["livros"][locais[1]])
     return livros
 
@@ -137,7 +137,7 @@ def procura(
         raise ValueError("db_quantia is not set in sistema")
     lista_livros: list[tuple[int, int]] = []
     for indice in range(db_quantia + 1):
-        BD = shelve.open("./livrosBD/livro_db{0:04d}".format(indice))
+        BD = shelve.open(f"./livrosBD/livro_db{indice:04d}")
         livros = BD["livros"]
         for livro_index in range(len(livros)):
             if comparacao == 1:
@@ -224,10 +224,10 @@ def adicionar_livro() -> bool:
     db_quantia = sistema.get("db_quantia", 0)
     if db_quantia is None:
         db_quantia = 0
-    database = shelve.open("./livrosBD/livro_db{0:04d}".format(db_quantia))
+    database = shelve.open(f"./livrosBD/livro_db{db_quantia:04d}")
     livro_db: list[LivroData] = database.get("livros", [])
     if len(livro_db) >= 10:
-        database = shelve.open("./livrosBD/livro_db{0:04d}".format(db_quantia + 1))
+        database = shelve.open(f"./livrosBD/livro_db{db_quantia + 1:04d}")
         livro_db = []
         db_quantia += 1
     categorias = sistema.get("categorias", [])
@@ -385,7 +385,7 @@ def muda(endereco: tuple[int, int], item_index: int) -> None:
         "paginas",
         "local",
     ]
-    BD = shelve.open("./livrosBD/livro_db{0:04d}".format(endereco[0]))
+    BD = shelve.open(f"./livrosBD/livro_db{endereco[0]:04d}")
     livros = BD["livros"]
     novo_livro = livros[endereco[1]]
     apresenta_livro([novo_livro])
@@ -465,7 +465,7 @@ def substituir_categoria(velho_nome: str, novo_nome: str) -> None:
     if db_quantia is None:
         raise ValueError("db_quantia is not set in sistema")
     for indice in range(db_quantia + 1):
-        BD = shelve.open("./livrosBD/livro_db{0:04d}".format(indice))
+        BD = shelve.open(f"./livrosBD/livro_db{indice:04d}")
         livros = BD["livros"]
         for livro in range(len(livros)):
             if livros[livro][1] == velho_nome:
@@ -503,7 +503,7 @@ def retira_livro() -> None:
     if not livro_mudar:
         return
     endereco = livro_lugar[1][livro_mudar - 1]
-    BD = shelve.open("./livrosBD/livro_db{0:04d}".format(endereco[0]))
+    BD = shelve.open(f"./livrosBD/livro_db{endereco[0]:04d}")
     livros = BD["livros"]
     del livros[endereco[1]]
     BD["livros"] = livros
