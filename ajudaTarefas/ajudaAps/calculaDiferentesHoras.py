@@ -2,116 +2,116 @@ import random
 from typing import Literal
 
 
-def defineLimite(fator: int, total: int, add: int = 0) -> int:
+def define_limit(factor: int, total: int, add: int = 0) -> int:
     num = 0
-    while fator * num + add <= total:
+    while factor * num + add <= total:
         num += 1
-    limite = num
-    return limite
+    limit = num
+    return limit
 
 
-def entradaDeInteiro(mensagem: str) -> int:
-    print(mensagem)
-    numeroTexto = input()
-    convertido = False
-    numero = 0
-    while not (convertido):
+def get_integer_input(message: str) -> int:
+    print(message)
+    number_text = input()
+    is_converted = False
+    number = 0
+    while not (is_converted):
         try:
-            numero = int(numeroTexto)
-            convertido = True
+            number = int(number_text)
+            is_converted = True
         except Exception as _:
-            print(mensagem)
-            numeroTexto = input()
-    return numero
+            print(message)
+            number_text = input()
+    return number
 
 
-def entradaDeSN(mensagem: str) -> Literal["s", "n", "0"]:
-    escolha = ""
-    while escolha not in ("s", "n", "0"):
-        print(mensagem + " [s/n]")
-        escolha = input()
-    return escolha
+def prompt_for_yes_no(message: str) -> Literal["y", "n", "0"]:
+    choice = ""
+    while choice not in ("y", "n", "0"):
+        print(message + " [y/n]")
+        choice = input()
+    return choice
 
 
-def impressaoLista(lista: list[tuple[int, int, int, int]]) -> None:
-    for fatores in lista:
-        print(f"4*{fatores[0]}+3*{fatores[1]}+2*{fatores[2]}+1*{fatores[3]}")
+def print_list(factors_list: list[tuple[int, int, int, int]]) -> None:
+    for factors in factors_list:
+        print(f"4*{factors[0]}+3*{factors[1]}+2*{factors[2]}+1*{factors[3]}")
 
-HORAS_A = 4
-HORAS_B = 3
-HORAS_C = 2
-HORAS_D = 1
+HOURS_A = 4
+HOURS_B = 3
+HOURS_C = 2
+HOURS_D = 1
 while True:
-    print("quantas horas")
-    horas = int(input())
+    print("how many hours to calculate?")
+    hours = int(input())
     while True:
-        escolha = entradaDeSN("modo ficha")
-        if escolha == "0":
+        choice = prompt_for_yes_no("sheet mode?")
+        if choice == "0":
             break
-        modoFicha = escolha == "s"
-        fichas = 1
-        linhasDisposto = 1
+        sheet_mode = choice == "y"
+        sheets = 1
+        lines_arranged = 1
         while True:
-            lista: list[tuple[int, int, int, int]] = []
-            if modoFicha:
-                fichas = entradaDeInteiro("quantas fichas")
+            factors_list: list[tuple[int, int, int, int]] = []
+            if sheet_mode:
+                sheets = get_integer_input("how many sheets")
             else:
-                linhasDisposto = entradaDeInteiro("quantas linhas")
-            if (fichas == 0) or (linhasDisposto == 0):
+                lines_arranged = get_integer_input("how many lines")
+            if (sheets == 0) or (lines_arranged == 0):
                 break
-            aLimite = defineLimite(HORAS_A, horas)
-            for a in range(aLimite):
-                bLimite = defineLimite(HORAS_B, horas, add=HORAS_A * a)
-                for b in range(bLimite):
-                    cLimite = defineLimite(
-                        HORAS_C, horas, add=HORAS_A * a + HORAS_B * b
+            aLimit = define_limit(HOURS_A, hours)
+            for a in range(aLimit):
+                bLimit = define_limit(HOURS_B, hours, add=HOURS_A * a)
+                for b in range(bLimit):
+                    cLimit = define_limit(
+                        HOURS_C, hours, add=HOURS_A * a + HOURS_B * b
                     )
-                    for c in range(cLimite):
-                        dLimite = defineLimite(
-                            HORAS_D, horas, add=HORAS_A * a + HORAS_B * b + HORAS_C * c
+                    for c in range(cLimit):
+                        dLimit = define_limit(
+                            HOURS_D, hours, add=HOURS_A * a + HOURS_B * b + HOURS_C * c
                         )
-                        for d in range(dLimite):
+                        for d in range(dLimit):
                             if (
-                                HORAS_A * a + HORAS_B * b + HORAS_C * c + HORAS_D * d
-                                == horas
+                                HOURS_A * a + HOURS_B * b + HOURS_C * c + HOURS_D * d
+                                == hours
                             ):
-                                if modoFicha:
-                                    if (a + b + c + d <= fichas * 25) and (
-                                        a + b + c + d >= fichas * 25 - 25
+                                if sheet_mode:
+                                    if (a + b + c + d <= sheets * 25) and (
+                                        a + b + c + d >= sheets * 25 - 25
                                     ):
-                                        lista.append((a, b, c, d))
+                                        factors_list.append((a, b, c, d))
                                 else:
-                                    if a + b + c + d == linhasDisposto:
-                                        lista.append((a, b, c, d))
+                                    if a + b + c + d == lines_arranged:
+                                        factors_list.append((a, b, c, d))
             while True:
-                escolha = entradaDeSN("randomizar resultados")
-                if escolha != "s":
+                choice = prompt_for_yes_no("randomize results")
+                if choice != "y":
                     break
-                grupo = entradaDeInteiro("quantas pessoas tem no seu grupo")
-                if grupo > len(lista):
-                    print("a lista é menor que o grupo")
-                    impressaoLista(lista)
+                group_length = get_integer_input("how many people are in your group")
+                if group_length > len(factors_list):
+                    print("the list is smaller than the group")
+                    print_list(factors_list)
                     continue
-                listaPessoais = random.sample(lista, grupo)
-                impressaoLista(listaPessoais)
-                escolha = entradaDeSN("mostrar resultados pessoais")
-                if escolha != "s":
+                personal_lists = random.sample(factors_list, group_length)
+                print_list(personal_lists)
+                choice = prompt_for_yes_no("show personal results")
+                if choice != "y":
                     continue
-                for listaPessoal in listaPessoais:
-                    linhas = 0
-                    listaResultante = (
-                        [HORAS_A for _ in range(listaPessoal[0])]
-                        + [HORAS_B for _ in range(listaPessoal[1])]
-                        + [HORAS_C for _ in range(listaPessoal[2])]
-                        + [HORAS_D for _ in range(listaPessoal[3])]
+                for personal_list in personal_lists:
+                    lines = 0
+                    resulting_list = (
+                        [HOURS_A for _ in range(personal_list[0])]
+                        + [HOURS_B for _ in range(personal_list[1])]
+                        + [HOURS_C for _ in range(personal_list[2])]
+                        + [HOURS_D for _ in range(personal_list[3])]
                     )
-                    random.shuffle(listaResultante)
-                    for elemento in listaResultante:
-                        print(elemento)
-                        linhas += 1
-                        if linhas == 25:
-                            print("outra ficha")
-                    print("continuar")
-                    escolha = entradaDeSN("continuar para o próximo")
-                    if escolha == "0":
+                    random.shuffle(resulting_list)
+                    for element in resulting_list:
+                        print(element)
+                        lines += 1
+                        if lines == 25:
+                            print("another sheet")
+                    print("continue")
+                    choice = prompt_for_yes_no("continue to the next")
+                    if choice == "0":
                         break
