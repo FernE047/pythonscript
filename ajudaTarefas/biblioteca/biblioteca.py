@@ -21,7 +21,8 @@ def open_sistema() -> SistemaData:
 def close_sistema() -> None:
     global sistema_shelf
     if sistema_shelf is not None:
-        close_sistema()
+        sistema_shelf.close()
+        sistema_shelf = None
 
 
 def fazerMenu(options: list[str] | list[LivroData]) -> int:
