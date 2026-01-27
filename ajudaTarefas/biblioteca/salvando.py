@@ -1,6 +1,7 @@
 import shelve
-shelfFile = shelve.open('mydata')
-livro=shelfFile['livro']
-for categoria in livro:
-    print(categoria)
-shelfFile.close()
+
+shelf_file = shelve.open("mydata")
+book = shelf_file["livro"]
+for category in book:
+    print(category)
+shelf_file.close()
