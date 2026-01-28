@@ -1,5 +1,4 @@
 internet - fun��es para internet:
-	siteProcura - PEGA site(string),html(elemento) RETORNA informa��o
 	achaSite - PEGA informa��o,site(string) RETORNA siteCompleto(string)
 	resultadosGoogle - PEGA texto,adicao* RETORNA sites
 	pegaTodosSites - PEGA informa��o RETORNA sites

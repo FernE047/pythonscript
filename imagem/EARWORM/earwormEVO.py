@@ -80,12 +80,20 @@ def achaGenius(informacao,tem=""):
                     return(site)
             else:
                 return(site)
-        
+
+
+def siteProcura(site: str, html: str) -> bs4.ResultSet[bs4.element.Tag]:
+    siteBaguncado = conecta(site)
+    siteSoup = bs4.BeautifulSoup(siteBaguncado.text, features="html.parser")
+    informacao = siteSoup.select(html)
+    return informacao
+
+
 def fazImagem(site,pasta="imagens/"):
-    titulo = internet.siteProcura(site,'.header_with_cover_art-primary_info-title')
+    titulo = siteProcura(site,'.header_with_cover_art-primary_info-title')
     titulo = textos.limpaSopa(titulo)
     print(titulo+"\n")
-    informacao = internet.siteProcura(site,'.lyrics')
+    informacao = siteProcura(site,'.lyrics')
     musica = textos.limpaSopa(informacao)
     print(musica+"\n")
     musicaSeparada=musica.split(" ")
@@ -103,7 +111,7 @@ def fazImagem(site,pasta="imagens/"):
 def albumImagens(site,album):
     fazDiretorio('album/'+album)
     faixa=1
-    informacao = internet.siteProcura(site,'.u-display_block')
+    informacao = siteProcura(site,'.u-display_block')
     musicasSites = internet.pegaTodosSites(informacao)
     for site in musicasSites:
         fazImagem(site,pasta=f'album/{album}/{faixa:03d}-')
@@ -112,7 +120,7 @@ def albumImagens(site,album):
 def artistImagens(site,artist):
     fazDiretorio(f'artist/{artist}')
     faixa=1
-    informacao = internet.siteProcura(site,'.mini_card')
+    informacao = siteProcura(site,'.mini_card')
     musicasSites = internet.pegaTodosSites(informacao)
     for site in musicasSites:
         fazImagem(site,pasta=f'artist/{artist}/{faixa:03d}-')
@@ -123,7 +131,7 @@ def fazDiretorio(diretorio):
     os.mkdir(diretorio)
 
 def novoSite(site):
-    informacao=internet.siteProcura(site,'.header_with_cover_art-primary_info-primary_artist')
+    informacao=siteProcura(site,'.header_with_cover_art-primary_info-primary_artist')
     return(informacao[0].get('href'))
     
 album=False

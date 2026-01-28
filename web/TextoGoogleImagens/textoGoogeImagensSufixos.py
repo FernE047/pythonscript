@@ -1,7 +1,6 @@
 import requests, bs4, re
 import os
 import limpaSopa
-import internet
 import textos
 import pyperclip
 
@@ -11,6 +10,13 @@ def conecta(site: str) -> requests.Response:
     while siteBaguncado.status_code != requests.codes.ok:
         siteBaguncado = requests.get(site)
     return siteBaguncado
+
+
+def siteProcura(site: str, html: str) -> bs4.ResultSet[bs4.element.Tag]:
+    siteBaguncado = conecta(site)
+    siteSoup = bs4.BeautifulSoup(siteBaguncado.text, features="html.parser")
+    informacao = siteSoup.select(html)
+    return informacao
 
 
 def pesquisaGoogle(
@@ -73,10 +79,10 @@ def achaGenius(informacao):
 
 
 def achaLetra(site):
-    titulo = internet.siteProcura(site, ".header_with_cover_art-primary_info-title")
+    titulo = siteProcura(site, ".header_with_cover_art-primary_info-title")
     titulo = limpaSopa.limpa(titulo)
     print(titulo + "\n")
-    informacao = internet.siteProcura(site, ".lyrics")
+    informacao = siteProcura(site, ".lyrics")
     musica = limpaSopa.limpa(informacao)
     print(musica + "\n")
     musicaSeparada = musica.split(" ")
@@ -129,7 +135,7 @@ def fazDiretorio(diretorio):
 
 
 def novoSite(site):
-    informacao = internet.siteProcura(
+    informacao = siteProcura(
         site, ".header_with_cover_art-primary_info-primary_artist"
     )
     return informacao[0].get("href")

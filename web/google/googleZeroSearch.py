@@ -3,8 +3,23 @@ import requests, bs4, re
 import internet
 import time
 
+
+def conecta(site: str) -> requests.Response:
+    siteBaguncado = requests.get(site)
+    while siteBaguncado.status_code != requests.codes.ok:
+        siteBaguncado = requests.get(site)
+    return siteBaguncado
+
+
+def siteProcura(site: str, html: str) -> bs4.ResultSet[bs4.element.Tag]:
+    siteBaguncado = conecta(site)
+    siteSoup = bs4.BeautifulSoup(siteBaguncado.text, features="html.parser")
+    informacao = siteSoup.select(html)
+    return informacao
+
+
 def resultadosQuantia(termo):
-    informacao=internet.siteProcura('https://www.google.com.br/search?q='+termo,'#resultStats')                              
+    informacao=siteProcura('https://www.google.com.br/search?q='+termo,'#resultStats')                              
     pegaNumero=re.compile(r'\d{1,3}')                                           
     textoMisturado=informacao[0].getText()                                      
     if(textoMisturado):
