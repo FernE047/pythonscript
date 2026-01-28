@@ -1,5 +1,4 @@
 userUtil - valida��o de entrada do Usuario
-	cadaMusicaFaca - funcao feita para o Earworm
 	listaDeInteiros - RETORNA uma lista de inteiros
     	pegaImagem - RETORNA imagem
     	pegaMusicaLetra - RETORNA letra de musica 

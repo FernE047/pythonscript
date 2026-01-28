@@ -1,7 +1,21 @@
 from colorsys import hsv_to_rgb as hTr
-from userUtil import cadaMusicaFaca
+import os
+from typing import Callable
 from PIL import Image
 import math
+
+def cadaMusicaFaca(func: Callable[[tuple[str, str]], Image.Image], pastaDir: str) -> None:
+    pastaMusicas = "C:\\pythonscript\\imagem\\EARWORM\\musicas\\"
+    pastaSalvar = f"C:\\pythonscript\\imagem\\EARWORM\\{pastaDir}\\"
+    if not os.path.exists(pastaSalvar):
+        os.makedirs(pastaSalvar)
+    for nomeArquivo in os.listdir(pastaMusicas):
+        if nomeArquivo.endswith(".txt"):
+            caminhoCompleto = os.path.join(pastaMusicas, nomeArquivo)
+            with open(caminhoCompleto, "r", encoding="utf-8") as f:
+                musica = f.read()
+            imagem = func((nomeArquivo[:-4], musica))
+            imagem.save(os.path.join(pastaSalvar, f"{nomeArquivo[:-4]}.png"))
 
 def criaPaleta(N): #cria paleta, ainda não personalizado
     HSV_tuples = [(x*1.0/N,0.5,0.5) for x in range(N)]
@@ -68,5 +82,5 @@ def fazImagem(info):
         imagem.putpixel(coord,(255,0,0,255))
     return(imagem.rotate(90))
 
-cadaMusicaFaca(fazImagem,pastaDir='EarwormCircle')#,debug=True)
+cadaMusicaFaca(fazImagem, pastaDir='EarwormCircle')#,debug=True)
     
