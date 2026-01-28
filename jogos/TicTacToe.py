@@ -2,6 +2,41 @@ from numpy.random import randint
 from string import ascii_uppercase
 import userUtil
 
+from typing import Literal, overload
+
+
+@overload
+def choose_from_options(
+    prompt: str, options: list[str], mode: Literal["text"]
+) -> str: ...
+
+
+@overload
+def choose_from_options(
+    prompt: str, options: list[str], mode: Literal["number"]
+) -> int: ...
+
+@overload
+def choose_from_options(
+    prompt: str, options: list[str]
+) -> str: ...
+
+
+def choose_from_options(
+    prompt: str, options: list[str], mode: Literal["text", "number"] = "text"
+) -> str | int:
+    while True:
+        for i, option in enumerate(options):
+            print(f"{i} - {option}")
+        user_choice = input(prompt)
+        try:
+            if mode == "number":
+                return int(user_choice)
+            else:
+                return options[int(user_choice)]
+        except (ValueError, IndexError):
+            user_choice = input("not valid, try again: ")
+
 def imprime(board):
     global IMPRESSAO
     if(not(IMPRESSAO)):
@@ -219,7 +254,7 @@ def fazJogada(tabuleiro,estrategia):
     else:
         return jogadaHumana(tabuleiro)
 
-IMPRESSAO=("sim"==userUtil.entradaNaLista("impressao na tela?",("sim","não")))
+IMPRESSAO=("sim"==choose_from_options("impressao na tela?",["sim","não"]))
 ESTRATEGIAS=["random","mirrorx","mirrory","mirrordiag","mirrordiagx","spin180clock"]
 if(IMPRESSAO):
     ESTRATEGIAS+=["humano"]
@@ -228,7 +263,7 @@ while True:
     partidasTotal=userUtil.pegaInteiro("digite quantas partidas serão jogadas")
     tamanho=userUtil.pegaInteiro("digite o tamanho do tabuleiro")  #máximo:10
     seed=0
-    estrategia1=userUtil.entradaNaLista("digite a estrategia do player 1",ESTRATEGIAS)
+    estrategia1=choose_from_options("digite a estrategia do player 1",ESTRATEGIAS)
     ESTRATEGIAS.pop(0)
     if(estrategia1=="aleatorios"):
         ESTRATEGIAS.pop(-1)
@@ -236,7 +271,7 @@ while True:
         estrategia2=ESTRATEGIAS[randint(len(ESTRATEGIAS))-1]
         ESTRATEGIAS+=["humano"]
     else:
-        estrategia2=userUtil.entradaNaLista("digite a estrategia do player 2",ESTRATEGIAS)
+        estrategia2=choose_from_options("digite a estrategia do player 2",ESTRATEGIAS)
     jogador=[{"simbolo":"X","estrategia":estrategia1,"vitorias":0},{"simbolo":"O","estrategia":estrategia2,"vitorias":0}]
     for partida in range(partidasTotal):
         seed=randomNumber(seed)
@@ -256,5 +291,5 @@ while True:
     print("jogador "+jogador[0]["simbolo"]+" ganhou "+str(vitoria1)+" vezes, "+str(vitoria1*100/partidasTotal)+"%, com a estrategia "+jogador[0]["estrategia"])
     print("jogador "+jogador[1]["simbolo"]+" ganhou "+str(vitoria2)+" vezes, "+str(vitoria2*100/partidasTotal)+"%, com a estrategia "+jogador[1]["estrategia"])
     print("Empatou "+str(partidasTotal-vitoria1-vitoria2)+" vezes, "+str(100-(vitoria1+vitoria2)*100/partidasTotal)+"%")
-    if("não"==userUtil.entradaNaLista("continuar?",("sim","não"))):
+    if("não"==choose_from_options("continuar?",("sim","não"))):
         break

@@ -1,4 +1,32 @@
-import userUtil
+from typing import Literal, overload
+
+
+@overload
+def choose_from_options(
+    prompt: str, options: list[str], mode: Literal["text"]
+) -> str: ...
+
+
+@overload
+def choose_from_options(
+    prompt: str, options: list[str], mode: Literal["number"]
+) -> int: ...
+
+
+def choose_from_options(
+    prompt: str, options: list[str], mode: Literal["text", "number"] = "text"
+) -> str | int:
+    while True:
+        for i, option in enumerate(options):
+            print(f"{i} - {option}")
+        user_choice = input(prompt)
+        try:
+            if mode == "number":
+                return int(user_choice)
+            else:
+                return options[int(user_choice)]
+        except (ValueError, IndexError):
+            user_choice = input("not valid, try again: ")
 
 def chegaAFim(termo,limite,base):
     termos=[termo]
@@ -82,7 +110,7 @@ limite=100
 base=10
 while True:
     quantia=0
-    modo=userUtil.entradaNaLista("qual será o modo?",["Tudo","Apenas Estouros","Sem Estouros","Apenas Passos","Final Esperado","Troca Base","Troca Limites","Finalização"],retorno="numericoStr")
+    modo=choose_from_options("qual será o modo?",["Tudo","Apenas Estouros","Sem Estouros","Apenas Passos","Final Esperado","Troca Base","Troca Limites","Finalização"],mode="text")
     if(modo=='5'):
         base=userUtil.pegaInteiro("digite a nova base")
         continue
@@ -96,7 +124,7 @@ while True:
     else:
         passos=0
     if(modo=='1'):
-        passos=userUtil.entradaNaLista("termos?",["sem","com"],retorno="numericoStr")
+        passos=choose_from_options("termos?",["sem","com"],mode="text")
     final=userUtil.pegaInteiro("procurar até quanto?")
     for numeroTeste in range(final+1):
         try:

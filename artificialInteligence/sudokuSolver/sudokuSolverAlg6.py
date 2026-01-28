@@ -1,9 +1,38 @@
-from userUtil import entradaNaLista as eNL
+from typing import Literal, overload
 from userUtil import pegaString as pS
 from textos import tiraEspacoBranco as tEB
 from time import time
 from textos import embelezeTempo
 import os
+
+
+
+@overload
+def choose_from_options(
+    prompt: str, options: list[str], mode: Literal["text"]
+) -> str: ...
+
+
+@overload
+def choose_from_options(
+    prompt: str, options: list[str], mode: Literal["number"]
+) -> int: ...
+
+
+def choose_from_options(
+    prompt: str, options: list[str], mode: Literal["text", "number"] = "text"
+) -> str | int:
+    while True:
+        for i, option in enumerate(options):
+            print(f"{i} - {option}")
+        user_choice = input(prompt)
+        try:
+            if mode == "number":
+                return int(user_choice)
+            else:
+                return options[int(user_choice)]
+        except (ValueError, IndexError):
+            user_choice = input("not valid, try again: ")
 
 class Tabuleiro:
     def __init__(self, confInicial=0):
@@ -178,7 +207,7 @@ def resolveUmTabuleiro(tabuleiro):
     print('\n'+embelezeTempo(tempo)+'\n\n\n')
 
 while True:
-    mode = eNL('escolha uma opcao:',['sair','Input Manual','Import Sudoku Txt','Loop Import Folder'],'numerico')
+    mode = choose_from_options('escolha uma opcao:',['sair','Input Manual','Import Sudoku Txt','Loop Import Folder'],'number')
     if(mode==0):
         break
     if(mode==3):

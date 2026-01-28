@@ -1,6 +1,5 @@
 from colorsys import hsv_to_rgb as hTr
 from userUtil import cadaMusicaFaca
-from userUtil import entradaNaLista
 from textos import separaPalavras
 from PIL import Image
 import math

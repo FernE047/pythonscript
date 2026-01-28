@@ -1,8 +1,37 @@
+from typing import Literal, overload
 from send2trash import send2trash
 import userUtil
 import random
 import textos
 import os
+
+
+@overload
+def choose_from_options(
+    prompt: str, options: list[str], mode: Literal["text"]
+) -> str: ...
+
+
+@overload
+def choose_from_options(
+    prompt: str, options: list[str], mode: Literal["number"]
+) -> int: ...
+
+
+def choose_from_options(
+    prompt: str, options: list[str], mode: Literal["text", "number"] = "text"
+) -> str | int:
+    while True:
+        for i, option in enumerate(options):
+            print(f"{i} - {option}")
+        user_choice = input(prompt)
+        try:
+            if mode == "number":
+                return int(user_choice)
+            else:
+                return options[int(user_choice)]
+        except (ValueError, IndexError):
+            user_choice = input("not valid, try again: ")
 
 #simple system to register answers and questions
 #the user can create categories and modules
@@ -30,7 +59,7 @@ def editarModulo(pasta,modulo):
     opcoes += ['Adicionar']
     opcoes += ['Alterar']
     opcoes += ['Remover']
-    escolha = userUtil.entradaNaLista('escolha uma opcao : ',opcoes)
+    escolha = choose_from_options('escolha uma opcao : ',opcoes)
     if escolha in ['Alterar','Remover'] :
         imprimeModulo(pasta + '\\' + modulo)
         quantia = quantiaLinhas('\\'.join([pasta,modulo,'answer.txt']))
@@ -130,7 +159,7 @@ def acessarModulo(pasta,modulo):
     opcoes += ['Perguntas']
     opcoes += ['Respostas']
     opcoes += ['Perguntas & Respostas']
-    escolha = userUtil.entradaNaLista('escolha um modo : ',opcoes)
+    escolha = choose_from_options('escolha um modo : ',opcoes)
     print("digite 0 em qualquer lugar para sair")
     
     while True:
@@ -169,14 +198,14 @@ def modoAleatorio(pasta,modo): #adicionar modular parcial
     opcoes += ['Perguntas']
     opcoes += ['Respostas']
     opcoes += ['Perguntas & Respostas']
-    escolha = userUtil.entradaNaLista('escolha um modo : ',opcoes)
+    escolha = choose_from_options('escolha um modo : ',opcoes)
     print("digite 0 em qualquer lugar para sair")
     isParcial = True if modo.find('Parcial')!=-1 else False
     if isParcial:
         modo = modo[8:]
         while True:
             opcoes = ['Concluir Seleção']
-            indice = userUtil.entradaNaLista('escolha quais modulos retirar : ', opcoes+modulos, retorno = 'numerico')
+            indice = choose_from_options('escolha quais modulos retirar : ', opcoes+modulos, mode = 'number')
             if indice == 0:
                 break
             if len(modulos) == 1:
@@ -208,7 +237,7 @@ def modoAleatorio(pasta,modo): #adicionar modular parcial
         
 while True:
     diretorio = 'C:\\pythonscript\\ajudaTarefas\\quickLearning'
-    escolha = userUtil.entradaNaLista('escolha uma categoria : ',['Sair','Criar Nova']+os.listdir(diretorio+'\\categorias'))
+    escolha = choose_from_options('escolha uma categoria : ',['Sair','Criar Nova']+os.listdir(diretorio+'\\categorias'))
     if escolha == "Sair":
         break
     if escolha == "Criar Nova":
@@ -230,7 +259,7 @@ while True:
         opcoes += ['Modulos']
         if len(os.listdir(pasta)) != 0:
             opcoes += ['Aleatorio']
-        escolha = userUtil.entradaNaLista('escolha uma opcao : ',opcoes)
+        escolha = choose_from_options('escolha uma opcao : ',opcoes)
         if escolha == "Voltar":
             break
         if escolha == "Modulos":
@@ -238,7 +267,7 @@ while True:
                 opcoes = ['Voltar']
                 opcoes += ['Novo']
                 categorias = os.listdir(pasta)
-                escolha = userUtil.entradaNaLista('escolha uma opcao : ',opcoes+categorias)
+                escolha = choose_from_options('escolha uma opcao : ',opcoes+categorias)
                 if escolha == "Voltar":
                     break
                 if escolha == "Novo":
@@ -251,7 +280,7 @@ while True:
                     opcoes += ['Estudar']
                     opcoes += ['Editar']
                     opcoes += ['Excluir']
-                    escolha = userUtil.entradaNaLista('escolha uma opcao : ',opcoes)
+                    escolha = choose_from_options('escolha uma opcao : ',opcoes)
                     if escolha == 'Visualizar':
                         imprimeModulo(pasta+'\\'+modulo)
                     if escolha == 'Editar':
@@ -269,7 +298,7 @@ while True:
                 opcoes += ['Parcial Total']
                 opcoes += ['Parcial Simples']
             while True:
-                escolha = userUtil.entradaNaLista('escolha uma opcao : ',opcoes)
+                escolha = choose_from_options('escolha uma opcao : ',opcoes)
                 if escolha == "Voltar":
                     modulos = None
                     break

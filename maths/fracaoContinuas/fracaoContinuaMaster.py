@@ -1,4 +1,32 @@
-import userUtil
+from typing import Literal, overload
+
+
+@overload
+def choose_from_options(
+    prompt: str, options: list[str], mode: Literal["text"]
+) -> str: ...
+
+
+@overload
+def choose_from_options(
+    prompt: str, options: list[str], mode: Literal["number"]
+) -> int: ...
+
+
+def choose_from_options(
+    prompt: str, options: list[str], mode: Literal["text", "number"] = "text"
+) -> str | int:
+    while True:
+        for i, option in enumerate(options):
+            print(f"{i} - {option}")
+        user_choice = input(prompt)
+        try:
+            if mode == "number":
+                return int(user_choice)
+            else:
+                return options[int(user_choice)]
+        except (ValueError, IndexError):
+            user_choice = input("not valid, try again: ")
 
 def fractionToNumber(fraction):
     quant=len(fraction)
@@ -57,9 +85,9 @@ def fracaoToFraction(numerador,denominador):
             return(fraction)
         
 while True:
-    modo=userUtil.entradaNaLista("modo de conversão:",("fração continua para numero","numero para fração continua"),retorno="numerico")
+    modo=choose_from_options("modo de conversão:",["fração continua para numero","numero para fração continua"],mode="number")
     if(modo):
-        modo=userUtil.entradaNaLista("tipo do numero",("decimal","fração","raizes quadradas"),retorno="numerico")
+        modo=choose_from_options("tipo do numero",["decimal","fração","raizes quadradas"],mode="number")
         if(modo==0):
             valor=userUtil.pegaFloat("digite um valor decimal")
             resultado=decimalToFraction(valor)
@@ -68,7 +96,7 @@ while True:
             denominador=userUtil.pegaInteiro("digite o denominador")
             resultado=fracaoToFraction(numerador,denominador)
         elif(modo==2):
-            modo=userUtil.entradaNaLista("modo de raiz:",("simples","complexo"),retorno=(2,3))
+            modo=choose_from_options("modo de raiz:",["simples","complexo"],mode="number") + 2
             raizes=userUtil.pegaFloat("digite o numero dentro da raiz")
             if(modo==3):
                 numerador=userUtil.pegaInteiro("digite o numero que somará a raiz")
