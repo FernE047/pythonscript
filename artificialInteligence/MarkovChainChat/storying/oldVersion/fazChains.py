@@ -10,63 +10,64 @@ def rename_file(source_file_name: str, destination_file_name: str) -> None:
         destination_file.write(content)
 
 
-def alteraChainFile(n, termo, isTitulo):
-    if isTitulo:
-        diretorio = "chainTitle//0"
+def update_chain_file(index: int, keywords: list[str], is_title: bool) -> None:
+    if is_title:
+        directory = "chainTitle/0"
     else:
-        diretorio = "chainStory//0"
-    nomeTemp = diretorio + "//c.txt"
-    nomeReal = diretorio + "//{0:03d}.txt"
-    fileWrite = open(nomeTemp, "w")
-    if f"{n:03d}.txt" in os.listdir(diretorio):
-        fileRead = open(nomeReal.format(n), "r")
-        linha = fileRead.readline()
-        encontrou = False
-        indice = len(termo)
-        while linha:
-            palavras = linha.split()
-            if palavras[:-1] == termo:
-                palavras[-1] = str(int(palavras[-1]) + 1)
-                fileWrite.write(" ".join(palavras) + "\n")
-                encontrou = True
-            else:
-                fileWrite.write(linha)
-            linha = fileRead.readline()
-        if not encontrou:
-            fileWrite.write(" ".join(termo) + " 1\n")
-        fileRead.close()
-    else:
-        fileWrite.write(" ".join(termo) + " 1\n")
-    fileWrite.close()
-    renome(nomeTemp, nomeReal.format(n))
+        directory = "chainStory/0"
+    update_keyword_count(index, keywords, directory)
+    rename_file(f"{directory}/c.txt", f"{directory}/{index:03d}.txt")
 
 
-def fazChain(texto, isTitulo=False):
-    palavras = texto.split()
-    tamanho = len(palavras)
-    for n in range(tamanho):
-        palavra = palavras[n]
+def update_keyword_count(index: int, keywords: list[str], directory: str) -> None:
+    with open(f"{directory}/c.txt", "w", encoding="utf-8") as file_write:
+        if f"{index:03d}.txt" not in os.listdir(directory):
+            file_write.write(" ".join(keywords) + " 1\n")
+            return
+        with open(f"{directory}/{index:03d}.txt", "r", encoding="utf-8") as file_read:
+            line = file_read.readline()
+            keyword_found = False
+            while line:
+                words = line.split()
+                if words[:-1] == keywords:
+                    words[-1] = str(int(words[-1]) + 1)
+                    file_write.write(" ".join(words) + "\n")
+                    keyword_found = True
+                else:
+                    file_write.write(line)
+                line = file_read.readline()
+            if not keyword_found:
+                file_write.write(" ".join(keywords) + " 1\n")
+
+
+def faz_chain(text: str, is_title: bool = False) -> None:
+    words = text.split()
+    length = len(words)
+    for n in range(length):
+        word = words[n]
         if n == 0:
-            alteraChainFile(n, [palavra], isTitulo)
-            if tamanho == 1:
-                alteraChainFile(n + 1, [palavra, "¨"], isTitulo)
-                break
-        if tamanho > 1:
-            if n >= tamanho - 1:
-                palavraSeguinte = "¨"
+            update_chain_file(n, [word], is_title)
+            if length == 1:
+                update_chain_file(n + 1, [word, "¨"], is_title)
+                return
+        if length > 1:
+            if n >= length - 1:
+                next_word = "¨"
             else:
-                palavraSeguinte = palavras[n + 1]
-            alteraChainFile(n + 1, [palavra, palavraSeguinte], isTitulo)
-            if palavraSeguinte == "¨":
-                break
+                next_word = words[n + 1]
+            update_chain_file(n + 1, [word, next_word], is_title)
+            if next_word == "¨":
+                return
 
 
-for name in os.listdir("historias"):
-    print(name)
-    file = open("historias//" + name)
-    elementos = file.readline().split(" : ")
-    historia = elementos[-1:][0]
-    titulo = ": ".join(elementos[:-1])
-    fazChain(titulo, isTitulo=True)
-    fazChain(historia)
+# TODO: type hints and make everything english with underscore naming convention
+
+for file_name in os.listdir("stories"):
+    print(file_name)
+    file = open(f"stories/{file_name}", "r", encoding="utf-8")
+    title_and_story_parts = file.readline().split(" : ")
+    story = title_and_story_parts[-1:][0]
+    title = ": ".join(title_and_story_parts[:-1])
+    faz_chain(title, is_title=True)
+    faz_chain(story)
     file.close()
