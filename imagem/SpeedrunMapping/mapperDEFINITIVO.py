@@ -1,9 +1,38 @@
-from textos import embelezeTempo as eT
 from send2trash import send2trash
 from os import listdir
 from PIL import Image
 from os import remove
 from time import time
+
+
+def embelezeTempo(segundos: float) -> str:
+    if segundos < 0:
+        segundos = -segundos
+        sign = "-"
+    else:
+        sign = ""
+    total_ms = int(round(segundos * 1000))
+    ms = total_ms % 1000
+    total_s = total_ms // 1000
+    s = total_s % 60
+    total_min = total_s // 60
+    m = total_min % 60
+    total_h = total_min // 60
+    h = total_h % 24
+    d = total_h // 24
+    parts: list[str] = []
+
+    def add(value: int, singular: str, plural: str) -> None:
+        if value:
+            parts.append(f"{value} {singular if value == 1 else plural}")
+
+    add(d, "day", "days")
+    add(h, "hour", "hours")
+    add(m, "minute", "minutes")
+    add(s, "second", "seconds")
+    if ms or not parts:
+        parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
+    return sign + ", ".join(parts)
 
 def openFrame(frame):
     return Image.open(frame)#.crop((42,78,1039,479))
@@ -118,11 +147,11 @@ for n,frame in enumerate(listdir(diretorioVideo)):
     fim = time()
     duracao = fim-inicio
     inicio = time()
-    print(str(n) + " : " + eT(duracao*(totalFiles-n)))
+    print(str(n) + " : " + embelezeTempo(duracao*(totalFiles-n)))
     mapa.save("mapa.png")
 frameAtual.close()
 fimTotal = time()
 duracao = fimTotal-inicioTotal
-print(eT(duracao))
+print(embelezeTempo(duracao))
 mapa.save("mapa.png")
 mapa.close()

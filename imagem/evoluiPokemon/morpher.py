@@ -1,6 +1,5 @@
 from PIL import Image
 from userUtil import pegaInteiro
-from textos import embelezeTempo
 from time import time
 import os
 import multiprocessing

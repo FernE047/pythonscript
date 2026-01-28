@@ -1,10 +1,39 @@
-from textos import embelezeTempo as eT
 from send2trash import send2trash
 from os import listdir
 from PIL import Image
 from os import remove
 from time import time
 import subprocess
+
+
+def embelezeTempo(segundos: float) -> str:
+    if segundos < 0:
+        segundos = -segundos
+        sign = "-"
+    else:
+        sign = ""
+    total_ms = int(round(segundos * 1000))
+    ms = total_ms % 1000
+    total_s = total_ms // 1000
+    s = total_s % 60
+    total_min = total_s // 60
+    m = total_min % 60
+    total_h = total_min // 60
+    h = total_h % 24
+    d = total_h // 24
+    parts: list[str] = []
+
+    def add(value: int, singular: str, plural: str) -> None:
+        if value:
+            parts.append(f"{value} {singular if value == 1 else plural}")
+
+    add(d, "day", "days")
+    add(h, "hour", "hours")
+    add(m, "minute", "minutes")
+    add(s, "second", "seconds")
+    if ms or not parts:
+        parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
+    return sign + ", ".join(parts)
 
 def openFrame(frame):
     return Image.open(frame)#.crop((42,78,1039,479))
@@ -150,13 +179,13 @@ try:
                 duracao = fim-inicio
                 inicio = time()
                 mapa.save("mapa.png")
-                print(eT(duracao*(horas*3600+minutos*60+segundos-hora*3600-minuto*60-segundo)))
+                print(embelezeTempo(duracao*(horas*3600+minutos*60+segundos-hora*3600-minuto*60-segundo)))
 except:
     print(posicao)
     print(f"{hora:02d}:{minuto:02d}:{segundo:02d}.{n:02d}")
 frameAtual.close()
 fimTotal = time()
 duracao = fimTotal-inicioTotal
-print(eT(duracao))
+print(embelezeTempo(duracao))
 mapa.save("mapa.png")
 mapa.close()

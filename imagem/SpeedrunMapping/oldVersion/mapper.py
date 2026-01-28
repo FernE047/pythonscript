@@ -2,7 +2,36 @@ import subprocess
 from PIL import Image
 from os import listdir
 from time import time
-from textos import embelezeTempo as eT
+
+
+def embelezeTempo(segundos: float) -> str:
+    if segundos < 0:
+        segundos = -segundos
+        sign = "-"
+    else:
+        sign = ""
+    total_ms = int(round(segundos * 1000))
+    ms = total_ms % 1000
+    total_s = total_ms // 1000
+    s = total_s % 60
+    total_min = total_s // 60
+    m = total_min % 60
+    total_h = total_min // 60
+    h = total_h % 24
+    d = total_h // 24
+    parts: list[str] = []
+
+    def add(value: int, singular: str, plural: str) -> None:
+        if value:
+            parts.append(f"{value} {singular if value == 1 else plural}")
+
+    add(d, "day", "days")
+    add(h, "hour", "hours")
+    add(m, "minute", "minutes")
+    add(s, "second", "seconds")
+    if ms or not parts:
+        parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
+    return sign + ", ".join(parts)
 
 def openFrame(frame):
     return Image.open(frame).crop((40,70,1039,479))
@@ -126,8 +155,8 @@ for n in range(150,framesTotais):
     duracao = fim-inicio
     inicio = time()
     print()
-    print(str(n) + " : " + eT(duracao))
-    print(eT(duracao*(framesTotais-n)))
+    print(str(n) + " : " + embelezeTempo(duracao))
+    print(embelezeTempo(duracao*(framesTotais-n)))
     mapa.save("mapa.png")
 mapa.save("mapa.png")
 frameAtual.close()
@@ -135,4 +164,4 @@ ultimoFrame.close()
 mapa.save("mapa.png")
 fimTotal = time()
 duracao = fimTotal-inicioTotal
-print(eT(duracao))
+print(embelezeTempo(duracao))

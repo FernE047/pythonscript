@@ -1,6 +1,35 @@
 import math
 from time import time
-from textos import embelezeTempo as eT
+
+
+def embelezeTempo(segundos: float) -> str:
+    if segundos < 0:
+        segundos = -segundos
+        sign = "-"
+    else:
+        sign = ""
+    total_ms = int(round(segundos * 1000))
+    ms = total_ms % 1000
+    total_s = total_ms // 1000
+    s = total_s % 60
+    total_min = total_s // 60
+    m = total_min % 60
+    total_h = total_min // 60
+    h = total_h % 24
+    d = total_h // 24
+    parts: list[str] = []
+
+    def add(value: int, singular: str, plural: str) -> None:
+        if value:
+            parts.append(f"{value} {singular if value == 1 else plural}")
+
+    add(d, "day", "days")
+    add(h, "hour", "hours")
+    add(m, "minute", "minutes")
+    add(s, "second", "seconds")
+    if ms or not parts:
+        parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
+    return sign + ", ".join(parts)
 
 def geraLista(listaInicial,x):
     y = len(listaInicial)
@@ -26,8 +55,8 @@ def analisaAsListas(n):
             if first == limite:
                 fim = time()
                 duracao = fim-inicio
-                print(str(limite)+' execucoes deu : '+eT(duracao))
-                print('Previsao de Execucao Total  : '+eT(duracao*(math.factorial(n)/limite)))
+                print(str(limite)+' execucoes deu : '+embelezeTempo(duracao))
+                print('Previsao de Execucao Total  : '+embelezeTempo(duracao*(math.factorial(n)/limite)))
                 first = limite+1
             else:
                 first += 1
@@ -60,4 +89,4 @@ inicio = time()
 dic = analisaAsListas(8)
 for cat in dic:
     print(f'{cat:8s} : {dic[cat]}')
-print('execucao Total  : '+eT(time()-inicio))
+print('execucao Total  : '+embelezeTempo(time()-inicio))

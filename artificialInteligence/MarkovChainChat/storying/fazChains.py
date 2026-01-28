@@ -3,6 +3,36 @@ from time import sleep
 from textos import embelezeTempo as eT
 import os
 
+
+def embelezeTempo(segundos: float) -> str:
+    if segundos < 0:
+        segundos = -segundos
+        sign = "-"
+    else:
+        sign = ""
+    total_ms = int(round(segundos * 1000))
+    ms = total_ms % 1000
+    total_s = total_ms // 1000
+    s = total_s % 60
+    total_min = total_s // 60
+    m = total_min % 60
+    total_h = total_min // 60
+    h = total_h % 24
+    d = total_h // 24
+    parts: list[str] = []
+
+    def add(value: int, singular: str, plural: str) -> None:
+        if value:
+            parts.append(f"{value} {singular if value == 1 else plural}")
+
+    add(d, "day", "days")
+    add(h, "hour", "hours")
+    add(m, "minute", "minutes")
+    add(s, "second", "seconds")
+    if ms or not parts:
+        parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
+    return sign + ", ".join(parts)
+
 def renome(origemName,destinoName):
     origem = open(origemName,'r')
     destino = open(destinoName,'w')
@@ -95,9 +125,9 @@ for name in os.listdir(DIRECTORY + "historias"):
         final = time()
         duracao = (final - inicio)/quantia
         print(name)
-        print("duração média : " + eT(duracao))
-        print("tempo Passado : " + eT(final-inicio))
-        print("falta : " + eT(duracao*(total-quantia)))
+        print("duração média : " + embelezeTempo(duracao))
+        print("tempo Passado : " + embelezeTempo(final-inicio))
+        print("falta : " + embelezeTempo(duracao*(total-quantia)))
         print()
 print("concluindo...")
 if len(termosTitulos) > OVERFLOWLIMIT:
@@ -108,5 +138,5 @@ if len(termosHistorias) > OVERFLOWLIMIT:
     termosHistorias = []
     final = time()
     duracao = (final - inicio)/total
-    print("falta : " + eT(duracao*(total-quantia)))
+    print("falta : " + embelezeTempo(duracao*(total-quantia)))
 print()

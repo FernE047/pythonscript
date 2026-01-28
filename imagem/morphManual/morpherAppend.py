@@ -1,5 +1,4 @@
 from PIL import Image
-from textos import embelezeTempo
 import os
 import pypdn
 from analisaEFazConfig import configPart

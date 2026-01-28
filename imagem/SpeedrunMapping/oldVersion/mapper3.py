@@ -5,7 +5,36 @@ import matplotlib.pyplot as plt
 from PIL import Image
 from os import listdir
 from time import time
-from textos import embelezeTempo as eT
+
+
+def embelezeTempo(segundos: float) -> str:
+    if segundos < 0:
+        segundos = -segundos
+        sign = "-"
+    else:
+        sign = ""
+    total_ms = int(round(segundos * 1000))
+    ms = total_ms % 1000
+    total_s = total_ms // 1000
+    s = total_s % 60
+    total_min = total_s // 60
+    m = total_min % 60
+    total_h = total_min // 60
+    h = total_h % 24
+    d = total_h // 24
+    parts: list[str] = []
+
+    def add(value: int, singular: str, plural: str) -> None:
+        if value:
+            parts.append(f"{value} {singular if value == 1 else plural}")
+
+    add(d, "day", "days")
+    add(h, "hour", "hours")
+    add(m, "minute", "minutes")
+    add(s, "second", "seconds")
+    if ms or not parts:
+        parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
+    return sign + ", ".join(parts)
 
 def openFrame(frame):
     return im.imread(frame)[42:1039,78:479,:]
@@ -54,7 +83,7 @@ def comparaFrames(mapa,frameB,posicao):
     yAdd = probabilidades[indiceX].index(maximo)-DDP
     xAdd = indiceX - DDP
     duracao = fim-inicio
-    print(str(posicao) + " : " + eT(duracao))
+    print(str(posicao) + " : " + embelezeTempo(duracao))
     return [-xAdd,-yAdd]
 
 def ampliaMapa(mapa,ampliacao,posicao,adds):
@@ -127,8 +156,8 @@ for n in range(90,framesTotais):
     duracao = fim-inicio
     inicio = time()
     print()
-    print(str(n) + " : " + eT(duracao))
-    print(eT(duracao*(framesTotais-n)))
+    print(str(n) + " : " + embelezeTempo(duracao))
+    print(embelezeTempo(duracao*(framesTotais-n)))
     print(adds)'''
     mapa.savefig("mapa.png")
 #except:
@@ -136,5 +165,5 @@ for n in range(90,framesTotais):
 #    pass
 fimTotal = time()
 duracao = fimTotal-inicioTotal
-print(eT(duracao))
+print(embelezeTempo(duracao))
 mapa.savefig("mapa.png")

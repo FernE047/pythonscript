@@ -1,6 +1,5 @@
 from PIL import Image
 from userUtil import pegaInteiro
-from textos import embelezeTempo
 from time import time
 from os import cpu_count
 import multiprocessing

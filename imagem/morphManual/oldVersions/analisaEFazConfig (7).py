@@ -1,5 +1,4 @@
 from PIL import Image
-from textos import embelezeTempo
 import os
 from os import cpu_count
 import pypdn
