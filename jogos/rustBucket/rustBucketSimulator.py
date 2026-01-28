@@ -1,6 +1,6 @@
 from PIL import Image
 
-'''
+"""
 
 TIPOS:
 
@@ -24,7 +24,7 @@ DIRECAO:
 6 - baixo + direita
 7 - baixo + esquerda
 
-'''
+"""
 
 class Node:
     def __init__(self, aType, aCoord, aCaminhoFeito = None):
@@ -111,8 +111,8 @@ class Node:
                 lista = self.caminhoFeito[1:]
             else:
                 lista = self.caminhoFeito
-            texto.append(', '.join([["cima","direita","baixo","esquerda","cimeita","cimerda","baixeita","baixerda"][direcao] for direcao in lista]))
-        return '\n'.join(texto)
+            texto.append(", ".join([["cima","direita","baixo","esquerda","cimeita","cimerda","baixeita","baixerda"][direcao] for direcao in lista]))
+        return "\n".join(texto)
 
 class Elemento:
     def __init__(self, aType, aCoord):

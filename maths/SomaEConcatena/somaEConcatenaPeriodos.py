@@ -24,11 +24,11 @@ def proximoTermo(termo):
         resultado.append(bidigito)
     if(not(resultado)):
         resultado=[termo]
-    termo=''.join(resultado)
+    termo="".join(resultado)
     return(termo)
 
 def pegaPeriodo(termoA,termoB):
-    periodo=''
+    periodo=""
     for carac in range(len(termoA)):
         if(carac>len(termoB)-1):
             return(periodo)
@@ -38,11 +38,11 @@ def pegaPeriodo(termoA,termoB):
             return(periodo)
 
 while True:
-    print('modo:\n\n1 - tudo\n2 - não\n3 - sim')
+    print("modo:\n\n1 - tudo\n2 - não\n3 - sim")
     modo=input()
-    print('limite')
+    print("limite")
     limite=int(input())
-    print('final')
+    print("final")
     final=int(input())
     for numeroTeste in range(final+1):
         termo=str(numeroTeste)
@@ -50,13 +50,13 @@ while True:
         if(not(sucesso)):
             periodo1=pegaPeriodo(termos[-1],termos[-3])
             periodo2=pegaPeriodo(termos[-2],termos[-4])
-            if((periodo1=='')or(periodo2=='')):
-                if(modo!='3'):
-                    #print(termo+' não tem periodos')
+            if((periodo1=="")or(periodo2=="")):
+                if(modo!="3"):
+                    #print(termo+" não tem periodos")
                     print(termo)
             else:
-                if(modo!='2'):
-                    print('\n'+termo+' tem periodos:')
-                    print('periodo 1:'+periodo1)
-                    print('periodo 2:'+periodo2)
-            #print('\n'.join(termos))
+                if(modo!="2"):
+                    print("\n"+termo+" tem periodos:")
+                    print("periodo 1:"+periodo1)
+                    print("periodo 2:"+periodo2)
+            #print("\n".join(termos))

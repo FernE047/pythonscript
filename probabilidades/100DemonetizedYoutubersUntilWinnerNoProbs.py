@@ -15,10 +15,10 @@ try:
 except:
     fim=time()
     duracao=fim-comeco
-    print('total : '+str(total))
-    print('execução total : '+str(duracao))
-    print('media total :    '+str((duracao)/total))
-    print('100k :    '+str((duracao*100000)/total))
+    print("total : "+str(total))
+    print("execução total : "+str(duracao))
+    print("media total :    "+str((duracao)/total))
+    print("100k :    "+str((duracao*100000)/total))
     total=input()
 #media 100k : 0.00045391589059292357 segundos
 

@@ -67,57 +67,58 @@ def choose_from_options(
         except (ValueError, IndexError):
             user_choice = input("not valid, try again: ")
 
+
 class Tabuleiro:
     def __init__(self, confInicial=0):
-        self.matrizTab=[]
-        self.espacosVazios=[]
+        self.matrizTab = []
+        self.espacosVazios = []
         for y in range(9):
-            self.matrizTab.append([0,0,0,0,0,0,0,0,0])
-        if(confInicial):
+            self.matrizTab.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
+        if confInicial:
             confLimpa = tiraEspaçoBranco(confInicial)
-            for a,valor in enumerate(list(confLimpa)):
-                if(a>80):
+            for a, valor in enumerate(list(confLimpa)):
+                if a > 80:
                     break
-                posY=a//9
-                posX=a%9
-                self.setElement(posY,posX,valor)
-                if(valor=='0'):
-                    self.espacosVazios=[(posY,posX)]+self.espacosVazios
+                posY = a // 9
+                posX = a % 9
+                self.setElement(posY, posX, valor)
+                if valor == "0":
+                    self.espacosVazios = [(posY, posX)] + self.espacosVazios
         else:
-            self.espacosVazios=[(y,x) for x in range(9,0,-1)]+self.espacosVazios
+            self.espacosVazios = [(y, x) for x in range(9, 0, -1)] + self.espacosVazios
 
-    def verificaValorQuadrante(self,y,x,v):
-        yQuad=y//3
-        xQuad=x//3
+    def verificaValorQuadrante(self, y, x, v):
+        yQuad = y // 3
+        xQuad = x // 3
         for y in range(3):
             for x in range(3):
-                if(self.matrizTab[3*yQuad+y][3*xQuad+x]==v):
+                if self.matrizTab[3 * yQuad + y][3 * xQuad + x] == v:
                     return False
         return True
 
-    def verificaValorLinha(self,y,v):
+    def verificaValorLinha(self, y, v):
         for x in range(9):
-            if(self.matrizTab[y][x]==v):
+            if self.matrizTab[y][x] == v:
                 return False
         return True
 
-    def verificaValorColuna(self,x,v):
+    def verificaValorColuna(self, x, v):
         for y in range(9):
-            if(self.matrizTab[y][x]==v):
+            if self.matrizTab[y][x] == v:
                 return False
         return True
 
-    def verificaValor(self,y,x,v):
-        if(not(self.verificaValorQuadrante(y,x,v))):
+    def verificaValor(self, y, x, v):
+        if not (self.verificaValorQuadrante(y, x, v)):
             return False
-        if(not(self.verificaValorColuna(x,v))):
+        if not (self.verificaValorColuna(x, v)):
             return False
-        if(not(self.verificaValorLinha(y,v))):
+        if not (self.verificaValorLinha(y, v)):
             return False
         return True
 
     def viraConfig(self):
-        chave=''
+        chave = ""
         for y in range(9):
             for x in range(9):
                 chave += self.matrizTab[y][x]
@@ -126,18 +127,18 @@ class Tabuleiro:
     def copia(self):
         return Tabuleiro(self.viraConfig())
 
-    def setElement(self,y,x,v):
-        self.matrizTab[y][x]='0'
-        if v in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
-            if(v=='0'):
+    def setElement(self, y, x, v):
+        self.matrizTab[y][x] = "0"
+        if v in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]:
+            if v == "0":
                 return True
             else:
-                if(self.verificaValor(y,x,v)):
-                    self.matrizTab[y][x]=v
+                if self.verificaValor(y, x, v):
+                    self.matrizTab[y][x] = v
                     return True
         return False
 
-    def addEspaco(self,espaco):
+    def addEspaco(self, espaco):
         self.espacosVazios.append(espaco)
 
     def proximoEspaco(self):
@@ -146,111 +147,121 @@ class Tabuleiro:
     def imprime(self):
         for y in range(9):
             for x in range(9):
-                print(self.matrizTab[y][x],end='')
+                print(self.matrizTab[y][x], end="")
             print()
 
+
 def criaTabuleiro(mode):
-    if(mode==2):
-        nome = input('qual o nome do arquivo?')
-        sudokuFile = open(nome+'.txt')
+    if mode == 2:
+        nome = input("qual o nome do arquivo?")
+        sudokuFile = open(nome + ".txt")
         tabuleiro = Tabuleiro(sudokuFile.read())
         return tabuleiro
     else:
         tabuleiro = Tabuleiro()
         quantia = 0
-        while quantia<81:
-            inputConfig=input('')
+        while quantia < 81:
+            inputConfig = input("")
             for v in inputConfig:
-                posY=quantia//9
-                posX=quantia%9
-                if v in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
-                    if(tabuleiro.setElement(posY,posX,v)):
-                        print('elemento '+v+' adicionado')
-                        quantia+=1
+                posY = quantia // 9
+                posX = quantia % 9
+                if v in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]:
+                    if tabuleiro.setElement(posY, posX, v):
+                        print("elemento " + v + " adicionado")
+                        quantia += 1
                     else:
-                        print('elemento '+v+' não adicionado')
+                        print("elemento " + v + " não adicionado")
                         break
                 else:
-                    if(v=='p'):
-                        if(quantia>0):
-                            quantia-=1
-                            posY=quantia//9
-                            posX=quantia%9
-                            print('numero '+tabuleiro.matrizTab[posY][posX]+' apagado')
-                            tabuleiro.matrizTab[posY][posX]='0'
-                    elif(v=='l'):
-                        pass #apagar linha atual
-                    elif(v=='L'):
-                        pass #apagar uma linha
-                    elif(v=='c'):
-                        pass #apagar coluna atual
-                    elif(v=='C'):
-                        pass #apagar uma coluna
-                    elif(v=='q'):
-                        pass #apagar quadrante atual
-                    elif(v=='Q'):
-                        pass #apagar um quadrante
-                    elif(v=='o'):
-                        print('entrada completamente apagada')
+                    if v == "p":
+                        if quantia > 0:
+                            quantia -= 1
+                            posY = quantia // 9
+                            posX = quantia % 9
+                            print(
+                                "numero " + tabuleiro.matrizTab[posY][posX] + " apagado"
+                            )
+                            tabuleiro.matrizTab[posY][posX] = "0"
+                    elif v == "l":
+                        pass  # apagar linha atual
+                    elif v == "L":
+                        pass  # apagar uma linha
+                    elif v == "c":
+                        pass  # apagar coluna atual
+                    elif v == "C":
+                        pass  # apagar uma coluna
+                    elif v == "q":
+                        pass  # apagar quadrante atual
+                    elif v == "Q":
+                        pass  # apagar um quadrante
+                    elif v == "o":
+                        print("entrada completamente apagada")
                         tabuleiro = Tabuleiro()
-                        quantia=0
-                    elif(v=='s'):
+                        quantia = 0
+                    elif v == "s":
                         tabuleiro.imprime()
-                    elif(v=='e'):
+                    elif v == "e":
                         return tabuleiro
                     else:
-                        print('digite um numero entre 0 e 9 ou opcoes adicionais')
-                        config +='0'
+                        print("digite um numero entre 0 e 9 ou opcoes adicionais")
+                        config += "0"
             print()
             tabuleiro.imprime()
         return tabuleiro
 
+
 def resolveTabuleiro(tabuleiro):
     global tries
-    if(tabuleiro.espacosVazios):
+    if tabuleiro.espacosVazios:
         espacoVazio = tabuleiro.espacosVazios[-1]
         tabuleiro.espacosVazios = tabuleiro.espacosVazios[0:-1]
-        if(espacoVazio):
-            for value in range(1,10):
-                if(tabuleiro.setElement(espacoVazio[0],espacoVazio[1],str(value))):
+        if espacoVazio:
+            for value in range(1, 10):
+                if tabuleiro.setElement(espacoVazio[0], espacoVazio[1], str(value)):
                     tries += 1
                     solucao = resolveTabuleiro(tabuleiro)
-                    if(solucao):
+                    if solucao:
                         return solucao
-            tabuleiro.matrizTab[espacoVazio[0]][espacoVazio[1]]='0'
+            tabuleiro.matrizTab[espacoVazio[0]][espacoVazio[1]] = "0"
             tabuleiro.addEspaco(espacoVazio)
     else:
         return tabuleiro
+
 
 def resolveUmTabuleiro(tabuleiro):
     global tempoTotal
     tabuleiro.imprime()
     print()
     global tries
-    tries=0
+    tries = 0
     inicio = time()
     solucao = resolveTabuleiro(tabuleiro)
     fim = time()
     solucao.imprime()
-    print('\ntentativas: '+str(tries))
-    tempo = fim-inicio
+    print("\ntentativas: " + str(tries))
+    tempo = fim - inicio
     tempoTotal += tempo
-    print('\n'+embelezeTempo(tempo)+'\n\n\n')
+    print("\n" + embelezeTempo(tempo) + "\n\n\n")
+
 
 while True:
-    mode = choose_from_options('escolha uma opcao:',['sair','Input Manual','Import Sudoku Txt','Loop Import Folder'],'number')
-    if(mode==0):
+    mode = choose_from_options(
+        "escolha uma opcao:",
+        ["sair", "Input Manual", "Import Sudoku Txt", "Loop Import Folder"],
+        "number",
+    )
+    if mode == 0:
         break
-    if(mode==3):
+    if mode == 3:
         global tempoTotal
-        tempoTotal= 0
-        files = os.listdir('sudokus')
+        tempoTotal = 0
+        files = os.listdir("sudokus")
         for name in files:
-            print(name,end='\n\n')
-            sudoku = open('sudokus//'+name)
+            print(name, end="\n\n")
+            sudoku = open("sudokus//" + name)
             tabuleiro = Tabuleiro(sudoku.read())
             resolveUmTabuleiro(tabuleiro)
-        print('\n'+embelezeTempo(fimTotal-tempoTotal)+'\n\n\n')
+        print("\n" + embelezeTempo(fimTotal - tempoTotal) + "\n\n\n")
     else:
         tabuleiro = criaTabuleiro(mode)
         resolveUmTabuleiro(tabuleiro)

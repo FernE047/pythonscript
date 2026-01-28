@@ -1,14 +1,14 @@
 from PIL import Image
 import os
 
-diretorio='C:\\Users\\DELL\\Desktop\\antigo_PC\\pythonscript\\imagem\\terminalVideo\\video'
+diretorio="C:\\Users\\DELL\\Desktop\\antigo_PC\\pythonscript\\imagem\\terminalVideo\\video"
 
 def imagemToText(imagem):
     global showAltura
     global niveis
     global showLargura
     imagemColor=Image.open(imagem)
-    imagemBW=imagemColor.convert('L')
+    imagemBW=imagemColor.convert("L")
     largura,altura=imagemBW.size
     if(showAltura==0):
         if (largura>showLargura):
@@ -18,21 +18,21 @@ def imagemToText(imagem):
             showAltura=altura  
     imagemShow=imagemBW.resize((showLargura,showAltura))  
     largura,altura=imagemShow.size
-    texto=''
+    texto=""
     for y in range(altura):
-        linha=''
+        linha=""
         for x in range(largura):
             pixel=imagemShow.getpixel((x,y))
             linha+=niveis[int(pixel/32)]
-        texto+=linha + '\n'
+        texto+=linha + "\n"
     return(texto)
     
 showAltura=0
-niveis=[' ','▫','□','O','░','▒','▓','█']
+niveis=[" ","▫","□","O","░","▒","▓","█"]
 showLargura= 60
 imagens=[os.path.join(diretorio,imagem)for imagem in os.listdir(diretorio)]
 for imagem in imagens:
     texto=imagemToText(imagem)
     apaga=len(texto)
-    os.system('cls' if os.name == 'nt' else 'clear')
-    print(texto+(apaga*'\b'),end='',flush=True)
+    os.system("cls" if os.name == "nt" else "clear")
+    print(texto+(apaga*"\b"),end="",flush=True)

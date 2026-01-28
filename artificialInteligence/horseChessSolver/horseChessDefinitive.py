@@ -55,9 +55,9 @@ def resolveUmTabuleiro(tabuleiro):
     inicio = time()
     solucao = resolveTabuleiro(tabuleiro)
     fim = time()
-    print('\ntentativas: '+str(tries))
+    print("\ntentativas: "+str(tries))
     tempo = fim-inicio
-    print('\n'+embelezeTempo(tempo)+'\n\n\n')
+    print("\n"+embelezeTempo(tempo)+"\n\n\n")
 
 tabuleiro = criaTabuleiroSquare(3,5)
 print(tabuleiro)

@@ -1,13 +1,13 @@
 from PIL import Image
 import os
 
-'''
+"""
 
 SECÇÃO DE DIREÇÃO:
 
 possui funções que funcionam com direções apontadas
 
-'''
+"""
 
 def coordDirecao(coord,n):
     if(n>7):
@@ -31,14 +31,14 @@ def coordDirecao(coord,n):
         return(x-1,y-1)
     return (x,y)
 
-'''
+"""
 
 SECÇÃO VERDE:
 
 Regiões que sejam 2D, chamadas de blob
 cada Blob possui camadas que são conjuntos de coordenadas
 
-'''
+"""
 
 def procuraContornoVerde(imagem):
     contorno = []
@@ -99,21 +99,21 @@ def procuraBlobs(imagem):
     procuraBlob(linhaAtual,imagem,blob)
     return blob
     
-'''
+"""
 
 SECÇÃO ESCRITA:
 
 ferramentas para auxiliar a escrita de linhas e blob
 
-'''
+"""
 
 def escreveLinhas(linhaInicial,linhaFinal,file):
     pontosLinhaInicial = len(linhaInicial)
     pontosLinhaFinal = len(linhaFinal)
     if(pontosLinhaInicial == pontosLinhaFinal):
         for n in range(pontosLinhaInicial):
-            file.write(str(linhaInicial[n][0])+','+str(linhaInicial[n][1]))
-            file.write(' '+str(linhaFinal[n][0])+','+str(linhaFinal[n][1])+'\n')
+            file.write(str(linhaInicial[n][0])+","+str(linhaInicial[n][1]))
+            file.write(" "+str(linhaFinal[n][0])+","+str(linhaFinal[n][1])+"\n")
     elif(pontosLinhaInicial>pontosLinhaFinal):
         if(pontosLinhaInicial-1==0):
             multiplicador = 0
@@ -121,8 +121,8 @@ def escreveLinhas(linhaInicial,linhaFinal,file):
             multiplicador = (pontosLinhaFinal-1)/(pontosLinhaInicial-1)
         for n in range(pontosLinhaInicial):
             pontoFinal = int(n*multiplicador)
-            file.write(str(linhaInicial[n][0])+','+str(linhaInicial[n][1]))
-            file.write(' '+str(linhaFinal[pontoFinal][0])+','+str(linhaFinal[pontoFinal][1])+'\n')
+            file.write(str(linhaInicial[n][0])+","+str(linhaInicial[n][1]))
+            file.write(" "+str(linhaFinal[pontoFinal][0])+","+str(linhaFinal[pontoFinal][1])+"\n")
     else:
         if(pontosLinhaFinal-1==0):
             multiplicador = 0
@@ -130,8 +130,8 @@ def escreveLinhas(linhaInicial,linhaFinal,file):
             multiplicador = (pontosLinhaInicial-1)/(pontosLinhaFinal-1)
         for n in range(pontosLinhaFinal):
             pontoInicial = int(n*multiplicador)
-            file.write(str(linhaInicial[pontoInicial][0])+','+str(linhaInicial[pontoInicial][1]))
-            file.write(' '+str(linhaFinal[n][0])+','+str(linhaFinal[n][1])+'\n')
+            file.write(str(linhaInicial[pontoInicial][0])+","+str(linhaInicial[pontoInicial][1]))
+            file.write(" "+str(linhaFinal[n][0])+","+str(linhaFinal[n][1])+"\n")
 
 def escreveBlobs(blobInicial,blobFinal,file):
     pontosBlobInicial = len(blobInicial)
@@ -156,25 +156,25 @@ def escreveBlobs(blobInicial,blobFinal,file):
             camadaInicial = int(n*multiplicador)
             escreveLinhas(blobInicial[camadaInicial],blobFinal[n],file)
 
-'''
+"""
 
 SECÇÃO DEBUG:
 
-'''
+"""
 
 def imprimeBlob(blobs):
     for n,blob in enumerate(blobs):
-        print('\nblob '+str(n)+' : \n')
+        print("\nblob "+str(n)+" : \n")
         for m,camada in enumerate(blob):
-            print('camada '+str(m)+' : \n')
+            print("camada "+str(m)+" : \n")
             for coord in camada:
                 print(coord)
 
-'''
+"""
 
 SECÇÃO Forma:
 
-'''
+"""
 
 def detectCorners(imagem):
     largura,altura = imagem.size
@@ -204,14 +204,14 @@ def fazForma(imagem):
             forma.putpixel((x,y),(0,0,0,255))
     return forma
 
-'''
+"""
 
 SECÇÃO MAIN:
 
-'''
+"""
 
-parteInicial = Image.open('C:\\pythonscript\\imagem\\morphOnlyShape\\inicial.png')
-fileConfig = open('C:\\pythonscript\\imagem\\morphOnlyShape\\config.txt','w')
+parteInicial = Image.open("C:\\pythonscript\\imagem\\morphOnlyShape\\inicial.png")
+fileConfig = open("C:\\pythonscript\\imagem\\morphOnlyShape\\config.txt","w")
 blobInicial = procuraBlobs(parteInicial)
 parteFinal = fazForma(parteInicial)
 blobFinal = procuraBlobs(parteFinal)

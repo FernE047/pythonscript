@@ -1,8 +1,9 @@
 from random import randint
 
-def getAnChar(nome,indice,anterior = ''):
+
+def getAnChar(nome, indice, anterior=""):
     nome += "//{0:03d}.txt"
-    file = open(nome.format(indice),encoding='utf-8')
+    file = open(nome.format(indice), encoding="utf-8")
     linha = file.readline()
     data = {}
     while linha:
@@ -19,21 +20,23 @@ def getAnChar(nome,indice,anterior = ''):
         data[letra] = numero
         linha = file.readline()
     total = sum(list(data.values()))
-    escolhido = randint(1,total)
+    escolhido = randint(1, total)
     soma = 0
-    for indice,valor in enumerate(data.values()):
+    for indice, valor in enumerate(data.values()):
         soma += valor
         if soma >= escolhido:
             file.close()
             return list(data.keys())[indice]
 
+
 def doAWord(nome):
     mensagem = ""
-    letra = getAnChar(nome,0)
+    letra = getAnChar(nome, 0)
     while letra != "¨":
         mensagem += letra
-        letra = getAnChar(nome,len(mensagem),letra)
+        letra = getAnChar(nome, len(mensagem), letra)
     return mensagem
+
 
 notSuccess = True
 while notSuccess:
@@ -41,7 +44,7 @@ while notSuccess:
         print("o que deseja abrir?")
         nome = input()
         try:
-            arqInput = open(nome+"//{0:03d}.txt",'r',encoding = "UTF-8")
+            arqInput = open(nome + "//{0:03d}.txt", "r", encoding="UTF-8")
             arqInput.close()
         except:
             pass
@@ -49,4 +52,4 @@ while notSuccess:
     except:
         print("nome invalido")
 for a in range(1000):
-    print(str(a)+" : "+doAWord(nome))
+    print(str(a) + " : " + doAWord(nome))

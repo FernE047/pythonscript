@@ -24,11 +24,11 @@ def proximoTermo(termo):
         resultado.append(bidigito)
     if(not(resultado)):
         resultado=[termo]
-    termo=''.join(resultado)
+    termo="".join(resultado)
     return(termo)
 
 def pegaPeriodo(termoA,termoB):
-    periodo=''
+    periodo=""
     for carac in range(len(termoA)):
         if(carac>len(termoB)-1):
             return(periodo)
@@ -38,16 +38,16 @@ def pegaPeriodo(termoA,termoB):
             return(periodo)
 
 while True:
-    print('limite')
+    print("limite")
     limite=int(input())
-    print('primeiro termo')
+    print("primeiro termo")
     termo=input()
     sucesso,termos=chegaAFim(termo,limite)
     if(sucesso):
-        print('termo '+termo+' chega a fim em '+str(len(termos)-1))
-        print(','.join(termos))
+        print("termo "+termo+" chega a fim em "+str(len(termos)-1))
+        print(",".join(termos))
     else:
-        print(termo+' estorou o limite:')
-        print('\n'.join(termos))
-        print('periodo 1:'+pegaPeriodo(termos[-1],termos[-3]))
-        print('periodo 2:'+pegaPeriodo(termos[-2],termos[-4]))
+        print(termo+" estorou o limite:")
+        print("\n".join(termos))
+        print("periodo 1:"+pegaPeriodo(termos[-1],termos[-3]))
+        print("periodo 2:"+pegaPeriodo(termos[-2],termos[-4]))

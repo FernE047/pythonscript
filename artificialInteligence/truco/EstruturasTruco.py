@@ -288,11 +288,11 @@ class Jogo:
 
 ##jogo = Jogo(6)
 ##jogo.jogaPartida()
-##print(5*'\n')
+##print(5*"\n")
 ##n = 1
 ##while(12 not in jogo.pontos):
-##    jogo.jogaPartida(modo = 'maior')
-##    print(5*'\n')
+##    jogo.jogaPartida(modo = "maior")
+##    print(5*"\n")
 ##    n += 1
 ##print(jogo.pontos)
 ##print(n)

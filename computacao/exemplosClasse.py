@@ -1,5 +1,4 @@
 class User:
-
     seq = 0
     objects = []
 
@@ -17,17 +16,18 @@ class User:
         return self.nome
 
     def __repr__(self):
-        return f'<{self.__class__.__name__}: {self.id} - {self.nome} - {self.idade}>\n'
+        return f"<{self.__class__.__name__}: {self.id} - {self.nome} - {self.idade}>\n"
 
     @classmethod
     def all(cls):
         return cls.objects
 
-if __name__ == '__main__':
-    u1 = User('Regis', 35)
+
+if __name__ == "__main__":
+    u1 = User("Regis", 35)
     u1.save()
     print(u1)
-    u2 = User('Fabio', 20)
+    u2 = User("Fabio", 20)
     u2.save()
     print(u2)
     print(User.all())

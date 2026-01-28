@@ -24,24 +24,24 @@ def proximoTermo(termo):
         resultado.append(bidigito)
     if(not(resultado)):
         resultado=[str(numeroTeste)]
-    termo=''.join(resultado)
+    termo="".join(resultado)
     return(termo)
 
 def fazMensagem(numeroTeste,termos):
-    print('\n'+str(numeroTeste)+' chega a um fim em '+str(len(termos)-1)+' passos')
-    print(','.join(termos))
+    print("\n"+str(numeroTeste)+" chega a um fim em "+str(len(termos)-1)+" passos")
+    print(",".join(termos))
 
 limite=100
 while True:
-    modo='4'
+    modo="4"
     numeroTeste=0
     while True:
         try:
             termo=str(numeroTeste)
             sucesso,termos=chegaAFim(termo,limite)
             if(str(numeroTeste)==termos[-1]):
-                print('\n'+str(numeroTeste)+' chega a um fim em '+str(len(termos)-1)+' passos')
-                print(','.join(termos))
+                print("\n"+str(numeroTeste)+" chega a um fim em "+str(len(termos)-1)+" passos")
+                print(",".join(termos))
             numeroTeste+=1
         except:
             print(numeroTeste)

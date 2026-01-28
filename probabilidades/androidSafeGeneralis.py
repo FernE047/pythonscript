@@ -3,9 +3,9 @@ from copy import deepcopy
 def imprimeBoard(board):
     for n in range(len(board)):
         for _ in board[n]:
-            print(str(board[n]),end='')
+            print(str(board[n]),end="")
             if (n%len(board)+1-len(board)==0):
-                print('')
+                print("")
 
 def calcula(board,ultimo,total,imp):
     grau=qualGrau(board)
@@ -13,7 +13,7 @@ def calcula(board,ultimo,total,imp):
         total+=1
         imprimeBoard(board)
         print(total)
-        print('')
+        print("")
     if(grau==9):
         return(total)
     for n in range(9):
@@ -29,7 +29,7 @@ def todasAsPossibilidade(boardOriginal):
             board=deepcopy(boardOriginal)
             board[n][m]=1
             total=calcula(board,n,total,imp)
-            print(','.join([n,m]))
+            print(",".join([n,m]))
     
 
 total=0

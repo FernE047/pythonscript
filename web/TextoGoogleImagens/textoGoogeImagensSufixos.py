@@ -126,11 +126,11 @@ def baixaImagens(lyrics, titulo, adicao):
         print(palavra)
         quantia = len(lista)
         os.system(
-            'google_images_download.py -o "'
+            "google_images_download.py -o ""
             + pasta
-            + '" -k "'
+            + "" -k ""
             + palavra
-            + '" -l '
+            + "" -l "
             + str(quantia)
         )
         imagens = os.listdir(os.path.join(pasta, palavra))

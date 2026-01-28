@@ -24,19 +24,19 @@ def proximoTermo(termo):
         resultado.append(bidigito)
     if(not(resultado)):
         resultado=[termo]
-    termo=''.join(resultado)
+    termo="".join(resultado)
     return(termo)
 
 while True:
-    print('limite')
+    print("limite")
     limite=int(input())
     #limite=165
-    print('primeiro termo')
+    print("primeiro termo")
     termo=input()
     sucesso,termos=chegaAFim(termo,limite)
     if(sucesso):
-        print('termo '+termo+' chega a fim em '+str(len(termos)-1))
-        print(','.join(termos))
+        print("termo "+termo+" chega a fim em "+str(len(termos)-1))
+        print(",".join(termos))
     else:
-        print(termo+' estorou o limite:')
-        print('\n'.join(termos))
+        print(termo+" estorou o limite:")
+        print("\n".join(termos))

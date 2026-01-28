@@ -2,8 +2,8 @@ import os
 
 def renome(name,destinoName):
     global enc
-    origem = open(f"{name}//c.txt",'r',encoding = "UTF-8")
-    destino = open(f"{name}{destinoName}",'w',encoding = "UTF-8")
+    origem = open(f"{name}//c.txt","r",encoding = "UTF-8")
+    destino = open(f"{name}{destinoName}","w",encoding = "UTF-8")
     linha = origem.readline()
     while linha:
         destino.write(linha)
@@ -12,9 +12,9 @@ def renome(name,destinoName):
     destino.close()
 
 def alteraChainFile(nome,n,termo):
-    fileWrite = open(f"{nome}//c.txt",'w',encoding = "UTF-8")
+    fileWrite = open(f"{nome}//c.txt","w",encoding = "UTF-8")
     if f"{n:03d}.txt" in os.listdir(nome):
-        fileRead = open(f"{nome}//{n:03d}.txt",'r',encoding = "UTF-8")
+        fileRead = open(f"{nome}//{n:03d}.txt","r",encoding = "UTF-8")
         linha = fileRead.readline()
         encontrou = False
         indice = len(termo)
@@ -39,10 +39,10 @@ while notSuccess:
     try:
         print("o que deseja abrir?")
         nome = input()
-        file = open(nome + '.txt','r')#, encoding = "UTF-8")
+        file = open(nome + ".txt","r")#, encoding = "UTF-8")
         notSuccess = False
         try:
-            arqInput = open(nome+"//c.txt",'w',encoding = "UTF-8")
+            arqInput = open(nome+"//c.txt","w",encoding = "UTF-8")
             arqInput.close()
         except:
             os.mkdir(nome)
@@ -60,8 +60,8 @@ while mensagem:
         for n in range(tamanho):
             letra = palavra[n]
             if n == 0:
-                '''if letra == "\n":
-                    letra = "¨"'''
+                """if letra == "\n":
+                    letra = "¨""""
                 alteraChainFile(nome,n," ".join([str(m),letra]))
                 if tamanho == 1:
                     alteraChainFile(nome,n+1," ".join([str(m),letra,"¨"]))
@@ -76,7 +76,7 @@ while mensagem:
                 if letraSeguinte == "¨":
                     break
     mensagem = file.readline()[:-1]
-arqInput = open(nome+"//c.txt",'w',encoding = "UTF-8")
+arqInput = open(nome+"//c.txt","w",encoding = "UTF-8")
 for index, quantity in enumerate(palavraQuant):
     arqInput.write(f"{index} ")
     arqInput.write(f"{quantity}\n")

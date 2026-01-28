@@ -9,11 +9,11 @@ class Equipamento:
         pass
 
 def equipamentos(nome):
-    if nome == 'Botas':
+    if nome == "Botas":
         return Equipamento(250,[[0,False,20]],[],[])
-    elif nome == 'Bota de Reducao':
+    elif nome == "Bota de Reducao":
         return
-    elif nome == 'Bota de Def. Fisica':
+    elif nome == "Bota de Def. Fisica":
         return Equipamento
         
         

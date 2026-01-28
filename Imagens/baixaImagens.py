@@ -10,10 +10,10 @@ while True:
     print("algum argumento adicional?")
     argumento=input()
     if(nome):
-        os.system('google_images_download.py -o "C:\pythonscript\Imagens\" -k "'+nome+'" '+argumento)
+        os.system("google_images_download.py -o "C:\pythonscript\Imagens\" -k ""+nome+"" "+argumento)
     else:
         break
     print("baixado")
-nomeOriginal=os.path.join('C:\\','pythonscript','Imagens',nome)
-nomeNovo=os.path.join('C:\\','pythonscript','Imagens',nome.proper())
+nomeOriginal=os.path.join("C:\\","pythonscript","Imagens",nome)
+nomeNovo=os.path.join("C:\\","pythonscript","Imagens",nome.proper())
 os.rename(nomeOriginal,nomeNovo)

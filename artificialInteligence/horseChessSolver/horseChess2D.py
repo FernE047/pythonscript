@@ -1,5 +1,6 @@
 from time import time
 
+
 def embelezeTempo(segundos: float) -> str:
     if segundos < 0:
         segundos = -segundos
@@ -16,9 +17,11 @@ def embelezeTempo(segundos: float) -> str:
     h = total_h % 24
     d = total_h // 24
     parts: list[str] = []
+
     def add(value: int, singular: str, plural: str) -> None:
         if value:
             parts.append(f"{value} {singular if value == 1 else plural}")
+
     add(d, "day", "days")
     add(h, "hour", "hours")
     add(m, "minute", "minutes")
@@ -27,6 +30,7 @@ def embelezeTempo(segundos: float) -> str:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
     return sign + ", ".join(parts)
 
+
 def resolveUmTabuleiro(tabuleiro):
     print()
     global tries
@@ -34,17 +38,29 @@ def resolveUmTabuleiro(tabuleiro):
     inicio = time()
     solucao = resolveTabuleiro(tabuleiro)
     fim = time()
-    print('\ntentativas: '+str(tries))
-    tempo = fim-inicio
+    print("\ntentativas: " + str(tries))
+    tempo = fim - inicio
     global tempoTotal
     tempoTotal += tempo
-    print('\n'+embelezeTempo(tempo)+'\n\n\n')
+    print("\n" + embelezeTempo(tempo) + "\n\n\n")
+
 
 global tempoTotal
 tempoTotal = 0
-for pos in ((0,0),(0,1),(0,2),(0,3),(1,1),(1,2),(1,3),(2,2),(2,3),(3,3)):
+for pos in (
+    (0, 0),
+    (0, 1),
+    (0, 2),
+    (0, 3),
+    (1, 1),
+    (1, 2),
+    (1, 3),
+    (2, 2),
+    (2, 3),
+    (3, 3),
+):
     matriz = [[False for a in range(8)] for b in range(8)]
     matriz[pos[0]][pos[1]] = True
-    tabuleiro = (matriz,pos)
+    tabuleiro = (matriz, pos)
     resolveUmTabuleiro(tabuleiro)
-print('\n'+embelezeTempo(tempoTotal)+'\n\n\n')
+print("\n" + embelezeTempo(tempoTotal) + "\n\n\n")

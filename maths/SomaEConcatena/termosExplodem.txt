@@ -1,4 +1,4 @@
-listona='''1496
+listona="""1496
 1497
 1498
 1499
@@ -2123,9 +2123,9 @@ listona='''1496
 9996
 9997
 9998
-9999'''.split('\n')
+9999""".split("\n")
 
-listaSemPeriodo='''
+listaSemPeriodo="""
 1587
 1588
 1589
@@ -3344,4 +3344,4 @@ listaSemPeriodo='''
 9896
 9897
 9898
-9899'''.split('\n')
+9899""".split("\n")

@@ -20,13 +20,13 @@ def pegaInteiro(
         except Exception as _:
             print("valor inválido, tente novamente")
 
-'''
+"""
 
 SECÇÃO UTILITARIOS DO MAIN:
 
 ferramentas utilizadas pelo main
 
-'''
+"""
 
 def hasColor(imagem):
     largura,altura = imagem.size
@@ -64,19 +64,19 @@ def hasColor(imagem):
     return(hasRed,hasGreen,hasBlue,hasBlueIterative)
 
 def limpaPasta(pasta):
-    arquivos = [pasta+'\\'+a for a in os.listdir(pasta)]
-    if('C:\\pythonscript\\imagem\\morphManual\\frames\\resized' in arquivos):
-        arquivos.pop(arquivos.index('C:\\pythonscript\\imagem\\morphManual\\frames\\resized'))
+    arquivos = [pasta+"\\"+a for a in os.listdir(pasta)]
+    if("C:\\pythonscript\\imagem\\morphManual\\frames\\resized" in arquivos):
+        arquivos.pop(arquivos.index("C:\\pythonscript\\imagem\\morphManual\\frames\\resized"))
     for arquivo in arquivos:
         os.remove(arquivo)
 
-'''
+"""
 
 SECÇÃO VERMELHA:
 
 pontos únicos
 
-'''
+"""
 
 def procuraCor(imagem,indexColor):
     largura,altura = imagem.size
@@ -97,13 +97,13 @@ def procuraCor(imagem,indexColor):
                     coordenadasDasCores[corIndex].append((x,y))
     return coordenadasDasCores
 
-'''
+"""
 
 SECÇÃO DE DIREÇÃO:
 
 possui funções que funcionam com direções apontadas pela secção azul
 
-'''
+"""
 
 def coordDirecao(coord,n):
     if(n>7):
@@ -127,7 +127,7 @@ def coordDirecao(coord,n):
         return(x-1,y-1)
     return (x,y)
 
-'''
+"""
 
 SECÇÃO AZUL:
 
@@ -137,7 +137,7 @@ linhas que sejam direcionadas de acordo com direções de 1 a 8 com:
 4 X 3
 2 1 0
 
-'''
+"""
 
 def procuraLinhaAzul(imagem,primeiro = None):
     largura,altura = imagem.size
@@ -221,14 +221,14 @@ def procuraLinhaAzulIterativo(imagem, anteriores = None, inicio = None):
                 if len(novaLinha)> len(linhaMaxima):
                     linhaMaxima = novaLinha.copy()
             return linhaMaxima
-'''
+"""
 
 SECÇÃO VERDE:
 
 Regiões que sejam 2D, chamadas de blob
 cada Blob possui camadas que são conjuntos de coordenadas
 
-'''
+"""
 
 def procuraContornoVerde(imagem):
     contorno = []
@@ -284,13 +284,13 @@ def procuraBlob(imagem,linhaAtual,blob,linhaAnterior = None):
         blob.append(proximaLinha)
         procuraBlob(imagem,proximaLinha,blob,linhaAnterior = linhaAtual)
     
-'''
+"""
 
 SECÇÃO ESCRITA:
 
 ferramentas para auxiliar a escrita de linhas e blob
 
-'''
+"""
 
 def escreveLinhas(imagemInicialPNG,imagemFinalPNG,linhaInicial,linhaFinal,file,total):
     pontosLinhaInicial = len(linhaInicial)
@@ -301,14 +301,14 @@ def escreveLinhas(imagemInicialPNG,imagemFinalPNG,linhaInicial,linhaFinal,file,t
             for m in range(2):
                 B = linhaInicial[n][m]
                 A = (linhaFinal[n][m]-B)
-                linha.append(str(A)+','+str(B))
+                linha.append(str(A)+","+str(B))
             pixelInicial = imagemInicialPNG.getpixel(linhaInicial[n])
             pixelFinal = imagemFinalPNG.getpixel(linhaFinal[n])
             for m in range(3):
                 B = pixelInicial[m]
                 A = (pixelFinal[m]-B)
-                linha.append(str(A)+','+str(B))
-            file.write(' '.join(linha)+'\n')
+                linha.append(str(A)+","+str(B))
+            file.write(" ".join(linha)+"\n")
     elif(pontosLinhaInicial>pontosLinhaFinal):
         if(pontosLinhaInicial-1==0):
             multiplicador = 0
@@ -320,14 +320,14 @@ def escreveLinhas(imagemInicialPNG,imagemFinalPNG,linhaInicial,linhaFinal,file,t
             for m in range(2):
                 B = linhaInicial[n][m]
                 A = (linhaFinal[pontoFinal][m]-B)
-                linha.append(str(A)+','+str(B))
+                linha.append(str(A)+","+str(B))
             pixelInicial = imagemInicialPNG.getpixel(linhaInicial[n])
             pixelFinal = imagemFinalPNG.getpixel(linhaFinal[pontoFinal])
             for m in range(3):
                 B = pixelInicial[m]
                 A = pixelFinal[m]-B
-                linha.append(str(A)+','+str(B))
-            file.write(' '.join(linha)+'\n')
+                linha.append(str(A)+","+str(B))
+            file.write(" ".join(linha)+"\n")
     else:
         if(pontosLinhaFinal-1==0):
             multiplicador = 0
@@ -339,21 +339,21 @@ def escreveLinhas(imagemInicialPNG,imagemFinalPNG,linhaInicial,linhaFinal,file,t
             for m in range(2):
                 B = linhaInicial[pontoInicial][m]
                 A = linhaFinal[n][m]-B
-                linha.append(str(A)+','+str(B))
+                linha.append(str(A)+","+str(B))
             pixelInicial = imagemInicialPNG.getpixel(linhaInicial[pontoInicial])
             pixelFinal = imagemFinalPNG.getpixel(linhaFinal[n])
             for m in range(3):
                 B = pixelInicial[m]
                 A = pixelFinal[m]-B
-                linha.append(str(A)+','+str(B))
-            file.write(' '.join(linha)+'\n')
+                linha.append(str(A)+","+str(B))
+            file.write(" ".join(linha)+"\n")
 
 def escreveBlobs(imagemInicialPNG,imagemFinalPNG,blobInicial,blobFinal,file,quantiaFrames):
-    '''print('blob inicial')
+    """print("blob inicial")
     print(blobsInicial)
-    print('blob final')
+    print("blob final")
     print(blobsFinal)
-    print('\n\n\n')'''
+    print("\n\n\n")"""
     pontosBlobInicial = len(blobInicial)
     pontosBlobFinal = len(blobFinal)
     if(pontosBlobInicial == pontosBlobFinal):
@@ -376,11 +376,11 @@ def escreveBlobs(imagemInicialPNG,imagemFinalPNG,blobInicial,blobFinal,file,quan
             camadaInicial = int(n*multiplicador)
             escreveLinhas(imagemInicialPNG,imagemFinalPNG,blobInicial[camadaInicial],blobFinal[n],file,quantiaFrames)
 
-'''
+"""
 
 SECÇÃO Fundo:
 
-'''
+"""
 
 def fazFundo(fileConfig,parteInicial,parteFinal):
     largura,altura = parteInicial.size
@@ -389,42 +389,42 @@ def fazFundo(fileConfig,parteInicial,parteFinal):
             pixel = parteInicial.getpixel((x,y))
             if pixel[3] != 0:
                 if parteFinal.getpixel((x,y))[3]!=0:
-                    fileConfig.write(str(x)+','+str(y)+' '+str(x)+','+str(y)+'\n')
+                    fileConfig.write(str(x)+","+str(y)+" "+str(x)+","+str(y)+"\n")
                 else:
-                    fileConfig.write(str(x)+','+str(y)+' fundo\n')
+                    fileConfig.write(str(x)+","+str(y)+" fundo\n")
     parteInicial.close()
     parteFinal.close()
                     
                 
 
-'''
+"""
 
 SECÇÃO DEBUG:
 
-'''
+"""
 
 def imprimeBlob(blobs):
     for n,blob in enumerate(blobs):
-        print('\nblob '+str(n)+' : \n')
+        print("\nblob "+str(n)+" : \n")
         for m,camada in enumerate(blob):
-            print('camada '+str(m)+' : \n')
+            print("camada "+str(m)+" : \n")
             for coord in camada:
                 print(coord)
 
-'''
+"""
 
 SECÇÃO MAIN:
 
-'''
+"""
 
 def fazConfig(quantiaFrames):
-    nomeConfig = 'partesConfig\\parte{0:02d}Config.txt'
+    nomeConfig = "partesConfig\\parte{0:02d}Config.txt"
     imagemInicialPDN = pypdn.read("inicial.pdn")
     imagemFinalPDN = pypdn.read("final.pdn")
     imagemInicialPNG = Image.fromarray(imagemInicialPDN.layers[0].image)
     imagemFinalPNG = Image.fromarray(imagemFinalPDN.layers[0].image)
     quantiaPartes = len(imagemInicialPDN.layers)
-    file = open('config.txt','w')
+    file = open("config.txt","w")
     partes = None
     for nParte in range(1,quantiaPartes):
         print(nParte)
@@ -434,7 +434,7 @@ def fazConfig(quantiaFrames):
             if(parteInicial.getpixel((0,0))==(255,255,255,255)):
                 fazFundo(file,parteInicial,parteFinal)
                 continue
-        fileConfig = open(nomeConfig.format(nParte),'w')
+        fileConfig = open(nomeConfig.format(nParte),"w")
         hasRGB = hasColor(parteInicial)
         print(hasRGB)
         if(hasRGB[0]):
@@ -468,14 +468,14 @@ def fazConfig(quantiaFrames):
         if(hasRGB[0]):
             for coordInicial, coordFinal in zip(coordVermelhosInicial, coordVermelhosFinal):
                 for coord_i, coord_f in zip(coordInicial, coordFinal):
-                    fileConfig.write(str(coord_i[0])+','+str(coord_i[1]))
-                    fileConfig.write(' '+str(coord_f[0])+','+str(coord_f[1])+'\n')
+                    fileConfig.write(str(coord_i[0])+","+str(coord_i[1]))
+                    fileConfig.write(" "+str(coord_f[0])+","+str(coord_f[1])+"\n")
         print()
         fileConfig.close()
         parteInicial.close()
         parteFinal.close()
     for nParte in range(1,quantiaPartes):
-        fileConfig = open(nomeConfig.format(nParte),'r')
+        fileConfig = open(nomeConfig.format(nParte),"r")
         linha = fileConfig.readline()
         while(linha):
             file.write(linha)
@@ -492,26 +492,26 @@ def funcaoAfim(inicio,fim,total,n):
         elemento.append(int(A*n+B))
     return tuple(elemento)
 
-quantiaFrames = 30#pegaInteiro('quantos frames?')
-limpaPasta('C:\\pythonscript\\imagem\\morphManual\\partesConfig')
-limpaPasta('C:\\pythonscript\\imagem\\morphManual\\frames')
-limpaPasta('C:\\pythonscript\\imagem\\morphManual\\frames\\resized')
-nomeFrame = 'frames\\frame{0:03d}.png'
+quantiaFrames = 30#pegaInteiro("quantos frames?")
+limpaPasta("C:\\pythonscript\\imagem\\morphManual\\partesConfig")
+limpaPasta("C:\\pythonscript\\imagem\\morphManual\\frames")
+limpaPasta("C:\\pythonscript\\imagem\\morphManual\\frames\\resized")
+nomeFrame = "frames\\frame{0:03d}.png"
 imagemInicial,imagemFinal = fazConfig(quantiaFrames)
 imagemInicial.save(nomeFrame.format(0))
 imagemFinal.save(nomeFrame.format(quantiaFrames+1))
-print('\n tamanho: '+str(imagemInicial.size),end='\n\n')
+print("\n tamanho: "+str(imagemInicial.size),end="\n\n")
 for n in range(quantiaFrames):
     print(n)
     frame = Image.new("RGBA",imagemFinal.size,(255,255,255,0))
-    file = open('config.txt')
+    file = open("config.txt")
     linha = file.readline()
     while(linha):
-        if(linha.find('fundo')!=-1):
-            coord = tuple([int(b) for b in linha[:-6].split(',')])
+        if(linha.find("fundo")!=-1):
+            coord = tuple([int(b) for b in linha[:-6].split(",")])
             frame.putpixel(coord,imagemInicial.getpixel(coord))
         else:
-            dados = [tuple([int(b) for b in coord.split(',')]) for coord in linha.split(' ')]
+            dados = [tuple([int(b) for b in coord.split(",")]) for coord in linha.split(" ")]
             novaCoord = []
             for m in range(2):
                 A = dados[m][0]

@@ -132,8 +132,8 @@ class Linha:
     def escreve(self,other,file):
         if(len(self) == len(other)):
             for self_ponto, other_ponto in zip(self, other):
-                file.write(str(self_ponto[0])+','+str(self_ponto[1]))
-                file.write(' '+str(other_ponto[0])+','+str(other_ponto[1])+'\n')
+                file.write(str(self_ponto[0])+","+str(self_ponto[1]))
+                file.write(" "+str(other_ponto[0])+","+str(other_ponto[1])+"\n")
         elif(len(self)>len(other)):
             if(len(self)-1==0):
                 multiplicador = 0
@@ -142,8 +142,8 @@ class Linha:
             for index in range(len(self)):
                 pontoInicial = self.pontos[index]
                 pontoFinal = other.pontos[int(index*multiplicador)]
-                file.write(str(pontoInicial[0])+','+str(pontoInicial[1]))
-                file.write(' '+str(pontoFinal[0])+','+str(pontoFinal[1])+'\n')
+                file.write(str(pontoInicial[0])+","+str(pontoInicial[1]))
+                file.write(" "+str(pontoFinal[0])+","+str(pontoFinal[1])+"\n")
         else:
             if(len(other)-1==0):
                 multiplicador = 0
@@ -152,8 +152,8 @@ class Linha:
             for index in range(len(other)):
                 pontoInicial = self.pontos[int(index*multiplicador)]
                 pontoFinal = other.pontos[index]
-                file.write(str(pontoInicial[0])+','+str(pontoInicial[1]))
-                file.write(' '+str(pontoFinal[0])+','+str(pontoFinal[1])+'\n')
+                file.write(str(pontoInicial[0])+","+str(pontoInicial[1]))
+                file.write(" "+str(pontoFinal[0])+","+str(pontoFinal[1])+"\n")
                 
     def copy(self,other = None):
         if other is None:
@@ -322,9 +322,9 @@ class ImagemParte:
         self.area.escreve(other.area,file)
 
 def limpaPasta(pasta):
-    arquivos = [pasta+'\\'+a for a in os.listdir(pasta)]
-    if('C:\\pythonscript\\imagem\\morphManual\\frames\\resized' in arquivos):
-        arquivos.pop(arquivos.index('C:\\pythonscript\\imagem\\morphManual\\frames\\resized'))
+    arquivos = [pasta+"\\"+a for a in os.listdir(pasta)]
+    if("C:\\pythonscript\\imagem\\morphManual\\frames\\resized" in arquivos):
+        arquivos.pop(arquivos.index("C:\\pythonscript\\imagem\\morphManual\\frames\\resized"))
     for arquivo in arquivos:
         os.remove(arquivo)
 
@@ -368,17 +368,17 @@ def configPart(indice):
     print("a")
     parteFinal = ImagemParte(indice,"C:\\pythonscript\\imagem\\morphManual\\final.pdn")
     print("b")
-    fileConfig = open(f'C:\\pythonscript\\imagem\\morphManual\\partesConfig\\parte{indice:02d}Config.txt','w')
+    fileConfig = open(f"C:\\pythonscript\\imagem\\morphManual\\partesConfig\\parte{indice:02d}Config.txt","w")
     print("c")
     parteInicial.escreveArea(parteFinal,fileConfig)
     print("\tParte Terminada : " + str(indice))
     fileConfig.close()
         
-if __name__ == '__main__':
-    limpaPasta('C:\\pythonscript\\imagem\\morphManual\\partesConfig')
-    limpaPasta('C:\\pythonscript\\imagem\\morphManual\\frames')
-    limpaPasta('C:\\pythonscript\\imagem\\morphManual\\frames\\resized')
-    limpaPasta('C:\\pythonscript\\imagem\\morphManual\\debug')
+if __name__ == "__main__":
+    limpaPasta("C:\\pythonscript\\imagem\\morphManual\\partesConfig")
+    limpaPasta("C:\\pythonscript\\imagem\\morphManual\\frames")
+    limpaPasta("C:\\pythonscript\\imagem\\morphManual\\frames\\resized")
+    limpaPasta("C:\\pythonscript\\imagem\\morphManual\\debug")
     imagemInicial = pypdn.read("C:\\pythonscript\\imagem\\morphManual\\inicial.pdn")
     imagemFinal = pypdn.read("C:\\pythonscript\\imagem\\morphManual\\final.pdn")
     Image.fromarray(imagemInicial.layers[0].image).save("inicial.png")

@@ -17,8 +17,8 @@ def isSolved(labirint):
     return labirint.getpixel(FINAL) == VERMELHO
 
 def labirintSolver(labirint,coord,path):
-    '''print(coord)
-    print(path)'''
+    """print(coord)
+    print(path)"""
     if not isSolved(labirint):
         for direction in range(4):
             if direction == (path[-1]-2)%4:
@@ -47,11 +47,11 @@ def labirintSolver(labirint,coord,path):
 BRANCO = (255,255,255,255)
 PRETO = (0,0,0,255)
 VERMELHO = (255,0,0,255)
-imagem = Image.open(f'pureLabirint//labirint{234:04d}.png')
+imagem = Image.open(f"pureLabirint//labirint{234:04d}.png")
 largura,altura = imagem.size
 FINAL = (largura-2,altura-2)
 INICIAL = (1,1)
 path = [8]
 labirintSolver(imagem,INICIAL,path)
-imagem.save(f'labirintSolved{len(listdir("pureLabirint")):03d}.png')
+imagem.save(f"labirintSolved{len(listdir("pureLabirint")):03d}.png")
 imagem.close()

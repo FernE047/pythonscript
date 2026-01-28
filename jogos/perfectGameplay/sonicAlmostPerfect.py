@@ -1,10 +1,10 @@
 #! python3
-# superHotEverything.py - Displays the mouse cursor's current position.
+# superHotEverything.py - Displays the mouse cursor"s current position.
 import pyautogui
 import time
 
 def pressFor(tecla,tempo=1/15):
-    print('press '+tecla)
+    print("press "+tecla)
     pyautogui.keyDown(tecla)
     time.sleep(tempo)
     pyautogui.keyUp(tecla)
@@ -12,7 +12,7 @@ def pressFor(tecla,tempo=1/15):
 def todosOsPress():
     pyautogui.click(340,750)
     time.sleep(1)
-    pressFor('f8')
+    pressFor("f8")
 
 def visao(parametros):
     pixelColor=[0,0,0]
@@ -45,14 +45,14 @@ def waitFor(coordenadas,cor):
         
 try:
     pyautogui.click(350,750)
-    pyautogui.keyDown('ctrl')
-    pyautogui.keyDown('tab')
+    pyautogui.keyDown("ctrl")
+    pyautogui.keyDown("tab")
     time.sleep(1/15)
-    pyautogui.keyUp('tab')
-    pyautogui.keyUp('ctrl')
+    pyautogui.keyUp("tab")
+    pyautogui.keyUp("ctrl")
     waitFor((316,289),(99,97,232))
     pyautogui.click(350,750)
     pyautogui.click(900,600)
 except KeyboardInterrupt:
-    print('\nDone.')
+    print("\nDone.")
 #o emulador não possui fps statico então sempre será aleatorio o caminho, logo não podemos descrever ações se não estabilizarmos o fps

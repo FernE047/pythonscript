@@ -124,16 +124,16 @@ DDP = 15 #DISTANCIADEPROCURA maior mais lento e melhor
 DT = DDP*2+1 #DISTANCIATOTAL
 
 #Argumentos do FFMPEG
-diretorioVideo = 'C:\\pythonscript\\imagem\\SpeedrunMapping\\video'
-origemVideo = '-i C:\pythonscript\\imagem\\SpeedrunMapping\\level.mp4'#'-i C:\\pythonscript\\videos\\videos\\video0002.mp4'
-destinoTemp = diretorioVideo + '\\frame%04d.png'
-extraArguments = '-r {0:02d}/1'
-processoArgs = ['ffmpeg',origemVideo,extraArguments,destinoTemp]
+diretorioVideo = "C:\\pythonscript\\imagem\\SpeedrunMapping\\video"
+origemVideo = "-i C:\pythonscript\\imagem\\SpeedrunMapping\\level.mp4"#"-i C:\\pythonscript\\videos\\videos\\video0002.mp4"
+destinoTemp = diretorioVideo + "\\frame%04d.png"
+extraArguments = "-r {0:02d}/1"
+processoArgs = ["ffmpeg",origemVideo,extraArguments,destinoTemp]
 
 fps = 30
 
 processoArgs[2] = extraArguments.format(fps)
-#subprocess.call (' '.join(processoArgs))
+#subprocess.call (" ".join(processoArgs))
 
 diretorioFrames = diretorioVideo+"\\frame{0:04d}.png"
 

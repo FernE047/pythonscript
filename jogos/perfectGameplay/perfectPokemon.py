@@ -135,12 +135,12 @@ def inicio():
     print(str(inicial))
     if(inicial==1):
         apertePor(direita)
-        novoPokemon(nome='mudkip',level=5)
+        novoPokemon(nome="mudkip",level=5)
     elif(inicial==2):
         apertePor(esquerda)
-        novoPokemon(nome='treecko',level=5)
+        novoPokemon(nome="treecko",level=5)
     else:
-        novoPokemon(nome='torchic',level=5)
+        novoPokemon(nome="torchic",level=5)
     espere()
     apertePor(botaoA)
     apertePor(botaoA)
@@ -150,10 +150,10 @@ def limpaBD():
     global BD
     BD["ataques"]=[]
     BD["pokemons"]=[]
-    BD["jogadorPokemons"]=[0,'','','','','']
+    BD["jogadorPokemons"]=[0,"","","","",""]
     BD["jogadorItens"]=[]
     BD.close()
-    BD = shelve.open('C:/pythonscript/jogos/perfectGameplay/bd')
+    BD = shelve.open("C:/pythonscript/jogos/perfectGameplay/bd")
 
 def colocaPokemon(slot,pokemon):
     global BD
@@ -163,46 +163,46 @@ def procuraPokemon(nome):
     global BD
     pokemons=BD["pokemons"]
     for indice in range(len(pokemons)):
-        if nome==pokemons[indice]['nome']:
+        if nome==pokemons[indice]["nome"]:
             return(indice)
 
 def tiraPokemon(slot):
     global BD
     BD["jogadorPokemons"][slot]=0
 
-def novoPokemon(nome="",genero="f",level=0,nature="",typePKM='',HP=0,SPATK=0,SPDEF=0,attack=0,defense=9,speed=0,exp=0,nextExp=0,ataques=[]):
+def novoPokemon(nome="",genero="f",level=0,nature="",typePKM="",HP=0,SPATK=0,SPDEF=0,attack=0,defense=9,speed=0,exp=0,nextExp=0,ataques=[]):
     global BD
-    BD["pokemons"].append({'nome':nome,'genero':genero,'nature':nature,'level':level,'type':typePKM,'HP':HP,'SPATK':SPATK,'SPDEF':SPDEF,'attack':attack,'defense':defense,'speed':speed,'exp':exp,'nextExp':nextExp,'ataques':ataques})
+    BD["pokemons"].append({"nome":nome,"genero":genero,"nature":nature,"level":level,"type":typePKM,"HP":HP,"SPATK":SPATK,"SPDEF":SPDEF,"attack":attack,"defense":defense,"speed":speed,"exp":exp,"nextExp":nextExp,"ataques":ataques})
 
-def atualizaPokemon(indice,genero='',level=0,nature="",typePKM='',HP=0,SPATK=0,SPDEF=0,attack=0,defense=9,speed=0,exp=0,nextExp=0,ataques=[]):
+def atualizaPokemon(indice,genero="",level=0,nature="",typePKM="",HP=0,SPATK=0,SPDEF=0,attack=0,defense=9,speed=0,exp=0,nextExp=0,ataques=[]):
     global BD
     pokemons=BD["pokemons"]
     if(level):
-        pokemons[indice]['level']=level
+        pokemons[indice]["level"]=level
     if(genero):
-        pokemons[indice]['genero']=genero
+        pokemons[indice]["genero"]=genero
     if(nature):
-        pokemons[indice]['nature']=nature
+        pokemons[indice]["nature"]=nature
     if(typePKM):
-        pokemons[indice]['typePKM']=typePKM
+        pokemons[indice]["typePKM"]=typePKM
     if(HP):
-        pokemons[indice]['HP']=HP
+        pokemons[indice]["HP"]=HP
     if(SPATK):
-        pokemons[indice]['SPATK']=SPATK
+        pokemons[indice]["SPATK"]=SPATK
     if(SPDEF):
-        pokemons[indice]['SPDEF']=SPDEF
+        pokemons[indice]["SPDEF"]=SPDEF
     if(attack):
-        pokemons[indice]['attack']=attack
+        pokemons[indice]["attack"]=attack
     if(defense):
-        pokemons[indice]['defense']=defense
+        pokemons[indice]["defense"]=defense
     if(speed):
-        pokemons[indice]['speed']=speed
+        pokemons[indice]["speed"]=speed
     if(exp):
-        pokemons[indice]['exp']=exp
+        pokemons[indice]["exp"]=exp
     if(nextExp):
-        pokemons[indice]['nextExp']=nextExp
+        pokemons[indice]["nextExp"]=nextExp
     if(ataques):
-        pokemons[indice]['ataques']=ataques
+        pokemons[indice]["ataques"]=ataques
     BD["pokemons"]=pokemons
 
 def verificaAtaque(ataqueVerifica):
@@ -217,18 +217,18 @@ def verificaAtaque(ataqueVerifica):
 
 def espere(secs=1/2,mensagem=True):
     if(mensagem):
-        print('esperando '+str(secs)+' segundos')
+        print("esperando "+str(secs)+" segundos")
     time.sleep(secs)
         
 def esperePor(coordenadas,cor,pressed=0):
-    print('esperando cor '+str(cor)+' nas coordenadas '+str(coordenadas))
+    print("esperando cor "+str(cor)+" nas coordenadas "+str(coordenadas))
     if(pressed):
         pyautogui.keyDown(pressed)
     while True:
         time.sleep(1/15)
         tela=pyautogui.screenshot()
         if(tela.getpixel(coordenadas)==cor):
-            print('color found')
+            print("color found")
             if(pressed):
                 pyautogui.keyUp(pressed)
             return()
@@ -238,35 +238,35 @@ def transicao():
         time.sleep(1/15)
         tela=pyautogui.screenshot()
         if(tela.getpixel((367,276))==(248, 208, 176)):
-            print('transicionado')
+            print("transicionado")
             time.sleep(1)
             return()
 
 #conversas
 
 def setaVermelha(step,vermelho=(224,8,8)):
-    print('conversando')
+    print("conversando")
     for x in range(step):
-        pyautogui.keyDown('x')
+        pyautogui.keyDown("x")
         while True:
             sair=False
             tela=pyautogui.screenshot()
             for xCoord in range(65,705,10):
                 if(tela.getpixel((xCoord,434))==vermelho):
-                    pyautogui.keyUp('x')
-                    apertePor('x',mensagem=False)
-                    print('\ttecla x apertada '+str(x+1)+' vezes')
+                    pyautogui.keyUp("x")
+                    apertePor("x",mensagem=False)
+                    print("\ttecla x apertada "+str(x+1)+" vezes")
                     sair=True
                     break
                 elif(tela.getpixel((xCoord,482))==vermelho):
-                    pyautogui.keyUp('x')
-                    apertePor('x',mensagem=False)
-                    print('\ttecla x apertada '+str(x+1)+' vezes')
+                    pyautogui.keyUp("x")
+                    apertePor("x",mensagem=False)
+                    print("\ttecla x apertada "+str(x+1)+" vezes")
                     sair=True
                     break
             if(sair):
                 break
-    print('talking done')
+    print("talking done")
     return()
 
 def ultimaConversa(coordenadas):
@@ -276,7 +276,7 @@ def ultimaConversa(coordenadas):
         coordenadas[1]=495
         coordenadas=tuple(coordenadas)
     esperePor(coordenadas,cinzaMenu)
-    apertePor('x')
+    apertePor("x")
 
 def conversaCompleta(setas,coordenadas):
     setaVermelha(setas)
@@ -286,18 +286,18 @@ def conversaCompleta(setas,coordenadas):
 
 def apertePor(tecla,tempo=1/15,mensagem=True):
     if(mensagem):
-        print('tecla '+tecla+' apertada')
+        print("tecla "+tecla+" apertada")
     pyautogui.keyDown(tecla)
     time.sleep(tempo)
     pyautogui.keyUp(tecla)
 
 def andePassos(direction,steps=1):
-    print('andando para '+direction)
+    print("andando para "+direction)
     for a in range(steps):
         apertePor(direction,tempo=1/300,mensagem=False)
-        print('\t'+str(a+1)+' passos')
+        print("\t"+str(a+1)+" passos")
         time.sleep(1/3)
-    print('andando terminado')
+    print("andando terminado")
 
 def caminhada(lista):
     for passos in lista:
@@ -310,7 +310,7 @@ def caminhada(lista):
 #batalhas
 
 def decifraFonte(numero):
-    valores=('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','0','1','2','3','4','5','6','7','8','9','L')
+    valores=("A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","0","1","2","3","4","5","6","7","8","9","L")
     return(valores[numero-1])
     
 class Inimigo():
@@ -327,7 +327,7 @@ def scanNomeInimigo(inimigo):
     while True:
         pixel=tela.getpixel((x,114))
         if(pixel==cor):
-            imagem=Image.new('RGBA',(10,19),(255,255,255,255))
+            imagem=Image.new("RGBA",(10,19),(255,255,255,255))
             for xLetra in range(10):
                 for yLetra in range(19):
                     pixel=tela.getpixel((xLetra+x,yLetra+114))
@@ -335,7 +335,7 @@ def scanNomeInimigo(inimigo):
                         imagem.putpixel((xLetra,yLetra),(0,0,0,255))
             for nomeArq in range(1,38):
                 try:
-                    comparada=Image.open('C:/pythonscript/jogos/perfectGameplay/alfabeto1/'+str(nomeArq)+'.png')
+                    comparada=Image.open("C:/pythonscript/jogos/perfectGameplay/alfabeto1/"+str(nomeArq)+".png")
                 except:
                     comparada=False
                 teste=False
@@ -351,7 +351,7 @@ def scanNomeInimigo(inimigo):
                 print(nome)
                 print("qual o numero dessa letra?")
                 nomeArq=int(input())
-                imagem.save('C:/pythonscript/jogos/perfectGameplay/alfabeto1/'+str(nomeArq)+'.png')
+                imagem.save("C:/pythonscript/jogos/perfectGameplay/alfabeto1/"+str(nomeArq)+".png")
             nome+=decifraFonte(nomeArq)
             x+=10
         elif(x==315):
@@ -369,10 +369,10 @@ def scanGeneroInimigo():
     for x in range(50,320):
         pixel=tela.getpixel((x,120))
         if(pixel==(114,203,224)):
-            return('m')
+            return("m")
         elif(pixel==(0,0,0)):
-            return('f')
-    return('f')
+            return("f")
+    return("f")
 
 def scanVidaInimigo():
     tela=pyautogui.screenshot()
@@ -414,15 +414,15 @@ vermelhoFala=(224,8,8)
 cinzaMenu=(96,96,96)
 cores=[vermelhoFala,cinzaMenu]
 ataqueGlobal=[]
-cima='i'
-baixo='k'
-esquerda='j'
-direita='l'
-enter='w'
-botaoA='x'
-botaoB='z'
+cima="i"
+baixo="k"
+esquerda="j"
+direita="l"
+enter="w"
+botaoA="x"
+botaoB="z"
 teclas=[enter,botaoA,botaoB,cima,baixo,esquerda,direita]
-BD = shelve.open('C:/pythonscript/jogos/perfectGameplay/bd')
+BD = shelve.open("C:/pythonscript/jogos/perfectGameplay/bd")
 limpaBD()
 try:
     comeco=time.time()
@@ -443,4 +443,4 @@ except KeyboardInterrupt:
     fim=time.time()
     tempo=fim-comeco
     print("completo em:"+embelezeTempo(tempo))
-    print('\nDone.')
+    print("\nDone.")

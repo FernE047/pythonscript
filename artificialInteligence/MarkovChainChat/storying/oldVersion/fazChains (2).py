@@ -32,8 +32,8 @@ def embelezeTempo(segundos: float) -> str:
     return sign + ", ".join(parts)
 
 def renome(origemName,destinoName):
-    origem = open(origemName,'r')
-    destino = open(destinoName,'w')
+    origem = open(origemName,"r")
+    destino = open(destinoName,"w")
     linha = origem.readline()
     while linha:
         destino.write(linha)
@@ -48,9 +48,9 @@ def alteraChainFile(termos, tamanhoChain, isTitulo):
         diretorio = "chainStory//"+str(tamanhoChain)
     nomeTemp = diretorio + "//c.txt"
     nomeReal = diretorio + "//chain.txt"
-    fileWrite = open(nomeTemp,'w')
+    fileWrite = open(nomeTemp,"w")
     if "chain.txt" in os.listdir(diretorio):
-        fileRead = open(nomeReal,'r')
+        fileRead = open(nomeReal,"r")
         linha = fileRead.readline()
         while linha:
             palavras = linha.split()
@@ -71,12 +71,12 @@ def alteraChainFile(termos, tamanhoChain, isTitulo):
     renome(nomeTemp,nomeReal)
 
 def fazChain(texto,tamanhoChain,isTitulo = False):
-    texto = texto.replace('\n',' ')
-    texto = texto.replace('\t',' ')
-    texto = texto.replace('“', ' " ')
-    texto = texto.replace('”', ' " ')
-    for spaced in ['.','-',',','!','?','(','—',')',':','...','..','/','\\']:
-        texto = texto.replace(spaced, f' {spaced} ')
+    texto = texto.replace("\n"," ")
+    texto = texto.replace("\t"," ")
+    texto = texto.replace("“", " " ")
+    texto = texto.replace("”", " " ")
+    for spaced in [".","-",",","!","?","(","—",")",":","...","..","/","\\"]:
+        texto = texto.replace(spaced, f" {spaced} ")
     palavras = texto.split()
     tamanhoTexto = len(palavras)
     listaDePares = []
@@ -102,7 +102,7 @@ for tamanho in range(2,3):
         quantia += 1
         inicio = time()
         print(name)
-        file = open('historias//' + name)
+        file = open("historias//" + name)
         elementos = file.readline().split(" : ")
         if elementos[:-1]:
             titulo = " : ".join(elementos[:-1])

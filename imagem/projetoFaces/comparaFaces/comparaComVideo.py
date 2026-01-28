@@ -111,7 +111,7 @@ horas = 0
 
 
 # Argumentos do FFMPEG
-origemVideo = "-i C:\pythonscript\\imagem\\projetoFaces\\comparaFaces\\aim.mp4"  #'-i C:\\pythonscript\\videos\\videos\\video0002.mp4'
+origemVideo = "-i C:\pythonscript\\imagem\\projetoFaces\\comparaFaces\\aim.mp4"  #"-i C:\\pythonscript\\videos\\videos\\video0002.mp4"
 destinoTemp = (
     "C:\\pythonscript\\imagem\\projetoFaces\\comparaFaces\\tempFrames\\frame%04d.png"
 )
@@ -140,7 +140,7 @@ for hora in range(horas + 1):
                     "C:\\pythonscript\\imagem\\projetoFaces\\comparaFaces\\tempFrames\\"
                     + frame
                 )
-                # send2trash('C:\\pythonscript\\imagem\\projetoFaces\\comparaFaces\\tempFrames\\'+frame)
+                # send2trash("C:\\pythonscript\\imagem\\projetoFaces\\comparaFaces\\tempFrames\\"+frame)
             for face in listdir(
                 "C:\\pythonscript\\imagem\\projetoFaces\\comparaFaces\\tempFaces"
             ):

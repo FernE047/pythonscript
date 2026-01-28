@@ -1,5 +1,5 @@
 #! python3
-# superHotEverything.py - Displays the mouse cursor's current position.
+# superHotEverything.py - Displays the mouse cursor"s current position.
 import pyautogui
 import msvcrt
 

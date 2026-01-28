@@ -25,13 +25,13 @@ for jogo in range(total):
             break
     if(ehCerto):
         soma+=1
-        print('temos um ganhador')
+        print("temos um ganhador")
     porcentagemAtual=int(jogo*100/total)
     if(porcentagemAtual!=porcentagem):
         porcentagem=porcentagemAtual
-        print(str(porcentagem)+'%')
+        print(str(porcentagem)+"%")
 for participante,prob in enumerate(probIndividual):
     if(prob!=0):
-        print('participante '+str(participante)+' : '+str(prob*100/total)+'%')
-print('total : '+str(soma*100/total)+'%')
+        print("participante "+str(participante)+" : "+str(prob*100/total)+"%")
+print("total : "+str(soma*100/total)+"%")
     

@@ -1,8 +1,8 @@
 from random import randint
 
-def getAWord(indice,anterior = ''):
+def getAWord(indice,anterior = ""):
     nome = "chain//{0:03d}.txt"
-    file = open(nome.format(indice),encoding='utf-8')
+    file = open(nome.format(indice),encoding="utf-8")
     linha = file.readline()
     data = {}
     while linha:

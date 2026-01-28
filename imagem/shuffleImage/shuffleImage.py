@@ -35,99 +35,103 @@ def embelezeTempo(segundos: float) -> str:
     return sign + ", ".join(parts)
 
 
-def procuraBranco(imagem,quantia):
-    largura,altura = imagem.size
-    total=0
+def procuraBranco(imagem, quantia):
+    largura, altura = imagem.size
+    total = 0
     for x in range(largura):
         for y in range(altura):
-            coord=(x,y)
+            coord = (x, y)
             pixel = imagem.getpixel(coord)
-            if(pixel == (255,255,255,255)):
-                total+=1
-            if(total == quantia):
-                return(coord)
-    return(coord)
+            if pixel == (255, 255, 255, 255):
+                total += 1
+            if total == quantia:
+                return coord
+    return coord
+
 
 def randomTotal(imagem):
-    largura,altura = imagem.size
-    shuffledImage = Image.new('RGBA',(largura,altura),(255,255,255,255))
+    largura, altura = imagem.size
+    shuffledImage = Image.new("RGBA", (largura, altura), (255, 255, 255, 255))
     for x in range(largura):
         for y in range(altura):
-            coord=(x,y)
+            coord = (x, y)
             pixelOriginal = imagem.getpixel(coord)
-            newX = randint(0,largura-1)
-            newY = randint(0,altura-1)
-            newCoord = (newX,newY)
+            newX = randint(0, largura - 1)
+            newY = randint(0, altura - 1)
+            newCoord = (newX, newY)
             pixel = shuffledImage.getpixel(newCoord)
-            while(pixel != (255,255,255,255)):
-                newX = randint(0,largura-1)
-                newY = randint(0,altura-1)
-                newCoord = (newX,newY)
+            while pixel != (255, 255, 255, 255):
+                newX = randint(0, largura - 1)
+                newY = randint(0, altura - 1)
+                newCoord = (newX, newY)
                 pixel = shuffledImage.getpixel(newCoord)
-            newCoord = (newX,newY)
-            shuffledImage.putpixel(newCoord,pixelOriginal)
+            newCoord = (newX, newY)
+            shuffledImage.putpixel(newCoord, pixelOriginal)
     return shuffledImage
+
 
 def brancosTotal(imagem):
-    largura,altura = imagem.size
-    totalBranco = largura*altura
-    shuffledImage = Image.new('RGBA',(largura,altura),(255,255,255,255))
+    largura, altura = imagem.size
+    totalBranco = largura * altura
+    shuffledImage = Image.new("RGBA", (largura, altura), (255, 255, 255, 255))
     for x in range(largura):
         for y in range(altura):
-            coord=(x,y)
+            coord = (x, y)
             pixelOriginal = imagem.getpixel(coord)
-            posicao = randint(1,totalBranco)
-            newCoord = procuraBranco(shuffledImage,posicao)
-            totalBranco-=1
-            shuffledImage.putpixel(newCoord,pixelOriginal)
+            posicao = randint(1, totalBranco)
+            newCoord = procuraBranco(shuffledImage, posicao)
+            totalBranco -= 1
+            shuffledImage.putpixel(newCoord, pixelOriginal)
     return shuffledImage
 
-def meioAMeio(imagem,porcentagemRandom):
-    largura,altura = imagem.size
-    total = largura*altura
+
+def meioAMeio(imagem, porcentagemRandom):
+    largura, altura = imagem.size
+    total = largura * altura
     totalRandom = 0
     totalBranco = total
-    porcentagem = totalRandom/total
-    shuffledImage = Image.new('RGBA',(largura,altura),(255,255,255,255))
+    porcentagem = totalRandom / total
+    shuffledImage = Image.new("RGBA", (largura, altura), (255, 255, 255, 255))
     for x in range(largura):
         for y in range(altura):
-            coord=(x,y)
+            coord = (x, y)
             pixelOriginal = imagem.getpixel(coord)
-            if(porcentagem<porcentagemRandom):
-                newX = randint(0,largura-1)
-                newY = randint(0,altura-1)
-                newCoord = (newX,newY)
+            if porcentagem < porcentagemRandom:
+                newX = randint(0, largura - 1)
+                newY = randint(0, altura - 1)
+                newCoord = (newX, newY)
                 pixel = shuffledImage.getpixel(newCoord)
-                while(pixel != (255,255,255,255)):
-                    newX = randint(0,largura-1)
-                    newY = randint(0,altura-1)
-                    newCoord = (newX,newY)
+                while pixel != (255, 255, 255, 255):
+                    newX = randint(0, largura - 1)
+                    newY = randint(0, altura - 1)
+                    newCoord = (newX, newY)
                     pixel = shuffledImage.getpixel(newCoord)
-                newCoord = (newX,newY)
+                newCoord = (newX, newY)
                 totalRandom += 1
                 totalBranco -= 1
-                porcentagem = totalRandom/total
+                porcentagem = totalRandom / total
             else:
-                posicao = randint(1,totalBranco)
-                newCoord = procuraBranco(shuffledImage,posicao)
+                posicao = randint(1, totalBranco)
+                newCoord = procuraBranco(shuffledImage, posicao)
                 totalBranco -= 1
-            shuffledImage.putpixel(newCoord,pixelOriginal)
+            shuffledImage.putpixel(newCoord, pixelOriginal)
     return shuffledImage
 
-imagem=pI(infoAdicional=1)
-tempos=[]
-for porc in range(100,-1,-1):
-    BD=shelve.open('BDRandom')
-    inicio=time()
-    shuffledImage=meioAMeio(imagem,porc)
-    fim=time()
-    tempo=fim-inicio
+
+imagem = pI(infoAdicional=1)
+tempos = []
+for porc in range(100, -1, -1):
+    BD = shelve.open("BDRandom")
+    inicio = time()
+    shuffledImage = meioAMeio(imagem, porc)
+    fim = time()
+    tempo = fim - inicio
     print(f"porcentagem de aleatoridade:{porc}%\n{embelezeTempo(tempo)}\n")
     shuffledImage.save(f"output{porc:03d}.png")
     tempos.append(tempo)
-    BD[f"tempos{porc:03d}"]=tempos
+    BD[f"tempos{porc:03d}"] = tempos
     BD.close()
-temposOrdenados=sorted(tempos)
+temposOrdenados = sorted(tempos)
 print("Resultados : ")
 for tempo in temposOrdenados:
     print(f"{tempos.index(tempo)}% : {tempo}")

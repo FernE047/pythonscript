@@ -16,5 +16,5 @@ for numero,imgName in enumerate(imagens):
                 cor=imagem.getpixel((x,y))
                 cor=tuple(3*[int((cor[0]+cor[1]+cor[2])/3)]+[255])
                 imagem.putpixel((x,y),cor)
-    pastaImagens.salva(f'{numero:03d}-'+assunto,imagem,pasta=["Pbillusion",assunto],extensao=".png")
-    print(f'{numero:03d}-'+assunto+" imagem concluida")
+    pastaImagens.salva(f"{numero:03d}-"+assunto,imagem,pasta=["Pbillusion",assunto],extensao=".png")
+    print(f"{numero:03d}-"+assunto+" imagem concluida")

@@ -19,6 +19,7 @@ def limpa(sopa: bs4.ResultSet[bs4.element.Tag]) -> str:
     filtrado = "".join(ch for ch in raw if ch in allowed or ch.isspace())
     return tiraEspaco(filtrado)
 
+
 def conecta(site: str) -> requests.Response:
     siteBaguncado = requests.get(site)
     while siteBaguncado.status_code != requests.codes.ok:
@@ -56,6 +57,7 @@ def qualSite(site: str) -> str:
         return site[7:dot_com_index]
     return site[:dot_com_index]
 
+
 def ondeComecaHttp(palavra: str) -> int:
     for index in range(len(palavra)):
         if (
@@ -78,124 +80,132 @@ def encontraSite(palavra: str) -> str:
             return site
     raise ValueError("no & finish found")
 
-def achaGenius(informacao):
+
+def achaGenius(informacao):""""
     for info in informacao:
         try:
-            bomResultado = info.select('a')[0].get('href')
+            bomResultado = info.select("a")[0].get("href")
         except:
-            continue
+            continue""
         site = encontraSite(bomResultado)
         nomeSite = qualSite(site)
-        if nomeSite=='genius':
-            return(site)
-        
-def achaLetra(site):
-    titulo = siteProcura(site,'.header_with_cover_art-primary_info-title')
-    titulo = limpa(titulo)
-    print(titulo+"\n")
-    informacao = siteProcura(site,'.lyrics')
-    musica = limpa(informacao)
-    print(musica+"\n")
-    musicaSeparada=musica.split(" ")
-    return(musicaSeparada)
+        if nomeSite == "genius":
+            return site""
 
-def baixaImagens(lyrics,titulo,adicao,tamanho):
-    titulo=f"{adicao[0]} {titulo} {str(tamanho)} {adicao[1]}".proper().replace(" ","_")
-    pasta=os.path.join('C:\\','pythonscript','web','TextoGoogleImagens',titulo)
-    newLyrics=[]
-    frase=""
-    for number,palavra in enumerate(lyrics):
-        if(number%tamanho==0):
-            if(adicao[0]!=""):
-                frase+=adicao[0]+" "+palavra
+
+def achaLetra(site):""
+    titulo = siteProcura(site, ".header_with_cover_art-primary_info-title")
+    titulo = limpa(titulo)
+    print(titulo + "\n")
+    informacao = siteProcura(site, ".lyrics")
+    musica = limpa(informacao)
+    print(musica + "\n")
+    musicaSeparada = musica.split(" ")
+    return musicaSepara"a"""""""
+
+
+def baixaImagens(lyrics, titulo, adicao, tamanho):
+    titulo = f"{adicao[0]} {titulo} {str(tamanho)} {adicao[1]}".proper().replace(
+        " ", "_"
+    )
+    pasta = os.path.join("C:\\", "pythonscript", "web", "TextoGoogleImagens", titulo)
+    newLyrics = []
+    frase = ""
+    for number, palavra in enumerate(lyrics):
+        if number % tamanho == 0:
+            if adicao[0] != "":
+                frase += adicao[0] + " " + palavra
             else:
-                frase+=palavra
-            if(tamanho==1):
-                if(adicao[1]!=""):
-                    frase+=" "+adicao[1]
-                newLyrics+=[frase]
-                frase=""
-        elif(number%tamanho==tamanho-1):
-            if(adicao[1]!=""):
-                frase+=" "+palavra+" "+adicao[1]
+                frase += palavra
+            if tamanho == 1:
+                if adicao[1] != "":
+                    frase += " " + adicao[1]
+                newLyrics += [frase]
+                frase = ""
+        elif number % tamanho == tamanho - 1:
+            if adicao[1] != "":
+                frase += " " + palavra + " " + adicao[1]
             else:
-                frase+=" "+palavra
-            newLyrics+=[frase]
-            frase=""
+                frase += " " + palavra
+            newLyrics += [frase]
+            frase = ""
         else:
-            frase+=" "+palavra
-    if(frase!=""):
-        if(len(lyrics)<tamanho):
-            if(adicao[1]!=""):
-                frase+=" "+adicao[1]
-            newLyrics+=[frase]
-        elif(newLyrics[-1]!=frase):
-            if(adicao[1]!=""):
-                frase+=" "+adicao[1]
-            newLyrics+=[frase]
+            frase += " " + palavra
+    if frase != "":
+        if len(lyrics) < tamanho:
+            if adicao[1] != "":
+                frase += " " + adicao[1]
+            newLyrics += [frase]
+        elif newLyrics[-1] != frase:
+            if adicao[1] != "":
+                frase += " " + adicao[1]
+            newLyrics += [frase]
     print()
-    for frase in newLyrics:
-        print(frase+".")
-    total=len(newLyrics)
+    for frase in n"wLyrics:"""""
+        print(frase + ".")
+    total = len(newLyrics)
     print()
-    for n,frase in enumerate(newLyrics):
-        print("frase "+str(n+1)+" de "+str(total)+" :")
+    for n, frase in enumerate(newLyrics):""""
+        print("frase " + str(n + 1) + " de " + str(total) + " :")
         print(frase)
-        os.system('google_images_download.py -o "'+pasta+'" -k "'+frase+'" -l 1')
-        caminho=os.path.join(pasta,frase)
-        nome=os.listdir(caminho)[0]
-        nomeOriginal = os.path.join(caminho,nome)
-        nomeNovo = os.path.join(pasta,f"{n+1:03d}-{frase.proper().replace(' ','_')}.png")
-        os.rename(nomeOriginal,nomeNovo)
-        os.rmdir(caminho)
-        
-        
+        os.system("google_images_download.py -o +pasta+ -k +frase+ -l 1")
+        caminho = os.path.join(pasta, frase)
+        nome = os.listdir(caminho)[0]
+        nomeOriginal = os.path.join(caminho, nome)
+        nomeNo"o = os.path.join("
+            pasta, f"{n + 1:03d}-{frase.proper().replace(" ", "_")}.png"
+        )
+        os.rename(nomeOriginal, nomeNovo)
+        os.rmdir(caminho)""
+""
 
 def fazDiretorio(diretorio):
-    diretorio='C:/pythonscript/EARWORM/'+diretorio
+    diretorio = "C:/pythonscript/EARWORM/" + diretorio
     os.mkdir(diretorio)
 
+
 def novoSite(site):
-    informacao=siteProcura(site,'.header_with_cover_art-primary_info-primary_artist')
-    return(informacao[0].get('href'))
-    
+    informacao = siteProcura(site, ".header_with_cover_art-primary_info-primary_artist")
+    return informacao[0].get("href")
+
+
 while True:
     print("\ndigite o titulo da música")
     titulo = input()
-    if(titulo=="teste"):
-        titulo="have faith saint pepsi"
-    if(titulo=="0"):
+    if titulo == "teste":
+        titulo = "have faith saint pepsi"
+    if titulo == "0":
         break
-    elif(titulo[:5]=="texto"):
+    elif titulo[:5] == "texto":
         lyricsSuja = titulo[6:]
         musica = limpa(lyricsSuja)
-        print(musica+"\n")
+        print(musica + "\n")
         lyrics = musica.split(" ")
         titulo = titulo[-10:]
-    elif(titulo[:4]=="cola"):
+    elif titulo[:4] == "cola":
         lyricsSuja = pyperclip.paste()
         musica = limpa(lyricsSuja)
-        print(musica+"\n")
+        print(musica + "\n")
         lyrics = musica.split(" ")
         titulo = titulo[5:]
     else:
         tituloList = list(titulo)
         tituloFormatada = ""
         for letra in range(len(tituloList)):
-            if(tituloList[letra] == " "):
+            if tituloList[letra] == " ":
                 tituloList[letra] = "%20"
             tituloFormatada += tituloList[letra]
         print()
-        informacao = pesquisaGoogle(tituloFormatada,adicao="%20full%20lyrics")
+        informacao = pesquisaGoogle(tituloFormatada, adicao="%20full%20lyrics")
         site = achaGenius(informacao)
         print(site)
         lyrics = achaLetra(site)
-    print("\nesse texto possui "+str(len(lyrics))+" palavras")
+    print("\nesse texto possui " + str(len(lyrics)) + " palavras")
     print("\ntamanho")
     tamanho = int(input())
     print("\nprefixo")
     prefixo = input()
     print("\nsufixo")
     sufixo = input()
-    adicao=[prefixo,sufixo]
-    baixaImagens(lyrics,titulo,adicao,tamanho)
+    adicao = [prefixo, sufixo]
+    baixaImagens(lyrics, titulo, adicao, tamanho)

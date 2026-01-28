@@ -28,7 +28,7 @@ while True:
     termo=input().lower()
     tituloTamanho=tamanhoParaTitulo()
     print("tamanho do titulo "+tituloTamanho+" palavras")
-    informacao=pesquisaGoogle(termo,adicao='+site%3A%2Ffanfiction.com.br%2F')
+    informacao=pesquisaGoogle(termo,adicao="+site%3A%2Ffanfiction.com.br%2F")
     tituloOficial=[termo]
     titulos=[]
     while (len(tituloOficial)<=tituloTamanho):

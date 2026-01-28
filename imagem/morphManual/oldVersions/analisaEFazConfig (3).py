@@ -2,13 +2,13 @@ from PIL import Image
 import os
 import pypdn
 
-'''
+"""
 
 SECÇÃO UTILITARIOS DO MAIN:
 
 ferramentas utilizadas pelo main
 
-'''
+"""
 
 def hasColor(imagem):
     largura,altura = imagem.size
@@ -46,19 +46,19 @@ def hasColor(imagem):
     return(hasRed,hasGreen,hasBlue,hasBlueIterative)
 
 def limpaPasta(pasta):
-    arquivos = [pasta+'\\'+a for a in os.listdir(pasta)]
-    if('C:\\pythonscript\\imagem\\morphManual\\frames\\resized' in arquivos):
-        arquivos.pop(arquivos.index('C:\\pythonscript\\imagem\\morphManual\\frames\\resized'))
+    arquivos = [pasta+"\\"+a for a in os.listdir(pasta)]
+    if("C:\\pythonscript\\imagem\\morphManual\\frames\\resized" in arquivos):
+        arquivos.pop(arquivos.index("C:\\pythonscript\\imagem\\morphManual\\frames\\resized"))
     for arquivo in arquivos:
         os.remove(arquivo)
 
-'''
+"""
 
 SECÇÃO VERMELHA:
 
 pontos únicos
 
-'''
+"""
 
 def procuraCor(imagem,indexColor):
     largura,altura = imagem.size
@@ -79,13 +79,13 @@ def procuraCor(imagem,indexColor):
                     coordenadasDasCores[corIndex].append((x,y))
     return coordenadasDasCores
 
-'''
+"""
 
 SECÇÃO DE DIREÇÃO:
 
 possui funções que funcionam com direções apontadas pela secção azul
 
-'''
+"""
 
 def coordDirecao(coord,n):
     if(n>7):
@@ -109,7 +109,7 @@ def coordDirecao(coord,n):
         return(x-1,y-1)
     return (x,y)
 
-'''
+"""
 
 SECÇÃO AZUL:
 
@@ -119,7 +119,7 @@ linhas que sejam direcionadas de acordo com direções de 1 a 8 com:
 4 X 3
 2 1 0
 
-'''
+"""
 
 def procuraInicioDaLinhaAzul(imagem):
     largura,altura = imagem.size
@@ -206,14 +206,14 @@ def procuraLinhaAzulIterativo(imagem, anteriores = None, inicio = None):
                     linhaMaxima = novaLinha.copy()
             #print(len(linhaMaxima))
             return linhaMaxima
-'''
+"""
 
 SECÇÃO VERDE:
 
 Regiões que sejam 2D, chamadas de blob
 cada Blob possui camadas que são conjuntos de coordenadas
 
-'''
+"""
 
 def procuraContornoVerde(imagem,tom):
     contorno = []
@@ -293,21 +293,21 @@ def procuraBlobs(imagem,linhaAtual = None):
             blobs.append(blob)
     return blobs
     
-'''
+"""
 
 SECÇÃO ESCRITA:
 
 ferramentas para auxiliar a escrita de linhas e blob
 
-'''
+"""
 
 def escreveLinhas(linhaInicial,linhaFinal,file):
     pontosLinhaInicial = len(linhaInicial)
     pontosLinhaFinal = len(linhaFinal)
     if(pontosLinhaInicial == pontosLinhaFinal):
         for n in range(pontosLinhaInicial):
-            file.write(str(linhaInicial[n][0])+','+str(linhaInicial[n][1]))
-            file.write(' '+str(linhaFinal[n][0])+','+str(linhaFinal[n][1])+'\n')
+            file.write(str(linhaInicial[n][0])+","+str(linhaInicial[n][1]))
+            file.write(" "+str(linhaFinal[n][0])+","+str(linhaFinal[n][1])+"\n")
     elif(pontosLinhaInicial>pontosLinhaFinal):
         if(pontosLinhaInicial-1==0):
             multiplicador = 0
@@ -315,8 +315,8 @@ def escreveLinhas(linhaInicial,linhaFinal,file):
             multiplicador = (pontosLinhaFinal-1)/(pontosLinhaInicial-1)
         for n in range(pontosLinhaInicial):
             pontoFinal = int(n*multiplicador)
-            file.write(str(linhaInicial[n][0])+','+str(linhaInicial[n][1]))
-            file.write(' '+str(linhaFinal[pontoFinal][0])+','+str(linhaFinal[pontoFinal][1])+'\n')
+            file.write(str(linhaInicial[n][0])+","+str(linhaInicial[n][1]))
+            file.write(" "+str(linhaFinal[pontoFinal][0])+","+str(linhaFinal[pontoFinal][1])+"\n")
     else:
         if(pontosLinhaFinal-1==0):
             multiplicador = 0
@@ -324,15 +324,15 @@ def escreveLinhas(linhaInicial,linhaFinal,file):
             multiplicador = (pontosLinhaInicial-1)/(pontosLinhaFinal-1)
         for n in range(pontosLinhaFinal):
             pontoInicial = int(n*multiplicador)
-            file.write(str(linhaInicial[pontoInicial][0])+','+str(linhaInicial[pontoInicial][1]))
-            file.write(' '+str(linhaFinal[n][0])+','+str(linhaFinal[n][1])+'\n')
+            file.write(str(linhaInicial[pontoInicial][0])+","+str(linhaInicial[pontoInicial][1]))
+            file.write(" "+str(linhaFinal[n][0])+","+str(linhaFinal[n][1])+"\n")
 
 def escreveBlobs(blobsInicial,blobsFinal,file):
-    '''print('blob inicial')
+    """print("blob inicial")
     print(blobsInicial)
-    print('blob final')
+    print("blob final")
     print(blobsFinal)
-    print('\n\n\n')'''
+    print("\n\n\n")"""
     for blobInicial, blobFinal in zip(blobsInicial, blobsFinal):
         pontosBlobInicial = len(blobInicial)
         pontosBlobFinal = len(blobFinal)
@@ -356,11 +356,11 @@ def escreveBlobs(blobsInicial,blobsFinal,file):
                 camadaInicial = int(n*multiplicador)
                 escreveLinhas(blobInicial[camadaInicial],blobFinal[n],file)
 
-'''
+"""
 
 SECÇÃO Fundo:
 
-'''
+"""
 
 def fazFundo(fileConfig,parteInicial,parteFinal):
     largura,altura = parteInicial.size
@@ -369,42 +369,42 @@ def fazFundo(fileConfig,parteInicial,parteFinal):
             pixel = parteInicial.getpixel((x,y))
             if pixel[3] != 0:
                 if parteFinal.getpixel((x,y))[3]!=0:
-                    fileConfig.write(str(x)+','+str(y)+' '+str(x)+','+str(y)+'\n')
+                    fileConfig.write(str(x)+","+str(y)+" "+str(x)+","+str(y)+"\n")
                 else:
-                    fileConfig.write(str(x)+','+str(y)+' fundo\n')
+                    fileConfig.write(str(x)+","+str(y)+" fundo\n")
     parteInicial.close()
     parteFinal.close()
                     
                 
 
-'''
+"""
 
 SECÇÃO DEBUG:
 
-'''
+"""
 
 def imprimeBlob(blobs):
     for n,blob in enumerate(blobs):
-        print('\nblob '+str(n)+' : \n')
+        print("\nblob "+str(n)+" : \n")
         for m,camada in enumerate(blob):
-            print('camada '+str(m)+' : \n')
+            print("camada "+str(m)+" : \n")
             for coord in camada:
                 print(coord)
 
-'''
+"""
 
 SECÇÃO MAIN:
 
-'''
+"""
 
-limpaPasta('C:\\pythonscript\\imagem\\morphManual\\partesConfig')
-limpaPasta('C:\\pythonscript\\imagem\\morphManual\\frames')
-limpaPasta('C:\\pythonscript\\imagem\\morphManual\\frames\\resized')
-nomeConfig = 'partesConfig\\parte{0:02d}Config.txt'
+limpaPasta("C:\\pythonscript\\imagem\\morphManual\\partesConfig")
+limpaPasta("C:\\pythonscript\\imagem\\morphManual\\frames")
+limpaPasta("C:\\pythonscript\\imagem\\morphManual\\frames\\resized")
+nomeConfig = "partesConfig\\parte{0:02d}Config.txt"
 imagemInicial = pypdn.read("inicial.pdn")
 imagemFinal = pypdn.read("final.pdn")
 quantiaPartes = len(imagemInicial.layers)
-file = open('config.txt','w')
+file = open("config.txt","w")
 partes = None
 for nParte in range(1,quantiaPartes):
     print(nParte)
@@ -414,7 +414,7 @@ for nParte in range(1,quantiaPartes):
         if(parteInicial.getpixel((0,0))==(255,255,255,255)):
             fazFundo(file,parteInicial,parteFinal)
             continue
-    fileConfig = open(nomeConfig.format(nParte),'w')
+    fileConfig = open(nomeConfig.format(nParte),"w")
     hasRGB = hasColor(parteInicial)
     print(hasRGB)
     if(hasRGB[0]):
@@ -449,7 +449,7 @@ for nParte in range(1,quantiaPartes):
     parteInicial.close()
     parteFinal.close()
 for nParte in range(1,quantiaPartes):
-    fileConfig = open(nomeConfig.format(nParte),'r')
+    fileConfig = open(nomeConfig.format(nParte),"r")
     linha = fileConfig.readline()
     while(linha):
         file.write(linha)

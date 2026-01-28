@@ -1,6 +1,7 @@
 from random import randint
 
-def getAWord(indice,isTitle,anterior = ''):
+
+def getAWord(indice, isTitle, anterior=""):
     if isTitle:
         diretorio = "chainTitle//0"
     else:
@@ -24,21 +25,23 @@ def getAWord(indice,isTitle,anterior = ''):
         data[palavra] = numero
         linha = file.readline()
     total = sum(list(data.values()))
-    escolhido = randint(1,total)
+    escolhido = randint(1, total)
     soma = 0
-    for indice,valor in enumerate(data.values()):
+    for indice, valor in enumerate(data.values()):
         soma += valor
         if soma >= escolhido:
             file.close()
             return list(data.keys())[indice]
 
+
 def doATexto(isTitle):
     texto = []
-    palavra = getAWord(0,isTitle)
+    palavra = getAWord(0, isTitle)
     while palavra != "¨":
         texto.append(palavra)
-        palavra = getAWord(len(texto),isTitle,palavra)
+        palavra = getAWord(len(texto), isTitle, palavra)
     return " ".join(texto)
 
+
 for a in range(10):
-    print(doATexto(True)+" : "+doATexto(False),end='\n\n')
+    print(doATexto(True) + " : " + doATexto(False), end="\n\n")

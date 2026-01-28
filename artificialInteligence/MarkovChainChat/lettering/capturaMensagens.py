@@ -1,21 +1,21 @@
 import re
 
-person_1 = "" # Replace with the name of the first person
-file = open('ConversaDoWhatsApp.txt',encoding='utf-8')
-output = open('sohMensagens.txt','w',encoding = 'utf-8')
-pattern = r"([0-3][0-9][/][0-1][0-9][/]20[21][09] [0-2][0-9][:][0-5][0-9])" 
+person_1 = ""  # Replace with the name of the first person
+file = open("ConversaDoWhatsApp.txt", encoding="utf-8")
+output = open("sohMensagens.txt", "w", encoding="utf-8")
+pattern = r"([0-3][0-9][/][0-1][0-9][/]20[21][09] [0-2][0-9][:][0-5][0-9])"
 word = file.read(16)
 mensagem = ""
 while True:
-    r2 = re.search(pattern,word)
+    r2 = re.search(pattern, word)
     if r2:
         if mensagem:
             mensagem = mensagem[3:-17]
             usuario = mensagem[:13]
-            if usuario == f'{person_1}: ':
+            if usuario == f"{person_1}: ":
                 mensagem = mensagem[13:]
                 print(mensagem)
-                output.write(mensagem+"\n")
+                output.write(mensagem + "\n")
             mensagem = ""
     while True:
         try:
@@ -24,9 +24,8 @@ while True:
         except:
             pass
     if letra:
-        word = word[1:]+letra
+        word = word[1:] + letra
         mensagem += letra
     else:
         break
 file.close()
-

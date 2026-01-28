@@ -58,16 +58,16 @@ def fazJogada(quant):
         return(jogada)
 
 while True:
-    print('quantia de jogos')
+    print("quantia de jogos")
     #quantJogo=int(input())
     quantJogo=1000
-    print('quantia de pares')
+    print("quantia de pares")
     #quantPar=int(input())
     quantPar=4
     dados=[]
     inicio=time.time()
     for jogo in range(quantJogo):
-        #print('jogo:'+str(jogo+1))
+        #print("jogo:"+str(jogo+1))
         board=[]
         memoria=[]
         for a in range(quantPar):
@@ -92,8 +92,8 @@ while True:
                 board[jogada[0]]=-1
                 board[jogada[1]]=-1
             total+=1
-            #print('jogada:'+str(jogada))
-            #print('')
+            #print("jogada:"+str(jogada))
+            #print("")
             #print(board)
         dados.append(total)
         #print(total)
@@ -101,11 +101,11 @@ while True:
     for elemento in dados:
         soma+=elemento
     fim=time.time()
-    print('quantia de jogos:'+str(quantJogo))
-    print('\n\nmedia:'+str(soma/quantJogo))
-    print('maximo:'+str(max(dados)))
-    print('minimo:'+str(min(dados)))
+    print("quantia de jogos:"+str(quantJogo))
+    print("\n\nmedia:"+str(soma/quantJogo))
+    print("maximo:"+str(max(dados)))
+    print("minimo:"+str(min(dados)))
     print(embelezeTempo(fim-inicio))
-    print('\ncontinuar')
+    print("\ncontinuar")
     if(input()):
         break

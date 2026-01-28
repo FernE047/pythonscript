@@ -1,5 +1,5 @@
 #! python3
-# superHotEverything.py - Displays the mouse cursor's current position.
+# superHotEverything.py - Displays the mouse cursor"s current position.
 import pyautogui
 import time
 
@@ -68,7 +68,7 @@ try:
     tecla = "l"
     tempofinal = quantoTempo(tecla)
     print("tempo final foi " + str(tempofinal))
-    print("adicione \npressFor('" + tecla + "');")
+    print("adicione \npressFor( + tecla + );")
     pyautogui.click(900, 600)
 except KeyboardInterrupt:
     print("\nDone.")

@@ -1,4 +1,4 @@
-'''
+"""
 PIECES:
 
 walkers = 0 (rook)
@@ -16,7 +16,7 @@ check = 1
 capture = 2
 capture-All = 3
 
-'''
+"""
 from itertools import permutations as perm
 
 def imprimeTabuleiro(tabuleiro,posicao=None):
@@ -37,9 +37,9 @@ def montaTabuleiro(dimensao = 2, tamanho = 8, posicao = None):
         posicao = []
     if dimensao == 0:
         if sum(posicao)%2:
-            return ['█',0]
+            return ["█",0]
         else:
-            return [' ',0]
+            return [" ",0]
     else:
         tabuleiro = []
         for t in range(tamanho):
@@ -139,7 +139,7 @@ def colocaPeca(tabuleiro,peca,jogador,posicao = None):
 def movePeca(tabuleiro,posicaoInicio,posicaoFinal):
     peca = verificaTabuleiro(tabuleiro,posicaoInicio)
     colocaPeca(tabuleiro,peca[0],peca[1],posicaoFinal)
-    limpo = '█' if sum(posicaoInicio)%2 else ' '
+    limpo = "█" if sum(posicaoInicio)%2 else " "
     colocaPeca(tabuleiro,limpo,0,posicaoInicio)
 
 def encontraPecas(tabuleiro,jogador1Lista,jogador2Lista,posicao = None):

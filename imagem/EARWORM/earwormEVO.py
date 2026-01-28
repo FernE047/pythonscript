@@ -34,7 +34,8 @@ def qualSite(site: str) -> str:
         return site[7:dot_com_index]
     return site[:dot_com_index]
 
-def ondeComecaHttp(palavra:str) -> int:
+
+def ondeComecaHttp(palavra: str) -> int:
     for index in range(len(palavra)):
         if (
             (palavra[index] == "h")
@@ -46,7 +47,7 @@ def ondeComecaHttp(palavra:str) -> int:
     raise ValueError("no https found")
 
 
-def encontraSite(palavra:str) -> str:
+def encontraSite(palavra: str) -> str:
     site = ""
     comeco = ondeComecaHttp(palavra)
     for a in range(comeco, len(palavra)):
@@ -56,29 +57,31 @@ def encontraSite(palavra:str) -> str:
             return site
     raise ValueError("no & finish found")
 
-def procuraComplemento(site):
-    if(site[20]=="r"):
-        return("artist")
-    else:
-        return("album")
 
-def achaGenius(informacao,tem=""):
+def procuraComplemento(site):
+    if site[20] == "r":
+        return "artist"
+    else:
+        return "album"
+
+
+def achaGenius(informacao, tem=""):
     for info in informacao:
         try:
-            bomResultado = info.select('a')[0].get('href')
+            bomResultado = info.select("a")[0].get("href")
         except:
             continue
         site = encontraSite(bomResultado)
         nomeSite = qualSite(site)
         print(site)
-        print(nomeSite+"\n")
-        if nomeSite=='genius':
-            if(tem=="album"):
-                complemento=procuraComplemento(site)
-                if(tem==complemento):
-                    return(site)
+        print(nomeSite + "\n")
+        if nomeSite == "genius":
+            if tem == "album":
+                complemento = procuraComplemento(site)
+                if tem == complemento:
+                    return site
             else:
-                return(site)
+                return site
 
 
 def siteProcura(site: str, html: str) -> bs4.ResultSet[bs4.element.Tag]:
@@ -88,98 +91,110 @@ def siteProcura(site: str, html: str) -> bs4.ResultSet[bs4.element.Tag]:
     return informacao
 
 
-def fazImagem(site,pasta="imagens/"):
-    titulo = siteProcura(site,'.header_with_cover_art-primary_info-title')
+def fazImagem(site, pasta="imagens/"):
+    titulo = siteProcura(site, ".header_with_cover_art-primary_info-title")
     titulo = textos.limpaSopa(titulo)
-    print(titulo+"\n")
-    informacao = siteProcura(site,'.lyrics')
+    print(titulo + "\n")
+    informacao = siteProcura(site, ".lyrics")
     musica = textos.limpaSopa(informacao)
-    print(musica+"\n")
-    musicaSeparada=musica.split(" ")
-    quantPalavras=len(musicaSeparada)
-    print("quantidade de palavras: "+str(quantPalavras)+"\n")
-    if(quantPalavras):
-        imagem=Image.new('RGBA',(quantPalavras,quantPalavras),(0,0,0,255))
+    print(musica + "\n")
+    musicaSeparada = musica.split(" ")
+    quantPalavras = len(musicaSeparada)
+    print("quantidade de palavras: " + str(quantPalavras) + "\n")
+    if quantPalavras:
+        imagem = Image.new("RGBA", (quantPalavras, quantPalavras), (0, 0, 0, 255))
         for coordX in range(quantPalavras):
             for coordY in range(quantPalavras):
-                if(musicaSeparada[coordX]==musicaSeparada[coordY]):
-                    imagem.putpixel((coordX,coordY),(255,0,0,255))
-        imagem.save('C:/pythonscript/EARWORM/'+pasta+str(titulo)+".png")
+                if musicaSeparada[coordX] == musicaSeparada[coordY]:
+                    imagem.putpixel((coordX, coordY), (255, 0, 0, 255))
+        imagem.save("C:/pythonscript/EARWORM/" + pasta + str(titulo) + ".png")
     print("feita com sucesso\n\n")
 
+
 def pegaTodosSites(informacao: bs4.ResultSet[bs4.element.Tag]) -> list[str]:
-    sites:list[str] = []
+    sites: list[str] = []
     for info in informacao:
         try:
-            bomResultado = cast(str,info.select('a')[0].get('href'))
+            bomResultado = cast(str, info.select("a")[0].get("href"))
         except Exception as _:
             continue
         site = encontraSite(bomResultado)
         nomeSite = qualSite(site)
         print(site)
-        print(nomeSite+"\n")
-        if nomeSite=='genius':
+        print(nomeSite + "\n")
+        if nomeSite == "genius":
             sites.append(site)
-    return(sites)
+    return sites
 
-def albumImagens(site,album):
-    fazDiretorio('album/'+album)
-    faixa=1
-    informacao = siteProcura(site,'.u-display_block')
+
+def albumImagens(site, album):
+    fazDiretorio("album/" + album)
+    faixa = 1
+    informacao = siteProcura(site, ".u-display_block")
     musicasSites = pegaTodosSites(informacao)
     for site in musicasSites:
-        fazImagem(site,pasta=f'album/{album}/{faixa:03d}-')
-        faixa+=1
+        fazImagem(site, pasta=f"album/{album}/{faixa:03d}-")
+        faixa += 1
 
-def artistImagens(site,artist):
-    fazDiretorio(f'artist/{artist}')
-    faixa=1
-    informacao = siteProcura(site,'.mini_card')
+
+def artistImagens(site, artist):
+    fazDiretorio(f"artist/{artist}")
+    faixa = 1
+    informacao = siteProcura(site, ".mini_card")
     musicasSites = pegaTodosSites(informacao)
     for site in musicasSites:
-        fazImagem(site,pasta=f'artist/{artist}/{faixa:03d}-')
-        faixa+=1
+        fazImagem(site, pasta=f"artist/{artist}/{faixa:03d}-")
+        faixa += 1
+
 
 def fazDiretorio(diretorio):
-    diretorio=f'C:/pythonscript/EARWORM/{diretorio}'
+    diretorio = f"C:/pythonscript/EARWORM/{diretorio}"
     os.mkdir(diretorio)
 
+
 def novoSite(site):
-    informacao=siteProcura(site,'.header_with_cover_art-primary_info-primary_artist')
-    return(informacao[0].get('href'))
-    
-album=False
-artist=False
+    informacao = siteProcura(site, ".header_with_cover_art-primary_info-primary_artist")
+    return informacao[0].get("href")
+
+
+album = False
+artist = False
 while True:
     print("\ndigite o titulo da música")
     titulo = input()
-    if(titulo=="0"):
+    if titulo == "0":
         break
     tituloList = list(titulo)
-    if tituloList[:5]==['a','l','b','u','m']:
-        tituloList=tituloList[6:]
-        album=True
-    if tituloList[:6]==['a','r','t','i','s','t']:
-        tituloList=tituloList[7:]
-        artist=True
+    if tituloList[:5] == ["a", "l", "b", "u", "m"]:
+        tituloList = tituloList[6:]
+        album = True
+    if tituloList[:6] == ["a", "r", "t", "i", "s", "t"]:
+        tituloList = tituloList[7:]
+        artist = True
     tituloFormatada = ""
-    for index,letra in enumerate(tituloList):
-        if(letra == " "):
+    for index, letra in enumerate(tituloList):
+        if letra == " ":
             tituloList[index] = "%20"
         tituloFormatada += tituloList[index]
-    if(album):
-        informacao = pesquisaGoogle(tituloFormatada,adicao="%20albums+site%3Ahttps%3A%2F%2Fgenius.com%2F")
-        site = achaGenius(informacao,tem="album")
+    if album:
+        informacao = pesquisaGoogle(
+            tituloFormatada, adicao="%20albums+site%3Ahttps%3A%2F%2Fgenius.com%2F"
+        )
+        site = achaGenius(informacao, tem="album")
         nome = titulo[6:]
-        albumImagens(site,nome)
-    elif(artist):
-        informacao = pesquisaGoogle(tituloFormatada,adicao="%20artist+site%3Ahttps%3A%2F%2Fgenius.com%2F")
-        site = achaGenius(informacao,tem="artist")
-        if(procuraComplemento(site)!="artist"):
-            site=novoSite(site)
+        albumImagens(site, nome)
+    elif artist:
+        informacao = pesquisaGoogle(
+            tituloFormatada, adicao="%20artist+site%3Ahttps%3A%2F%2Fgenius.com%2F"
+        )
+        site = achaGenius(informacao, tem="artist")
+        if procuraComplemento(site) != "artist":
+            site = novoSite(site)
         nome = titulo[7:]
-        artistImagens(site,nome)
+        artistImagens(site, nome)
     else:
-        informacao = pesquisaGoogle(tituloFormatada,adicao="+site%3Ahttps%3A%2F%2Fgenius.com%2F")
+        informacao = pesquisaGoogle(
+            tituloFormatada, adicao="+site%3Ahttps%3A%2F%2Fgenius.com%2F"
+        )
         site = achaGenius(informacao)
         fazImagem(site)

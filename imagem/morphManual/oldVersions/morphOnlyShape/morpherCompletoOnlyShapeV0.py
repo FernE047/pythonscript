@@ -38,12 +38,12 @@ def fazProcesso(processo,nome):
     subprocess.call (processo)
     fim = time()
     duracao = fim-inicio
-    print(nome+' demorou : '+embelezeTempo(duracao))
+    print(nome+" demorou : "+embelezeTempo(duracao))
     
 inicioDef = time()
-fazProcesso('python C:\\pythonscript\\imagem\\morphOnlyShape\\analisaEFazConfig.py ','fazer configurações')
-fazProcesso('python C:\\pythonscript\\imagem\\morphOnlyShape\\morpher.py ','fazer animações')
+fazProcesso("python C:\\pythonscript\\imagem\\morphOnlyShape\\analisaEFazConfig.py ","fazer configurações")
+fazProcesso("python C:\\pythonscript\\imagem\\morphOnlyShape\\morpher.py ","fazer animações")
 fimDef = time()
-print('\nfinalizado')
-print('execução : '+embelezeTempo(fimDef-inicioDef))
+print("\nfinalizado")
+print("execução : "+embelezeTempo(fimDef-inicioDef))
 a = input()

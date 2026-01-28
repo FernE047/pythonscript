@@ -9,18 +9,18 @@ def funcaoAfim(inicio,fim,total,n):
         elemento.append(int(A*n+B))
     return tuple(elemento)
 
-imagemInicial = Image.open('C:\\pythonscript\\imagem\\morphOnlyShape\\inicial.png')
-imagemFinal = Image.new('RGBA',imagemInicial.size,(0,0,0,0))
-file = open('C:\\pythonscript\\imagem\\morphOnlyShape\\config.txt')
+imagemInicial = Image.open("C:\\pythonscript\\imagem\\morphOnlyShape\\inicial.png")
+imagemFinal = Image.new("RGBA",imagemInicial.size,(0,0,0,0))
+file = open("C:\\pythonscript\\imagem\\morphOnlyShape\\config.txt")
 linha = file.readline()
 while(linha):
-    coords = [tuple([int(b) for b in coord.split(',')]) for coord in linha.split(' ')]
+    coords = [tuple([int(b) for b in coord.split(",")]) for coord in linha.split(" ")]
     coordInicial = coords[0]
     coordFinal = coords[1]
     cor = imagemInicial.getpixel(coordInicial)
     imagemFinal.putpixel(coordFinal,cor)
     linha = file.readline()
-imagemFinal.save('C:\\pythonscript\\imagem\\morphOnlyShape\\final.png')
+imagemFinal.save("C:\\pythonscript\\imagem\\morphOnlyShape\\final.png")
 file.close()
 imagemInicial.close()
 imagemFinal.close()

@@ -2,7 +2,8 @@ import subprocess
 import gc
 from time import time
 
-#esse algoritmo faz o morph completo
+# esse algoritmo faz o morph completo
+
 
 def embelezeTempo(segundos: float) -> str:
     if segundos < 0:
@@ -34,22 +35,38 @@ def embelezeTempo(segundos: float) -> str:
     return sign + ", ".join(parts)
 
 
-def fazProcesso(processo,nome):
+def fazProcesso(processo, nome):
     inicio = time()
-    subprocess.call (processo)
+    subprocess.call(processo)
     fim = time()
-    duracao = fim-inicio
-    print(nome+' demorou : '+embelezeTempo(duracao))
+    duracao = fim - inicio
+    print(nome + " demorou : " + embelezeTempo(duracao))
+
 
 while True:
     inicioDef = time()
-    fazProcesso('python C:\\pythonscript\\imagem\\evoluiPokemon\\preparaMorph.py ','limpar directory')
-    fazProcesso('python C:\\pythonscript\\imagem\\evoluiPokemon\\analisaEFazConfig.py ','fazer configurações')
-    fazProcesso('python C:\\pythonscript\\imagem\\evoluiPokemon\\recolor.py ','recolor')
-    fazProcesso('python C:\\pythonscript\\imagem\\evoluiPokemon\\morpher.py ','fazer animações')
-    fazProcesso('python C:\\pythonscript\\imagem\\evoluiPokemon\\corrigeFrames.py ','correção de frames')
-    fazProcesso('python C:\\pythonscript\\imagem\\evoluiPokemon\\fazGif.py ','fazer Gif')
+    fazProcesso(
+        "python C:\\pythonscript\\imagem\\evoluiPokemon\\preparaMorph.py ",
+        "limpar directory",
+    )
+    fazProcesso(
+        "python C:\\pythonscript\\imagem\\evoluiPokemon\\analisaEFazConfig.py ",
+        "fazer configurações",
+    )
+    fazProcesso(
+        "python C:\\pythonscript\\imagem\\evoluiPokemon\\recolor.py ", "recolor"
+    )
+    fazProcesso(
+        "python C:\\pythonscript\\imagem\\evoluiPokemon\\morpher.py ", "fazer animações"
+    )
+    fazProcesso(
+        "python C:\\pythonscript\\imagem\\evoluiPokemon\\corrigeFrames.py ",
+        "correção de frames",
+    )
+    fazProcesso(
+        "python C:\\pythonscript\\imagem\\evoluiPokemon\\fazGif.py ", "fazer Gif"
+    )
     fimDef = time()
-    print('\nfinalizado')
-    print('execução : '+embelezeTempo(fimDef-inicioDef))
+    print("\nfinalizado")
+    print("execução : " + embelezeTempo(fimDef - inicioDef))
     gc.collect()

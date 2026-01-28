@@ -60,7 +60,7 @@ def imprime(board):
     tamanho=len(board)
     lista=[str(a) for a in range(tamanho)]
     print(" "+" ".join(lista))
-    entreLinha=" "+'+'.join(['-' for a in range(tamanho)])
+    entreLinha=" "+"+".join(["-" for a in range(tamanho)])
     for n,linhaValores in enumerate(board):
         linha=str(n)
         for m,valor in enumerate(linhaValores):
@@ -155,7 +155,7 @@ def randomNumber(number):
         if(newNumber==SEEDLEN):
             break
         newNumber.pop(-1)
-    newNumber=int(''.join(newNumber))
+    newNumber=int("".join(newNumber))
     return newNumber
 
 def possibilidadesDeJogadas(board):

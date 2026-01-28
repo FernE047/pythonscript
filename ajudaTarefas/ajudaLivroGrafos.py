@@ -1,7 +1,7 @@
 import pyautogui
 import time
 
-# ajuda a nomear as fotos retiradas do livro 'Grafos'
+# ajuda a nomear as fotos retiradas do livro "Grafos"
 
 a = 90
 for a in range(230, 314):

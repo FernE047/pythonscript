@@ -2,7 +2,7 @@ from PIL import Image
 import os
 from pastaImagens import pegaAssunto as pA
 
-imagens=pA('pokedex sem fundo')
+imagens=pA("pokedex sem fundo")
 paleta=[]
 for img in imagens:
     imagem=Image.open(img)
@@ -23,4 +23,4 @@ for index in range(len(paleta)):
         m=0
     paletaImg.putpixel((m,int(index/256)),paleta[index])
     m+=1
-paletaImg.save(os.path.join('paleta','paletaPokemons.png'))
+paletaImg.save(os.path.join("paleta","paletaPokemons.png"))

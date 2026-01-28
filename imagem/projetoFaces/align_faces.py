@@ -7,14 +7,14 @@ import dlib
 import cv2
 import os
 
-# initialize dlib's face detector (HOG-based) and then create
+# initialize dlib"s face detector (HOG-based) and then create
 # the facial landmark predictor and the face aligner
 detector = dlib.get_frontal_face_detector()
-predictor = dlib.shape_predictor('C:\\pythonscript\\imagem\\projetoFaces\\shape_predictor_68_face_landmarks.dat')
+predictor = dlib.shape_predictor("C:\\pythonscript\\imagem\\projetoFaces\\shape_predictor_68_face_landmarks.dat")
 fa = FaceAligner(predictor, desiredFaceWidth=256)
 
 # load the input image, resize it, and convert it to grayscale
-image = cv2.imread('C:\\pythonscript\\imagem\\projetoFaces\\faces\\originais\\pic0001.png')
+image = cv2.imread("C:\\pythonscript\\imagem\\projetoFaces\\faces\\originais\\pic0001.png")
 image = imutils.resize(image, width=800)
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 # show the original input image and detect faces in the grayscale

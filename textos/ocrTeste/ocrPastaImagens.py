@@ -37,15 +37,16 @@ def embelezeTempo(segundos: float) -> str:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
     return sign + ", ".join(parts)
 
+
 def melhora(img):
-    imagem = Image.open(img).convert('RGB')
+    imagem = Image.open(img).convert("RGB")
     npimagem = np.asarray(imagem).astype(np.uint8)
-    npimagem[:, :, 0] = 0 
+    npimagem[:, :, 0] = 0
     npimagem[:, :, 2] = 0
-    im = cv2.cvtColor(npimagem, cv2.COLOR_RGB2GRAY) 
+    im = cv2.cvtColor(npimagem, cv2.COLOR_RGB2GRAY)
     ret, thresh = cv2.threshold(im, 127, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
     binimagem = Image.fromarray(thresh)
-    return(binimagem)
+    return binimagem
 
 
 def tiraEspaçoBranco(texto: str) -> str:
@@ -55,22 +56,22 @@ def tiraEspaçoBranco(texto: str) -> str:
     return texto
 
 
-start=time.time()
-print('digite um assunto')
-assunto=input()
-print('quantas imagens ler?')
-leitura=input()
+start = time.time()
+print("digite um assunto")
+assunto = input()
+print("quantas imagens ler?")
+leitura = input()
 try:
-    leitura=int(leitura)
-    imagens=pI.pegaAssunto(assunto,leitura)
+    leitura = int(leitura)
+    imagens = pI.pegaAssunto(assunto, leitura)
 except:
-    imagens=pI.pegaAssunto(assunto)
+    imagens = pI.pegaAssunto(assunto)
 for imagem in imagens:
-    print('\n'+imagem)
-    imagem=melhora(imagem)
-    phrase = ocr.image_to_string(imagem, lang='eng')
-    phraseBonita=tiraEspaçoBranco(phrase)
-    print(str(len(phraseBonita))+'\n')
+    print("\n" + imagem)
+    imagem = melhora(imagem)
+    phrase = ocr.image_to_string(imagem, lang="eng")
+    phraseBonita = tiraEspaçoBranco(phrase)
+    print(str(len(phraseBonita)) + "\n")
     print(phraseBonita)
-final=time.time()
-print("demorou "+embelezeTempo(final-start))
+final = time.time()
+print("demorou " + embelezeTempo(final - start))

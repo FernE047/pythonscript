@@ -1,8 +1,8 @@
 import os
 
 def renome(origemName,destinoName):
-    origem = open(origemName,'r',encoding='utf-8')
-    destino = open(destinoName,'w',encoding='utf-8')
+    origem = open(origemName,"r",encoding="utf-8")
+    destino = open(destinoName,"w",encoding="utf-8")
     linha = origem.readline()
     while linha:
         destino.write(linha)
@@ -11,9 +11,9 @@ def renome(origemName,destinoName):
     destino.close()
 
 def alteraChainFile(n,termo):
-    fileWrite = open("chain//c.txt",'w',encoding='utf-8')
+    fileWrite = open("chain//c.txt","w",encoding="utf-8")
     if f"{n:03d}.txt" in os.listdir("chain"):
-        fileRead = open(f"chain//{n:03d}.txt",'r',encoding='utf-8')
+        fileRead = open(f"chain//{n:03d}.txt","r",encoding="utf-8")
         linha = fileRead.readline()
         encontrou = False
         indice = len(termo)
@@ -34,7 +34,7 @@ def alteraChainFile(n,termo):
     fileWrite.close()
     renome("chain//c.txt",f"chain//{n:03d}.txt")
 
-file = open('sohMensagens.txt',encoding='utf-8')
+file = open("sohMensagens.txt",encoding="utf-8")
 mensagem = file.readline()
 lista = []
 while mensagem:

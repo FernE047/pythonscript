@@ -1,7 +1,7 @@
 def imprime(matriz):
     if matriz:
         for linha in matriz:
-            print(' '.join([str(elemento) for elemento in linha]))
+            print(" ".join([str(elemento) for elemento in linha]))
     else:
         print("nao existe solução")
 
@@ -36,8 +36,8 @@ def solve(x,y,matriz,possibilidades):
     global tries
     global iterations
     if iterations%100000==0:
-        print(f'{iterations:,}')
-        print(f'{tries:,}')
+        print(f"{iterations:,}")
+        print(f"{tries:,}")
         imprime(matriz)
         print()
     iterations += 1

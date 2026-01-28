@@ -32,10 +32,11 @@ def embelezeTempo(segundos: float) -> str:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
     return sign + ", ".join(parts)
 
-def renome(name,destinoName):
+
+def renome(name, destinoName):
     global enc
-    origem = open(f"{name}//c.txt",'r',encoding = "UTF-8")
-    destino = open(f"{name}{destinoName}",'w',encoding = "UTF-8")
+    origem = open(f"{name}//c.txt", "r", encoding="UTF-8")
+    destino = open(f"{name}{destinoName}", "w", encoding="UTF-8")
     linha = origem.readline()
     while linha:
         destino.write(linha)
@@ -43,11 +44,12 @@ def renome(name,destinoName):
     origem.close()
     destino.close()
 
-def alteraChainFile(nome,n,termos):
-    fileWrite = open(f"{nome}//c.txt",'w',encoding = "UTF-8")
+
+def alteraChainFile(nome, n, termos):
+    fileWrite = open(f"{nome}//c.txt", "w", encoding="UTF-8")
     amount = Counter([str(a) for a in termos])
     if f"{n:03d}.txt" in os.listdir(nome):
-        fileRead = open(f"{nome}//{n:03d}.txt",'r',encoding = "UTF-8")
+        fileRead = open(f"{nome}//{n:03d}.txt", "r", encoding="UTF-8")
         linha = fileRead.readline()[:-1]
         while linha:
             palavras = linha.split()
@@ -57,38 +59,40 @@ def alteraChainFile(nome,n,termos):
                 while palavras[:-1] in termos:
                     termos.remove(palavras[:-1])
                 palavras[-1] = str(palavras[-1])
-                fileWrite.write( " ".join(palavras) + "\n")
+                fileWrite.write(" ".join(palavras) + "\n")
             else:
                 fileWrite.write(linha + "\n")
             linha = fileRead.readline()[:-1]
         used = []
         for termo in termos:
             if termo not in used:
-                fileWrite.write(" ".join(termo+[str(amount[str(termo)])]) + "\n")
+                fileWrite.write(" ".join(termo + [str(amount[str(termo)])]) + "\n")
                 used.append(termo)
         fileRead.close()
-    else :
+    else:
         used = []
         for termo in termos:
             if termo not in used:
-                fileWrite.write(" ".join(termo+[str(amount[str(termo)])]) + "\n")
+                fileWrite.write(" ".join(termo + [str(amount[str(termo)])]) + "\n")
                 used.append(termo)
     fileWrite.close()
-    renome(nome,f"//{n:03d}.txt")
+    renome(nome, f"//{n:03d}.txt")
 
-def alteraFiles(nome,alterations):
+
+def alteraFiles(nome, alterations):
     for n in alterations:
-        alteraChainFile(nome,n,alterations[n])
+        alteraChainFile(nome, n, alterations[n])
+
 
 notSuccess = True
 while notSuccess:
     try:
         print("o que deseja abrir?")
         nome = input()
-        file = open(nome + '.txt','r', encoding = "UTF-8")
+        file = open(nome + ".txt", "r", encoding="UTF-8")
         notSuccess = False
         try:
-            arqInput = open(nome+"//c.txt",'w',encoding = "UTF-8")
+            arqInput = open(nome + "//c.txt", "w", encoding="UTF-8")
             arqInput.close()
         except:
             os.mkdir(nome)
@@ -109,24 +113,24 @@ while mensagem:
                 alterations[n].append([letra])
         if tamanho > 1:
             try:
-                letraSeguinte = mensagem[n+1]
+                letraSeguinte = mensagem[n + 1]
             except:
                 letraSeguinte = "¨"
-            if n+1 not in alterations:
-                alterations[n+1] = [[letra,letraSeguinte]]
+            if n + 1 not in alterations:
+                alterations[n + 1] = [[letra, letraSeguinte]]
             else:
-                alterations[n+1].append([letra,letraSeguinte])
+                alterations[n + 1].append([letra, letraSeguinte])
             if letraSeguinte == "¨":
                 break
     if count == 100:
-        alteraFiles(nome,alterations)
+        alteraFiles(nome, alterations)
         alterations = {}
         count = 0
     else:
         count += 1
     mensagem = file.readline()[:-1]
-alteraFiles(nome,alterations)
+alteraFiles(nome, alterations)
 print(tamanho)
 fim = time()
-print(embelezeTempo(fim-inicio))
+print(embelezeTempo(fim - inicio))
 file.close()

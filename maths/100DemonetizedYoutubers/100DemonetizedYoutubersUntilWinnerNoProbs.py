@@ -17,19 +17,19 @@ try:
 except:
     fim=time()
     duracao=fim-comeco
-    print('total : '+str(total))
-    print('execução total : '+str(duracao))
-    print('media total :    '+str((duracao)/total))
-    print('100k :    '+str((duracao*100000)/total))
-    print('final :    '+str((duracao*345484498)/total))
+    print("total : "+str(total))
+    print("execução total : "+str(duracao))
+    print("media total :    "+str((duracao)/total))
+    print("100k :    "+str((duracao*100000)/total))
+    print("final :    "+str((duracao*345484498)/total))
     a=input()
 fim=time()
 duracao=fim-comeco
-print('total : '+str(total))
-print('execução total : '+str(duracao))
-print('media total :    '+str((duracao)/total))
-print('100k :    '+str((duracao*100000)/total))
-print('final :    '+str((duracao*345484498)/total))
+print("total : "+str(total))
+print("execução total : "+str(duracao))
+print("media total :    "+str((duracao)/total))
+print("100k :    "+str((duracao*100000)/total))
+print("final :    "+str((duracao*345484498)/total))
 a=input()
 
 #media 100k :       0.00045348677564376093 segundos

@@ -2,7 +2,7 @@ import pypdn
 import matplotlib.pyplot as plt
 from PIL import Image
 
-layeredImage = pypdn.read('Untitled3.pdn')
+layeredImage = pypdn.read("Untitled3.pdn")
 print(layeredImage)
 # Contains width, height, version and layers of the image within the class
 # Version being the Paint.NET version that the image was saved with

@@ -33,7 +33,7 @@ def getABegining(isTitle, tamanhoChain):
             file.close()
             return [palavraInicial]+list(data.keys())[indice].split()
 
-def getAWord(isTitle,tamanhoChain,anteriores = '¨'):
+def getAWord(isTitle,tamanhoChain,anteriores = "¨"):
     if anteriores == "¨":
         anteriores = ["¨" for a in range(tamanhoChain)]
     if isTitle:
@@ -76,12 +76,12 @@ def doATexto(isTitle):
         if palavra == "¨":
             return " ".join(texto)
         texto.append(palavra)
-        print(palavra,end=' ')
+        print(palavra,end=" ")
     palavra = palavras[-1]
     indice = 1
     while palavra != "¨":
         texto.append(palavra)
-        print(palavra,end=' ')
+        print(palavra,end=" ")
         palavra = getAWord(isTitle,tamanhoChain,texto[indice:indice+tamanhoChain])
         indice += 1
     return ""#" ".join(texto)

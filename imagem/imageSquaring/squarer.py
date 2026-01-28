@@ -23,7 +23,7 @@ def detectCorners(imagem):
                 
                 
 
-nome = 'C:\\pythonscript\\Imagens\\PokedexSemFundo\\pokemon{0:03d}.png'
+nome = "C:\\pythonscript\\Imagens\\PokedexSemFundo\\pokemon{0:03d}.png"
 for a in range(762):
     print(nome.format(a))
     imagem = Image.open(nome.format(a))

@@ -160,7 +160,7 @@ class Linha:
         return linhas
         
     def melhorPonto(self):
-        melhor = (float('inf'),float('inf'))
+        melhor = (float("inf"),float("inf"))
         for ponto in self.pontos:
             if ponto[1] < melhor[1]:
                 melhor = ponto
@@ -187,7 +187,7 @@ class Linha:
                 camada.append(Linha([self.pontos[-1]],circular = self.circular))
             return camada
         camada = []
-        melhorPontuacao = float('inf')
+        melhorPontuacao = float("inf")
         for inicioSeccao in range(tamanhoSeccao):
             novaCamada = self.divide(4,inicioSeccao)
             maiorY = novaCamada[0].pontoMedio()[1]
@@ -231,8 +231,8 @@ class Linha:
     def escreve(self,other,file):
         if(len(self) == len(other)):
             for index in range(len(self)):
-                file.write(str(self.pontos[index][0])+','+str(self.pontos[index][1]))
-                file.write(' '+str(other.pontos[index][0])+','+str(other.pontos[index][1])+'\n')
+                file.write(str(self.pontos[index][0])+","+str(self.pontos[index][1]))
+                file.write(" "+str(other.pontos[index][0])+","+str(other.pontos[index][1])+"\n")
         elif(len(self)>len(other)):
             if(len(self)-1==0):
                 multiplicador = 0
@@ -241,8 +241,8 @@ class Linha:
             for index in range(len(self)):
                 pontoInicial = self.pontos[index]
                 pontoFinal = other.pontos[int(index*multiplicador)]
-                file.write(str(pontoInicial[0])+','+str(pontoInicial[1]))
-                file.write(' '+str(pontoFinal[0])+','+str(pontoFinal[1])+'\n')
+                file.write(str(pontoInicial[0])+","+str(pontoInicial[1]))
+                file.write(" "+str(pontoFinal[0])+","+str(pontoFinal[1])+"\n")
         else:
             if(len(other)-1==0):
                 multiplicador = 0
@@ -251,8 +251,8 @@ class Linha:
             for index in range(len(other)):
                 pontoInicial = self.pontos[int(index*multiplicador)]
                 pontoFinal = other.pontos[index]
-                file.write(str(pontoInicial[0])+','+str(pontoInicial[1]))
-                file.write(' '+str(pontoFinal[0])+','+str(pontoFinal[1])+'\n')
+                file.write(str(pontoInicial[0])+","+str(pontoInicial[1]))
+                file.write(" "+str(pontoFinal[0])+","+str(pontoFinal[1])+"\n")
                 
     def imprime(self,imagem): 
         transparencia = 255
@@ -461,7 +461,7 @@ class AreaVermelha: #maybe add a separation for larger areas
             self.regioes.append([linha])
 
     def procuraCamadas(self):
-        self.imprimeCamadas('nome')
+        self.imprimeCamadas("nome")
         alterationDone = False
         for indice in [0,2,1,3]:
             linhaAtual = Linha(circular = True)
@@ -549,7 +549,7 @@ class AreaVermelha: #maybe add a separation for larger areas
         return len(self.camadas)
         
     def tamanhoMaiorRegiao(self):
-        tamanho = float('-inf')
+        tamanho = float("-inf")
         for regiao in self.regioes:
             if len(regiao) > tamanho:
                 tamanho = len(regiao)
@@ -621,12 +621,12 @@ def configPart(indice):
     print("Fazendo Parte : " + str(indice))
     parteInicial = ImagemParte(f"C:\\pythonscript\\imagem\\morphManual\\partes\\iniciais\\{indice:03d}.png")
     parteFinal = ImagemParte(f"C:\\pythonscript\\imagem\\morphManual\\partes\\finais\\{indice:03d}.png")
-    fileConfig = open(f'C:\\pythonscript\\imagem\\morphManual\\partes\\config\\{indice:03d}.txt','w')
+    fileConfig = open(f"C:\\pythonscript\\imagem\\morphManual\\partes\\config\\{indice:03d}.txt","w")
     parteInicial.escreveArea(parteFinal,fileConfig)
     print("\tParte Terminada : " + str(indice))
     fileConfig.close()
         
-if __name__ == '__main__':
+if __name__ == "__main__":
     quantiaPartes = len(os.listdir("C:\\pythonscript\\imagem\\morphManual\\partes\\finais"))
     p = multiprocessing.Pool(os.cpu_count())
     p.map(configPart,range(quantiaPartes))

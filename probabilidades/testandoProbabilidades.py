@@ -8,7 +8,7 @@ def proximo(numero):
     proximoLista=list(str(proximo))
     while(len(proximoLista)>tamanhoSeed):
         proximoLista.pop(-1)
-    return(int(''.join(proximoLista)))
+    return(int("".join(proximoLista)))
     
 
 def imprime(num):

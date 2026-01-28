@@ -28,7 +28,7 @@ def pegaInteiro(
 
 def pegaFloat(mensagem: str, valorPadrao: float | Literal["."]) -> float | Literal["."]:
     while True:
-        entrada = input(f'{mensagem} (padrão: {valorPadrao}) : ')
+        entrada = input(f"{mensagem} (padrão: {valorPadrao}) : ")
         if entrada == "":
             return valorPadrao
         try:

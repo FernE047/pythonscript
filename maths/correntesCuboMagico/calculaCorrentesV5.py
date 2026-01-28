@@ -56,8 +56,8 @@ def analisaAsListas(n):
             if first == limite:
                 fim = time()
                 duracao = fim-inicio
-                print(str(limite)+' execucoes deu : '+embelezeTempo(duracao))
-                print('Previsao de Execucao Total  : '+embelezeTempo(duracao*(math.factorial(n)/limite)))
+                print(str(limite)+" execucoes deu : "+embelezeTempo(duracao))
+                print("Previsao de Execucao Total  : "+embelezeTempo(duracao*(math.factorial(n)/limite)))
                 first = limite+1
             else:
                 first += 1
@@ -80,13 +80,13 @@ def achaCategoria(lista):
     for indice in range(1,len(lista)):
         if tamanhos[indice] != 0:
             categoria += [str(indice+1) for a in range(tamanhos[indice])]
-    return ' '.join(categoria)
+    return " ".join(categoria)
 
 inicio = time()
 try:
     dic = analisaAsListas(12)
     for cat in dic:
-        print(f'{cat:8s} : {dic[cat]}')
-    print('execucao Total  : '+embelezeTempo(time()-inicio))
+        print(f"{cat:8s} : {dic[cat]}")
+    print("execucao Total  : "+embelezeTempo(time()-inicio))
 except:
     print(gc.collect())

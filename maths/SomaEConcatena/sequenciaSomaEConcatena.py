@@ -24,23 +24,23 @@ def proximoTermo(termo):
         resultado.append(bidigito)
     if(not(resultado)):
         resultado=[termo]
-    termo=''.join(resultado)
+    termo="".join(resultado)
     return(termo)
 
 def fazMensagem(numeroTeste,termos):
-    print('\n'+str(numeroTeste)+' chega a um fim em '+str(len(termos)-1)+' passos')
-    print(','.join(termos))
+    print("\n"+str(numeroTeste)+" chega a um fim em "+str(len(termos)-1)+" passos")
+    print(",".join(termos))
 
 def imprime(termos,numeroTeste,modo,sucesso,passos):
     global quantia
     if(sucesso):
-        if(modo!='1'):
-            if(modo=='3'):
+        if(modo!="1"):
+            if(modo=="3"):
                 if(len(termos)-1==passos):
                     fazMensagem(numeroTeste,termos)
                     quantia+=1
             else:
-                if(modo=='4'):
+                if(modo=="4"):
                     if(str(numeroTeste)==termos[-1]):
                         fazMensagem(numeroTeste,termos)
                         quantia+=1
@@ -48,14 +48,14 @@ def imprime(termos,numeroTeste,modo,sucesso,passos):
                     fazMensagem(numeroTeste,termos)
                     quantia+=1
     else:
-        if(modo=='0'):
-            print(str(numeroTeste)+' estorou o limite:')
-            print(','.join(termos))
+        if(modo=="0"):
+            print(str(numeroTeste)+" estorou o limite:")
+            print(",".join(termos))
             quantia+=1
-        elif(modo=='1'):
-            if(passos=='1'):
-                print(str(numeroTeste)+':')
-                print(','.join(termos))
+        elif(modo=="1"):
+            if(passos=="1"):
+                print(str(numeroTeste)+":")
+                print(",".join(termos))
                 quantia+=1
             else:
                 print(str(numeroTeste))
@@ -67,15 +67,15 @@ while True:
     print("qual será o modo?")
     print("0 - tudo\n1 - apenas estouros\n2 - sem estouros\n3 - apenas passos\n4 - final esperado\n5 - finalização")
     modo=input()
-    if(modo=='5'):
+    if(modo=="5"):
         break
-    if(modo=='3'):
-        print('quantos passos?')
+    if(modo=="3"):
+        print("quantos passos?")
         passos=int(input())
     else:
         passos=0
-    if(modo=='1'):
-        print('com termos ou sem? [1/0]')
+    if(modo=="1"):
+        print("com termos ou sem? [1/0]")
         passos=input()
     print("procurar até quanto?")
     final=int(input())
@@ -87,5 +87,5 @@ while True:
             numeroTeste+=1
         except:
             print(numeroTeste)
-    print('quantidade total '+str(quantia))
+    print("quantidade total "+str(quantia))
     

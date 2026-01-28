@@ -3,9 +3,9 @@ from PIL import Image
 import os
 
 def limpaPasta(pasta):
-    arquivos = [pasta+'\\'+a for a in os.listdir(pasta)]
-    if('C:\\pythonscript\\imagem\\morphManual\\frames\\resized' in arquivos):
-        arquivos.pop(arquivos.index('C:\\pythonscript\\imagem\\morphManual\\frames\\resized'))
+    arquivos = [pasta+"\\"+a for a in os.listdir(pasta)]
+    if("C:\\pythonscript\\imagem\\morphManual\\frames\\resized" in arquivos):
+        arquivos.pop(arquivos.index("C:\\pythonscript\\imagem\\morphManual\\frames\\resized"))
     for arquivo in arquivos:
         os.remove(arquivo)
 
@@ -33,10 +33,10 @@ def salvaLayers(nome,pasta):
         new_im.save(f"{pasta}\\parte{n-1:02d}{nome[:-4]}.png")
         new_im.close()
 
-limpaPasta('C:\\pythonscript\\imagem\\morphManual\\partes\\partesIniciais')
-limpaPasta('C:\\pythonscript\\imagem\\morphManual\\partes\\partesFinais')
-limpaPasta('C:\\pythonscript\\imagem\\morphManual\\partes\\partesConfig')
-limpaPasta('C:\\pythonscript\\imagem\\morphManual\\frames')
-limpaPasta('C:\\pythonscript\\imagem\\morphManual\\frames\\resized')
-salvaLayers('inicial.pdn','partesIniciais')
-salvaLayers('final.pdn','partesFinais')
+limpaPasta("C:\\pythonscript\\imagem\\morphManual\\partes\\partesIniciais")
+limpaPasta("C:\\pythonscript\\imagem\\morphManual\\partes\\partesFinais")
+limpaPasta("C:\\pythonscript\\imagem\\morphManual\\partes\\partesConfig")
+limpaPasta("C:\\pythonscript\\imagem\\morphManual\\frames")
+limpaPasta("C:\\pythonscript\\imagem\\morphManual\\frames\\resized")
+salvaLayers("inicial.pdn","partesIniciais")
+salvaLayers("final.pdn","partesFinais")

@@ -24,9 +24,9 @@ def identificaCanto(canto):
 
 def imprimeBoard(board):
     for n in range(9):
-        print(str(board[n]),end='')
+        print(str(board[n]),end="")
         if (n%3==2):
-            print('')
+            print("")
 
 def possivel(board,ultimo,proximo):
     if(board[proximo]):
@@ -74,7 +74,7 @@ def calcula(board,ultimo,total,imp):
         if(imp):
             imprimeBoard(board)
             print(total)
-            print('')
+            print("")
     if(grau==9):
         return(total)
     for n in range(9):

@@ -24,7 +24,7 @@ class Heroi:
         pass
 
 def herois(nome):
-    if(nome == 'lolita'):
+    if(nome == "lolita"):
         primeira = Skill([10,0],[70,10],[[200,True,55],[7.5,False,0.5]],6)
         primeira = Skill([10,0],[70,10],[[200,True,55],[7.5,False,0.5]],6)
         return Heroi(260,115,0,27,10,2579,480,0.786,48,12,0,0,[primeira,Skill(),Skill()])

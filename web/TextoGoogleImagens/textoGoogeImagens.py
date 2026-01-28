@@ -81,19 +81,19 @@ def encontraSite(palavra: str) -> str:
 def achaGenius(informacao):
     for info in informacao:
         try:
-            bomResultado = info.select('a')[0].get('href')
+            bomResultado = info.select("a")[0].get("href")
         except:
             continue
         site = encontraSite(bomResultado)
         nomeSite = qualSite(site)
-        if nomeSite=='genius':
+        if nomeSite=="genius":
             return(site)
         
 def achaLetra(site):
-    titulo = siteProcura(site,'.header_with_cover_art-primary_info-title')
+    titulo = siteProcura(site,".header_with_cover_art-primary_info-title")
     titulo = limpa(titulo)
     print(titulo+"\n")
-    informacao = siteProcura(site,'.lyrics')
+    informacao = siteProcura(site,".lyrics")
     musica = limpa(informacao)
     print(musica+"\n")
     musicaSeparada=musica.split(" ")
@@ -102,7 +102,7 @@ def achaLetra(site):
 def baixaImagens(lyrics,titulo):
     total=len(lyrics)
     titulo=titulo.proper()
-    pasta=os.path.join('C:\\','pythonscript','web','TextoGoogleImagens',titulo)
+    pasta=os.path.join("C:\\","pythonscript","web","TextoGoogleImagens",titulo)
     palavras={}
     for number,palavra in enumerate(lyrics):
         if(palavra not in palavras):
@@ -117,23 +117,23 @@ def baixaImagens(lyrics,titulo):
         print("palavra "+str(n+1)+" de "+str(total)+" :")
         print(palavra)
         quantia=len(lista)
-        os.system('google_images_download.py -o "'+pasta+'" -k "'+palavra+'" -l '+str(quantia))
+        os.system("google_images_download.py -o ""+pasta+"" -k ""+palavra+"" -l "+str(quantia))
         imagens=os.listdir(os.path.join(pasta,palavra))
         for numero,nome in enumerate(imagens):
             nomeOriginal = os.path.join(os.path.join(pasta,palavra),nome)
-            nomeNovo = os.path.join(pasta,f'{lista[numero]+1:03d}-{palavra}.png')
+            nomeNovo = os.path.join(pasta,f"{lista[numero]+1:03d}-{palavra}.png")
             os.rename(nomeOriginal,nomeNovo)
         os.rmdir(os.path.join(pasta,palavra))
         
         
 
 def fazDiretorio(diretorio):
-    diretorio='C:/pythonscript/EARWORM/'+diretorio
+    diretorio="C:/pythonscript/EARWORM/"+diretorio
     os.mkdir(diretorio)
 
 def novoSite(site):
-    informacao=siteProcura(site,'.header_with_cover_art-primary_info-primary_artist')
-    return(informacao[0].get('href'))
+    informacao=siteProcura(site,".header_with_cover_art-primary_info-primary_artist")
+    return(informacao[0].get("href"))
     
 while True:
     print("\ndigite o titulo da música")

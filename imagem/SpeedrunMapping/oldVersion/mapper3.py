@@ -125,16 +125,16 @@ DT = DDP*2+1 #DISTANCIATOTAL
 #PX = DT #PASSOSX             menor = mais lento e melhor
 
 #Argumentos do FFMPEG
-diretorioVideo = 'C:\\pythonscript\\imagem\\SpeedrunMapping\\video'
-origemVideo = '-i C:\pythonscript\\imagem\\SpeedrunMapping\\level.mp4'#'-i C:\\pythonscript\\videos\\videos\\video0002.mp4'
-destinoTemp = diretorioVideo + '\\frame%04d.png'
-extraArguments = '-r {0:02d}/1'
-processoArgs = ['ffmpeg',origemVideo,extraArguments,destinoTemp]
+diretorioVideo = "C:\\pythonscript\\imagem\\SpeedrunMapping\\video"
+origemVideo = "-i C:\pythonscript\\imagem\\SpeedrunMapping\\level.mp4"#"-i C:\\pythonscript\\videos\\videos\\video0002.mp4"
+destinoTemp = diretorioVideo + "\\frame%04d.png"
+extraArguments = "-r {0:02d}/1"
+processoArgs = ["ffmpeg",origemVideo,extraArguments,destinoTemp]
 
 fps = 30
 
 processoArgs[2] = extraArguments.format(fps)
-#subprocess.call (' '.join(processoArgs))
+#subprocess.call (" ".join(processoArgs))
 
 diretorioFrames = diretorioVideo+"\\frame{0:04d}.png"
 
@@ -152,13 +152,13 @@ for n in range(90,framesTotais):
         DT = DDP*2+1
         adds = comparaFrames(mapa,frameAtual,posicao)
     mapa,posicao = ampliaMapa(mapa,frameAtual,posicao,adds)
-    '''fim = time()
+    """fim = time()
     duracao = fim-inicio
     inicio = time()
     print()
     print(str(n) + " : " + embelezeTempo(duracao))
     print(embelezeTempo(duracao*(framesTotais-n)))
-    print(adds)'''
+    print(adds)"""
     mapa.savefig("mapa.png")
 #except:
 #    print("deu erro")

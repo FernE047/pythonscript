@@ -15,7 +15,7 @@ with open("input.txt", "r") as caption_txt, open("output.str", "w") as caption_s
             caption_str.write(f"{line}\n")
             line = ""
             continue
-        # comma = line.find(',')
+        # comma = line.find(",")
         modified_line = list(line)
         modified_line[9] = "."
         modified_line[23] = "."

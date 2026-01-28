@@ -1,19 +1,19 @@
 from PIL import Image
 import os
 
-directory = 'C:\\pythonscript\\imagem\\morphManual\\'
+directory = "C:\\pythonscript\\imagem\\morphManual\\"
 
-imagemInicial = Image.open(directory + 'inicial.png')
-imagemFinal = Image.open(directory + 'final.png')
-print('recolorindo...')
+imagemInicial = Image.open(directory + "inicial.png")
+imagemFinal = Image.open(directory + "final.png")
+print("recolorindo...")
 
-inicialRecolor = Image.open(directory + 'inicial.png')
-finalRecolor = Image.open(directory + 'final.png')
-for fileName in os.listdir(directory + 'partes\\config'):
-    file = open(directory + 'partes\\config\\' + fileName,'r')
+inicialRecolor = Image.open(directory + "inicial.png")
+finalRecolor = Image.open(directory + "final.png")
+for fileName in os.listdir(directory + "partes\\config"):
+    file = open(directory + "partes\\config\\" + fileName,"r")
     linha = file.readline()
     while(linha):
-        coordInicial,coordFinal = [tuple([int(b) for b in coord.split(',')]) for coord in linha.split(' ')]
+        coordInicial,coordFinal = [tuple([int(b) for b in coord.split(",")]) for coord in linha.split(" ")]
         pixelFinal = imagemFinal.getpixel(coordFinal)
         pixelInicial = imagemInicial.getpixel(coordInicial)
         inicialRecolor.putpixel(coordInicial,pixelFinal)
