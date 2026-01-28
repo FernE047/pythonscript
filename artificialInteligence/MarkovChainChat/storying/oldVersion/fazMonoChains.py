@@ -10,63 +10,60 @@ def rename_file(source_file_name: str, destination_file_name: str) -> None:
         destination_file.write(content)
 
 
-def alteraMonoChainFile(termo, isTitulo):
-    if isTitulo:
-        diretorio = "monoChainTitle"
+def update_mono_chain_file(keywords: list[str], is_title: bool) -> None:
+    if is_title:
+        directory = "monoChainTitle"
     else:
-        diretorio = "monoChainStory"
-    nomeTemp = diretorio + "//c.txt"
-    nomeReal = diretorio + "//chain.txt"
-    fileWrite = open(nomeTemp, "w")
-    if "chain.txt" in os.listdir(diretorio):
-        fileRead = open(nomeReal, "r")
-        linha = fileRead.readline()
-        encontrou = False
-        indice = len(termo)
-        while linha:
-            palavras = linha.split()
-            if palavras[:-1] == termo:
-                palavras[-1] = str(int(palavras[-1]) + 1)
-                fileWrite.write(" ".join(palavras) + "\n")
-                encontrou = True
+        directory = "monoChainStory"
+    update_keyword_frequency(keywords, directory)
+    rename_file(f"{directory}/c.txt", f"{directory}/chain.txt")
+
+def update_keyword_frequency(keywords: list[str], directory: str) -> None:
+    with open(f"{directory}/c.txt", "w", encoding="utf-8") as file_write:
+        if "chain.txt" not in os.listdir(directory):
+            file_write.write(" ".join(keywords) + " 1\n")
+            return
+        with open(f"{directory}/chain.txt", "r", encoding="utf-8") as file_read:
+            line = file_read.readline()
+            keyword_found = False
+            while line:
+                words = line.split()
+                if words[:-1] == keywords:
+                    words[-1] = str(int(words[-1]) + 1)
+                    file_write.write(" ".join(words) + "\n")
+                    keyword_found = True
+                else:
+                    file_write.write(line)
+                line = file_read.readline()
+            if not keyword_found:
+                file_write.write(" ".join(keywords) + " 1\n")
+
+
+def generate_markov_chain(text:str, is_title:bool=False) -> None:
+    words = text.split()
+    length = len(words)
+    for index in range(length):
+        word = words[index]
+        if index == 0:
+            update_mono_chain_file(["¨", word], is_title)
+            if length == 1:
+                update_mono_chain_file([word, "¨"], is_title)
+                return
+        if length > 1:
+            if index >= length - 1:
+                next_word = "¨"
             else:
-                fileWrite.write(linha)
-            linha = fileRead.readline()
-        if not encontrou:
-            fileWrite.write(" ".join(termo) + " 1\n")
-        fileRead.close()
-    else:
-        fileWrite.write(" ".join(termo) + " 1\n")
-    fileWrite.close()
-    renome(nomeTemp, nomeReal)
+                next_word = words[index + 1]
+            update_mono_chain_file([word, next_word], is_title)
+            if next_word == "¨":
+                return
 
 
-def fazMonoChain(texto, isTitulo=False):
-    palavras = texto.split()
-    tamanho = len(palavras)
-    for n in range(tamanho):
-        palavra = palavras[n]
-        if n == 0:
-            alteraMonoChainFile(["¨", palavra], isTitulo)
-            if tamanho == 1:
-                alteraMonoChainFile([palavra, "¨"], isTitulo)
-                break
-        if tamanho > 1:
-            if n >= tamanho - 1:
-                palavraSeguinte = "¨"
-            else:
-                palavraSeguinte = palavras[n + 1]
-            alteraMonoChainFile([palavra, palavraSeguinte], isTitulo)
-            if palavraSeguinte == "¨":
-                break
-
-
-for name in os.listdir("historias"):
+for name in os.listdir("stories"):
     print(name)
-    file = open("historias//" + name)
-    elementos = file.readline().split(" : ")
-    historia = elementos[-1:][0]
-    titulo = ": ".join(elementos[:-1])
-    fazMonoChain(titulo, isTitulo=True)
-    fazMonoChain(historia)
-    file.close()
+    with open(f"stories/{name}", "r", encoding="utf-8") as  file:
+        title_and_story_parts = file.readline().split(" : ")
+        story = title_and_story_parts[-1:][0]
+        title = " : ".join(title_and_story_parts[:-1])
+        generate_markov_chain(title, is_title=True)
+        generate_markov_chain(story)
