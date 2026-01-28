@@ -1,58 +1,55 @@
+def write_lines(name: str) -> None:
+    with open(f"{name}.txt", "r") as file:
+        text = file.read()
+    with open(f"{name}NoTabs.txt", "w") as output_file:
+        output_file.write("<")
+        for character in list(text)[1:]:
+            if character == "<":
+                character = "\n<"
+            output_file.write(character)
 
-def fazLinha(nome):
-    inputFile=open(nome+".txt","r")
-    texto=inputFile.read()
-    inputFile.close()
-    outputFile=open(nome+"NoTabs.txt","w")
-    outputFile.write("<")
-    for a in range(1,len(list(texto))):
-        caracter=texto[a]
-        if(caracter=="<"):
-            caracter="\n<"
-        outputFile.write(caracter)
-    outputFile.close()  
 
-def fazTabulacao(nome,ident,tabs=False):
-    if(tabs):
-        add=".txt"
+def make_tabulation(name: str, ident: str, tabs: bool = False) -> None:
+    if tabs:
+        file_name = f"{name}.txt"
     else:
-        add="NoTabs.txt"
-    inputFile=open(nome+add,"r")
-    texto=inputFile.readlines()
-    inputFile.close()
-    outputFile=open(nome+"Final.txt","w")
-    level=-1
-    if ident=="0":
-        ident="\t"
-    else:
-        ident=" "
-    for linha in texto:
-        tagFim=linha.find(">")
-        if(linha[tagFim-1]!="/"):
-            if(linha[1]!="/"):
-                level+=1
-                linha=level*ident+linha+"\n"
-            else:
-                linha=level*ident+linha+"\n"
-                level+=-1
-            outputFile.write(linha)
-    outputFile.close()
+        file_name = f"{name}NoTabs.txt"
+    with open(file_name, "r") as file:
+        lines = file.readlines()
+    with open(f"{name}Final.txt", "w") as output_file:
+        level = -1
+        if ident == "0":
+            ident = "\t"
+        else:
+            ident = " "
+        for line in lines:
+            end_tag = line.find(">")
+            if line[end_tag - 1] != "/":
+                if line[1] != "/":
+                    level += 1
+                    line = level * ident + line + "\n"
+                else:
+                    line = level * ident + line + "\n"
+                    level += -1
+                output_file.write(line)
 
-escolha="1"
-while(escolha!="0"):
-    print("\n1 - não tenho nada")
-    print("2 - não tem identação")
-    print("0 - sair")
-    escolha=input()
-    if(escolha!="0"):
-        print("nome do arquivo (obs: sem ".txt")")
-        nome=input()
-        print("caracter para identação")
-        print("0 - tab")
-        print("1 - espaço")
-        ident=input()
-    if(escolha=="1"):
-        fazLinha(nome)
-        fazTabulacao(nome,ident)
-    elif(escolha=="2"):
-        fazTabulacao(nome,ident)
+
+user_choice = "1"
+while user_choice != "0":
+    print("\n1 - no lines and no indentation")
+    print("2 - no indentation")
+    print("0 - exit")
+    user_choice = input()
+    if user_choice == "0":
+        break
+    print('file name (without extension)')
+    name = input()
+    print("character for indentation")
+    print("0 - tab")
+    print("1 - space")
+    ident = input()
+    if user_choice == "1":
+        write_lines(name)
+        make_tabulation(name, ident)
+    elif user_choice == "2":
+        make_tabulation(name, ident)
