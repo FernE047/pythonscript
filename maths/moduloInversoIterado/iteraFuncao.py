@@ -1,5 +1,19 @@
-
-import userUtil
+def pegaInteiro(
+    mensagem: str, minimo: int | None = None, maximo: int | None = None
+) -> int:
+    while True:
+        entrada = input(f"{mensagem} : ")
+        try:
+            valor = int(entrada)
+            if (minimo is not None) and (valor < minimo):
+                print(f"valor deve ser maior ou igual a {minimo}")
+                continue
+            if (maximo is not None) and (valor > maximo):
+                print(f"valor deve ser menor ou igual a {maximo}")
+                continue
+            return valor
+        except Exception as _:
+            print("valor inválido, tente novamente")
 
 def formula(a,b,n):
     if((b==0)and(n==0)):
@@ -45,11 +59,11 @@ def itera(funcao,inicio=0):
     print(str(a+1)+" : "+str(valor)+" : "+fatoresPrimos(valor))
 
 while True:
-    base = userUtil.pegaInteiro("\nescreva base")
+    base = pegaInteiro("\nescreva base")
     if(base==0):
         break
-    resto = userUtil.pegaInteiro("escreva resto")
-    comeco = userUtil.pegaInteiro("escreva o inicio")
+    resto = pegaInteiro("escreva resto")
+    comeco = pegaInteiro("escreva o inicio")
     funcao = lambda x : formula(base,resto,x)
     if(resto==0):
         itera(funcao,inicio=comeco)

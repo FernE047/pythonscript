@@ -1,8 +1,24 @@
 from numpy.random import randint
 from string import ascii_uppercase
-import userUtil
-
 from typing import Literal, overload
+
+
+def pegaInteiro(
+    mensagem: str, minimo: int | None = None, maximo: int | None = None
+) -> int:
+    while True:
+        entrada = input(f"{mensagem} : ")
+        try:
+            valor = int(entrada)
+            if (minimo is not None) and (valor < minimo):
+                print(f"valor deve ser maior ou igual a {minimo}")
+                continue
+            if (maximo is not None) and (valor > maximo):
+                print(f"valor deve ser menor ou igual a {maximo}")
+                continue
+            return valor
+        except Exception as _:
+            print("valor inválido, tente novamente")
 
 
 @overload
@@ -155,13 +171,13 @@ def jogadaHumana(board):
     tamanho=len(board)
     while True:
         while True:
-            y=userUtil.pegaInteiro("digite Y")
+            y=pegaInteiro("digite Y")
             if((y<0)or(y>tamanho-1)):
                 print("numero invalido")
             else:
                 break
         while True:
-            x=userUtil.pegaInteiro("digite X")
+            x=pegaInteiro("digite X")
             if((x<0)or(x>tamanho-1)):
                 print("numero invalido")
             else:
@@ -260,8 +276,8 @@ if(IMPRESSAO):
     ESTRATEGIAS+=["humano"]
 while True:
     ESTRATEGIAS=["aleatorios"]+list(ESTRATEGIAS)
-    partidasTotal=userUtil.pegaInteiro("digite quantas partidas serão jogadas")
-    tamanho=userUtil.pegaInteiro("digite o tamanho do tabuleiro")  #máximo:10
+    partidasTotal=pegaInteiro("digite quantas partidas serão jogadas")
+    tamanho=pegaInteiro("digite o tamanho do tabuleiro", maximo = 10)
     seed=0
     estrategia1=choose_from_options("digite a estrategia do player 1",ESTRATEGIAS)
     ESTRATEGIAS.pop(0)

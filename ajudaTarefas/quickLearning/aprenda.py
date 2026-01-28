@@ -32,6 +32,21 @@ def choose_from_options(
         except (ValueError, IndexError):
             user_choice = input("not valid, try again: ")
 
+def pegaInteiro(mensagem: str, minimo: int| None = None, maximo: int| None = None) -> int:
+    while True:
+        entrada = input(f'{mensagem} : ')
+        try:
+            valor = int(entrada)
+            if (minimo is not None) and (valor < minimo):
+                print(f"valor deve ser maior ou igual a {minimo}")
+                continue
+            if (maximo is not None) and (valor > maximo):
+                print(f"valor deve ser menor ou igual a {maximo}")
+                continue
+            return valor
+        except Exception as _:
+            print("valor inválido, tente novamente")
+
 #simple system to register answers and questions
 #the user can create categories and modules
 #each module has a question and answer file
@@ -62,7 +77,7 @@ def editarModulo(pasta,modulo):
     if escolha in ['Alterar','Remover'] :
         imprimeModulo(pasta + '\\' + modulo)
         quantia = quantiaLinhas('\\'.join([pasta,modulo,'answer.txt']))
-        indiceAltera = userUtil.pegaInteiro("digite o indice que deseja alterar",minimo = 1,maximo = quantia)
+        indiceAltera = pegaInteiro("digite o indice que deseja alterar",minimo = 1,maximo = quantia)
         fileRespostas = open('\\'.join([pasta,modulo,'answer.txt']),'r')
         filePerguntas = open('\\'.join([pasta,modulo,'question.txt']),'r')
         fileRespostasTemp = open('\\'.join([pasta,modulo,'answer.txt.tmp']),'w')

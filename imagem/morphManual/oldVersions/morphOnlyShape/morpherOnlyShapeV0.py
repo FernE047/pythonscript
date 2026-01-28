@@ -1,5 +1,4 @@
 from PIL import Image
-from userUtil import pegaInteiro
 from time import time
 
 def funcaoAfim(inicio,fim,total,n):

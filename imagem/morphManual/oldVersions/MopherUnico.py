@@ -1,7 +1,24 @@
-#from userUtil import pegaInteiro
 from PIL import Image
 import pypdn
 import os
+
+
+def pegaInteiro(
+    mensagem: str, minimo: int | None = None, maximo: int | None = None
+) -> int:
+    while True:
+        entrada = input(f"{mensagem} : ")
+        try:
+            valor = int(entrada)
+            if (minimo is not None) and (valor < minimo):
+                print(f"valor deve ser maior ou igual a {minimo}")
+                continue
+            if (maximo is not None) and (valor > maximo):
+                print(f"valor deve ser menor ou igual a {maximo}")
+                continue
+            return valor
+        except Exception as _:
+            print("valor inválido, tente novamente")
 
 '''
 

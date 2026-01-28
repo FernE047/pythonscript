@@ -1,8 +1,25 @@
 from PIL import Image
-from userUtil import pegaInteiro
 from time import time
 from os import cpu_count
 import multiprocessing
+
+
+def pegaInteiro(
+    mensagem: str, minimo: int | None = None, maximo: int | None = None
+) -> int:
+    while True:
+        entrada = input(f"{mensagem} : ")
+        try:
+            valor = int(entrada)
+            if (minimo is not None) and (valor < minimo):
+                print(f"valor deve ser maior ou igual a {minimo}")
+                continue
+            if (maximo is not None) and (valor > maximo):
+                print(f"valor deve ser menor ou igual a {maximo}")
+                continue
+            return valor
+        except Exception as _:
+            print("valor inválido, tente novamente")
 
 def funcaoAfim(inicio,fim,total,n):
     elemento = []

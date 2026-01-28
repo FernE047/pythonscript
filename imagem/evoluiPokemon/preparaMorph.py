@@ -1,7 +1,24 @@
-from userUtil import pegaInteiro as pInt
 from PIL import Image
 from pastaImagens import pegaImagem as pI
 import os
+
+
+def pegaInteiro(
+    mensagem: str, minimo: int | None = None, maximo: int | None = None
+) -> int:
+    while True:
+        entrada = input(f"{mensagem} : ")
+        try:
+            valor = int(entrada)
+            if (minimo is not None) and (valor < minimo):
+                print(f"valor deve ser maior ou igual a {minimo}")
+                continue
+            if (maximo is not None) and (valor > maximo):
+                print(f"valor deve ser menor ou igual a {maximo}")
+                continue
+            return valor
+        except Exception as _:
+            print("valor inválido, tente novamente")
 
 def limpaPasta(pasta):
     arquivos = [pasta+'\\'+a for a in os.listdir(pasta)]
@@ -12,7 +29,7 @@ def limpaPasta(pasta):
 
 def salvaLayers(nome):
     fundo = False
-    indice = pInt("escolha um pokemon entre 0 e 761", minimo = 0, maximo = 761)
+    indice = pegaInteiro("escolha um pokemon entre 0 e 761", minimo = 0, maximo = 761)
     im = Image.open(pI('PokedexSemFundo',indice))
     im.save('C:\\pythonscript\\imagem\\evoluiPokemon\\' + nome + ".png")
     im.close()

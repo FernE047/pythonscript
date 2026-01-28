@@ -1,6 +1,23 @@
 from PIL import Image
 from userUtil import pegaImagem as pImg
-from userUtil import pegaInteiro as pInt
+
+
+def pegaInteiro(
+    mensagem: str, minimo: int | None = None, maximo: int | None = None
+) -> int:
+    while True:
+        entrada = input(f"{mensagem} : ")
+        try:
+            valor = int(entrada)
+            if (minimo is not None) and (valor < minimo):
+                print(f"valor deve ser maior ou igual a {minimo}")
+                continue
+            if (maximo is not None) and (valor > maximo):
+                print(f"valor deve ser menor ou igual a {maximo}")
+                continue
+            return valor
+        except Exception as _:
+            print("valor inválido, tente novamente")
 
 def processaImagemPorImagem(imagemInicial,imagemFinal,frames):
     tamanho=imagemInicial.size
@@ -24,7 +41,7 @@ def processaPixelPorPixel(imagemInicial,imagemFinal,frames):
 
 imagemInicial = pImg(texto='\ndigite o assunto da primeira imagem',infoAdicional=1)
 imagemFinal = pImg(texto='\ndigite o assunto da última imagem',infoAdicional=1)
-frames = pInt('\ndigite a quantidade de frames do meio')
+frames = pegaInteiro('\ndigite a quantidade de frames do meio')
 larg1,alt1=imagemInicial.size
 larg2,alt2=imagemFinal.size
 tamanho1=larg1*alt1

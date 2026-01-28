@@ -1,6 +1,29 @@
-from userUtil import pegaInteiro
 import numpy as np
 from typing import Literal
+
+
+def pegaInteiro(
+    mensagem: str,
+    default: int | Literal["."] | None = None,
+    minimo: int | None = None,
+    maximo: int | None = None,
+) -> int | Literal["."]:
+    while True:
+        entrada = input(f"{mensagem} : ")
+        if entrada == "":
+            if default is not None:
+                return default
+        try:
+            valor = int(entrada)
+            if (minimo is not None) and (valor < minimo):
+                print(f"valor deve ser maior ou igual a {minimo}")
+                continue
+            if (maximo is not None) and (valor > maximo):
+                print(f"valor deve ser menor ou igual a {maximo}")
+                continue
+            return valor
+        except Exception as _:
+            print("valor inválido, tente novamente")
 
 def pegaFloat(mensagem: str, valorPadrao: float | Literal["."]) -> float | Literal["."]:
     while True:

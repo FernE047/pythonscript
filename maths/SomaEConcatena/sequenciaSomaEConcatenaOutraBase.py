@@ -1,6 +1,23 @@
 from typing import Literal, overload
 
 
+def pegaInteiro(
+    mensagem: str, minimo: int | None = None, maximo: int | None = None
+) -> int:
+    while True:
+        entrada = input(f"{mensagem} : ")
+        try:
+            valor = int(entrada)
+            if (minimo is not None) and (valor < minimo):
+                print(f"valor deve ser maior ou igual a {minimo}")
+                continue
+            if (maximo is not None) and (valor > maximo):
+                print(f"valor deve ser menor ou igual a {maximo}")
+                continue
+            return valor
+        except Exception as _:
+            print("valor inválido, tente novamente")
+
 @overload
 def choose_from_options(
     prompt: str, options: list[str], mode: Literal["text"]
@@ -112,20 +129,20 @@ while True:
     quantia=0
     modo=choose_from_options("qual será o modo?",["Tudo","Apenas Estouros","Sem Estouros","Apenas Passos","Final Esperado","Troca Base","Troca Limites","Finalização"],mode="text")
     if(modo=='5'):
-        base=userUtil.pegaInteiro("digite a nova base")
+        base=pegaInteiro("digite a nova base")
         continue
     if(modo=='6'):
-        limite=userUtil.pegaInteiro("digite o novo limite")
+        limite=pegaInteiro("digite o novo limite")
         continue
     if(modo=='7'):
         break
     if(modo=='3'):
-        passos=userUtil.pegaInteiro("quantos passos?")
+        passos=pegaInteiro("quantos passos?")
     else:
         passos=0
     if(modo=='1'):
         passos=choose_from_options("termos?",["sem","com"],mode="text")
-    final=userUtil.pegaInteiro("procurar até quanto?")
+    final=pegaInteiro("procurar até quanto?")
     for numeroTeste in range(final+1):
         try:
             termo=converte(numeroTeste,base)
