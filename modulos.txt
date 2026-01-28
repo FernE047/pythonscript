@@ -1,9 +1,6 @@
 textos - fun��o para string
-	tudoMinuscula - PEGA texto RETORNA texto com tudo minuculo
-	tiraEspaco - PEGA texto RETORNA texto sem espa�os adicionais
 	limpa - PEGA sopa RETORNA apenas texto alphanum sem espa�os adicionais com tudo minusculo
 	separaLinhas - PEGA texto RETORNA lista de linhas
-	tiraEspacoBranco - PEGA texto RETORNA texto sem espa�o em branco (' ','\n','\t')
 	limpaNomeArquivo - PEGA texto RETORNA texto que possa ser nome de arquivo
 	fazNomeArquivo - PEGA texto RETORNA nome bonito para arquivo
 	embelezeTempo - PEGA tempo RETORNA texto com tempo em segundo, minutos, horas e etc...

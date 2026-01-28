@@ -1,7 +1,14 @@
-from textos import tiraEspacoBranco as tEB
 from time import time
 from textos import embelezeTempo
 import os
+
+
+def tiraEspaçoBranco(texto: str) -> str:
+    for espaco in [" ", "\n", "\t"]:
+        if espaco in texto:
+            texto = texto.replace(espaco, "")
+    return texto
+
 
 def criaTabuleiro(config):
     matriz = []
@@ -9,7 +16,7 @@ def criaTabuleiro(config):
     tabuleiro = {'matriz':matriz,'espacos':espacosVazios}
     for y in range(9):
         tabuleiro['matriz'].append([0,0,0,0,0,0,0,0,0])
-    confLimpa = tEB(config,tiraTudo = True)
+    confLimpa = tiraEspaçoBranco(config)
     for a,valor in enumerate(list(confLimpa)):
         if(a>80):
             break

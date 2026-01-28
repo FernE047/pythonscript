@@ -26,12 +26,20 @@ def procuraTipo(informacao,alolan,mega=False):
             tipos.append(tipo[17:-4].title())
     return(tipos)
 
+
+def tiraEspaçoBranco(texto: str) -> str:
+    for espaco in [" ", "\n", "\t"]:
+        if espaco in texto:
+            texto = texto.replace(espaco, "")
+    return texto
+
+
 def limpaInfo(informacao):
     informacao.pop(1)
     informacao.pop(1)
     informacao.pop(2) 
     for index in range(6):
-        informacao[index]=textos.tiraEspacoBranco(informacao[index].getText())
+        informacao[index]=tiraEspaçoBranco(informacao[index].getText())
     return(informacao)
 
 def procuraMegaIndex(info,nome):

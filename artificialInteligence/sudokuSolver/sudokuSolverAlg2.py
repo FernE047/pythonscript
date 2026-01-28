@@ -1,11 +1,15 @@
 from typing import Literal, overload
 from userUtil import pegaString as pS
-from textos import tiraEspacoBranco as tEB
 from time import time
 from textos import embelezeTempo
 import os
 
 
+def tiraEspaçoBranco(texto: str) -> str:
+    for espaco in [" ", "\n", "\t"]:
+        if espaco in texto:
+            texto = texto.replace(espaco, "")
+    return texto
 
 
 @overload
@@ -41,7 +45,7 @@ class Tabuleiro:
         for a in range(9):
             self.matrizTab.append([0,0,0,0,0,0,0,0,0])
         if(confInicial):
-            confLimpa = tEB(confInicial,tiraTudo=True)
+            confLimpa = tiraEspaçoBranco(confInicial)
             for a,valor in enumerate(list(confLimpa)):
                 if(a>80):
                     break

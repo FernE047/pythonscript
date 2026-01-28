@@ -1,10 +1,15 @@
 from typing import Literal, overload
 from userUtil import pegaString as pS
-from textos import tiraEspacoBranco as tEB
 from time import time
 from textos import embelezeTempo
 import os
 
+
+def tiraEspaçoBranco(texto: str) -> str:
+    for espaco in [" ", "\n", "\t"]:
+        if espaco in texto:
+            texto = texto.replace(espaco, "")
+    return texto
 
 
 @overload
@@ -47,7 +52,7 @@ def criaTabuleiro(config):
     tabuleiro = [matriz,espacosVazios]
     for y in range(9):
         tabuleiro[0].append(['0','0','0','0','0','0','0','0','0'])
-    confLimpa = tEB(config,tiraTudo = True)
+    confLimpa = tiraEspaçoBranco(config)
     for a,valor in enumerate(list(confLimpa)):
         if(a>80):
             break

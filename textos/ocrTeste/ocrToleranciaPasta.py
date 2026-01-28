@@ -4,6 +4,14 @@ import pytesseract as ocr
 import time
 import textos
 
+
+def tiraEspaçoBranco(texto: str) -> str:
+    for espaco in [" ", "\n", "\t"]:
+        if espaco in texto:
+            texto = texto.replace(espaco, "")
+    return texto
+
+
 def applyTolerancia(img,tolerancia):
     imagem=Image.open(img)
     width,height=imagem.size
@@ -28,7 +36,7 @@ for imagem in imagens:
     print('\n'+imagem)
     startProcessing=time.time()
     phrase = ocr.image_to_string(applyTolerancia(imagem,20), lang='por')
-    phraseBonita=textos.tiraEspacoBranco(phrase)
+    phraseBonita=tiraEspaçoBranco(phrase)
     endProcessing=time.time()
     print(str(len(phraseBonita)))
     print("procesamento: "+textos.embelezeTempo(endProcessing-startProcessing))

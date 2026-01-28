@@ -18,6 +18,14 @@ def melhora(img):
     binimagem = Image.fromarray(thresh)
     return(binimagem)
 
+
+def tiraEspaçoBranco(texto: str) -> str:
+    for espaco in [" ", "\n", "\t"]:
+        if espaco in texto:
+            texto = texto.replace(espaco, "")
+    return texto
+
+
 start=time.time()
 print('digite um assunto')
 assunto=input()
@@ -32,7 +40,7 @@ for imagem in imagens:
     print('\n'+imagem)
     imagem=melhora(imagem)
     phrase = ocr.image_to_string(imagem, lang='eng')
-    phraseBonita=textos.tiraEspacoBranco(phrase)
+    phraseBonita=tiraEspaçoBranco(phrase)
     print(str(len(phraseBonita))+'\n')
     print(phraseBonita)
 final=time.time()
