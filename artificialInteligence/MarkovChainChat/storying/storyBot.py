@@ -1,100 +1,99 @@
 from random import randint
 
 
-def getABegining(isTitle):
-    palavraInicial = getAWord(isTitle)
-    if isTitle:
-        diretorio = DIRECTORY + "chainTitle//" + str(TAMANHO)
-    else:
-        diretorio = DIRECTORY + "chainStory//" + str(TAMANHO)
-    nome = diretorio + "//chain.txt"
-    file = open(nome)
-    linha = file.readline().lower()
-    data = {}
-    while linha:
-        palavras = linha.split()
-        if palavraInicial == palavras[0]:
-            palavraUsaveis = palavras[1:-1]
-            numero = int(palavras[-1])
-        else:
-            linha = file.readline().lower()
-            continue
-        palavra = " ".join(palavraUsaveis)
-        if palavra not in data.keys():
-            data[palavra] = numero
-        else:
-            data[palavra] += numero
-        linha = file.readline().lower()
-    total = sum(list(data.values()))
-    escolhido = randint(1, total)
-    soma = 0
-    for indice, valor in enumerate(data.values()):
-        soma += valor
-        if soma >= escolhido:
-            file.close()
-            return [palavraInicial] + list(data.keys())[indice].split()
-
-
-def getAWord(isTitle, anteriores="¨"):
-    if anteriores == "¨":
-        anteriores = ["¨" for a in range(TAMANHO)]
-    if isTitle:
-        diretorio = DIRECTORY + "chainTitle//" + str(TAMANHO)
-    else:
-        diretorio = DIRECTORY + "chainStory//" + str(TAMANHO)
-    anterior = " ".join(anteriores)
-    nome = diretorio + "//chain.txt"
-    file = open(nome)
-    linha = file.readline().lower()
-    data = {}
-    while linha:
-        palavras = linha.split()
-        palavraTeste = " ".join(palavras[:-2])
-        if anterior == palavraTeste:
-            palavra = palavras[-2]
-            numero = int(palavras[-1])
-        else:
-            linha = file.readline().lower()
-            continue
-        if palavra not in data.keys():
-            data[palavra] = numero
-        else:
-            data[palavra] += numero
-        linha = file.readline().lower()
-    total = sum(list(data.values()))
-    escolhido = randint(1, total)
-    soma = 0
-    for indice, valor in enumerate(data.values()):
-        soma += valor
-        if soma >= escolhido:
-            file.close()
-            return list(data.keys())[indice]
-
-
-def doATexto(isTitle):
-    texto = []
-    palavras = getABegining(isTitle)
-    for palavra in palavras[:-1]:
-        if palavra == "¨":
-            return " ".join(texto)
-        texto.append(palavra)
-        print(palavra, end=" ")
-    palavra = palavras[-1]
-    indice = 1
-    while palavra != "¨":
-        texto.append(palavra)
-        print(palavra, end=" ")
-        palavra = getAWord(isTitle, texto[indice : indice + TAMANHO])
-        indice += 1
-    return ""  # " ".join(texto)
-
-
-DIRECTORY = (
-    "C:\\pythonscript\\artificialInteligence\\MarkovChainChat\\storying\\FanficAnime\\"
-)
+DIRECTORY = "./FanficAnime/"
 TAMANHO = 1
+
+
+def generate_initial_words(is_title: bool) -> list[str]:
+    initial_word = generate_word(is_title)
+    if is_title:
+        directory = f"{DIRECTORY}chainTitle/{TAMANHO}"
+    else:
+        directory = f"{DIRECTORY}chainStory/{TAMANHO}"
+    filename = f"{directory}/chain.txt"
+    with open(filename, "r", encoding="utf-8") as file:
+        line = file.readline().lower()
+        word_frequency_map: dict[str, int] = {}
+        while line:
+            words = line.split()
+            if initial_word == words[0]:
+                usable_words = words[1:-1]
+                number = int(words[-1])
+            else:
+                line = file.readline().lower()
+                continue
+            word = " ".join(usable_words)
+            if word not in word_frequency_map.keys():
+                word_frequency_map[word] = number
+            else:
+                word_frequency_map[word] += number
+            line = file.readline().lower()
+        total = sum(list(word_frequency_map.values()))
+        chosen = randint(1, total)
+        cumulative_sum = 0
+        for index, value in enumerate(word_frequency_map.values()):
+            cumulative_sum += value
+            if cumulative_sum >= chosen:
+                return [initial_word] + list(word_frequency_map.keys())[index].split()
+    return [initial_word, "¨"]
+
+
+def generate_word(is_title: bool, previous_words: list[str] | None = None) -> str:
+    if previous_words is None:
+        previous_words = ["¨" for _ in range(TAMANHO)]
+    if is_title:
+        directory = f"{DIRECTORY}chainTitle/{TAMANHO}"
+    else:
+        directory = f"{DIRECTORY}chainStory/{TAMANHO}"
+    previous = " ".join(previous_words)
+    filename = f"{directory}/chain.txt"
+    with open(filename, "r", encoding="utf-8") as file:
+        line = file.readline().lower()
+        word_frequency_map: dict[str, int] = {}
+        while line:
+            words = line.split()
+            word_test = " ".join(words[:-2])
+            if previous != word_test:
+                line = file.readline().lower()
+                continue
+            word = words[-2]
+            number = int(words[-1])
+            if word not in word_frequency_map.keys():
+                word_frequency_map[word] = number
+            else:
+                word_frequency_map[word] += number
+            line = file.readline().lower()
+        total = sum(list(word_frequency_map.values()))
+        chosen = randint(1, total)
+        cumulative_sum = 0
+        for index, value in enumerate(word_frequency_map.values()):
+            cumulative_sum += value
+            if cumulative_sum >= chosen:
+                return list(word_frequency_map.keys())[index]
+    return "¨"
+
+
+def generate_text(is_title: bool) -> str:
+    words: list[str] = []
+    initial_words = generate_initial_words(is_title)
+    for word in initial_words[:-1]:
+        if word == "¨":
+            return " ".join(words)
+        words.append(word)
+        print(word, end=" ")
+    word = initial_words[-1]
+    index = 1
+    while word != "¨":
+        words.append(word)
+        print(word, end=" ")
+        word = generate_word(is_title, words[index : index + TAMANHO])
+        index += 1
+    return " ".join(words)
+
+
 for a in range(1000):
-    doATexto(True)
+    generate_text(True)
     print(" : ", end="")
-    doATexto(False)
+    generate_text(False)
     print("\n")
