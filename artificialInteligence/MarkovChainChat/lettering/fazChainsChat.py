@@ -1,70 +1,63 @@
 import os
 
 
-def renome(origemName, destinoName):
-    origem = open(origemName, "r", encoding="utf-8")
-    destino = open(destinoName, "w", encoding="utf-8")
-    linha = origem.readline()
-    while linha:
-        destino.write(linha)
-        linha = origem.readline()
-    origem.close()
-    destino.close()
+def rename_file(source_file_name: str, destination_file_name: str) -> None:
+    with open(source_file_name, "r", encoding="utf-8") as source_file, open(destination_file_name, "w", encoding="utf-8") as destination_file:
+        content = source_file.read()
+        destination_file.write(content)
+
+def update_term_count(index: int, keyword: str) -> None:
+    with open("chain/c.txt", "w", encoding="utf-8") as file_write:
+        if f"{index:03d}.txt" not in os.listdir("chain"):
+            file_write.write(keyword + " 1\n")
+            return
+        with open(f"chain/{index:03d}.txt", "r", encoding="utf-8") as file_read:
+            file_read = open(f"chain/{index:03d}.txt", "r", encoding="utf-8")
+            line = file_read.readline()
+            keyword_found = False
+            index = len(keyword)
+            while line:
+                if line[:index] == keyword:
+                    count = int(line[index + 1 :]) + 1
+                    file_write.write(line[: index + 1] + str(count) + "\n")
+                    keyword_found = True
+                else:
+                    file_write.write(line)
+                line = file_read.readline()
+            if not keyword_found:
+                file_write.write(keyword + " 1\n")
+            file_read.close()
 
 
-def alteraChainFile(n, termo):
-    if termo == "":
-        print(n)
-    fileWrite = open("chain//c.txt", "w", encoding="utf-8")
-    if f"{n:03d}.txt" in os.listdir("chain"):
-        fileRead = open(f"chain//{n:03d}.txt", "r", encoding="utf-8")
-        linha = fileRead.readline()
-        encontrou = False
-        indice = len(termo)
-        while linha:
-            if linha[:indice] == termo:
-                numero = int(linha[indice + 1 :]) + 1
-                fileWrite.write(linha[: indice + 1] + str(numero) + "\n")
-                encontrou = True
-            else:
-                fileWrite.write(linha)
-            linha = fileRead.readline()
-        if not encontrou:
-            fileWrite.write(termo + " 1\n")
-        fileRead.close()
-    else:
-        fileWrite.write(termo + " 1\n")
-    fileWrite.close()
-    renome("chain//c.txt", f"chain//{n:03d}.txt")
+def update_chain_file(index: int, keyword: str) -> None:
+    if keyword == "":
+        print(index)
+    update_term_count(index, keyword)
+    rename_file("chain/c.txt", f"chain/{index:03d}.txt")
 
 
-file = open("sohMensagens.txt", encoding="utf-8")
-mensagem = file.readline()[1:]
-lista = []
-while mensagem:
-    tamanho = len(mensagem)
-    for n in range(tamanho):
-        letra = mensagem[n]
-        if n == 0:
-            if letra == "\n":
-                letra = "¨"
-            if letra == "<":
-                letra = "~"
-                alteraChainFile(n, letra)
-                alteraChainFile(n + 1, letra + " ¨")
-                break
-            alteraChainFile(n, letra)
-        if tamanho > 1:
-            try:
-                letraSeguinte = mensagem[n + 1]
-            except:
-                letraSeguinte = "¨"
-            if letraSeguinte == "\n":
-                letraSeguinte = "¨"
-            alteraChainFile(n + 1, letra + " " + letraSeguinte)
-            if letraSeguinte == "¨":
-                break
-    mensagem = file.readline()
-for letra in lista:
-    print(letra)
-file.close()
+with open("clean_input.txt", "r", encoding="utf-8") as file:
+    file.readline()
+    for message in file.readlines():
+        message_length = len(message)
+        for index in range(message_length):
+            character = message[index]
+            if index == 0:
+                if character == "\n":
+                    character = "¨"
+                if character == "<":
+                    character = "~"
+                    update_chain_file(index, character)
+                    update_chain_file(index + 1, character + " ¨")
+                    break
+                update_chain_file(index, character)
+            if message_length > 1:
+                try:
+                    next_character = message[index + 1]
+                except IndexError:
+                    next_character = "¨"
+                if next_character == "\n":
+                    next_character = "¨"
+                update_chain_file(index + 1, character + " " + next_character)
+                if next_character == "¨":
+                    break
