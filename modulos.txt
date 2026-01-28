@@ -1,11 +1,3 @@
-automation - fun��o para automa��o
-	wait - PEGA n mensagem=True FAZ espera segundos e imprime quanto esperamos
-	pressFor - PEGA tecla, n, mensagem=True FAZ aperta tecla por n segundos e exibe tecla e tempo esperado
-	pressUntil - PEGA tecla, coord, cor FAZ aperta tecla at� a cor aparecer nas coordenadas
-	waitFor - PEGA coord, cor FAZ espera at� a cor aparecer nas coordenadas
-
-
-
 userUtil - valida��o de entrada do Usuario
 	cadaMusicaFaca - funcao feita para o Earworm
 	listaDeInteiros - RETORNA uma lista de inteiros
