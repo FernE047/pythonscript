@@ -1,12 +1,11 @@
 import pyautogui
 import time
 
-# ajuda a nomear as fotos retiradas do livro "Grafos"
+# it helps to automate the renaming and saving of images from books Grafos
 
-a = 90
-for a in range(230, 314):
-    for c in range(2):
-        b = input()
+for image_index in range(230, 314):
+    for copy_index in range(2):
+        user_input = input()
         pyautogui.click(340, 750)
         pyautogui.keyDown("ctrlleft")
         pyautogui.keyDown("shiftleft")
@@ -14,7 +13,7 @@ for a in range(230, 314):
         pyautogui.keyUp("shiftleft")
         pyautogui.keyUp("ctrlleft")
         time.sleep(2)
-        if (c % 2) == 1:
+        if (copy_index % 2) == 1:
             pyautogui.keyDown("ctrlleft")
             pyautogui.press("h")
             pyautogui.keyUp("ctrlleft")
@@ -32,11 +31,11 @@ for a in range(230, 314):
         pyautogui.press("a")
         pyautogui.press("a")
         time.sleep(1)
-        nome = "A" + str(a + 1)
-        if c == 0:
-            nome = nome + "A"
+        name = f"A{image_index + 1}"
+        if copy_index == 0:
+            name = f"{name}A"
         else:
-            nome = nome + "B"
-        nome = nome + ".jpg"
-        pyautogui.typewrite(nome)
+            name = f"{name}B"
+        name = f"{name}.jpg"
+        pyautogui.typewrite(name)
         pyautogui.press("enter")
