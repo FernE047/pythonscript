@@ -1,5 +1,5 @@
 import subprocess
 
-# serve como batch pra acessar a biblioteca.py
+# Launch the biblioteca script
 
-subprocess.call("python C:\\pythonscript\\biblioteca\\biblioteca.py ")
+subprocess.call("python ./biblioteca/biblioteca.py ")
