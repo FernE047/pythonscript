@@ -1,5 +1,3 @@
-import userUtil
-
 def fractionToNumber(fraction):
     quant=len(fraction)
     a=fraction[-1]
