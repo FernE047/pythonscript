@@ -1,47 +1,47 @@
 from random import randint
 
 
-def getAWord(indice, isTitle, anterior=""):
-    if isTitle:
-        diretorio = "chainTitle//0"
+def generate_word(index:int, is_title:bool, previous_word:str="") -> str:
+    if is_title:
+        chain_directory = "chainTitle/0"
     else:
-        diretorio = "chainStory//0"
-    nome = diretorio + "//{0:03d}.txt"
-    file = open(nome.format(indice))
-    linha = file.readline()
-    data = {}
-    while linha:
-        palavras = linha.split()
-        if indice == 0:
-            palavra = palavras[0]
-            numero = int(palavras[-1])
-        else:
-            if anterior == palavras[0]:
-                palavra = palavras[1]
-                numero = int(palavras[-1])
+        chain_directory = "chainStory/0"
+    name = f"{chain_directory}/{index:03d}.txt"
+    with open(name, "r", encoding="utf-8") as file:
+        line = file.readline()
+        word_frequency_map:dict[str,int] = {}
+        while line:
+            words = line.split()
+            if index == 0:
+                word = words[0]
+                number = int(words[-1])
             else:
-                linha = file.readline()
-                continue
-        data[palavra] = numero
-        linha = file.readline()
-    total = sum(list(data.values()))
-    escolhido = randint(1, total)
-    soma = 0
-    for indice, valor in enumerate(data.values()):
-        soma += valor
-        if soma >= escolhido:
-            file.close()
-            return list(data.keys())[indice]
+                if previous_word == words[0]:
+                    word = words[1]
+                    number = int(words[-1])
+                else:
+                    line = file.readline()
+                    continue
+            word_frequency_map[word] = number
+            line = file.readline()
+        total = sum(list(word_frequency_map.values()))
+        chosen = randint(1, total)
+        sum_values = 0
+        for index, value in enumerate(word_frequency_map.values()):
+            sum_values += value
+            if sum_values >= chosen:
+                return list(word_frequency_map.keys())[index]
+    return "¨"
 
 
-def doATexto(isTitle):
-    texto = []
-    palavra = getAWord(0, isTitle)
-    while palavra != "¨":
-        texto.append(palavra)
-        palavra = getAWord(len(texto), isTitle, palavra)
+def generate_text(is_title:bool)-> str:
+    texto :list[str]= []
+    word = generate_word(0, is_title)
+    while word != "¨":
+        texto.append(word)
+        word = generate_word(len(texto), is_title, word)
     return " ".join(texto)
 
 
-for a in range(10):
-    print(doATexto(True) + " : " + doATexto(False), end="\n\n")
+for _ in range(10):
+    print(generate_text(True) + " : " + generate_text(False), end="\n\n")
