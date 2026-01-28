@@ -1,6 +1,17 @@
-from userUtil import pegaFloat 
 from userUtil import pegaInteiro
 import numpy as np
+from typing import Literal
+
+
+def pegaFloat(mensagem: str, valorPadrao: float | Literal["."]) -> float | Literal["."]:
+    while True:
+        entrada = input(f'{mensagem} (padrão: {valorPadrao}) : ')
+        if entrada == "":
+            return valorPadrao
+        try:
+            return float(entrada)
+        except Exception as _:
+            print("valor inválido, tente novamente")
 
 def entradaDeCoeficientes():
     n=0

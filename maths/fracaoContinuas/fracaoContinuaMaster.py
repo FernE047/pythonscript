@@ -28,6 +28,15 @@ def choose_from_options(
         except (ValueError, IndexError):
             user_choice = input("not valid, try again: ")
 
+
+def pegaFloat(mensagem: str) -> float:
+    while True:
+        entrada = input(mensagem)
+        try:
+            return float(entrada)
+        except Exception as _:
+            print("valor inválido, tente novamente")
+
 def fractionToNumber(fraction):
     quant=len(fraction)
     a=fraction[-1]
