@@ -30,16 +30,16 @@ def format_elapsed_time(seconds: float) -> str:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
     return sign + ", ".join(parts)
 
-def resolveBoard(
+def resolve_board(
     board: tuple[list[list[bool]], tuple[int, int]],
 ) -> list[tuple[int, int]] | None: #TODO: implement solver
     return None
 
-def resolveOneBoard(board: tuple[list[list[bool]], tuple[int, int]]) -> None:
+def resolve_one_board(board: tuple[list[list[bool]], tuple[int, int]]) -> None:
     print()
     tries = 0
     begin = time()
-    resolveBoard(board)
+    resolve_board(board)
     end = time()
     print("\ntries: " + str(tries))
     duration = end - begin
@@ -63,5 +63,5 @@ for pos in (
     matriz = [[False for _ in range(8)] for _ in range(8)]
     matriz[pos[0]][pos[1]] = True
     board = (matriz, pos)
-    resolveOneBoard(board)
+    resolve_one_board(board)
 print("\n" + format_elapsed_time(total_time) + "\n\n\n")

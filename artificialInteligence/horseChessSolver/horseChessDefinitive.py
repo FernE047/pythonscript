@@ -1,12 +1,16 @@
 from time import time
 
-def embelezeTempo(segundos: float) -> str:
-    if segundos < 0:
-        segundos = -segundos
+
+MatrizData = bool | list["MatrizData"]
+
+
+def format_elapsed_time(seconds: float) -> str:
+    if seconds < 0:
+        seconds = -seconds
         sign = "-"
     else:
         sign = ""
-    total_ms = int(round(segundos * 1000))
+    total_ms = int(round(seconds * 1000))
     ms = total_ms % 1000
     total_s = total_ms // 1000
     s = total_s % 60
@@ -16,9 +20,11 @@ def embelezeTempo(segundos: float) -> str:
     h = total_h % 24
     d = total_h // 24
     parts: list[str] = []
+
     def add(value: int, singular: str, plural: str) -> None:
         if value:
             parts.append(f"{value} {singular if value == 1 else plural}")
+
     add(d, "day", "days")
     add(h, "hour", "hours")
     add(m, "minute", "minutes")
@@ -27,38 +33,59 @@ def embelezeTempo(segundos: float) -> str:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
     return sign + ", ".join(parts)
 
-class Tabuleiro:
-    def __init__(self,dimensoes,tamanho=8,pos=[]):
-        self.dimensoes = dimensoes
-        self.tamanho = tamanho
-        self.pos = pos
-        if(self.dimensoes == 1):
-            self.matriz = [False for a in range(tamanho)]
+
+class Board:
+    def __init__(
+        self, dimensions: int, board_size: int = 8, position: list[int] | None = None
+    ) -> None:
+        self.dimensions = dimensions
+        self.board_size = board_size
+        self.position = position
+        if position is None:
+            self.position = [0 for _ in range(dimensions)]
+        self.matriz: MatrizData | "Board"
+        if self.dimensions == 1:
+            self.matriz = [False for _ in range(board_size)]
         else:
-            self.matriz = Tabuleiro(self.dimensoes-1,self.tamanho)
+            self.matriz = Board(self.dimensions - 1, self.board_size)
 
-    def setPos(self,pos):
+    def set_position(self, position: list[int]) -> None:
+        # TODO: implement set_position
+        return
 
-    def setPosValue(self,value):
-        if()
+    def set_position_value(self, value: bool) -> None:
+        # TODO: implement set_position_value
+        return
 
-def criaMatrizSquare(dimensoes,tamanho):
-    if(dimensoes==0):
+
+def create_square_matriz(dimensions: int, size: int = 8) -> MatrizData:
+    if dimensions == 0:
         return False
     else:
-        return [criaMatrizSquare(dimensoes-1,tamanho) for a in range(tamanho)]
+        return [create_square_matriz(dimensions - 1, size) for _ in range(size)]
 
-def resolveUmTabuleiro(tabuleiro):
+
+def create_square_board(dimensions: int, size: int = 8) -> Board:
+    # TODO: implement create_square_board
+    return Board(dimensions, size)  # boilerplate
+
+
+def resolve_board(board: Board) -> None:
+    # TODO: implement solver
+    return None
+
+
+def resolve_one_board(board: Board) -> None:
     print()
-    global tries
-    tries=0
-    inicio = time()
-    solucao = resolveTabuleiro(tabuleiro)
-    fim = time()
-    print("\ntentativas: "+str(tries))
-    tempo = fim-inicio
-    print("\n"+embelezeTempo(tempo)+"\n\n\n")
+    tries = 0
+    begin = time()
+    resolve_board(board)
+    end = time()
+    print("\ntries: " + str(tries))
+    duration = end - begin
+    print("\n" + format_elapsed_time(duration) + "\n\n\n")
 
-tabuleiro = criaTabuleiroSquare(3,5)
-print(tabuleiro)
-resolveUmTabuleiro(tabuleiro)
+
+board = create_square_board(3, 5)
+print(board)
+resolve_one_board(board)
