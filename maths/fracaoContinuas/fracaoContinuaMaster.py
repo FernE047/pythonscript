@@ -1,6 +1,5 @@
 from typing import Literal, overload
 
-
 def pegaInteiro(
     mensagem: str, minimo: int | None = None, maximo: int | None = None
 ) -> int:
@@ -17,6 +16,22 @@ def pegaInteiro(
             return valor
         except Exception as _:
             print("valor inválido, tente novamente")
+
+
+def listaDeInteiros() -> list[int]:
+    lista: list[int] = []
+    print("digite os inteiros da fração continua um por vez")
+    print("quando terminar, digite uma linha vazia")
+    while True:
+        entrada = input("inteiro: ")
+        if entrada == "":
+            break
+        try:
+            valor = int(entrada)
+            lista.append(valor)
+        except Exception as _:
+            print("valor inválido, tente novamente")
+    return lista
 
 
 @overload
@@ -116,19 +131,19 @@ while True:
     if(modo):
         modo=choose_from_options("tipo do numero",["decimal","fração","raizes quadradas"],mode="number")
         if(modo==0):
-            valor=userUtil.pegaFloat("digite um valor decimal")
+            valor=pegaFloat("digite um valor decimal")
             resultado=decimalToFraction(valor)
         elif(modo==1):
-            numerador=userUtil.pegaInteiro("digite o numerador")
-            denominador=userUtil.pegaInteiro("digite o denominador")
+            numerador=pegaInteiro("digite o numerador")
+            denominador=pegaInteiro("digite o denominador")
             resultado=fracaoToFraction(numerador,denominador)
         elif(modo==2):
             modo=choose_from_options("modo de raiz:",["simples","complexo"],mode="number") + 2
-            raizes=userUtil.pegaFloat("digite o numero dentro da raiz")
+            raizes=pegaFloat("digite o numero dentro da raiz")
             if(modo==3):
-                numerador=userUtil.pegaInteiro("digite o numero que somará a raiz")
-                denominador=userUtil.pegaInteiro("digite o denominador")
+                numerador=pegaInteiro("digite o numero que somará a raiz")
+                denominador=pegaInteiro("digite o denominador")
     else:
-        fraction=userUtil.listaDeInteiros()
+        fraction=listaDeInteiros()
         resultado=fractionToNumber(fraction)
     print(resultado)
