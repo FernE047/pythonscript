@@ -1,11 +1,10 @@
 from userUtil import pegaString
-from textos import separaLinhas
 from textos import fazAudio
 
 
 def invertePorPalavra(texto):
-    novoTexto=[];
-    for linha in (separaLinhas(texto)):
+    novoTexto=[]
+    for linha in (texto.split("\n")):
         for palavra in linha.split(" "):
             novoTexto+=[inverte(palavra)]
         novoTexto+="\n"
