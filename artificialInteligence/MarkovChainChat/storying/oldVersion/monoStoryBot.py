@@ -1,43 +1,43 @@
 from random import randint
 
 
-def getAWord(isTitle, anterior="¨"):
-    if isTitle:
-        diretorio = "monoChainTitle"
+def generate_word(is_title: bool, previous_word: str = "¨") -> str:
+    if is_title:
+        directory = "monoChainTitle"
     else:
-        diretorio = "monoChainStory"
-    nome = diretorio + "//chain.txt"
-    file = open(nome)
-    linha = file.readline()
-    data = {}
-    while linha:
-        palavras = linha.split()
-        if anterior == palavras[0]:
-            palavra = palavras[1]
-            numero = int(palavras[-1])
-        else:
-            linha = file.readline()
-            continue
-        data[palavra] = numero
-        linha = file.readline()
-    total = sum(list(data.values()))
-    escolhido = randint(1, total)
-    soma = 0
-    for indice, valor in enumerate(data.values()):
-        soma += valor
-        if soma >= escolhido:
-            file.close()
-            return list(data.keys())[indice]
+        directory = "monoChainStory"
+    filename = f"{directory}/chain.txt"
+    with open(filename, "r", encoding="utf-8") as file:
+        line = file.readline()
+        word_frequency_map: dict[str, int] = {}
+        while line:
+            words = line.split()
+            if previous_word == words[0]:
+                word = words[1]
+                number = int(words[-1])
+            else:
+                line = file.readline()
+                continue
+            word_frequency_map[word] = number
+            line = file.readline()
+        total = sum(list(word_frequency_map.values()))
+        chosen = randint(1, total)
+        cumulative_sum = 0
+        for index, value in enumerate(word_frequency_map.values()):
+            cumulative_sum += value
+            if cumulative_sum >= chosen:
+                return list(word_frequency_map.keys())[index]
+    return "¨"
 
 
-def doATexto(isTitle):
-    texto = []
-    palavra = getAWord(isTitle)
-    while palavra != "¨":
-        texto.append(palavra)
-        palavra = getAWord(isTitle, palavra)
-    return " ".join(texto)
+def generate_text(is_title: bool) -> str:
+    word_list: list[str] = []
+    word = generate_word(is_title)
+    while word != "¨":
+        word_list.append(word)
+        word = generate_word(is_title, word)
+    return " ".join(word_list)
 
 
 for a in range(10):
-    print(doATexto(True) + " : " + doATexto(False), end="\n\n")
+    print(generate_text(True) + " : " + generate_text(False), end="\n\n")
