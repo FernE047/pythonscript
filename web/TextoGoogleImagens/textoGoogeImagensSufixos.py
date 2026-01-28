@@ -1,6 +1,5 @@
 import requests, bs4, re
 import os
-import textos
 import pyperclip
 
 
@@ -110,8 +109,6 @@ def baixaImagens(lyrics, titulo, adicao):
     pasta = os.path.join("C:\\", "pythonscript", "web", "TextoGoogleImagens", titulo)
     palavras = {}
     for number, palavra in enumerate(lyrics):
-        if textos.isBadList(palavra):
-            palavra = textos.trocaBadForSafe(palavra)
         if adicao[0] != "":
             palavra = adicao[0] + " " + palavra
         if adicao[1] != "":

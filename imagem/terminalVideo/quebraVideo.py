@@ -1,4 +1,3 @@
-import textos
 import os
 import shutil
 

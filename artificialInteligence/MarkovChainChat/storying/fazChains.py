@@ -1,6 +1,5 @@
 from time import time
 from time import sleep
-from textos import embelezeTempo as eT
 import os
 
 

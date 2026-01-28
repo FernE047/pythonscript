@@ -2,7 +2,6 @@ from typing import Literal, overload
 from send2trash import send2trash
 import userUtil
 import random
-import textos
 import os
 
 

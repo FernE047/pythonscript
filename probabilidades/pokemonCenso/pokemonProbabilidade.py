@@ -1,5 +1,4 @@
 from time import time
-import textos
 import shelve
 
 dados=shelve.open('BDPokemonNoDetails')

@@ -1,6 +1,5 @@
 from random import randint
 from time import time
-import textos
 
 def proximo(numero):
     global POT

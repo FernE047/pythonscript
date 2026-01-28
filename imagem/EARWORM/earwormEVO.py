@@ -2,7 +2,6 @@ from PIL import Image
 import requests, bs4, re
 from typing import cast
 import os
-import textos
 
 
 def conecta(site: str) -> requests.Response:

@@ -1,6 +1,5 @@
 import requests, bs4, re
 import os
-import textos
 import pyperclip
 
 
@@ -106,8 +105,6 @@ def baixaImagens(lyrics,titulo,adicao,tamanho):
     newLyrics=[]
     frase=""
     for number,palavra in enumerate(lyrics):
-        if(textos.isBadList(palavra)):
-            palavra=textos.trocaBadForSafe(palavra)
         if(number%tamanho==0):
             if(adicao[0]!=""):
                 frase+=adicao[0]+" "+palavra

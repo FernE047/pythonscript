@@ -1,4 +1,3 @@
-import textos
 
 def fazLinha(nome):
     inputFile=open(nome+".txt",'r')
