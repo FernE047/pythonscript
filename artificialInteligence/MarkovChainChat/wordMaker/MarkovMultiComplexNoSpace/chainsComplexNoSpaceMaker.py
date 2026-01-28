@@ -33,16 +33,12 @@ def embelezeTempo(segundos: float) -> str:
     return sign + ", ".join(parts)
 
 
-def renome(name, destinoName):
-    global enc
-    origem = open(f"{nome}//c.txt", "r", encoding="UTF-8")
-    destino = open(f"{nome}{destinoName}", "w", encoding="UTF-8")
-    linha = origem.readline()
-    while linha:
-        destino.write(linha)
-        linha = origem.readline()
-    origem.close()
-    destino.close()
+
+
+def rename_file(source_file_name:str, destination_file_name:str) -> None:
+    with open(source_file_name, "r", encoding="utf-8") as source_file, open(destination_file_name, "w", encoding="utf-8") as destination_file:
+        content = source_file.read()
+        destination_file.write(content)
 
 
 def alteraChainFile(nome, n, termos):

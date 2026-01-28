@@ -32,15 +32,13 @@ def embelezeTempo(segundos: float) -> str:
     return sign + ", ".join(parts)
 
 
-def renome(origemName, destinoName):
-    origem = open(origemName, "r", encoding="UTF-8")
-    destino = open(destinoName, "w", encoding="UTF-8")
-    linha = origem.readline()
-    while linha:
-        destino.write(linha)
-        linha = origem.readline()
-    origem.close()
-    destino.close()
+def rename_file(source_file_name: str, destination_file_name: str) -> None:
+    with (
+        open(source_file_name, "r", encoding="utf-8") as source_file,
+        open(destination_file_name, "w", encoding="utf-8") as destination_file,
+    ):
+        content = source_file.read()
+        destination_file.write(content)
 
 
 def alteraMonoChainFile(nome, termos):
