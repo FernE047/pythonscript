@@ -1,6 +1,5 @@
 from string import ascii_uppercase
 from string import ascii_lowercase
-from userUtil import pegaString
 
 def trocaLetra(letra,n):
     n%=26
@@ -26,5 +25,5 @@ def todasCifras(texto):
         print(f"{n:02d}:")
         print(cifra(texto,n),end="\n\n")
             
-texto=pegaString("digite alguma coisa e cifraremos")
+texto=input("digite alguma coisa e cifraremos")
 todasCifras(texto)

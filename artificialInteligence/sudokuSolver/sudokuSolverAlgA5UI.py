@@ -1,5 +1,4 @@
 from typing import Literal, overload
-from userUtil import pegaString as pS
 from time import time
 import os
 
@@ -188,7 +187,7 @@ while True:
             resolveUmTabuleiro(tabuleiro)
             print('\n'+embelezeTempo(tempoTotal)+'\n\n\n')
     elif(mode==2):
-        name = pS('qual o nome do arquivo?')
+        name = input('qual o nome do arquivo?')
         sudoku = open(name+'.txt')
         tabuleiro = criaTabuleiro(sudoku.read())
         sudoku.close()
@@ -197,7 +196,7 @@ while True:
         sudoku = ''.join(['0' for a in range(81)])
         quantia = 0
         while quantia<81:
-            inputConfig = pS('')
+            inputConfig = input('')
             for v in inputConfig:
                 if v in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
                     sudoku = list(sudoku)

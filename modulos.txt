@@ -8,5 +8,3 @@ userUtil - valida��o de entrada do Usuario
     	pegaNomeImagem - RETORNA nome de imagem
     	pegaPixel - RETORNA pixel
     	pegaSitesMusicas - funcao feita para o Earworm
-    	pegaString - RETORNA uma string
-    	simOuNao -  pergunta sim ou n�o

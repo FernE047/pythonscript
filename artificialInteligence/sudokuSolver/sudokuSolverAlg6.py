@@ -1,5 +1,4 @@
 from typing import Literal, overload
-from userUtil import pegaString as pS
 from time import time
 import os
 
@@ -155,7 +154,7 @@ class Tabuleiro:
 
 def criaTabuleiro(mode):
     if(mode==2):
-        nome = pS('qual o nome do arquivo?')
+        nome = input('qual o nome do arquivo?')
         sudokuFile = open(nome+'.txt')
         tabuleiro = Tabuleiro(sudokuFile.read())
         return tabuleiro
@@ -163,7 +162,7 @@ def criaTabuleiro(mode):
         tabuleiro = Tabuleiro()
         quantia = 0
         while quantia<81:
-            inputConfig=pS('')
+            inputConfig=input('')
             for v in inputConfig:
                 posY=quantia//9
                 posX=quantia%9

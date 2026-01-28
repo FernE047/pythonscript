@@ -1,4 +1,3 @@
-from userUtil import pegaString
 from textos import fazAudio
 
 
@@ -26,8 +25,8 @@ def inverte(texto):
     return(novoTexto)
 
 while True:
-    nomeArquivo=pegaString("digite o nome do arquivo")
-    texto=pegaString("digite alguma coisa e inverteremos")
+    nomeArquivo=input("digite o nome do arquivo")
+    texto=input("digite alguma coisa e inverteremos")
     if(not(texto)):
         break
     print("simples:\n")

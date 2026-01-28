@@ -73,9 +73,9 @@ def editarModulo(pasta,modulo):
         while linhaResposta:
             if indice == indiceAltera:
                 if escolha == 'Alterar':
-                    palavra = userUtil.pegaString('digite a palavra pergunta')
+                    palavra = input('digite a palavra pergunta')
                     filePerguntasTemp.write(palavra+'\n')
-                    palavra = userUtil.pegaString('digite a palavra resposta')
+                    palavra = input('digite a palavra resposta')
                     fileRespostasTemp.write(palavra+'\n')
             else:
                 fileRespostasTemp.write(linhaResposta)
@@ -99,11 +99,11 @@ def editarModulo(pasta,modulo):
         fileRespostas = open('\\'.join([pasta,modulo,'answer.txt']),'a')
         filePerguntas = open('\\'.join([pasta,modulo,'question.txt']),'a')
         while True:
-            palavra = userUtil.pegaString('digite a palavra pergunta')
+            palavra = input('digite a palavra pergunta')
             if palavra == '0':
                 break
             filePerguntas.write(palavra+'\n')
-            palavra = userUtil.pegaString('digite a palavra resposta')
+            palavra = input('digite a palavra resposta')
             fileRespostas.write(palavra+'\n')
         fileRespostas.close()
         filePerguntas.close()
@@ -130,7 +130,7 @@ def fazPergunta(fileA,fileB,indice,escolha):
     indiceAtual = 0
     while linhaA:
         if indice == indiceAtual:
-            resposta = userUtil.pegaString(linhaA[:-1])
+            resposta = input(linhaA[:-1])
             if resposta == '0':
                 return resposta
             if resposta == linhaB[:-1]:
@@ -180,11 +180,11 @@ def criaModulo(pasta,pastaAv,modulo):
         filePerguntas = open('\\'.join([pasta,modulo,'question.txt']),'w')
         print('digite 0 em uma pergunta para sair ')
         while True:
-            palavra = userUtil.pegaString('digite a palavra pergunta')
+            palavra = input('digite a palavra pergunta')
             if palavra == '0':
                 break
             filePerguntas.write(palavra+'\n')
-            palavra = userUtil.pegaString('digite a palavra resposta')
+            palavra = input('digite a palavra resposta')
             fileRespostas.write(palavra+'\n')
         fileRespostas.close()
         filePerguntas.close()
@@ -240,7 +240,7 @@ while True:
     if escolha == "Sair":
         break
     if escolha == "Criar Nova":
-        nomeCategoriaNovo = userUtil.pegaString('digite o nome da nova categoria : ')
+        nomeCategoriaNovo = input('digite o nome da nova categoria : ')
         pasta = f"{diretorio}\\categorias\\{nomeCategoriaNovo.proper()}"
         pastaAv = f"{diretorio}\\avaliacao\\{nomeCategoriaNovo.proper()}"
         print(pasta)
@@ -270,7 +270,7 @@ while True:
                 if escolha == "Voltar":
                     break
                 if escolha == "Novo":
-                    modulo = userUtil.pegaString('digite o nome do novo modulo : ')
+                    modulo = input('digite o nome do novo modulo : ')
                     criaModulo(pasta,pastaAv,modulo.proper())
                 else:
                     modulo = escolha
