@@ -4,6 +4,21 @@ import os
 import internet
 import textos
 
+
+def qualSite(site: str) -> str:
+    dot_com_index = site.find(".com")
+    if dot_com_index == -1:
+        raise ValueError("no .com found")
+    if site[:12] == "https://www.":
+        return site[12:dot_com_index]
+    if site[:11] == "http://www.":
+        return site[11:dot_com_index]
+    if site[:8] == "https://":
+        return site[8:dot_com_index]
+    if site[:7] == "http://":
+        return site[7:dot_com_index]
+    return site[:dot_com_index]
+
 def ondeComecaHttp(palavra:str) -> int:
     for index in range(len(palavra)):
         if (
@@ -39,7 +54,7 @@ def achaGenius(informacao,tem=""):
         except:
             continue
         site = encontraSite(bomResultado)
-        nomeSite = internet.qualSite(site)
+        nomeSite = qualSite(site)
         print(site)
         print(nomeSite+"\n")
         if nomeSite=='genius':

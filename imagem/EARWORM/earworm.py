@@ -26,22 +26,19 @@ def encontraSite(palavra:str) -> str:
     raise ValueError("no & finish found")
 
 
-def qualSite(site):
-    if site[4] == "s":
-        if site[8] == "w":
-            a = 12
-        else:
-            a = 8
-    else:
-        if site[7] == "w":
-            a = 11
-        else:
-            a = 7
-    nome = ""
-    while site[a] != ".":
-        nome += site[a]
-        a += 1
-    return nome
+def qualSite(site:str) -> str:
+    dot_com_index = site.find(".com")
+    if dot_com_index == -1:
+        raise ValueError("no .com found")
+    if site[:12] == "https://www.":
+        return site[12:dot_com_index]
+    if site[:11] == "http://www.":
+        return site[11:dot_com_index]
+    if site[:8] == "https://":
+        return site[8:dot_com_index]
+    if site[:7] == "http://":
+        return site[7:dot_com_index]
+    return site[:dot_com_index]
 
 
 def tudoMinuscula(musicaMixed):

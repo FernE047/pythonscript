@@ -1,5 +1,4 @@
 internet - fun��es para internet:
-	qualSite - PEGA site(string) RETORNA nome do site
 	conecta - PEGA site(string) RETORNA site(baixado)
 	pesquisaGoogle - PEGA texto,adicao* RETORNA google resultados(informa��o)
 	siteProcura - PEGA site(string),html(elemento) RETORNA informa��o
