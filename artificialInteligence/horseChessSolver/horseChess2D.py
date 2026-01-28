@@ -1,13 +1,13 @@
 from time import time
 
 
-def format_elapsed_time(segundos: float) -> str:
-    if segundos < 0:
-        segundos = -segundos
+def format_elapsed_time(seconds: float) -> str:
+    if seconds < 0:
+        seconds = -seconds
         sign = "-"
     else:
         sign = ""
-    total_ms = int(round(segundos * 1000))
+    total_ms = int(round(seconds * 1000))
     ms = total_ms % 1000
     total_s = total_ms // 1000
     s = total_s % 60
