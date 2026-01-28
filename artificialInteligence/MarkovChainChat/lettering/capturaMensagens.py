@@ -1,31 +1,24 @@
 import re
 
+INPUT_FILE = "ConversaDoWhatsApp.txt"
+OUTPUT_FILE = "sohMensagens.txt"
+
 person_1 = ""  # Replace with the name of the first person
-file = open("ConversaDoWhatsApp.txt", encoding="utf-8")
-output = open("sohMensagens.txt", "w", encoding="utf-8")
 pattern = r"([0-3][0-9][/][0-1][0-9][/]20[21][09] [0-2][0-9][:][0-5][0-9])"
-word = file.read(16)
-mensagem = ""
-while True:
-    r2 = re.search(pattern, word)
-    if r2:
-        if mensagem:
-            mensagem = mensagem[3:-17]
-            usuario = mensagem[:13]
-            if usuario == f"{person_1}: ":
-                mensagem = mensagem[13:]
-                print(mensagem)
-                output.write(mensagem + "\n")
-            mensagem = ""
+message = ""
+with open(INPUT_FILE, "r", encoding="utf-8") as input_file, open(OUTPUT_FILE, "w", encoding="utf-8") as output_file:
+    word = input_file.read(16)
     while True:
-        try:
-            letra = file.read(1)
+        if re.search(pattern, word) and len(message) > 0:
+            message = message[3:-17]
+            user = message[:13]
+            if user == f"{person_1}: ":
+                message = message[13:]
+                print(message)
+                output_file.write(message + "\n")
+            message = ""
+        letter = input_file.read(1)
+        if not letter:
             break
-        except:
-            pass
-    if letra:
-        word = word[1:] + letra
-        mensagem += letra
-    else:
-        break
-file.close()
+        word = word[1:] + letter
+        message += letter
