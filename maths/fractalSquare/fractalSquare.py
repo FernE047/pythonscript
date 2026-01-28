@@ -1,6 +1,5 @@
 from PIL import Image
 import os
-from textos import fazNomeArquivo as fNA
 
 def vetorParaImagem(vetor):
     altura=len(vetor)
@@ -31,11 +30,11 @@ def proximoFractal(brick,guide):
     return(fractal)
 
 def fazNFractais(vetor,nome):
-    novaPasta=os.path.join(os.getcwd(),fNA(nome))
+    novaPasta=os.path.join(os.getcwd(),nome.proper())
     os.makedirs(novaPasta)
     guia=vetorParaImagem(vetor)
     bloco=guia
-    pastaSalvar=os.path.join(novaPasta,f'{fNA(f"{nome}{1:02d}")}.png')
+    pastaSalvar=os.path.join(novaPasta,f'{nome.proper()}{1:02d}.png')
     bloco.save(pastaSalvar)
     a=2
     while True:
@@ -43,7 +42,7 @@ def fazNFractais(vetor,nome):
         if(bloco==''):
             print('feito '+str(a)+' fractais\n')
             return()
-        pastaSalvar=os.path.join(novaPasta,f'{fNA(f"{nome}{a:02d}")}.png')
+        pastaSalvar=os.path.join(novaPasta,f'{nome.proper()}{a:02d}.png')
         bloco.save(pastaSalvar)
         a+=1
 

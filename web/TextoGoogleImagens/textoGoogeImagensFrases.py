@@ -101,7 +101,7 @@ def achaLetra(site):
     return(musicaSeparada)
 
 def baixaImagens(lyrics,titulo,adicao,tamanho):
-    titulo=textos.fazNomeArquivo(adicao[0]+" "+titulo+" "+str(tamanho)+" "+adicao[1])
+    titulo=f"{adicao[0]} {titulo} {str(tamanho)} {adicao[1]}".proper().replace(" ","_")
     pasta=os.path.join('C:\\','pythonscript','web','TextoGoogleImagens',titulo)
     newLyrics=[]
     frase=""
@@ -148,7 +148,7 @@ def baixaImagens(lyrics,titulo,adicao,tamanho):
         caminho=os.path.join(pasta,frase)
         nome=os.listdir(caminho)[0]
         nomeOriginal = os.path.join(caminho,nome)
-        nomeNovo = os.path.join(pasta,f'{n+1:03d}-'+textos.fazNomeArquivo(frase)+".png")
+        nomeNovo = os.path.join(pasta,f"{n+1:03d}-{frase.proper().replace(' ','_')}.png")
         os.rename(nomeOriginal,nomeNovo)
         os.rmdir(caminho)
         

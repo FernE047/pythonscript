@@ -242,8 +242,8 @@ while True:
         break
     if escolha == "Criar Nova":
         nomeCategoriaNovo = userUtil.pegaString('digite o nome da nova categoria : ')
-        pasta = diretorio+'\\categorias\\'+textos.fazNomeArquivo(nomeCategoriaNovo)
-        pastaAv =diretorio+'\\avaliacao\\'+textos.fazNomeArquivo(nomeCategoriaNovo)
+        pasta = f"{diretorio}\\categorias\\{nomeCategoriaNovo.proper()}"
+        pastaAv = f"{diretorio}\\avaliacao\\{nomeCategoriaNovo.proper()}"
         print(pasta)
         if not os.path.exists(pasta):
             os.makedirs(pasta)
@@ -272,7 +272,7 @@ while True:
                     break
                 if escolha == "Novo":
                     modulo = userUtil.pegaString('digite o nome do novo modulo : ')
-                    criaModulo(pasta,pastaAv,textos.fazNomeArquivo(modulo))
+                    criaModulo(pasta,pastaAv,modulo.proper())
                 else:
                     modulo = escolha
                     opcoes = ['Voltar']

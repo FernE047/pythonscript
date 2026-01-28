@@ -1,7 +1,6 @@
 from PIL import Image
 import os
 import pastaImagens as pI
-from textos import fazNomeArquivo as fNA
 
 def pegaPaleta(img):
     print('pegando paleta, por favor aguarde')
@@ -67,15 +66,15 @@ while(saida!='0'):
     assunto=input()
     if(assunto[:7]=='paleta '):
         paletaSample=pegaPaleta(os.path.join('paleta','paleta'+assunto[7:]+'.png'))
-        nome+=fNA(assunto[7:])
+        nome+=assunto[7:].proper()
     elif(assunto[:6]=='pasta '):
         imagens=pI.pegaAssunto(assunto)
         paletaSample=pegaPaletas(imagens)
-        nome+=fNA(assunto[6:])+str(numImagem)
+        nome+=assunto[6:].proper()+str(numImagem)
     else:
         imagem=pI.umaImagem(assunto)
         paletaSample=pegaPaleta(imagem)
-        nome+=fNA(assunto)+str(numImagem)
+        nome+=assunto.proper()+str(numImagem)
     print('tamanho da paleta:'+str(len(paletaSample)))
     print('\ndigite o assunto da imagem para adaptar')
     assunto=input()
@@ -85,7 +84,7 @@ while(saida!='0'):
     print('\nqual imagem? 0 a '+str(len(imagens)))
     numImagem=int(input())
     imagem=imagens[numImagem]
-    nome=fNA(assunto)+nome+str(numImagem)+'.png'
+    nome=assunto.proper()+nome+str(numImagem)+'.png'
     nome=os.path.join('imagens',nome)
     print(imagem)
     imagemPaletada=aplicaPaleta(paletaSample,imagem)

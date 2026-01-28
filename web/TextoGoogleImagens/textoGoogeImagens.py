@@ -102,7 +102,7 @@ def achaLetra(site):
 
 def baixaImagens(lyrics,titulo):
     total=len(lyrics)
-    titulo=textos.fazNomeArquivo(titulo)
+    titulo=titulo.proper()
     pasta=os.path.join('C:\\','pythonscript','web','TextoGoogleImagens',titulo)
     palavras={}
     for number,palavra in enumerate(lyrics):

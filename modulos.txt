@@ -1,6 +1,4 @@
 textos - fun��o para string
-	limpaNomeArquivo - PEGA texto RETORNA texto que possa ser nome de arquivo
-	fazNomeArquivo - PEGA texto RETORNA nome bonito para arquivo
 	embelezeTempo - PEGA tempo RETORNA texto com tempo em segundo, minutos, horas e etc...
 
 

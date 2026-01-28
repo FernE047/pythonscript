@@ -3,7 +3,6 @@
 #s:large, medium, icon, >400*300, >640*480, >800*600, >1024*768, >2MP, >4MP, >6MP, >8MP, >10MP, >12MP, >15MP, >20MP, >40MP, >70MP
 #f:jpg, gif, png, bmp, svg, webp, ico
 #l:limit of photos download
-import textos
 import os
 while True:
     print("me dê um input e retornarei 100 imagens / 0 para sair")
@@ -16,5 +15,5 @@ while True:
         break
     print("baixado")
 nomeOriginal=os.path.join('C:\\','pythonscript','Imagens',nome)
-nomeNovo=os.path.join('C:\\','pythonscript','Imagens',textos.fazNomeArquivo(nome))
+nomeNovo=os.path.join('C:\\','pythonscript','Imagens',nome.proper())
 os.rename(nomeOriginal,nomeNovo)
