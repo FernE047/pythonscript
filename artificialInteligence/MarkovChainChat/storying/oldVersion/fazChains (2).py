@@ -2,8 +2,6 @@ from time import time
 import os
 
 
-# TODO: addtype hints and make everything english with underscore naming convention
-
 
 def format_elapsed_time(seconds: float) -> str:
     if seconds < 0:
