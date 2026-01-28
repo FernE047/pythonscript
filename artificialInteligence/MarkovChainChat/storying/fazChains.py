@@ -43,9 +43,9 @@ def rename_file(source_file_name: str, destination_file_name: str) -> None:
 
 def update_chain_file(keywords: list[str], is_title: bool) -> None:
     if is_title:
-        directory = f"./FanficAnime/chainTitle/{TAMANHO}"
+        directory = f"./FanficAnime/chainTitle/{CHAINSIZE}"
     else:
-        directory = f"./FanficAnime/chainStory/{TAMANHO}"
+        directory = f"./FanficAnime/chainStory/{CHAINSIZE}"
     update_keyword_counts(keywords, directory)
     rename_file(f"{directory}/c.txt", f"{directory}/chain.txt")
 
@@ -85,12 +85,12 @@ def generate_word_chain(text: str) -> list[str]:
     words = text.split()
     text_word_count = len(words)
     word_combinations: list[str] = []
-    phrase_chunk = " ".join(["¨" for _ in range(TAMANHO)] + [words[0]])
+    phrase_chunk = " ".join(["¨" for _ in range(CHAINSIZE)] + [words[0]])
     word_combinations.append(phrase_chunk)
     for n in range(text_word_count):
-        phrase_segment = words[n : n + TAMANHO + 1]
-        if len(phrase_segment) <= TAMANHO:
-            while len(phrase_segment) <= TAMANHO:
+        phrase_segment = words[n : n + CHAINSIZE + 1]
+        if len(phrase_segment) <= CHAINSIZE:
+            while len(phrase_segment) <= CHAINSIZE:
                 phrase_segment.append("¨")
             phrase_chunk = " ".join(phrase_segment)
             word_combinations.append(phrase_chunk)
@@ -101,7 +101,7 @@ def generate_word_chain(text: str) -> list[str]:
 
 
 OVERFLOWLIMIT = 50000
-TAMANHO = 1
+CHAINSIZE = 1
 title_keywords: list[str] = []
 story_keywords: list[str] = []
 file_names = os.listdir("./FanficAnime/stories")
