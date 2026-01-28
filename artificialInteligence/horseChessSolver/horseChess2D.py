@@ -1,7 +1,7 @@
 from time import time
 
 
-def embelezeTempo(segundos: float) -> str:
+def format_elapsed_time(segundos: float) -> str:
     if segundos < 0:
         segundos = -segundos
         sign = "-"
@@ -30,23 +30,24 @@ def embelezeTempo(segundos: float) -> str:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
     return sign + ", ".join(parts)
 
+def resolveBoard(
+    board: tuple[list[list[bool]], tuple[int, int]],
+) -> list[tuple[int, int]] | None: #TODO: implement solver
+    return None
 
-def resolveUmTabuleiro(tabuleiro):
+def resolveOneBoard(board: tuple[list[list[bool]], tuple[int, int]]) -> None:
     print()
-    global tries
     tries = 0
-    inicio = time()
-    solucao = resolveTabuleiro(tabuleiro)
-    fim = time()
-    print("\ntentativas: " + str(tries))
-    tempo = fim - inicio
-    global tempoTotal
-    tempoTotal += tempo
-    print("\n" + embelezeTempo(tempo) + "\n\n\n")
+    begin = time()
+    resolveBoard(board)
+    end = time()
+    print("\ntries: " + str(tries))
+    duration = end - begin
+    global total_time
+    total_time += duration
+    print("\n" + format_elapsed_time(duration) + "\n\n\n")
 
-
-global tempoTotal
-tempoTotal = 0
+total_time = 0.0
 for pos in (
     (0, 0),
     (0, 1),
@@ -59,8 +60,8 @@ for pos in (
     (2, 3),
     (3, 3),
 ):
-    matriz = [[False for a in range(8)] for b in range(8)]
+    matriz = [[False for _ in range(8)] for _ in range(8)]
     matriz[pos[0]][pos[1]] = True
-    tabuleiro = (matriz, pos)
-    resolveUmTabuleiro(tabuleiro)
-print("\n" + embelezeTempo(tempoTotal) + "\n\n\n")
+    board = (matriz, pos)
+    resolveOneBoard(board)
+print("\n" + format_elapsed_time(total_time) + "\n\n\n")
