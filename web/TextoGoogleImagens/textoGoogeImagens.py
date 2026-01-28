@@ -1,9 +1,24 @@
 import requests, bs4, re
 import os
-import limpaSopa
 import textos
 import pyperclip
 
+
+def tiraEspaco(text: str) -> str:
+    while text.find("  ") != -1:
+        text = text.replace("  ", " ")
+    return text.lower().strip()
+
+
+def limpa(sopa: bs4.ResultSet[bs4.element.Tag]) -> str:
+    allowed = set(
+        list(
+            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 éáíóúãàêÉÀç"
+        )
+    )
+    raw = " ".join(tag.get_text(" ", strip=False) for tag in sopa)
+    filtrado = "".join(ch for ch in raw if ch in allowed or ch.isspace())
+    return tiraEspaco(filtrado)
 
 def conecta(site: str) -> requests.Response:
     siteBaguncado = requests.get(site)
@@ -77,10 +92,10 @@ def achaGenius(informacao):
         
 def achaLetra(site):
     titulo = siteProcura(site,'.header_with_cover_art-primary_info-title')
-    titulo = limpaSopa.limpa(titulo)
+    titulo = limpa(titulo)
     print(titulo+"\n")
     informacao = siteProcura(site,'.lyrics')
-    musica = limpaSopa.limpa(informacao)
+    musica = limpa(informacao)
     print(musica+"\n")
     musicaSeparada=musica.split(" ")
     return(musicaSeparada)
@@ -132,13 +147,13 @@ while True:
         break
     elif(titulo[:5]=="texto"):
         lyricsSuja = titulo[6:]
-        musica = limpaSopa.limpa(lyricsSuja)
+        musica = limpa(lyricsSuja)
         print(musica+"\n")
         lyrics = musica.split(" ")
         titulo = titulo[-10:]
     elif(titulo[:4]=="cola"):
         lyricsSuja = pyperclip.paste()
-        musica = limpaSopa.limpa(lyricsSuja)
+        musica = limpa(lyricsSuja)
         print(musica+"\n")
         lyrics = musica.split(" ")
         titulo = titulo[5:]

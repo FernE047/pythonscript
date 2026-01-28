@@ -3,7 +3,7 @@ import requests, bs4, re
 import os
 
 
-def ondeComecaHttp(palavra:str) -> int:
+def ondeComecaHttp(palavra: str) -> int:
     for index in range(len(palavra)):
         if (
             (palavra[index] == "h")
@@ -15,7 +15,7 @@ def ondeComecaHttp(palavra:str) -> int:
     raise ValueError("no https found")
 
 
-def encontraSite(palavra:str) -> str:
+def encontraSite(palavra: str) -> str:
     site = ""
     comeco = ondeComecaHttp(palavra)
     for a in range(comeco, len(palavra)):
@@ -26,7 +26,7 @@ def encontraSite(palavra:str) -> str:
     raise ValueError("no & finish found")
 
 
-def qualSite(site:str) -> str:
+def qualSite(site: str) -> str:
     dot_com_index = site.find(".com")
     if dot_com_index == -1:
         raise ValueError("no .com found")
@@ -41,122 +41,17 @@ def qualSite(site:str) -> str:
     return site[:dot_com_index]
 
 
-def tudoMinuscula(musicaMixed):
-    maiusculas = [
-        "A",
-        "B",
-        "C",
-        "D",
-        "E",
-        "F",
-        "G",
-        "H",
-        "I",
-        "J",
-        "K",
-        "L",
-        "M",
-        "N",
-        "O",
-        "P",
-        "Q",
-        "R",
-        "S",
-        "T",
-        "U",
-        "V",
-        "W",
-        "X",
-        "Y",
-        "Z",
-        "É",
-        "À",
-    ]
-    minusculas = [
-        "a",
-        "b",
-        "c",
-        "d",
-        "e",
-        "f",
-        "g",
-        "h",
-        "i",
-        "j",
-        "k",
-        "l",
-        "m",
-        "n",
-        "o",
-        "p",
-        "q",
-        "r",
-        "s",
-        "t",
-        "u",
-        "v",
-        "w",
-        "x",
-        "y",
-        "z",
-        "é",
-        "à",
-    ]
-    musicaMinuscula = ""
-    for letra in musicaMixed:
-        if letra in maiusculas:
-            for maiuscula, minuscula in zip(maiusculas, minusculas):
-                if maiuscula == letra:
-                    musicaMinuscula += minuscula
-        else:
-            musicaMinuscula += letra
-    return musicaMinuscula
+def tiraEspaco(text: str) -> str:
+    while text.find("  ") != -1:
+        text = text.replace("  ", " ")
+    return text.lower().strip()
 
 
-def tiraEspaco(musicaEspacada):
-    charac = 0
-    musicaLimpa = ""
-    while charac < len(musicaEspacada):
-        if musicaEspacada[charac] == " ":
-            musicaLimpa += " "
-            while (musicaEspacada[charac] == " ") and (
-                charac < len(musicaEspacada) - 1
-            ):
-                charac += 1
-            if charac == len(musicaEspacada) - 1:
-                musicaLista = list(musicaLimpa)
-                if musicaLista[0] == " ":
-                    del musicaLista[0]
-                musicaLimpa = ""
-                for a in musicaLista:
-                    musicaLimpa += str(a)
-                charac += 1
-            continue
-        else:
-            musicaLimpa += musicaEspacada[charac]
-        charac += 1
-    return tudoMinuscula(musicaLimpa)
-
-
-def limpa(sopa):
-    global alfabeto
-    codigo = False
-    musica = ""
-    sopona = ""
-    for pedaco in sopa:
-        sopona += str(pedaco)
-    for letra in sopona:
-        if (letra == "<") or (letra == "["):
-            codigo = True
-            musica += " "
-            continue
-        if (letra == ">") or (letra == "]"):
-            codigo = False
-            continue
-        if not (codigo):
-            if letra in alfabeto:
-                musica += letra
-    return tiraEspaco(musica)
+def limpa(sopa: bs4.ResultSet[bs4.element.Tag]) -> str:
+    allowed = set(list("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 éáíóúãàêÉÀç"))
+    raw = " ".join(tag.get_text(" ", strip=False) for tag in sopa)
+    filtrado = "".join(ch for ch in raw if ch in allowed or ch.isspace())
+    return tiraEspaco(filtrado)
 
 
 def conecta(site: str) -> requests.Response:
@@ -166,7 +61,9 @@ def conecta(site: str) -> requests.Response:
     return siteBaguncado
 
 
-def pesquisaGoogle(search: str, adicao: str = "%20full%20lyrics") -> bs4.ResultSet[bs4.element.Tag]:
+def pesquisaGoogle(
+    search: str, adicao: str = "%20full%20lyrics"
+) -> bs4.ResultSet[bs4.element.Tag]:
     musicaSearch = conecta(f"https://www.google.com.br/search?q={search}{adicao}")
     musicaSearchSoup = bs4.BeautifulSoup(musicaSearch.text, features="html.parser")
     informacao = musicaSearchSoup.select(".r")
