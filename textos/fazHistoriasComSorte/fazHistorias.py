@@ -1,4 +1,3 @@
-import internet
 import requests, bs4, re
 import random
 

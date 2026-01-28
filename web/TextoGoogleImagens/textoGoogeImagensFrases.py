@@ -1,7 +1,6 @@
 import requests, bs4, re
 import os
 import limpaSopa
-import internet
 import textos
 import pyperclip
 
