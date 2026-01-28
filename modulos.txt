@@ -1,6 +1,4 @@
 internet - fun��es para internet:
-	achaSite - PEGA informa��o,site(string) RETORNA siteCompleto(string)
-	resultadosGoogle - PEGA texto,adicao* RETORNA sites
 	pegaTodosSites - PEGA informa��o RETORNA sites
 	baixaImagem - PEGA nome, args RETORNA 100 imagens na pasta de imagens do python script
 

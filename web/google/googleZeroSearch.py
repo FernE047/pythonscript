@@ -1,6 +1,5 @@
 #! python3.
 import requests, bs4, re
-import internet
 import time
 
 
@@ -30,6 +29,13 @@ def resultadosQuantia(termo):
     print(numero)
     return(int(numero))
 
+
+def resultadosGoogle(search: str, adicao: str = "") -> bs4.ResultSet[bs4.element.Tag]:
+    musicaSearch = conecta(f"https://www.google.com.br/search?q={search}{adicao}")
+    musicaSearchSoup = bs4.BeautifulSoup(musicaSearch.text, features="html.parser")
+    informacao = musicaSearchSoup.select(".r")
+    return informacao
+
 def encontrarZero(termo):
     proxima=['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
     contagem=[]
@@ -47,7 +53,7 @@ def encontrarZero(termo):
             return(0)
         else:
             if(quantidade==1):
-                sites=internet.resultadosGoogle(termo)
+                sites=resultadosGoogle(termo)
                 for site in sites:
                     print(str(site))
             contagem[letra]=quantidade
