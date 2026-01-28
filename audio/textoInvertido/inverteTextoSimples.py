@@ -1,12 +1,12 @@
 from userUtil import pegaString
 from textos import separaLinhas
-from textos import separaPalavras
 from textos import fazAudio
+
 
 def invertePorPalavra(texto):
     novoTexto=[];
     for linha in (separaLinhas(texto)):
-        for palavra in (separaPalavras(linha)):
+        for palavra in linha.split(" "):
             novoTexto+=[inverte(palavra)]
         novoTexto+="\n"
     novoTexto=" ".join(novoTexto)
@@ -14,7 +14,7 @@ def invertePorPalavra(texto):
 
 def ninvertePorPalavra(texto):
     novoTexto=[];
-    for palavra in (separaPalavras(texto)):
+    for palavra in texto.split(" "):
         novoTexto+=[inverte(palavra)]
     novoTexto=" ".join(novoTexto)
     fazAudio("invertidoPorPalavra",novoTexto)

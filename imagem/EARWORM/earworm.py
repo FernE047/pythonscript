@@ -3,7 +3,7 @@ import requests, bs4, re
 import os
 
 
-def ondeComecaHttp(palavra):
+def ondeComecaHttp(palavra:str) -> int:
     for index in range(len(palavra)):
         if (
             (palavra[index] == "h")
@@ -12,11 +12,10 @@ def ondeComecaHttp(palavra):
             and (palavra[index + 3] == "p")
         ):
             return index
-    print("no https found")
-    return "ERROR01"
+    raise ValueError("no https found")
 
 
-def encontraSite(palavra):
+def encontraSite(palavra:str) -> str:
     site = ""
     comeco = ondeComecaHttp(palavra)
     for a in range(comeco, len(palavra)):
@@ -24,8 +23,7 @@ def encontraSite(palavra):
             site += palavra[a]
         else:
             return site
-    print("no & finish found")
-    return "ERROR 02"
+    raise ValueError("no & finish found")
 
 
 def qualSite(site):
@@ -164,11 +162,6 @@ def limpa(sopa):
     return tiraEspaco(musica)
 
 
-def separaPalavras(musica):
-    palavras = musica.split(" ")
-    return palavras
-
-
 def conecta(site):
     siteBaguncado = requests.get(site)
     while siteBaguncado.status_code != requests.codes.ok:
@@ -215,7 +208,7 @@ def fazImagem(site, pasta="imagens/"):
     informacao = musicaSoup.select(".lyrics")
     musica = limpa(informacao)
     print(musica + "\n")
-    musicaSeparada = separaPalavras(musica)
+    musicaSeparada = musica.split(" ")
     quantPalavras = len(musicaSeparada)
     print("quantidade de palavras: " + str(quantPalavras) + "\n")
     if quantPalavras:

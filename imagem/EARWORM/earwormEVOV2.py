@@ -1,11 +1,10 @@
 from userUtil import cadaMusicaFaca
-from textos import separaPalavras
 from PIL import Image
 import os
         
 def fazImagem(info):
     titulo,musica = info
-    musicaSeparada = separaPalavras(musica)
+    musicaSeparada = musica.split(" ")
     quantPalavras=len(musicaSeparada)
     print("quantidade de palavras: "+str(quantPalavras)+"\n")
     if(quantPalavras):

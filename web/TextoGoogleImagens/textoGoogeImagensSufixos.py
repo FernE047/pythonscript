@@ -5,13 +5,35 @@ import internet
 import textos
 import pyperclip
 
+def ondeComecaHttp(palavra: str) -> int:
+    for index in range(len(palavra)):
+        if (
+            (palavra[index] == "h")
+            and (palavra[index + 1] == "t")
+            and (palavra[index + 2] == "t")
+            and (palavra[index + 3] == "p")
+        ):
+            return index
+    raise ValueError("no https found")
+
+
+def encontraSite(palavra: str) -> str:
+    site = ""
+    comeco = ondeComecaHttp(palavra)
+    for a in range(comeco, len(palavra)):
+        if palavra[a] != "&":
+            site += palavra[a]
+        else:
+            return site
+    raise ValueError("no & finish found")
+
 def achaGenius(informacao):
     for info in informacao:
         try:
             bomResultado = info.select('a')[0].get('href')
         except:
             continue
-        site = internet.encontraSite(bomResultado)
+        site = encontraSite(bomResultado)
         nomeSite = internet.qualSite(site)
         if nomeSite=='genius':
             return(site)
@@ -23,7 +45,7 @@ def achaLetra(site):
     informacao = internet.siteProcura(site,'.lyrics')
     musica = limpaSopa.limpa(informacao)
     print(musica+"\n")
-    musicaSeparada=textos.separaPalavras(musica)
+    musicaSeparada=musica.split(" ")
     return(musicaSeparada)
 
 def baixaImagens(lyrics,titulo,adicao):
@@ -84,13 +106,13 @@ while True:
         lyricsSuja = titulo[6:]
         musica = limpaSopa.limpa(lyricsSuja)
         print(musica+"\n")
-        lyrics = textos.separaPalavras(musica)
+        lyrics = musica.split(" ")
         titulo = titulo[-10:]
     elif(titulo[:4]=="cola"):
         lyricsSuja = pyperclip.paste()
         musica = limpaSopa.limpa(lyricsSuja)
         print(musica+"\n")
-        lyrics = textos.separaPalavras(musica)
+        lyrics = musica.split(" ")
         titulo = titulo[5:]
     else:
         tituloList = list(titulo)

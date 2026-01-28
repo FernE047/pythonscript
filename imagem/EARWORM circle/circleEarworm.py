@@ -1,6 +1,5 @@
 from colorsys import hsv_to_rgb as hTr
 from userUtil import cadaMusicaFaca
-from textos import separaPalavras
 from PIL import Image
 import math
 
@@ -45,7 +44,7 @@ def fazLinha(pontoInicial,pontoFinal,imagem,cor):
 
 def fazImagem(info):
     titulo,musica = info
-    musicaSeparada = separaPalavras(musica)
+    musicaSeparada = musica.split(" ")
     prego = []
     for palavra in musicaSeparada:
         if palavra not in prego:
