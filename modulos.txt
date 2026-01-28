@@ -1,9 +1,3 @@
-internet - fun��es para internet:
-	pegaTodosSites - PEGA informa��o RETORNA sites
-	baixaImagem - PEGA nome, args RETORNA 100 imagens na pasta de imagens do python script
-
-
-
 textos - fun��o para string
 	tudoMinuscula - PEGA texto RETORNA texto com tudo minuculo
 	tiraEspaco - PEGA texto RETORNA texto sem espa�os adicionais

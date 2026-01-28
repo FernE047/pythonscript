@@ -1,7 +1,7 @@
 from PIL import Image
 import requests, bs4, re
+from typing import cast
 import os
-import internet
 import textos
 
 
@@ -108,11 +108,26 @@ def fazImagem(site,pasta="imagens/"):
         imagem.save('C:/pythonscript/EARWORM/'+pasta+str(titulo)+".png")
     print("feita com sucesso\n\n")
 
+def pegaTodosSites(informacao: bs4.ResultSet[bs4.element.Tag]) -> list[str]:
+    sites:list[str] = []
+    for info in informacao:
+        try:
+            bomResultado = cast(str,info.select('a')[0].get('href'))
+        except Exception as _:
+            continue
+        site = encontraSite(bomResultado)
+        nomeSite = qualSite(site)
+        print(site)
+        print(nomeSite+"\n")
+        if nomeSite=='genius':
+            sites.append(site)
+    return(sites)
+
 def albumImagens(site,album):
     fazDiretorio('album/'+album)
     faixa=1
     informacao = siteProcura(site,'.u-display_block')
-    musicasSites = internet.pegaTodosSites(informacao)
+    musicasSites = pegaTodosSites(informacao)
     for site in musicasSites:
         fazImagem(site,pasta=f'album/{album}/{faixa:03d}-')
         faixa+=1
@@ -121,7 +136,7 @@ def artistImagens(site,artist):
     fazDiretorio(f'artist/{artist}')
     faixa=1
     informacao = siteProcura(site,'.mini_card')
-    musicasSites = internet.pegaTodosSites(informacao)
+    musicasSites = pegaTodosSites(informacao)
     for site in musicasSites:
         fazImagem(site,pasta=f'artist/{artist}/{faixa:03d}-')
         faixa+=1
