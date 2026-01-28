@@ -1,3 +1,4 @@
+from io import TextIOWrapper
 from typing import Literal, overload
 from send2trash import send2trash
 import random
@@ -16,6 +17,10 @@ def choose_from_options(
 ) -> int: ...
 
 
+@overload
+def choose_from_options(prompt: str, options: list[str]) -> str: ...
+
+
 def choose_from_options(
     prompt: str, options: list[str], mode: Literal["text", "number"] = "text"
 ) -> str | int:
@@ -32,22 +37,24 @@ def choose_from_options(
             user_choice = input("not valid, try again: ")
 
 
-def pegaInteiro(
-    mensagem: str, minimo: int | None = None, maximo: int | None = None
+def int_input(
+    prompt_message: str,
+    minimum_value: int | None = None,
+    maximum_value: int | None = None,
 ) -> int:
     while True:
-        entrada = input(f"{mensagem} : ")
+        entry = input(f"{prompt_message} : ")
         try:
-            valor = int(entrada)
-            if (minimo is not None) and (valor < minimo):
-                print(f"valor deve ser maior ou igual a {minimo}")
+            value = int(entry)
+            if (minimum_value is not None) and (value < minimum_value):
+                print(f"value must be greater than or equal to {minimum_value}")
                 continue
-            if (maximo is not None) and (valor > maximo):
-                print(f"valor deve ser menor ou igual a {maximo}")
+            if (maximum_value is not None) and (value > maximum_value):
+                print(f"value must be less than or equal to {maximum_value}")
                 continue
-            return valor
+            return value
         except Exception as _:
-            print("valor inválido, tente novamente")
+            print("invalid value, please try again")
 
 
 # simple system to register answers and questions
@@ -56,294 +63,279 @@ def pegaInteiro(
 # the user can study the modules in random order
 
 
-def imprimeModulo(nome):
-    fileRespostas = open("\\".join([pasta, modulo, "answer.txt"]), "r")
-    filePerguntas = open("\\".join([pasta, modulo, "question.txt"]), "r")
-    linhaResposta = fileRespostas.readline()
-    linhaPergunta = filePerguntas.readline()
-    indice = 1
-    while linhaResposta:
-        print(indice, end=") \n")
-        print(linhaPergunta, end="")
-        print(linhaResposta + "\n")
-        linhaResposta = fileRespostas.readline()
-        linhaPergunta = filePerguntas.readline()
-        indice += 1
-    fileRespostas.close()
-    filePerguntas.close()
+def print_module(module_path: str) -> None:
+    with (
+        open(f"{module_path}/answer.txt", "r") as answers_file,
+        open(f"{module_path}/question.txt", "r") as questions_file,
+    ):
+        answers_line = answers_file.readline()
+        questions_line = questions_file.readline()
+        index = 1
+        while answers_line:
+            print(f"{index}) ")
+            print(questions_line, end="")
+            print(f"{answers_line}\n")
+            answers_line = answers_file.readline()
+            questions_line = questions_file.readline()
+            index += 1
 
 
-def editarModulo(pasta, modulo):
-    opcoes = ["Voltar"]
-    opcoes += ["Adicionar"]
-    opcoes += ["Alterar"]
-    opcoes += ["Remover"]
-    escolha = choose_from_options("escolha uma opcao : ", opcoes)
-    if escolha in ["Alterar", "Remover"]:
-        imprimeModulo(pasta + "\\" + modulo)
-        quantia = quantiaLinhas("\\".join([pasta, modulo, "answer.txt"]))
-        indiceAltera = pegaInteiro(
-            "digite o indice que deseja alterar", minimo=1, maximo=quantia
+def edit_module(folder: str, module: str) -> None:
+    opcoes = ["Back", "New", "Edit", "Delete"]
+    user_choice = choose_from_options("escolha uma opcao : ", opcoes)
+    path_module = f"{folder}/{module}"
+    if user_choice in ["Edit", "Delete"]:
+        print_module(path_module)
+        line_count = count_lines(f"{path_module}/answer.txt")
+        index_edit = int_input(
+            "type the index you want to edit", minimum_value=1, maximum_value=line_count
         )
-        fileRespostas = open("\\".join([pasta, modulo, "answer.txt"]), "r")
-        filePerguntas = open("\\".join([pasta, modulo, "question.txt"]), "r")
-        fileRespostasTemp = open("\\".join([pasta, modulo, "answer.txt.tmp"]), "w")
-        filePerguntasTemp = open("\\".join([pasta, modulo, "question.txt.tmp"]), "w")
-        linhaResposta = fileRespostas.readline()
-        linhaPergunta = filePerguntas.readline()
-        indice = 1
-        while linhaResposta:
-            if indice == indiceAltera:
-                if escolha == "Alterar":
-                    palavra = input("digite a palavra pergunta")
-                    filePerguntasTemp.write(palavra + "\n")
-                    palavra = input("digite a palavra resposta")
-                    fileRespostasTemp.write(palavra + "\n")
-            else:
-                fileRespostasTemp.write(linhaResposta)
-                filePerguntasTemp.write(linhaPergunta)
-                print(indice, end=") \n")
-                print(linhaPergunta, end="")
-                print(linhaResposta + "\n")
-            linhaResposta = fileRespostas.readline()
-            linhaPergunta = filePerguntas.readline()
-            indice += 1
-        fileRespostas.close()
-        filePerguntas.close()
-        fileRespostasTemp.close()
-        filePerguntasTemp.close()
-        send2trash("\\".join([pasta, modulo, "answer.txt"]))
-        send2trash("\\".join([pasta, modulo, "question.txt"]))
+        with (
+            open(f"{path_module}/answer.txt", "r") as answers_file,
+            open(f"{path_module}/question.txt", "r") as questions_file,
+            open(f"{path_module}/answer.txt.tmp", "w") as answers_fileTemp,
+            open(f"{path_module}/question.txt.tmp", "w") as questions_fileTemp,
+        ):
+            answers_line = answers_file.readline()
+            questions_line = questions_file.readline()
+            index = 1
+            while answers_line:
+                if index == index_edit:
+                    if user_choice == "Edit":
+                        question_word = input("type the question word")
+                        questions_fileTemp.write(f"{question_word}\n")
+                        answer_word = input("type the answer word")
+                        answers_fileTemp.write(f"{answer_word}\n")
+                else:
+                    answers_fileTemp.write(answers_line)
+                    questions_fileTemp.write(questions_line)
+                    print(index, end=") \n")
+                    print(questions_line, end="")
+                    print(answers_line + "\n")
+                answers_line = answers_file.readline()
+                questions_line = questions_file.readline()
+                index += 1
+        send2trash(f"{path_module}/answer.txt")
+        send2trash(f"{path_module}/question.txt")
         os.rename(
-            "\\".join([pasta, modulo, "answer.txt.tmp"]),
-            "\\".join([pasta, modulo, "answer.txt"]),
+            f"{path_module}/answer.txt.tmp",
+            f"{path_module}/answer.txt",
         )
         os.rename(
-            "\\".join([pasta, modulo, "question.txt.tmp"]),
-            "\\".join([pasta, modulo, "question.txt"]),
+            f"{path_module}/question.txt.tmp",
+            f"{path_module}/question.txt",
         )
-    if escolha == "Adicionar":
-        imprimeModulo(pasta + "\\" + modulo)
-        fileRespostas = open("\\".join([pasta, modulo, "answer.txt"]), "a")
-        filePerguntas = open("\\".join([pasta, modulo, "question.txt"]), "a")
-        while True:
-            palavra = input("digite a palavra pergunta")
-            if palavra == "0":
-                break
-            filePerguntas.write(palavra + "\n")
-            palavra = input("digite a palavra resposta")
-            fileRespostas.write(palavra + "\n")
-        fileRespostas.close()
-        filePerguntas.close()
+    if user_choice == "New":
+        print_module(path_module)
+        with (
+            open(f"{path_module}/answer.txt", "a") as answers_file,
+            open(f"{path_module}/question.txt", "a") as questions_file,
+        ):
+            while True:
+                question_word = input("type the question word")
+                if question_word == "0":
+                    return
+                questions_file.write(f"{question_word}\n")
+                answer_word = input("type the answer word")
+                answers_file.write(f"{answer_word}\n")
 
 
-def excluirModulo(pasta, modulo):
-    send2trash("\\".join([pasta, modulo]))
-    print("Removido Modulo " + modulo)
+def delete_module(folder: str, module: str) -> None:
+    send2trash(f"{folder}/{module}")
+    print(f"Module Deleted {module}")
 
 
-def fazPergunta(fileA, fileB, indice, escolha):
-    if escolha == "Respostas":
-        fileC = fileB
-        fileB = fileA
-        fileA = fileC
-        fileC = None
+def make_question(
+    file_a: TextIOWrapper, file_b: TextIOWrapper, index: int, choice: str
+) -> str:
+    file_c: TextIOWrapper | None = None
+    if choice == "Respostas":
+        file_c = file_b
+        file_b = file_a
+        file_a = file_c
+        file_c = None
     else:
-        modo = random.randint(0, 1)
-        if modo:
-            fileC = fileB
-            fileB = fileA
-            fileA = fileC
-            fileC = None
-    linhaA = fileA.readline()
-    linhaB = fileB.readline()
-    indiceAtual = 0
-    while linhaA:
-        if indice == indiceAtual:
-            resposta = input(linhaA[:-1])
-            if resposta == "0":
-                return resposta
-            if resposta == linhaB[:-1]:
-                print("\tCERTO!!!\n")
+        mode = random.randint(0, 1)
+        if mode:
+            file_c = file_b
+            file_b = file_a
+            file_a = file_c
+            file_c = None
+    line_a = file_a.readline()
+    line_b = file_b.readline()
+    current_index = 0
+    while line_a:
+        if index == current_index:
+            answer = input(line_a[:-1])
+            if answer == "0":
+                return answer
+            if answer == line_b[:-1]:
+                print("\tCongratulations!!!\n")
             else:
-                print("\terrou\n")
-            return resposta
-        linhaA = fileA.readline()
-        linhaB = fileB.readline()
-        indiceAtual += 1
+                print("\tWrong\n")
+            return answer
+        line_a = file_a.readline()
+        line_b = file_b.readline()
+        current_index += 1
+    return ""
 
 
-def quantiaLinhas(fileName):
-    file = open(fileName, "r")
-    linha = file.readline()
-    quantia = 0
-    while linha:
-        quantia += 1
-        linha = file.readline()
-    file.close()
-    return quantia
+def count_lines(fileName: str) -> int:
+    with open(fileName, "r") as file:
+        line = file.readline()
+        line_count = 0
+        while line:
+            line_count += 1
+            line = file.readline()
+    return line_count
 
 
-def acessarModulo(pasta, modulo):
-    quantia = quantiaLinhas("\\".join([pasta, modulo, "answer.txt"]))
-    opcoes = ["Voltar"]
-    opcoes += ["Perguntas"]
-    opcoes += ["Respostas"]
-    opcoes += ["Perguntas & Respostas"]
-    escolha = choose_from_options("escolha um modo : ", opcoes)
-    print("digite 0 em qualquer lugar para sair")
-
+def study_module(folder: str, module: str) -> None:
+    module_path = f"{folder}/{module}"
+    quantity = count_lines(f"{module_path}/answer.txt")
+    options = ["Back", "Questions", "Answers", "Questions & Answers"]
+    user_choice = choose_from_options("choose a mode : ", options)
+    print("type 0 anywhere to exit")
     while True:
-        fileRespostas = open("\\".join([pasta, modulo, "answer.txt"]), "r")
-        filePerguntas = open("\\".join([pasta, modulo, "question.txt"]), "r")
-        indice = random.randint(0, quantia)
-        resposta = fazPergunta(filePerguntas, fileRespostas, indice, escolha)
-        fileRespostas.close()
-        filePerguntas.close()
-        if resposta == "0":
-            break
+        with (
+            open(f"{module_path}/answer.txt", "r") as answers_file,
+            open(f"{module_path}/question.txt", "r") as questions_file,
+        ):
+            index = random.randint(0, quantity)
+            answer = make_question(questions_file, answers_file, index, user_choice)
+        if answer == "0":
+            return
 
 
-def criaModulo(pasta, pastaAv, modulo):
-    print(pasta + "\\" + modulo)
-    if not os.path.exists(pasta + "\\" + modulo):
-        os.makedirs(pasta + "\\" + modulo)
-        os.makedirs(pastaAv + "\\" + modulo)
-        fileRespostas = open("\\".join([pasta, modulo, "answer.txt"]), "w")
-        filePerguntas = open("\\".join([pasta, modulo, "question.txt"]), "w")
-        print("digite 0 em uma pergunta para sair ")
-        while True:
-            palavra = input("digite a palavra pergunta")
-            if palavra == "0":
-                break
-            filePerguntas.write(palavra + "\n")
-            palavra = input("digite a palavra resposta")
-            fileRespostas.write(palavra + "\n")
-        fileRespostas.close()
-        filePerguntas.close()
-    else:
+def new_module(folder: str, evaluation_folder: str, module: str) -> None:
+    path_module = f"{folder}/{module}"
+    print(path_module)
+    if os.path.exists(path_module):
         print("já existe")
-
-
-def modoAleatorio(pasta, modo):  # adicionar modular parcial
-    modulos = os.listdir(pasta)
-    opcoes = ["Voltar"]
-    opcoes += ["Perguntas"]
-    opcoes += ["Respostas"]
-    opcoes += ["Perguntas & Respostas"]
-    escolha = choose_from_options("escolha um modo : ", opcoes)
-    print("digite 0 em qualquer lugar para sair")
-    isParcial = True if modo.find("Parcial") != -1 else False
-    if isParcial:
-        modo = modo[8:]
+        return
+    os.makedirs(path_module)
+    os.makedirs(f"{evaluation_folder}/{module}")
+    with (
+        open(f"{path_module}/answer.txt", "w") as answers_file,
+        open(f"{path_module}/question.txt", "w") as questions_file,
+    ):
+        print("type 0 to stop")
         while True:
-            opcoes = ["Concluir Seleção"]
-            indice = choose_from_options(
-                "escolha quais modulos retirar : ", opcoes + modulos, mode="number"
+            word = input("type the question word: ")
+            if word == "0":
+                return
+            questions_file.write(word + "\n")
+            word = input("type the answer word: ")
+            answers_file.write(word + "\n")
+
+
+def random_study(folder: str, mode: str) -> None:  # TODO implement partial modular mode
+    modules = os.listdir(folder)
+    options = ["Back", "Questions", "Answers", "Questions & Answers"]
+    choice = choose_from_options("choose a mode : ", options)
+    print("type 0 anywhere to exit")
+    isPartial = mode.find("Partial") != -1
+    if isPartial:
+        mode = mode[8:]
+        while True:
+            options = ["Conclude Selection"]
+            index = choose_from_options(
+                "choose which modules to remove : ", options + modules, mode="number"
             )
-            if indice == 0:
+            if index == 0:
                 break
-            if len(modulos) == 1:
-                print("não é possivel excluir o último modulo")
+            if len(modules) == 1:
+                print("it is not possible to remove the last module")
                 break
-            else:
-                modulos.pop(indice - 1)
-    if modo == "Total":
-        quantias = [quantiaLinhas("//".join([pasta, a, "answer.txt"])) for a in modulos]
+            modules.pop(index - 1)
     while True:
-        if modo == "Total":
-            soma = 0
-            indice = -1
-            linhaRequerida = random.randint(1, sum(quantias))
-            while soma < linhaRequerida:
-                indice += 1
-                soma += quantias[indice]
-            modulo = modulos[indice]
+        if mode == "Total":
+            quantities: list[int] = [
+                count_lines(f"{folder}/{a}/answer.txt") for a in modules
+            ]
+            sum_ = 0
+            index = -1
+            required_line = random.randint(1, sum(quantities))
+            while sum_ < required_line:
+                index += 1
+                sum_ += quantities[index]
+            module = modules[index]
         else:
-            modulo = modulos[random.randint(0, len(modulos) - 1)]
-        indice = random.randint(
-            0, quantiaLinhas("//".join([pasta, modulo, "answer.txt"]))
-        )
-        fileRespostas = open("\\".join([pasta, modulo, "answer.txt"]), "r")
-        filePerguntas = open("\\".join([pasta, modulo, "question.txt"]), "r")
-        resposta = fazPergunta(filePerguntas, fileRespostas, indice, escolha)
-        fileRespostas.close()
-        filePerguntas.close()
-        if resposta == "0":
-            break
+            module = modules[random.randint(0, len(modules) - 1)]
+        module_path = f"{folder}/{module}"
+        index = random.randint(0, count_lines(f"{module_path}/answer.txt"))
+        with (
+            open(f"{module_path}/answer.txt", "r") as answers_file,
+            open(f"{module_path}/question.txt", "r") as questions_file,
+        ):
+            answer = make_question(questions_file, answers_file, index, choice)
+        if answer == "0":
+            return
 
 
 while True:
-    diretorio = "C:\\pythonscript\\ajudaTarefas\\quickLearning"
-    escolha = choose_from_options(
-        "escolha uma categoria : ",
-        ["Sair", "Criar Nova"] + os.listdir(diretorio + "\\categorias"),
+    user_choice = choose_from_options(
+        "choose a category : ", ["Exit", "Create New"] + os.listdir("./categories")
     )
-    if escolha == "Sair":
+    if user_choice == "Exit":
         break
-    if escolha == "Criar Nova":
-        nomeCategoriaNovo = input("digite o nome da nova categoria : ")
-        pasta = f"{diretorio}\\categorias\\{nomeCategoriaNovo.proper()}"
-        pastaAv = f"{diretorio}\\avaliacao\\{nomeCategoriaNovo.proper()}"
-        print(pasta)
-        if not os.path.exists(pasta):
-            os.makedirs(pasta)
-            os.makedirs(pastaAv)
+    if user_choice == "Create New":
+        new_category_name = input("type the new category name : ")
+        folder = f"./categories/{new_category_name.title()}"
+        evaluation_folder = f"./evaluations/{new_category_name.title()}"
+        print(folder)
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+            os.makedirs(evaluation_folder)
         else:
-            print("já existe")
+            print("already exists")
         continue
-    else:
-        pasta = diretorio + "\\categorias\\" + escolha
-        pastaAv = diretorio + "\\avaliacao\\" + escolha
+    folder = "./categories/" + user_choice
+    evaluation_folder = "./evaluations/" + user_choice
     while True:
-        opcoes = ["Voltar"]
-        opcoes += ["Modulos"]
-        if len(os.listdir(pasta)) != 0:
-            opcoes += ["Aleatorio"]
-        escolha = choose_from_options("escolha uma opcao : ", opcoes)
-        if escolha == "Voltar":
+        options = ["Back"]
+        options += ["Modules"]
+        if len(os.listdir(folder)) != 0:
+            options += ["Random"]
+        user_choice = choose_from_options("choose an option : ", options)
+        if user_choice == "Back":
             break
-        if escolha == "Modulos":
+        if user_choice == "Modules":
             while True:
-                opcoes = ["Voltar"]
-                opcoes += ["Novo"]
-                categorias = os.listdir(pasta)
-                escolha = choose_from_options(
-                    "escolha uma opcao : ", opcoes + categorias
+                options = ["Back"]
+                options += ["New"]
+                categories = os.listdir(folder)
+                user_choice = choose_from_options(
+                    "choose an option : ", options + categories
                 )
-                if escolha == "Voltar":
+                if user_choice == "Back":
                     break
-                if escolha == "Novo":
-                    modulo = input("digite o nome do novo modulo : ")
-                    criaModulo(pasta, pastaAv, modulo.proper())
-                else:
-                    modulo = escolha
-                    opcoes = ["Voltar"]
-                    opcoes += ["Visualizar"]
-                    opcoes += ["Estudar"]
-                    opcoes += ["Editar"]
-                    opcoes += ["Excluir"]
-                    escolha = choose_from_options("escolha uma opcao : ", opcoes)
-                    if escolha == "Visualizar":
-                        imprimeModulo(pasta + "\\" + modulo)
-                    if escolha == "Editar":
-                        editarModulo(pasta, modulo)
-                    if escolha == "Excluir":
-                        excluirModulo(pasta, modulo)
-                    if escolha == "Estudar":
-                        acessarModulo(pasta, modulo)
-        if escolha == "Aleatorio":
-            modulos = os.listdir(pasta)
-            opcoes = ["Voltar"]
-            opcoes += ["Total"]
-            if len(modulos) > 1:
-                opcoes += ["Simples"]
-                opcoes += ["Parcial Total"]
-                opcoes += ["Parcial Simples"]
+                if user_choice == "New":
+                    module = input("type the new module name : ")
+                    new_module(folder, evaluation_folder, module.title())
+                    continue
+                module = user_choice
+                options = ["Back"]
+                options += ["View"]
+                options += ["Study"]
+                options += ["Edit"]
+                options += ["Delete"]
+                user_choice = choose_from_options("choose an option : ", options)
+                if user_choice == "View":
+                    print_module(f"{folder}/{module}")
+                if user_choice == "Edit":
+                    edit_module(folder, module)
+                if user_choice == "Delete":
+                    delete_module(folder, module)
+                if user_choice == "Study":
+                    study_module(folder, module)
+        if user_choice == "Random":
+            modules = os.listdir(folder)
+            options = ["Back", "Total"]
+            if len(modules) > 1:
+                options.extend(["Simple", "Partial Total", "Partial Simple"])
             while True:
-                escolha = choose_from_options("escolha uma opcao : ", opcoes)
-                if escolha == "Voltar":
-                    modulos = None
+                user_choice = choose_from_options("choose an option : ", options)
+                if user_choice == "Back":
                     break
-                else:
-                    modoAleatorio(pasta, escolha)
+                random_study(folder, user_choice)
