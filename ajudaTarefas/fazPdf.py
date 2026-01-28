@@ -1,11 +1,14 @@
+#type: ignore
+
+## win32com doesn't have stubs for its methods
 import win32com.client as client
 
 
-def convert_to_pdf(filepath:str):
+def convert_to_pdf(filepath:str) -> None:
     """Save a pdf of a docx file."""    
     try:
         word = client.DispatchEx("Word.Application")
-        target_path = filepath.replace(".docx", r".pdf")
+        target_path = filepath.replace(".docx", ".pdf")
         word_doc = word.Documents.Open(filepath)
         word_doc.SaveAs(target_path, FileFormat=17)
         word_doc.Close()
