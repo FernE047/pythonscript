@@ -1,6 +1,4 @@
 internet - fun��es para internet:
-	conecta - PEGA site(string) RETORNA site(baixado)
-	pesquisaGoogle - PEGA texto,adicao* RETORNA google resultados(informa��o)
 	siteProcura - PEGA site(string),html(elemento) RETORNA informa��o
 	achaSite - PEGA informa��o,site(string) RETORNA siteCompleto(string)
 	resultadosGoogle - PEGA texto,adicao* RETORNA sites

@@ -6,6 +6,22 @@ import textos
 import pyperclip
 
 
+def conecta(site: str) -> requests.Response:
+    siteBaguncado = requests.get(site)
+    while siteBaguncado.status_code != requests.codes.ok:
+        siteBaguncado = requests.get(site)
+    return siteBaguncado
+
+
+def pesquisaGoogle(
+    search: str, adicao: str = "%20full%20lyrics"
+) -> bs4.ResultSet[bs4.element.Tag]:
+    musicaSearch = conecta(f"https://www.google.com.br/search?q={search}{adicao}")
+    musicaSearchSoup = bs4.BeautifulSoup(musicaSearch.text, features="html.parser")
+    informacao = musicaSearchSoup.select(".r")
+    return informacao
+
+
 def qualSite(site: str) -> str:
     dot_com_index = site.find(".com")
     if dot_com_index == -1:
@@ -128,7 +144,7 @@ while True:
                 tituloList[letra] = "%20"
             tituloFormatada += tituloList[letra]
         print()
-        informacao = internet.pesquisaGoogle(tituloFormatada,adicao="%20full%20lyrics")
+        informacao = pesquisaGoogle(tituloFormatada,adicao="%20full%20lyrics")
         site = achaGenius(informacao)
         print(site)
         lyrics = achaLetra(site)

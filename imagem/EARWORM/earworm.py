@@ -159,15 +159,15 @@ def limpa(sopa):
     return tiraEspaco(musica)
 
 
-def conecta(site):
+def conecta(site: str) -> requests.Response:
     siteBaguncado = requests.get(site)
     while siteBaguncado.status_code != requests.codes.ok:
         siteBaguncado = requests.get(site)
     return siteBaguncado
 
 
-def pesquisaGoogle(search, adicao="%20full%20lyrics"):
-    musicaSearch = conecta("https://www.google.com.br/search?q=" + search + adicao)
+def pesquisaGoogle(search: str, adicao: str = "%20full%20lyrics") -> bs4.ResultSet[bs4.element.Tag]:
+    musicaSearch = conecta(f"https://www.google.com.br/search?q={search}{adicao}")
     musicaSearchSoup = bs4.BeautifulSoup(musicaSearch.text, features="html.parser")
     informacao = musicaSearchSoup.select(".r")
     return informacao

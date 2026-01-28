@@ -6,6 +6,22 @@ import textos
 import pyperclip
 
 
+def conecta(site: str) -> requests.Response:
+    siteBaguncado = requests.get(site)
+    while siteBaguncado.status_code != requests.codes.ok:
+        siteBaguncado = requests.get(site)
+    return siteBaguncado
+
+
+def pesquisaGoogle(
+    search: str, adicao: str = "%20full%20lyrics"
+) -> bs4.ResultSet[bs4.element.Tag]:
+    musicaSearch = conecta(f"https://www.google.com.br/search?q={search}{adicao}")
+    musicaSearchSoup = bs4.BeautifulSoup(musicaSearch.text, features="html.parser")
+    informacao = musicaSearchSoup.select(".r")
+    return informacao
+
+
 def qualSite(site: str) -> str:
     dot_com_index = site.find(".com")
     if dot_com_index == -1:
@@ -19,6 +35,7 @@ def qualSite(site: str) -> str:
     if site[:7] == "http://":
         return site[7:dot_com_index]
     return site[:dot_com_index]
+
 
 def ondeComecaHttp(palavra: str) -> int:
     for index in range(len(palavra)):
@@ -42,69 +59,82 @@ def encontraSite(palavra: str) -> str:
             return site
     raise ValueError("no & finish found")
 
+
 def achaGenius(informacao):
     for info in informacao:
         try:
-            bomResultado = info.select('a')[0].get('href')
+            bomResultado = info.select("a")[0].get("href")
         except:
             continue
         site = encontraSite(bomResultado)
         nomeSite = qualSite(site)
-        if nomeSite=='genius':
-            return(site)
-        
-def achaLetra(site):
-    titulo = internet.siteProcura(site,'.header_with_cover_art-primary_info-title')
-    titulo = limpaSopa.limpa(titulo)
-    print(titulo+"\n")
-    informacao = internet.siteProcura(site,'.lyrics')
-    musica = limpaSopa.limpa(informacao)
-    print(musica+"\n")
-    musicaSeparada=musica.split(" ")
-    return(musicaSeparada)
+        if nomeSite == "genius":
+            return site
 
-def baixaImagens(lyrics,titulo,adicao):
-    total=len(lyrics)
-    titulo=textos.fazNomeArquivo(adicao[0]+" "+titulo+" "+adicao[1])
-    pasta=os.path.join('C:\\','pythonscript','web','TextoGoogleImagens',titulo)
-    palavras={}
-    for number,palavra in enumerate(lyrics):
-        if(textos.isBadList(palavra)):
-            palavra=textos.trocaBadForSafe(palavra)
-        if(adicao[0]!=""):
-            palavra=adicao[0]+" "+palavra
-        if(adicao[1]!=""):
-            palavra=palavra+" "+adicao[1]
-        if(palavra not in palavras):
-            palavras[palavra]=[]
-            palavras[palavra]+=[number]
+
+def achaLetra(site):
+    titulo = internet.siteProcura(site, ".header_with_cover_art-primary_info-title")
+    titulo = limpaSopa.limpa(titulo)
+    print(titulo + "\n")
+    informacao = internet.siteProcura(site, ".lyrics")
+    musica = limpaSopa.limpa(informacao)
+    print(musica + "\n")
+    musicaSeparada = musica.split(" ")
+    return musicaSeparada
+
+
+def baixaImagens(lyrics, titulo, adicao):
+    total = len(lyrics)
+    titulo = textos.fazNomeArquivo(adicao[0] + " " + titulo + " " + adicao[1])
+    pasta = os.path.join("C:\\", "pythonscript", "web", "TextoGoogleImagens", titulo)
+    palavras = {}
+    for number, palavra in enumerate(lyrics):
+        if textos.isBadList(palavra):
+            palavra = textos.trocaBadForSafe(palavra)
+        if adicao[0] != "":
+            palavra = adicao[0] + " " + palavra
+        if adicao[1] != "":
+            palavra = palavra + " " + adicao[1]
+        if palavra not in palavras:
+            palavras[palavra] = []
+            palavras[palavra] += [number]
         else:
-            palavras[palavra]+=[number]
-    for palavra,lista in palavras.items():
-        print(palavra+" : "+str(len(lista)))
-    total=len(palavras)
-    for n,(palavra,lista) in enumerate(palavras.items()):
-        print("palavra "+str(n+1)+" de "+str(total)+" :")
+            palavras[palavra] += [number]
+    for palavra, lista in palavras.items():
+        print(palavra + " : " + str(len(lista)))
+    total = len(palavras)
+    for n, (palavra, lista) in enumerate(palavras.items()):
+        print("palavra " + str(n + 1) + " de " + str(total) + " :")
         print(palavra)
-        quantia=len(lista)
-        os.system('google_images_download.py -o "'+pasta+'" -k "'+palavra+'" -l '+str(quantia))
-        imagens=os.listdir(os.path.join(pasta,palavra))
-        for numero,nome in enumerate(imagens):
-            nomeOriginal = os.path.join(os.path.join(pasta,palavra),nome)
-            nomeNovo = os.path.join(pasta,f'{lista[numero]+1:03d}-{palavra}.png')
-            os.rename(nomeOriginal,nomeNovo)
-        os.rmdir(os.path.join(pasta,palavra))
-        
-        
+        quantia = len(lista)
+        os.system(
+            'google_images_download.py -o "'
+            + pasta
+            + '" -k "'
+            + palavra
+            + '" -l '
+            + str(quantia)
+        )
+        imagens = os.listdir(os.path.join(pasta, palavra))
+        for numero, nome in enumerate(imagens):
+            nomeOriginal = os.path.join(os.path.join(pasta, palavra), nome)
+            nomeNovo = os.path.join(pasta, f"{lista[numero] + 1:03d}-{palavra}.png")
+            os.rename(nomeOriginal, nomeNovo)
+        os.rmdir(os.path.join(pasta, palavra))
+
 
 def fazDiretorio(diretorio):
-    diretorio='C:/pythonscript/EARWORM/'+diretorio
+    diretorio = "C:/pythonscript/EARWORM/" + diretorio
     os.mkdir(diretorio)
 
+
 def novoSite(site):
-    informacao=internet.siteProcura(site,'.header_with_cover_art-primary_info-primary_artist')
-    return(informacao[0].get('href'))
-    
+    informacao = internet.siteProcura(
+        site, ".header_with_cover_art-primary_info-primary_artist"
+    )
+    return informacao[0].get("href")
+
+
 while True:
     print("\ndigite o titulo da música")
     titulo = input()
@@ -112,34 +142,33 @@ while True:
     prefixo = input()
     print("\nsufixo")
     sufixo = input()
-    adicao=[prefixo,sufixo]
-    if(titulo=="teste"):
-        titulo="have faith saint pepsi"
-    if(titulo=="0"):
+    adicao = [prefixo, sufixo]
+    if titulo == "teste":
+        titulo = "have faith saint pepsi"
+    if titulo == "0":
         break
-    elif(titulo[:5]=="texto"):
+    elif titulo[:5] == "texto":
         lyricsSuja = titulo[6:]
         musica = limpaSopa.limpa(lyricsSuja)
-        print(musica+"\n")
+        print(musica + "\n")
         lyrics = musica.split(" ")
         titulo = titulo[-10:]
-    elif(titulo[:4]=="cola"):
+    elif titulo[:4] == "cola":
         lyricsSuja = pyperclip.paste()
         musica = limpaSopa.limpa(lyricsSuja)
-        print(musica+"\n")
+        print(musica + "\n")
         lyrics = musica.split(" ")
         titulo = titulo[5:]
     else:
         tituloList = list(titulo)
         tituloFormatada = ""
         for letra in range(len(tituloList)):
-            if(tituloList[letra] == " "):
+            if tituloList[letra] == " ":
                 tituloList[letra] = "%20"
             tituloFormatada += tituloList[letra]
         print()
-        informacao = internet.pesquisaGoogle(tituloFormatada,adicao="%20full%20lyrics")
+        informacao = pesquisaGoogle(tituloFormatada, adicao="%20full%20lyrics")
         site = achaGenius(informacao)
         print(site)
         lyrics = achaLetra(site)
-    baixaImagens(lyrics,titulo,adicao)
-
+    baixaImagens(lyrics, titulo, adicao)

@@ -1,4 +1,3 @@
-from internet import conecta
 from internet import siteProcura
 from time import time
 import shelve

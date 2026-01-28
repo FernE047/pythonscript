@@ -5,6 +5,22 @@ import internet
 import textos
 
 
+def conecta(site: str) -> requests.Response:
+    siteBaguncado = requests.get(site)
+    while siteBaguncado.status_code != requests.codes.ok:
+        siteBaguncado = requests.get(site)
+    return siteBaguncado
+
+
+def pesquisaGoogle(
+    search: str, adicao: str = "%20full%20lyrics"
+) -> bs4.ResultSet[bs4.element.Tag]:
+    musicaSearch = conecta(f"https://www.google.com.br/search?q={search}{adicao}")
+    musicaSearchSoup = bs4.BeautifulSoup(musicaSearch.text, features="html.parser")
+    informacao = musicaSearchSoup.select(".r")
+    return informacao
+
+
 def qualSite(site: str) -> str:
     dot_com_index = site.find(".com")
     if dot_com_index == -1:
@@ -130,18 +146,18 @@ while True:
             tituloList[index] = "%20"
         tituloFormatada += tituloList[index]
     if(album):
-        informacao = internet.pesquisaGoogle(tituloFormatada,adicao="%20albums+site%3Ahttps%3A%2F%2Fgenius.com%2F")
+        informacao = pesquisaGoogle(tituloFormatada,adicao="%20albums+site%3Ahttps%3A%2F%2Fgenius.com%2F")
         site = achaGenius(informacao,tem="album")
         nome = titulo[6:]
         albumImagens(site,nome)
     elif(artist):
-        informacao = internet.pesquisaGoogle(tituloFormatada,adicao="%20artist+site%3Ahttps%3A%2F%2Fgenius.com%2F")
+        informacao = pesquisaGoogle(tituloFormatada,adicao="%20artist+site%3Ahttps%3A%2F%2Fgenius.com%2F")
         site = achaGenius(informacao,tem="artist")
         if(procuraComplemento(site)!="artist"):
             site=novoSite(site)
         nome = titulo[7:]
         artistImagens(site,nome)
     else:
-        informacao = internet.pesquisaGoogle(tituloFormatada,adicao="+site%3Ahttps%3A%2F%2Fgenius.com%2F")
+        informacao = pesquisaGoogle(tituloFormatada,adicao="+site%3Ahttps%3A%2F%2Fgenius.com%2F")
         site = achaGenius(informacao)
         fazImagem(site)

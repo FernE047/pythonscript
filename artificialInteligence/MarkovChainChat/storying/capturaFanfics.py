@@ -1,8 +1,14 @@
 from textos import limpaSopa
-from internet import conecta
 import requests, bs4, re
 import time
 import os
+
+
+def conecta(site: str) -> requests.Response:
+    siteBaguncado = requests.get(site)
+    while siteBaguncado.status_code != requests.codes.ok:
+        siteBaguncado = requests.get(site)
+    return siteBaguncado
 
 generos = ["naruto",
            "boku-no-hero-academia-my-hero-academia",
