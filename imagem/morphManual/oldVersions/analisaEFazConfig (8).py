@@ -201,11 +201,10 @@ def divideLinha(linha):
     linhas = []
     for ponto in linha:
         linhasAppend = []
-        for n in range(len(linhas)):
-            novaLinha = linhas[n]
-            for novoPonto in novaLinha:
+        for linha in linhas:
+            for novoPonto in linha:
                 if distancia(ponto,novoPonto) <= 2**(1/2)+0.01:
-                    linhasAppend.append(n)
+                    linhasAppend.append(linha)
                     break
         if len(linhasAppend) == 0:
             linhas.append([ponto])
@@ -213,10 +212,10 @@ def divideLinha(linha):
             linhas[linhasAppend[0]].append(ponto)
         else:
             superLinha = []
-            for n in linhasAppend:
-                superLinha += linhas[n].copy()
-            for n in reversed(sorted(linhasAppend)):
-                linhas.pop(n)
+            for linha in linhasAppend:
+                superLinha += linhas[linha].copy()
+            for linha in reversed(sorted(linhasAppend)):
+                linhas.pop(linha)
             superLinha.append(ponto)
             linhas.append(superLinha)
     return linhas
@@ -265,8 +264,8 @@ def ordenaLinhaIt(linhaDesordenada, anteriores = None, inicio = None):
 
 def distancia(pontoA,pontoB):
     soma = 0
-    for n in range(len(pontoA)):
-        soma += abs(pontoA[n]-pontoB[n])**2
+    for coord_a, coord_b in zip(pontoA, pontoB):
+        soma += abs(coord_a - coord_b) ** 2
     return soma**(1/2)
     
 '''

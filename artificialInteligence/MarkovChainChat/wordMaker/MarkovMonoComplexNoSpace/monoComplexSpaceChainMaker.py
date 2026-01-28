@@ -76,23 +76,23 @@ while linha:
     for palavra in palavras:
         tamanho = len(palavra)
         letraAnterior = ""
-        for n in range(tamanho):
-            letra = palavra[n]
-            if n == 0:
+        for index in range(tamanho):
+            letra = palavra[index]
+            if index == 0:
                 alterations.append(["¨","¨",letra])
                 if tamanho == 1:
                     alterations.append(["¨",letra,"¨"])
                     break
                 else:
-                    letraSeguinte = palavra[n+1]
+                    letraSeguinte = palavra[index+1]
                     alterations.append(["¨",letra,letraSeguinte])
                     letraAnterior = letra
                 continue
             if tamanho > 1:
-                if n >= tamanho-1:
+                if index >= tamanho-1:
                     letraSeguinte = "¨"
                 else:
-                    letraSeguinte = palavra[n+1]
+                    letraSeguinte = palavra[index+1]
                 alterations.append([letraAnterior,letra,letraSeguinte])
                 if letraSeguinte == "¨":
                     break
@@ -106,9 +106,9 @@ while linha:
     linha = file.readline()[:-1]
 alteraMonoChainFile(nome,alterations)
 arqInput = open(nome+"//c.txt",'w',encoding = "UTF-8")
-for n in range(len(palavraQuant)):
-    arqInput.write(str(n)+" ")
-    arqInput.write(str(palavraQuant[n])+"\n")
+for index, quantity in enumerate(palavraQuant):
+    arqInput.write(f"{index} ")
+    arqInput.write(f"{quantity}\n")
 arqInput.close()
 print(tamanho)
 fim = time()

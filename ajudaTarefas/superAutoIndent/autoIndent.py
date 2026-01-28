@@ -27,8 +27,7 @@ def fazTabulacao(nome,ident,tabs=False):
         ident="\t"
     else:
         ident=" "
-    for a in range(len(texto)):
-        linha=texto[a]
+    for linha in texto:
         tagFim=linha.find('>')
         if(linha[tagFim-1]!="/"):
             if(linha[1]!="/"):

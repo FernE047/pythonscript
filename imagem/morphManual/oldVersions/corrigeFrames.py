@@ -77,7 +77,7 @@ def corrigeAlguns(coords,imagem):
             coords.pop(n)
 
 def pixelMedio(lista):
-    novoPixel = [0 for a in range(len(lista[0]))]
+    novoPixel = [0 for _ in lista[0]]
     for pixel in lista:
         for n,cor in enumerate(pixel):
             novoPixel[n] += cor

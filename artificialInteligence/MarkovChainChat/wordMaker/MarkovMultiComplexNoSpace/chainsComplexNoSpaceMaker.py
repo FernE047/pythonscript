@@ -120,9 +120,9 @@ while mensagem:
     mensagem = file.readline()[:-1]
 alteraFiles(nome,alterations)
 arqInput = open(nome+"//c.txt",'w',encoding = "UTF-8")
-for n in range(len(palavraQuant)):
-    arqInput.write(str(n)+" ")
-    arqInput.write(str(palavraQuant[n])+"\n")
+for index, quantity in enumerate(palavraQuant):
+    arqInput.write(f"{index} ")
+    arqInput.write(f"{quantity}\n")
 arqInput.close()
 print(tamanho)
 fim = time()

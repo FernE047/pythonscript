@@ -27,10 +27,10 @@ def insertionSort(A,imprime=True):
 
 def selectionPythonicSort(A,imprime):
     myTrocaNeM=lambda x,y:trocaNeM(A,x,y,imprime=imprime)
-    for i in range(len(A)-1):
-        indexMenor=A.index(min(A[i+1:]))
-        if(indexMenor!=i):
-            myTrocaNeM(i,indexMenor)
+    for index in range(len(A)-1):
+        indexMenor=A.index(min(A[index+1:]))
+        if(indexMenor!=index):
+            myTrocaNeM(index,indexMenor)
 
 def selectionSort(A,imprime):
     global comparacao

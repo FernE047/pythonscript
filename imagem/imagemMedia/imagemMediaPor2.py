@@ -91,16 +91,16 @@ while(len(imagens)>2**numeroPossivel):
     elif(modo=='4'):
         maior=0
         tamanho=0
-        for index in range(len(imagens)):
-            tamanhoTeste=Image.open(imagens[index]).size
+        for index,imagem in enumerate(imagens):
+            tamanhoTeste=Image.open(imagem).size
             tamanhoTeste=tamanhoTeste[0]*tamanhoTeste[1]
             if(tamanhoTeste>=tamanho):
                 tamanho=tamanhoTeste
                 maior=index
         imagens.pop(maior)
     else:
-        for index in range(len(imagens)):
-            print('{0:04d} - '.format(index)+imagens[index])
+        for index, imagem in enumerate(imagens):
+            print('{0:04d} - '.format(index)+imagem)
         print('\ndigite qual ou quais excluir')
         exclusao=input()
         if(exclusao.find(',')==-1):

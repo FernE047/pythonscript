@@ -5,8 +5,8 @@ from pastaImagens import pegaAssunto as pA
 print('digite um assunto')
 assunto=input()
 imagens=pA(assunto)
-for indice in range(len(imagens)):
-    print(str(indice)+'  -  '+imagens[indice])
+for indice,imagem_a in enumerate(imagens):
+    print(f"{indice}  -  {imagem_a}")
 print('\nqual imagem? 0 a '+str(len(imagens)))
 numImagem=int(input())
 img=imagens[numImagem]
@@ -25,10 +25,10 @@ if(altura>1):
 else:
     paletaImg=Image.new("RGBA",(len(paleta),altura),(0,0,0,0))
 m=0
-for n in range(len(paleta)):
+for index in range(len(paleta)):
     if(m%256==0):
         m=0
-    paletaImg.putpixel((m,int(n/256)),paleta[n])
+    paletaImg.putpixel((m,int(index/256)),paleta[index])
     m+=1
 print(img)
 print('digite o novo nome')

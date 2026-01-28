@@ -232,14 +232,13 @@ def divideLinha(linha):
     linhas = []
     for ponto in linha:
         pontoAppend = False
-        for n in range(len(linhas)):
-            novaLinha = linhas[n]
-            for novoPonto in novaLinha:
+        for linha in linhas:
+            for novoPonto in linha:
                 if distancia(ponto,novoPonto) <= 2**(1/2)+0.01:
                     pontoAppend = True
                     break
             if pontoAppend:
-                novaLinha.append(ponto)
+                linha.append(ponto)
                 break
         if not pontoAppend:
             linhas.append([ponto])
@@ -292,8 +291,8 @@ def ordenaLinhaIt(linhaDesordenada, anteriores = None, inicio = None):
 
 def distancia(pontoA,pontoB):
     soma = 0
-    for n in range(len(pontoA)):
-        soma += abs(pontoA[n]-pontoB[n])**2
+    for coord_a,coord_b in zip(pontoA, pontoB):
+        soma += abs(coord_a - coord_b)**2
     return soma**(1/2)
     
 '''
@@ -428,10 +427,10 @@ def configPart(data):
             procuraBlob(parteFinal,blobsFinal)
             escreveBlobs(blobsInicial,blobsFinal,fileConfig)
         if(hasRGB[0]):
-            for i in range(len(coordVermelhosInicial)):
-                for j in range(len(coordVermelhosInicial[i])):
-                    fileConfig.write(str(coordVermelhosInicial[i][j][0])+','+str(coordVermelhosInicial[i][j][1]))
-                    fileConfig.write(' '+str(coordVermelhosFinal[i][j][0])+','+str(coordVermelhosFinal[i][j][1])+'\n')
+        for coordInicial, coordFinal in zip(coordVermelhosInicial, coordVermelhosFinal):
+            for coord_i, coord_f in zip(coordInicial, coordFinal):
+                fileConfig.write(str(coord_i[0])+','+str(coord_i[1]))
+                fileConfig.write(' '+str(coord_f[0])+','+str(coord_f[1])+'\n')
         print()
     fileConfig.close()
     parteInicial.close()

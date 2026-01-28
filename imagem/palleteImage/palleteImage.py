@@ -80,8 +80,8 @@ while(saida!='0'):
     print('\ndigite o assunto da imagem para adaptar')
     assunto=input()
     imagens=pI.pegaAssunto(assunto)
-    for indice in range(len(imagens)):
-        print(str(indice)+'  -  '+imagens[indice])
+    for indice,imagem_a in enumerate(imagens):
+        print(f"{indice}  -  {imagem_a}")
     print('\nqual imagem? 0 a '+str(len(imagens)))
     numImagem=int(input())
     imagem=imagens[numImagem]

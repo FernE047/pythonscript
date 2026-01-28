@@ -26,14 +26,14 @@ def refina(equacao,busca):
     listaDeIntervalos=[]
     sinal=lambda n: n>0
     espacoDeBusca=(np.linspace(busca[0],busca[1],busca[2])).tolist()
-    for n in range(len(espacoDeBusca)-1):
-        x=espacoDeBusca[n]
+    for index in range(len(espacoDeBusca)-1):
+        x=espacoDeBusca[index]
         a=equacao(x)
         print("F("+str(x)+") : "+str(a))
         if(a==0):
             listaDeIntervalos.append((a,a))
         else:
-            proximoX=espacoDeBusca[n+1]
+            proximoX=espacoDeBusca[index+1]
             b=equacao(proximoX)
             if(sinal(a)!=sinal(b)):
                 listaDeIntervalos.append((x,proximoX))

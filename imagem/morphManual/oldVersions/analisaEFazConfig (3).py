@@ -334,9 +334,7 @@ def escreveBlobs(blobsInicial,blobsFinal,file):
     print('blob final')
     print(blobsFinal)
     print('\n\n\n')'''
-    for blobIndex in range(len(blobsInicial)):
-        blobInicial = blobsInicial[blobIndex]
-        blobFinal = blobsFinal[blobIndex]
+    for blobInicial, blobFinal in zip(blobsInicial, blobsFinal):
         pontosBlobInicial = len(blobInicial)
         pontosBlobFinal = len(blobFinal)
         if(pontosBlobInicial == pontosBlobFinal):
@@ -443,10 +441,10 @@ for nParte in range(1,quantiaPartes):
             blobsFinal = procuraBlobs(parteFinal)
         escreveBlobs(blobsInicial,blobsFinal,fileConfig)
     if(hasRGB[0]):
-        for n in range(len(coordVermelhosInicial)):
-            for m in range(len(coordVermelhosInicial[n])):
-                fileConfig.write(str(coordVermelhosInicial[n][m][0])+','+str(coordVermelhosInicial[n][m][1]))
-                fileConfig.write(' '+str(coordVermelhosFinal[n][m][0])+','+str(coordVermelhosFinal[n][m][1])+'\n')
+        for coordInicial, coordFinal in zip(coordVermelhosInicial, coordVermelhosFinal):
+            for coord_i, coord_f in zip(coordInicial, coordFinal):
+                fileConfig.write(str(coord_i[0]) + "," + str(coord_i[1]))
+                fileConfig.write(" " + str(coord_f[0]) + "," + str(coord_f[1]) + "\n")
     print()
     fileConfig.close()
     parteInicial.close()

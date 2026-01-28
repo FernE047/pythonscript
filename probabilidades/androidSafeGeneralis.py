@@ -2,7 +2,7 @@ from copy import deepcopy
 
 def imprimeBoard(board):
     for n in range(len(board)):
-        for m in range(len(board[n])):
+        for _ in board[n]:
             print(str(board[n]),end='')
             if (n%len(board)+1-len(board)==0):
                 print('')

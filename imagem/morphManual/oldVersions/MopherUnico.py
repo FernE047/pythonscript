@@ -449,10 +449,10 @@ def fazConfig(quantiaFrames):
                 procuraBlob(parteFinal,[],blobsFinal)
             escreveBlobs(imagemInicialPNG,imagemFinalPNG,blobsInicial,blobsFinal,fileConfig,quantiaFrames)
         if(hasRGB[0]):
-            for n in range(len(coordVermelhosInicial)):
-                for m in range(len(coordVermelhosInicial[n])):
-                    fileConfig.write(str(coordVermelhosInicial[n][m][0])+','+str(coordVermelhosInicial[n][m][1]))
-                    fileConfig.write(' '+str(coordVermelhosFinal[n][m][0])+','+str(coordVermelhosFinal[n][m][1])+'\n')
+            for coordInicial, coordFinal in zip(coordVermelhosInicial, coordVermelhosFinal):
+                for coord_i, coord_f in zip(coordInicial, coordFinal):
+                    fileConfig.write(str(coord_i[0])+','+str(coord_i[1]))
+                    fileConfig.write(' '+str(coord_f[0])+','+str(coord_f[1])+'\n')
         print()
         fileConfig.close()
         parteInicial.close()
@@ -469,9 +469,7 @@ def fazConfig(quantiaFrames):
 
 def funcaoAfim(inicio,fim,total,n):
     elemento = []
-    for index in range(len(inicio)):
-        elementoInicial = inicio[index]
-        elementoFinal = fim[index]
+    for elementoInicial, elementoFinal in zip(inicio, fim):
         B = elementoInicial
         A = (elementoFinal-elementoInicial)/(total+1)
         elemento.append(int(A*n+B))

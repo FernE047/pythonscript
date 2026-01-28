@@ -22,15 +22,16 @@ def quaoBranco(img,tenta=1):
             teste=pixel[0]+pixel[1]+pixel[2]
             if(momento%1000==0):
                 print(str(momento))
-            for tolerancia in range(255*3):
-                if(teste>=255*3-tolerancia):
-                    tolerancias[255*3-tolerancia]+=1
+            for index in range(255*3):
+                if(teste>=255*3-index):
+                    tolerancias[255*3-index]+=1
             momento+=1
-    for tolerancia in range(len(tolerancias)):
-        if(tolerancia%10==0):
-            print(str(tolerancia))
-        for x in range(tolerancias[tolerancia]):
-            grafico.putpixel((x,tolerancia),(0,0,0,255))
+    for index in range(len(tolerancias)):
+        if(index%10==0):
+            print(str(index))
+        tolerancia = tolerancias[index]
+        for x in range(tolerancia):
+            grafico.putpixel((x,index),(0,0,0,255))
     return(grafico)
 
 assunto='ds rom'

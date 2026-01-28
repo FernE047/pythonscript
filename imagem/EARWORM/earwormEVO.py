@@ -88,10 +88,10 @@ while True:
         tituloList=tituloList[7:]
         artist=True
     tituloFormatada = ""
-    for letra in range(len(tituloList)):
-        if(tituloList[letra] == " "):
-            tituloList[letra] = "%20"
-        tituloFormatada += tituloList[letra]
+    for index,letra in enumerate(tituloList):
+        if(letra == " "):
+            tituloList[index] = "%20"
+        tituloFormatada += tituloList[index]
     if(album):
         informacao = internet.pesquisaGoogle(tituloFormatada,adicao="%20albums+site%3Ahttps%3A%2F%2Fgenius.com%2F")
         site = achaGenius(informacao,tem="album")

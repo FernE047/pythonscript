@@ -4,42 +4,42 @@ from PIL import Image
 
 def salva(tabuleiro,nome):
     imagem = Image.new('RGBA',(len(tabuleiro[0]),len(tabuleiro)),(255,255,255,255))
-    for y in range(len(tabuleiro)):
-        for x in range(len(tabuleiro[0])):
-            if(tabuleiro[y][x] == 1):
+    for y, coluna in enumerate(tabuleiro):
+        for x, celula in enumerate(coluna):
+            if(celula == 1):
                 imagem.putpixel((x,y),(0,0,0,255))
     imagem.save(nome+".png")
     imagem.close()
 
-def situacaoCompara(situacao,dica,ultimaCelula,limite,tamanho):
+def situacaoCompara(situacoes,dica,ultimaCelula,limite,tamanho):
     if(dica[0]==0):
-        if situacao:
+        if situacoes:
             return False
         else:
             return True
-    if(len(situacao)>len(dica)):
+    if(len(situacoes)>len(dica)):
         return False
-    if(situacao):
-        if(len(situacao)>1):
-            for n in range(len(situacao)-1):
-                if(situacao[n]!=dica[n]):
+    if(situacoes):
+        if(len(situacoes)>1):
+            for index,situacao in enumerate(situacoes[:-1]):
+                if(situacao!=dica[index]):
                     return False
         else:
-           n=-1
+           index=-1
         if ultimaCelula != 1 :
-            if(situacao[n+1]!=dica[n+1]):
+            if(situacoes[index+1]!=dica[index+1]):
                 return False
-            if(len(situacao)<len(dica)):
-                if(tamanho-(limite+1)<len(dica[len(situacao):])+sum(dica[len(situacao):])-1):
+            if(len(situacoes)<len(dica)):
+                if(tamanho-(limite+1)<len(dica[len(situacoes):])+sum(dica[len(situacoes):])-1):
                     return False
         else:
-            if(situacao[n+1]>dica[n+1]):
+            if(situacoes[index+1]>dica[index+1]):
                 return False
-            if(situacao[n+1] == dica[n+1]):
-                if(tamanho-(limite+1)<len(dica[len(situacao):])+sum(dica[len(situacao):])-2):
+            if(situacoes[index+1] == dica[index+1]):
+                if(tamanho-(limite+1)<len(dica[len(situacoes):])+sum(dica[len(situacoes):])-2):
                     return False
             else:
-                if(tamanho-(limite+1)<len(dica[len(situacao):])+sum(dica[len(situacao):])+dica[n+1]-situacao[n+1]-1):
+                if(tamanho-(limite+1)<len(dica[len(situacoes):])+sum(dica[len(situacoes):])+dica[index+1]-situacoes[index+1]-1):
                     return False
     else:
         if(tamanho-(limite+1)<len(dica)+sum(dica)-1):
@@ -152,18 +152,18 @@ def resolveUmTabuleiro(tabuleiro,dicas):
 #nome = pS('qual o nome do arquivo?')
 nome = "piccross//A{0:03d}"
 tempoTotal = 0
-for a in range(8):
-    picFile = open(nome.format(a)+".txt")
+for index in range(8):
+    picFile = open(nome.format(index)+".txt")
     config = picFile.read()
     picFile.close()
     horizontal,vertical = config.split('#')
     horizontal = [[int(n) for n in dica.split()] for dica in horizontal[:-1].split('\n')]
     vertical = [[int(n) for n in dica.split()] for dica in vertical[1:].split('\n')]
     tabuleiro = []
-    for y in range(len(vertical)):
-        tabuleiro.append([0 for x in range(len(horizontal))])
+    for _ in vertical:
+        tabuleiro.append([0 for _ in horizontal])
     dicas = [horizontal,vertical]
     resolveUmTabuleiro(tabuleiro,dicas)
     print('\n'+embelezeTempo(tempoTotal)+'\n')
-    salva(tabuleiro,nome.format(a))
+    salva(tabuleiro,nome.format(index))
 print('\n'+embelezeTempo(tempoTotal)+'\n\n\n')

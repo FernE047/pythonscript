@@ -23,11 +23,10 @@ class Linha:
         linhas = []
         for ponto in self.pontos:
             linhasQueTemOPonto = []
-            for n in range(len(linhas)):
-                novaLinha = linhas[n]
-                for novoPonto in novaLinha.pontos:
+            for index,linha in enumerate(linhas):
+                for novoPonto in linha.pontos:
                     if distancia(ponto,novoPonto) <= 2**(1/2)+0.01:
-                        linhasQueTemOPonto.append(n)
+                        linhasQueTemOPonto.append(index)
                         break
             if len(linhasQueTemOPonto) == 0:
                 linhas.append(Linha([ponto],circular = self.circular))
@@ -35,10 +34,10 @@ class Linha:
                 linhas[linhasQueTemOPonto[0]].append(ponto)
             else:
                 superLinha = linhas[linhasQueTemOPonto[0]].copy()
-                for n in linhasQueTemOPonto[1:] :
-                    superLinha += linhas[n]
-                for n in reversed(sorted(linhasQueTemOPonto)):
-                    linhas.pop(n)
+                for index in linhasQueTemOPonto[1:] :
+                    superLinha += linhas[index]
+                for index in reversed(sorted(linhasQueTemOPonto)):
+                    linhas.pop(index)
                 superLinha.append(ponto)
                 linhas.append(superLinha)
         return linhas
@@ -73,11 +72,11 @@ class Linha:
                     maiorLinha = linhaOrdenada.copy()
                 else:
                     antes = len(linhaOrdenada)
-                    for indice in range(len(pontos)):
-                        pontosProximosDele = self.pontosProximos(pontos[indice], exceptions = linhaOrdenada)
+                    for ponto in pontos:
+                        pontosProximosDele = self.pontosProximos(ponto, exceptions = linhaOrdenada)
                         if len(pontosProximosDele) == 1:
                             if pontosProximosDele[0] in pontos:
-                                linhaOrdenada.append(pontos[indice])
+                                linhaOrdenada.append(ponto)
                                 linhaOrdenada.append(pontosProximosDele[0])
                                 break
                     if len(linhaOrdenada)!=antes:
@@ -111,16 +110,16 @@ class Linha:
         
     def divide(self,divisor,inicio):
         particoes = [0] * divisor
-        for n in range(len(self)):
-            particoes[n%divisor] += 1
+        for index in range(len(self)):
+            particoes[index%divisor] += 1
         linhas = []
-        for n in range(divisor):
+        for index in range(divisor):
             linha = Linha(circular = self.circular)
-            inicioParticao = inicio + sum(particoes[:n])
-            fimParticao = inicioParticao + particoes[n]
+            inicioParticao = inicio + sum(particoes[:index])
+            fimParticao = inicioParticao + particoes[index]
             for ponto in self.pontos[inicioParticao:fimParticao]:
                 linha.append(ponto)
-            if n == divisor-1:
+            if index == divisor-1:
                 for ponto in self.pontos[:inicio]:
                     linha.append(ponto)
             linhas.append(linha)
@@ -178,9 +177,9 @@ class Linha:
 
     def escreve(self,other,file):
         if(len(self) == len(other)):
-            for n in range(len(self)):
-                file.write(str(self.pontos[n][0])+','+str(self.pontos[n][1]))
-                file.write(' '+str(other.pontos[n][0])+','+str(other.pontos[n][1])+'\n')
+            for self_ponto,other_ponto in zip(self,other):
+                file.write(str(self_ponto[0])+','+str(self_ponto[1]))
+                file.write(' '+str(other_ponto[0])+','+str(other_ponto[1])+'\n')
         elif(len(self)>len(other)):
             if(len(self)-1==0):
                 multiplicador = 0
@@ -305,8 +304,8 @@ class Area:
     def escreve(self,other,file): 
         for indice in range(4):
             if(len(self.regioes[indice]) == len(other.regioes[indice])):
-                for n in range(len(self.regioes[indice])):
-                    self.regioes[indice][n].escreve(other.regioes[indice][n],file)
+                for self_regiao,other_regiao in zip(self.regioes[indice], other.regioes[indice]):
+                    self_regiao.escreve(other_regiao,file)
             elif(len(self.regioes[indice])>len(other.regioes[indice])):
                 if(len(self.regioes[indice])-1 == 0):
                     multiplicador = 0
@@ -369,8 +368,8 @@ def coordDirecao(coord,n):
 
 def distancia(pontoA,pontoB):
     soma = 0
-    for n in range(len(pontoA)):
-        soma += abs(pontoA[n]-pontoB[n])**2
+    for coord_a,coord_b in zip(pontoA,pontoB):
+        soma += abs(coord_a-coord_b)**2
     return soma**(1/2)
         
 if __name__ == '__main__':

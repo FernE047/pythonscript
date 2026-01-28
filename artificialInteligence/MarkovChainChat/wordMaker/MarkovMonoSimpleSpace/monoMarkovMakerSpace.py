@@ -30,7 +30,8 @@ def doAWord(nome):
     return "".join(texto)
 
 def arrumaStats(lista):
-    lista = [lista[a]/sum(lista) for a in range(len(lista))]
+    soma = sum(lista)
+    lista = [value / soma for value in lista]
     while sum(lista)!=1:
         if sum(lista)>1:
             add = sum(lista)-1

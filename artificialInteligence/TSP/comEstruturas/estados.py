@@ -14,9 +14,9 @@ class Estado:
 
     def geraFilhos(self):
         filhos = []
-        for n in range(len(self.grafo)):
-            if n not in self.caminho:
-                filhos.append(self.fazMovimento(n))
+        for index in range(len(self.grafo)):
+            if index not in self.caminho:
+                filhos.append(self.fazMovimento(index))
         return filhos
 
     def fazMovimento(self,movimento):

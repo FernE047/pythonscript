@@ -18,7 +18,7 @@ def GrafoFromArq(nome, lim = None):
         linha = file.readline()
         if lim:
             indice += 1
-    grafo = [[0 for n in range(len(vertices))] for m in range(len(vertices))]
+    grafo = [[0 for _ in vertices] for _ in vertices]
     for n,origem in enumerate(vertices):
         for m,destino in enumerate(vertices):
             distancia = ((destino[0]-origem[0])**2+(destino[1]-origem[1])**2)**0.5
@@ -56,11 +56,11 @@ def solvePorProfundidade(estado,menorEstado = None):
             else:
                 return menorEstado
     iterations += 1
-    for n in range(len(grafo)):
-        if n not in estado[1]:
+    for index in range(len(grafo)):
+        if index not in estado[1]:
             if estado[1] :
-                estado[0] += grafo[estado[1][-1]][n]
-            estado[1].append(n)
+                estado[0] += grafo[estado[1][-1]][index]
+            estado[1].append(index)
             if menorEstado == None:
                 menorEstado = solvePorProfundidade(estado,menorEstado)
             else:
@@ -68,9 +68,9 @@ def solvePorProfundidade(estado,menorEstado = None):
                     menorEstado = solvePorProfundidade(estado,menorEstado)
                 else:
                     cortes += 1
-            estado[1].remove(n)
+            estado[1].remove(index)
             if estado[1] :
-                estado[0] -= grafo[estado[1][-1]][n]
+                estado[0] -= grafo[estado[1][-1]][index]
     return menorEstado
 
 def solve(grafo,mode = 1):

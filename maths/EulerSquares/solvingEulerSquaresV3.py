@@ -72,7 +72,7 @@ def posicoesParaAlterar(matriz,coord):
 def numerosQueAfetam(matriz,coord):
     yC,xC,i = coord
     lista = []
-    listaCompleta = [a for a in range(len(matriz))]
+    listaCompleta = [index for index in range(len(matriz))]
     tamanho = len(matriz)
     for x in range(tamanho):
         if x == xC:

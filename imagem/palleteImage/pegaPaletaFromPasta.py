@@ -18,9 +18,9 @@ if(altura>1):
 else:
     paletaImg=Image.new("RGBA",(len(paleta),altura),(0,0,0,0))
 m=0
-for n in range(len(paleta)):
+for index in range(len(paleta)):
     if(m%256==0):
         m=0
-    paletaImg.putpixel((m,int(n/256)),paleta[n])
+    paletaImg.putpixel((m,int(index/256)),paleta[index])
     m+=1
 paletaImg.save(os.path.join('paleta','paletaPokemons.png'))

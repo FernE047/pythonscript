@@ -96,17 +96,18 @@ class Jogador:
 class Partida:
     def __init__(self,vira,jogadores,jogadorInicial):
         self.jogadores = jogadores
+        self.jogadores_qtd = len(jogadores)
         self.manilha = (vira.figura + 1)%10
         self.rodada = 0
         self.vira = vira
-        self.vez = jogadorInicial % len(jogadores)
+        self.vez = jogadorInicial % self.jogadores_qtd
         self.ganhadoresDasRodadas = [-1,-1,-1]
         self.ganhadores = []
         self.rodadas = []
         self.isEmpatado = False      
 
     def jogaRodada(self, modo = 'random'):
-        totalJogadores = len(self.jogadores)
+        totalJogadores = self.jogadores_qtd
         rodada = [0 for a in range(totalJogadores)]
         maiorCarta = (self.vez+1)%totalJogadores
         empate = False
@@ -156,34 +157,34 @@ class Partida:
                         return False
                     else:
                         if self.ganhadoresDasRodadas[2] == -1:
-                            self.ganhadores = [a for a in range(len(self.jogadores))]
+                            self.ganhadores = [a for a in range(self.jogadores_qtd)]
                             return True
                         else:
-                            self.ganhadores = [a for a in range(self.ganhadoresDasRodadas[2]%2,len(self.jogadores),2)]
+                            self.ganhadores = [a for a in range(self.ganhadoresDasRodadas[2]%2,self.jogadores_qtd,2)]
                             return True
                 else:
-                    self.ganhadores = [a for a in range(self.ganhadoresDasRodadas[1]%2,len(self.jogadores),2)]
+                    self.ganhadores = [a for a in range(self.ganhadoresDasRodadas[1]%2,self.jogadores_qtd,2)]
                     return True
         else:
             if self.rodada == 1:
                 return False
             else:
                 if self.ganhadoresDasRodadas[1] == self.ganhadoresDasRodadas[0]:
-                    self.ganhadores = [a for a in range(self.ganhadoresDasRodadas[0]%2,len(self.jogadores),2)]
+                    self.ganhadores = [a for a in range(self.ganhadoresDasRodadas[0]%2,self.jogadores_qtd,2)]
                     return True
                 else:
                     if self.ganhadoresDasRodadas[1] == -1:
-                        self.ganhadores = [a for a in range(self.ganhadoresDasRodadas[0]%2,len(self.jogadores),2)]
+                        self.ganhadores = [a for a in range(self.ganhadoresDasRodadas[0]%2,self.jogadores_qtd,2)]
                         return True
                     else:
                         if self.rodada == 2:
                             return False
                         else:
                             if self.ganhadoresDasRodadas[2] == -1:
-                                self.ganhadores = [a for a in range(self.ganhadoresDasRodadas[0]%2,len(self.jogadores),2)]
+                                self.ganhadores = [a for a in range(self.ganhadoresDasRodadas[0]%2,self.jogadores_qtd,2)]
                                 return True
                             else:
-                                self.ganhadores = [a for a in range(self.ganhadoresDasRodadas[2]%2,len(self.jogadores),2)]
+                                self.ganhadores = [a for a in range(self.ganhadoresDasRodadas[2]%2,self.jogadores_qtd,2)]
                                 return True
 
     def devolveCartas(self,baralho):
@@ -222,7 +223,7 @@ class Jogo:
     def jogaPartida(self,modo = 'random'):
         self.getJogador(0).embaralha(self.baralho)
         self.getJogador(-1).corta(self.baralho)
-        vira = self.getJogador(0).distribuiCartas(self.baralho,[self.getJogador(a) for a in range(1,len(self.jogadores)+1)])
+        vira = self.getJogador(0).distribuiCartas(self.baralho,[self.getJogador(a) for a in range(1,self.jogadores_qtd+1)])
         partida = Partida(vira,self.jogadores,self.vez+1)
         partida.imprime()
         while not partida.isFinished():
@@ -237,7 +238,7 @@ class Jogo:
         
 
     def getJogador(self,indice):
-        return self.jogadores[(self.vez+indice)%len(self.jogadores)]
+        return self.jogadores[(self.vez+indice)%self.jogadores_qtd]
 
 ##jogo = Jogo(6)
 ##jogo.jogaPartida()

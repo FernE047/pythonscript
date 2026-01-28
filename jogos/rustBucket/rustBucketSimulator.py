@@ -47,11 +47,11 @@ class Node:
         elif self.type == 2:
             direcao = self.caminhoFeito[0]
             custo = [0]
-            for a in range(len(self.caminhoFeito)):
-                if self.caminhoFeito[a] == direcao:
+            for coord in self.caminhoFeito:
+                if coord == direcao:
                     custo[-1] += 1
                 else:
-                    direcao = self.caminhoFeito[a]
+                    direcao = coord
                     custo.append(1)
             return custo
         else:
@@ -152,11 +152,11 @@ class Elemento:
                 if novoNode not in nodesAnteriores:
                     novoNodeEncontrado = False
                     #print(novoNode)
-                    for i in range(len(nodesFuturos)):
-                        if novoNode == nodesFuturos[i]:
+                    for node_futuro in nodesFuturos:
+                        if novoNode == node_futuro:
                             novoNodeEncontrado = True
-                            if novoNode > nodesFuturos[i]:
-                                nodesFuturos[i] = novoNode
+                            if novoNode > node_futuro:
+                                node_futuro = novoNode
                             break
                     if not novoNodeEncontrado:
                         nodesFuturos.append(novoNode)

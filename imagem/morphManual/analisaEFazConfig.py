@@ -57,11 +57,10 @@ class Linha:
         linhas = []
         for ponto in self.pontos:
             linhasQueTemOPonto = []
-            for n in range(len(linhas)):
-                novaLinha = linhas[n]
-                for novoPonto in novaLinha.pontos:
+            for index,linha in enumerate(linhas):
+                for novoPonto in linha.pontos:
                     if distancia(ponto,novoPonto) <= 2**(1/2)+0.01:
-                        linhasQueTemOPonto.append(n)
+                        linhasQueTemOPonto.append(index)
                         break
             if len(linhasQueTemOPonto) == 0:
                 linhas.append(Linha([ponto],circular = self.circular))
@@ -107,11 +106,11 @@ class Linha:
                     maiorLinha = linhaOrdenada.copy()
                 else:
                     antes = len(linhaOrdenada)
-                    for indice in range(len(pontos)):
-                        pontosProximosDele = self.pontosProximos(pontos[indice], exceptions = linhaOrdenada)
+                    for ponto in pontos:
+                        pontosProximosDele = self.pontosProximos(ponto, exceptions = linhaOrdenada)
                         if len(pontosProximosDele) == 1:
                             if pontosProximosDele[0] in pontos:
-                                linhaOrdenada.append(pontos[indice])
+                                linhaOrdenada.append(ponto)
                                 linhaOrdenada.append(pontosProximosDele[0])
                                 break
                     if len(linhaOrdenada)!=antes:
@@ -145,16 +144,16 @@ class Linha:
         
     def divide(self,divisor,inicio):
         particoes = [0] * divisor
-        for n in range(len(self)):
-            particoes[n%divisor] += 1
+        for index in range(len(self)):
+            particoes[index%divisor] += 1
         linhas = []
-        for n in range(divisor):
+        for index in range(divisor):
             linha = Linha(circular = self.circular)
-            inicioParticao = inicio + sum(particoes[:n])
-            fimParticao = inicioParticao + particoes[n]
+            inicioParticao = inicio + sum(particoes[:index])
+            fimParticao = inicioParticao + particoes[index]
             for ponto in self.pontos[inicioParticao:fimParticao]:
                 linha.append(ponto)
-            if n == divisor-1:
+            if index == divisor-1:
                 for ponto in self.pontos[:inicio]:
                     linha.append(ponto)
             linhas.append(linha)
@@ -231,17 +230,17 @@ class Linha:
 
     def escreve(self,other,file):
         if(len(self) == len(other)):
-            for n in range(len(self)):
-                file.write(str(self.pontos[n][0])+','+str(self.pontos[n][1]))
-                file.write(' '+str(other.pontos[n][0])+','+str(other.pontos[n][1])+'\n')
+            for index in range(len(self)):
+                file.write(str(self.pontos[index][0])+','+str(self.pontos[index][1]))
+                file.write(' '+str(other.pontos[index][0])+','+str(other.pontos[index][1])+'\n')
         elif(len(self)>len(other)):
             if(len(self)-1==0):
                 multiplicador = 0
             else:
                 multiplicador = (len(other)-1)/(len(self)-1)
-            for n in range(len(self)):
-                pontoInicial = self.pontos[n]
-                pontoFinal = other.pontos[int(n*multiplicador)]
+            for index in range(len(self)):
+                pontoInicial = self.pontos[index]
+                pontoFinal = other.pontos[int(index*multiplicador)]
                 file.write(str(pontoInicial[0])+','+str(pontoInicial[1]))
                 file.write(' '+str(pontoFinal[0])+','+str(pontoFinal[1])+'\n')
         else:
@@ -249,9 +248,9 @@ class Linha:
                 multiplicador = 0
             else:
                 multiplicador = (len(self)-1)/(len(other)-1)
-            for n in range(len(other)):
-                pontoInicial = self.pontos[int(n*multiplicador)]
-                pontoFinal = other.pontos[n]
+            for index in range(len(other)):
+                pontoInicial = self.pontos[int(index*multiplicador)]
+                pontoFinal = other.pontos[index]
                 file.write(str(pontoInicial[0])+','+str(pontoInicial[1]))
                 file.write(' '+str(pontoFinal[0])+','+str(pontoFinal[1])+'\n')
                 
@@ -389,24 +388,24 @@ class Area:
         
     def escreve(self,other,file):
         if(len(self) == len(other)):
-            for n in range(len(self)):
-                self.linhas[n].escreve(other.linhas[n],file)
+            for self_linha,other_linha in zip(self.linhas, other.linhas):
+                self_linha.escreve(other_linha,file)
         elif(len(self)>len(other)):
             if(len(self)-1 == 0):
                 multiplicador = 0
             else:
                 multiplicador = (len(other)-1)/(len(self)-1)
-            for n in range(len(self)):
-                linhaFinal = other.linhas[int(n*multiplicador)]
-                self.linhas[n].escreve(linhaFinal,file)
+            for index in range(len(self)):
+                linhaFinal = other.linhas[int(index*multiplicador)]
+                self.linhas[index].escreve(linhaFinal,file)
         else:
             if(len(other)-1 == 0):
                 multiplicador = 0
             else:
                 multiplicador = (len(self)-1)/(len(other)-1)
-            for n in range(len(other)):
-                linhaInicial = self.linhas[int(n*multiplicador)]
-                linhaInicial.escreve(other.linhas[n],file)
+            for index in range(len(other)):
+                linhaInicial = self.linhas[int(index*multiplicador)]
+                linhaInicial.escreve(other.linhas[index],file)
 
     def __contains__(self,other):
         for linha in self.linhas:
@@ -520,24 +519,24 @@ class AreaVermelha: #maybe add a separation for larger areas
     def escreve(self,other,file): 
         for indice in range(4):
             if(len(self.regioes[indice]) == len(other.regioes[indice])):
-                for n in range(len(self.regioes[indice])):
-                    self.regioes[indice][n].escreve(other.regioes[indice][n],file)
+                for self_regiao,other_regiao in zip(self.regioes[indice], other.regioes[indice]):
+                    self_regiao.escreve(other_regiao,file)
             elif(len(self.regioes[indice])>len(other.regioes[indice])):
                 if(len(self.regioes[indice])-1 == 0):
                     multiplicador = 0
                 else:
                     multiplicador = (len(other.regioes[indice])-1)/(len(self.regioes[indice])-1)
-                for n in range(len(self.regioes[indice])):
-                    linhaFinal = other.regioes[indice][int(n*multiplicador)]
-                    self.regioes[indice][n].escreve(linhaFinal,file)
+                for index in range(len(self.regioes[indice])):
+                    linhaFinal = other.regioes[indice][int(index*multiplicador)]
+                    self.regioes[indice][index].escreve(linhaFinal,file)
             else:
                 if(len(other.regioes[indice])-1 == 0):
                     multiplicador = 0
                 else:
                     multiplicador = (len(self.regioes[indice])-1)/(len(other.regioes[indice])-1)
-                for n in range(len(other.regioes[indice])):
-                    linhaInicial = self.regioes[indice][int(n*multiplicador)]
-                    linhaInicial.escreve(other.regioes[indice][n],file)
+                for index in range(len(other.regioes[indice])):
+                    linhaInicial = self.regioes[indice][int(index*multiplicador)]
+                    linhaInicial.escreve(other.regioes[indice][index],file)
 
     def __contains__(self,other): 
         for regiao in self.regioes:
@@ -614,8 +613,8 @@ def coordDirecao(coord,n):
 
 def distancia(pontoA,pontoB):
     soma = 0
-    for n in range(len(pontoA)):
-        soma += abs(pontoA[n]-pontoB[n])**2
+    for coord_a,coord_b in zip(pontoA, pontoB):
+        soma += abs(coord_a - coord_b)**2
     return soma**(1/2)
 
 def configPart(indice):

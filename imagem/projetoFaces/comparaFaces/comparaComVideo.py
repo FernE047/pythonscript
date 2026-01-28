@@ -47,7 +47,7 @@ def comparaFaces(face1,nome2):
         return 100
     distancia = lambda ponto1,ponto2:((ponto1[0]-ponto2[0])**2+(ponto1[1]-ponto2[1])**2)**0.5
     maiorDistancia = distancia((0,0),(255,255))
-    soma = sum([distancia(face1[n],face2[n])/maiorDistancia*100 for n in range(len(face1))])
+    soma = sum([distancia(coord_1,coord_2)/maiorDistancia*100 for coord_1,coord_2 in zip(face1,face2)])
     return soma/68
 
 #Constantes:

@@ -7,9 +7,7 @@ import multiprocessing
 
 def funcaoCor(inicio,fim,total,n):
     elemento = []
-    for index in range(len(inicio)):
-        elementoInicial = inicio[index]
-        elementoFinal = fim[index]
+    for elementoInicial, elementoFinal in zip(inicio, fim):
         B = elementoInicial
         A = (elementoFinal-elementoInicial)/(total+1)
         elemento.append(int(A*n+B))
@@ -17,9 +15,7 @@ def funcaoCor(inicio,fim,total,n):
 
 def funcaoCoord(inicio,fim,total,n):
     elemento = []
-    for index in range(2):
-        elementoInicial = inicio[index]
-        elementoFinal = fim[index]
+    for elementoInicial, elementoFinal in zip(inicio, fim):
         B = elementoInicial
         A = (elementoFinal-elementoInicial)/(total+1)
         elemento.append(int(A*n+B))

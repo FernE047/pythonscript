@@ -77,7 +77,8 @@ def makeWord():
     return " ".join(words)
 
 def arrumaStats(lista):
-    lista = [lista[a]/sum(lista) for a in range(len(lista))]
+    soma = sum(lista)
+    lista = [value / soma for value in lista]
     while sum(lista)!=1:
         if sum(lista)>1:
             add = sum(lista)-1
@@ -110,8 +111,8 @@ tamanhoStats = []
 palavraQuant = []
 palavraStats = []
 while linha:
-    for a in range(len(entrada)):
-        linha = linha.replace(entrada[a],saida[a])
+    for index, entry in enumerate(entrada):
+        linha = linha.replace(entry, saida[index])
     palavras = linha[:-1].split(" ")
     while len(palavras)>len(palavraQuant):
         palavraQuant.append(len(palavraQuant)+1)
@@ -143,8 +144,8 @@ vogais = arrumaStats(midLetter[0:5])
 cons = arrumaStats(midLetter[5:])
 for tamanhoStatsUsed in tamanhoStats:
     lista = arrumaStats(tamanhoStatsUsed)
-    for a in range(len(lista)):
-        tamanhoStatsUsed[a] = lista[a]
+    for index, listaa in enumerate(lista):
+        tamanhoStatsUsed[index] = listaa
 palavraStats = arrumaStats(palavraStats)
 arqInput.close()
 notSuccess = True

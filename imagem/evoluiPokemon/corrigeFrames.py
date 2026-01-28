@@ -35,7 +35,7 @@ def pixelMedio(coord,imagem):
         pixel = imagem.getpixel(coordenada)
         if pixel[3] == 255:
             lista.append(pixel)
-    novoPixel = [0 for a in range(len(lista[0]))]
+    novoPixel = [0 for _ in lista[0]]
     for pixel in lista:
         for n,cor in enumerate(pixel):
             novoPixel[n] += cor
