@@ -52,7 +52,7 @@ def possibleDirections(coord,imagem):
 BRANCO = (255,255,255,255)
 PRETO = (0,0,0,255)
 VERMELHO = (255,0,0,255)
-imagem = Image.open('pureLabirint//labirint{0:04d}.png'.format(241))
+imagem = Image.open(f'pureLabirint//labirint{241:04d}.png')
 largura,altura = imagem.size
 FINAL = (largura-2,altura-2)
 INICIAL = (1,1)
@@ -118,5 +118,5 @@ for direction in path:
     imagem.putpixel(coord,VERMELHO)
     coord = coordDirection(coord,direction)
     imagem.putpixel(coord,VERMELHO)
-imagem.save('solvedLabirint//labirintSolved{0:03d}.png'.format(len(listdir('solvedLabirint'))))
+imagem.save(f'solvedLabirint//labirintSolved{len(listdir("solvedLabirint")):03d}.png')
 imagem.close()

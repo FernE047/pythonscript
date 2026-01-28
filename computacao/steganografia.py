@@ -59,7 +59,7 @@ def esconde(imgE,imgO):
                     d=c[2:]
                     e=str(d)
                     f=int(e)
-                    g='{0:08d}'.format(f)
+                    g=f'{f:08d}'
                     h=g[2*b:2*b+2]
                     pixelE[a][b]=h
             posicoes= ((2*x,2*y),(2*x+1,2*y),(2*x,2*y+1),(2*x+1,2*y+1))

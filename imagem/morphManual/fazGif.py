@@ -17,11 +17,11 @@ def resize(nome):
     imagem.close()
 
 directory = 'C:\\pythonscript\\imagem\\morphManual\\'
-frames = [directory + 'frames\\'+a for a in os.listdir(directory + 'frames')]
-frames.remove(directory + 'frames\\resized')
+frames = [f'{directory}frames\\{a}' for a in os.listdir(f'{directory}frames')]
+frames.remove(f'{directory}frames\\resized')
 for frame in frames:
     resize(frame)
-nomeGif = directory + 'Animation{0:03d}.gif'.format(len(os.listdir()))
+nomeGif = f'{directory}Animation{len(os.listdir(directory)):03d}.gif'
 with imageio.get_writer(nomeGif, mode='I') as writer:
     frames = [directory + 'frames\\resized\\'+a for a in os.listdir(directory + 'frames\\resized\\')]
     nome = frames.pop(0)

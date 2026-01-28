@@ -50,7 +50,7 @@ def baixaImagens(lyrics,titulo):
         imagens=os.listdir(os.path.join(pasta,palavra))
         for numero,nome in enumerate(imagens):
             nomeOriginal = os.path.join(os.path.join(pasta,palavra),nome)
-            nomeNovo = os.path.join(pasta,'{0:03d}-'.format(lista[numero]+1)+palavra+".png")
+            nomeNovo = os.path.join(pasta,f'{lista[numero]+1:03d}-{palavra}.png')
             os.rename(nomeOriginal,nomeNovo)
         os.rmdir(os.path.join(pasta,palavra))
         

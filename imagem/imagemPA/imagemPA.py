@@ -17,7 +17,7 @@ def processaImagemPorImagem(imagemInicial,imagemFinal,frames):
                     cor.append(int(pixelInicial[index]+((frame+1)*(pixelFinal[index]-pixelInicial[index]))/(frames+1)))
                 cor=tuple(cor)
                 imagem.putpixel(coord,cor)
-        imagem.save('output{:02d}.png'.format(frame+1))
+        imagem.save(f'output{frame+1:02d}.png')
 
 def processaPixelPorPixel(imagemInicial,imagemFinal,frames):
     pass
@@ -33,6 +33,6 @@ if(tamanho1>tamanho2):
     imagemInicial=imagemInicial.resize((larg2,alt2))
 else:
     imagemFinal=imagemFinal.resize((larg1,alt1))
-imagemInicial.save('output{:02d}.png'.format(0))
-imagemFinal.save('output{:02d}.png'.format(frames+1))
+imagemInicial.save(f'output{0:02d}.png')
+imagemFinal.save(f'output{frames+1:02d}.png')
 processaImagemPorImagem(imagemInicial,imagemFinal,frames)

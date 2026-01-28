@@ -58,7 +58,7 @@ imagem = Image.new('RGBA',(largura,altura),(0,0,0,255))
 imagem.putpixel((1,1),(BRANCO))
 while verticesAbertos:
     makeALabirint(imagem,verticesAbertosInicio)
-name = 'pureLabirint//labirint{0:04d}.png'.format(len(listdir('pureLabirint')))
+name = f'pureLabirint//labirint{len(listdir("pureLabirint")):04d}.png'
 print(name)
 imagem.save(name)
 imagem.close()

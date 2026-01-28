@@ -45,7 +45,7 @@ def makeFrame(args):
         linha = file.readline()
     file.close()
     print("\tFrame Terminado : " + str(n))
-    frame.save('C:\\pythonscript\\imagem\\evoluiPokemon\\frames\\frame{0:03d}.png'.format(n+1))
+    frame.save(f'C:\\pythonscript\\imagem\\evoluiPokemon\\frames\\frame{n+1:03d}.png')
     imagemInicial.close()
     imagemFinal.close()
     frame.close()

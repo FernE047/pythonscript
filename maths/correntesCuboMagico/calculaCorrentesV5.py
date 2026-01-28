@@ -57,7 +57,7 @@ inicio = time()
 try:
     dic = analisaAsListas(12)
     for cat in dic:
-        print('{0:8s} : '.format(cat)+str(dic[cat]))
+        print(f'{cat:8s} : {dic[cat]}')
     print('execucao Total  : '+eT(time()-inicio))
 except:
     print(gc.collect())

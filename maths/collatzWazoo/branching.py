@@ -18,5 +18,5 @@ def makeBranch(z):
 
 for a in range(5):
     c=makeBranch(a)
-    print('collatz {}:\n'.format(a))
+    print(f'collatz {a}:\n')
     print(c(1),end='\n\n')

@@ -6,11 +6,11 @@ def imprimeDados(probIndividual,total):
     print('\ntotal : '+str(total)+'\n\ncoletivo')
     for participante,prob in enumerate(probIndividual):
         if(prob!=0):
-            print('participante '+str(participante)+' : {0:.20f}%'.format(prob*100/total))
+            print(f'participante {participante} : {prob*100/total:.20f}%')
     print('\nindividual')
     for participante,quant in enumerate(probIndividual):
         if(quant!=0):
-            print('participante '+str(participante)+' : '+str(quant))
+            print(f'participante {participante} : {quant}')
     print()
     print('total : '+str(total))
     print()

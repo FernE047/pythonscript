@@ -100,7 +100,7 @@ while(len(imagens)>2**numeroPossivel):
         imagens.pop(maior)
     else:
         for index, imagem in enumerate(imagens):
-            print('{0:04d} - '.format(index)+imagem)
+            print(f'{index:04d} - {imagem}')
         print('\ndigite qual ou quais excluir')
         exclusao=input()
         if(exclusao.find(',')==-1):

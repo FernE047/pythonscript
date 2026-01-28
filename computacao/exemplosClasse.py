@@ -17,7 +17,7 @@ class User:
         return self.nome
 
     def __repr__(self):
-        return '<{}: {} - {} - {}>\n'.format(self.__class__.__name__, self.id, self.nome, self.idade)
+        return f'<{self.__class__.__name__}: {self.id} - {self.nome} - {self.idade}>\n'
 
     @classmethod
     def all(cls):

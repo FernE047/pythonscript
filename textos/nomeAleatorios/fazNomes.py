@@ -86,4 +86,4 @@ g=['\nmasculinos:','\nfemininos:']
 for n in range(2):
     print(g[n])
     for b in range(100):
-        print('{:02d} : '.format(b)+makeRandomFullName(s[n]))
+        print(f'{b:02d} : {makeRandomFullName(s[n])}')

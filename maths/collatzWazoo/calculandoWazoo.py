@@ -10,7 +10,7 @@ collatzFuturo=Collatz(inicial)
 tempos=[]
 for a in range(inicial,final):
     inicio=time()
-    saida = open('collatz{}de{}.txt'.format(a,a+1),'w')
+    saida = open(f'collatz{a}de{a+1}.txt','w')
     collatzAtual = collatzFuturo
     collatzFuturo = Funcao()
     saida.write(str(collatzAtual)+'\n')
@@ -52,7 +52,7 @@ for a in range(inicial,final):
                             collatzFuturo.addRegra(newRegra)
     saida.close()
     fim=time()
-    print('collatz {} : '.format(a+1))
+    print(f'collatz {a+1} : ')
     print(collatzFuturo)
     collatzFuturo.salva(a+1)
     tempos.append(fim-inicio)

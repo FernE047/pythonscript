@@ -96,7 +96,7 @@ while verticesAbertosInicio or verticesAbertosFinal:
     makeALabirint(imagem,verticesAbertosFinal,VERMELHO)
 makeAPath(imagem,pathQuant)
 corrigeLabirint(imagem)
-name = 'pureLabirint//labirint{0:04d}.png'.format(len(listdir('pureLabirint')))
+name = f'pureLabirint//labirint{len(listdir("pureLabirint")):04d}.png'
 print(name)
 imagem.save(name)
 imagem.close()

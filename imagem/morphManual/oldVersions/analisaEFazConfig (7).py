@@ -399,7 +399,7 @@ def configPart(data):
     print(n)
     parteInicial = Image.fromarray(imagemInicial)
     parteFinal = Image.fromarray(imagemFinal)
-    fileConfig = open('partesConfig\\parte{0:02d}Config.txt'.format(n),'w')
+    fileConfig = open(f'partesConfig\\parte{n:02d}Config.txt','w')
     if n == 1:
         fazFundo(fileConfig,parteInicial,parteFinal)
     else:

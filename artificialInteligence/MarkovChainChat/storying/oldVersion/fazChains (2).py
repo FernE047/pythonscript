@@ -47,7 +47,7 @@ def fazChain(texto,tamanhoChain,isTitulo = False):
     texto = texto.replace('“', ' " ')
     texto = texto.replace('”', ' " ')
     for spaced in ['.','-',',','!','?','(','—',')',':','...','..','/','\\']:
-        texto = texto.replace(spaced, ' {0} '.format(spaced))
+        texto = texto.replace(spaced, f' {spaced} ')
     palavras = texto.split()
     tamanhoTexto = len(palavras)
     listaDePares = []

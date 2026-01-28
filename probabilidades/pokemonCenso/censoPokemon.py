@@ -85,7 +85,7 @@ def capturaDados(info,alolan=False):
     return(dados)
 
 def debugImprime(dados,numero):
-    print('pokemon : {0:03d}'.format(numero))
+    print(f'pokemon : {numero:03d}')
     for item in dados:
         print(item+' : '+str(dados[item]))
     print('')

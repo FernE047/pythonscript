@@ -368,7 +368,7 @@ def configPart(indice):
     print("a")
     parteFinal = ImagemParte(indice,"C:\\pythonscript\\imagem\\morphManual\\final.pdn")
     print("b")
-    fileConfig = open('C:\\pythonscript\\imagem\\morphManual\\partesConfig\\parte{0:02d}Config.txt'.format(indice),'w')
+    fileConfig = open(f'C:\\pythonscript\\imagem\\morphManual\\partesConfig\\parte{indice:02d}Config.txt','w')
     print("c")
     parteInicial.escreveArea(parteFinal,fileConfig)
     print("\tParte Terminada : " + str(indice))

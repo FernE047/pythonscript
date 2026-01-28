@@ -138,7 +138,7 @@ def fixTrappedPixels(imagem,freePixels): #make it better
             
 def corrigeFrame(indice):
     print("corregindo Frame : " + str(indice))
-    nome = 'C:\\pythonscript\\imagem\\morphManual\\frames\\frame{0:03d}.png'.format(indice)
+    nome = f'C:\\pythonscript\\imagem\\morphManual\\frames\\frame{indice:03d}.png'
     imagem = Image.open(nome)
     largura,altura = imagem.size
     freePixels = findBorderFreePixels(imagem)

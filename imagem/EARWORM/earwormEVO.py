@@ -53,20 +53,20 @@ def albumImagens(site,album):
     informacao = internet.siteProcura(site,'.u-display_block')
     musicasSites = internet.pegaTodosSites(informacao)
     for site in musicasSites:
-        fazImagem(site,pasta='album/'+album+'/{0:03d}-'.format(faixa))
+        fazImagem(site,pasta=f'album/{album}/{faixa:03d}-')
         faixa+=1
 
 def artistImagens(site,artist):
-    fazDiretorio('artist/'+artist)
+    fazDiretorio(f'artist/{artist}')
     faixa=1
     informacao = internet.siteProcura(site,'.mini_card')
     musicasSites = internet.pegaTodosSites(informacao)
     for site in musicasSites:
-        fazImagem(site,pasta='artist/'+artist+'/{0:03d}-'.format(faixa))
+        fazImagem(site,pasta=f'artist/{artist}/{faixa:03d}-')
         faixa+=1
 
 def fazDiretorio(diretorio):
-    diretorio='C:/pythonscript/EARWORM/'+diretorio
+    diretorio=f'C:/pythonscript/EARWORM/{diretorio}'
     os.mkdir(diretorio)
 
 def novoSite(site):

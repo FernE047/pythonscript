@@ -46,7 +46,7 @@ def possibilidades(matriz,x,y,usados):
 def solve(x,y,matriz,usados):
     global iterations
     if iterations%100000==0:
-        print('{:,}'.format(iterations))
+        print(f'{iterations:,}')
         imprime(matriz)
         print()
     iterations += 1

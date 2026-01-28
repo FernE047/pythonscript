@@ -13,6 +13,6 @@ for imagemCaminho in imagensCaminho:
     for y in range(int(altura/103)):
         for x in range(int(largura/96)):
             pokemon=imagem.crop((96*x,103*y,96*(x+1),103*y+96))
-            pokemon.save(os.path.join(diretorio,'pokemon','pokemon{0:03d}.png'.format(imageNumber)))
+            pokemon.save(os.path.join(diretorio,'pokemon',f'pokemon{imageNumber:03d}.png'))
             imageNumber+=1
     

@@ -36,8 +36,8 @@ def solve(x,y,matriz,possibilidades):
     global tries
     global iterations
     if iterations%100000==0:
-        print('{:,}'.format(iterations))
-        print('{:,}'.format(tries))
+        print(f'{iterations:,}')
+        print(f'{tries:,}')
         imprime(matriz)
         print()
     iterations += 1

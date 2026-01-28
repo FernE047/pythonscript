@@ -74,7 +74,7 @@ def baixaImagens(lyrics,titulo,adicao,tamanho):
         caminho=os.path.join(pasta,frase)
         nome=os.listdir(caminho)[0]
         nomeOriginal = os.path.join(caminho,nome)
-        nomeNovo = os.path.join(pasta,'{0:03d}-'.format(n+1)+textos.fazNomeArquivo(frase)+".png")
+        nomeNovo = os.path.join(pasta,f'{n+1:03d}-'+textos.fazNomeArquivo(frase)+".png")
         os.rename(nomeOriginal,nomeNovo)
         os.rmdir(caminho)
         

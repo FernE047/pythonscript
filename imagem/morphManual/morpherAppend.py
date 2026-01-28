@@ -10,9 +10,9 @@ def makeFrame(n,total,initial,final):
     imagemInicial = Image.open('C:\\pythonscript\\imagem\\morphManual\\inicial.png')
     imagemFinal = Image.open('C:\\pythonscript\\imagem\\morphManual\\final.png')
     print(n)
-    frame = Image.open('C:\\pythonscript\\imagem\\morphManual\\frames\\frame{0:03d}.png'.format(n+1))
+    frame = Image.open(f'C:\\pythonscript\\imagem\\morphManual\\frames\\frame{n+1:03d}.png')
     for nParte in range(initial,final):
-        file = open('C:\\pythonscript\\imagem\\morphManual\\partesConfig\\parte{0:02d}Config.txt'.format(nParte),'r')
+        file = open(f'C:\\pythonscript\\imagem\\morphManual\\partesConfig\\parte{nParte:02d}Config.txt','r')
         linha = file.readline()
         while(linha):
             if(linha.find('fundo')!=-1):
@@ -29,7 +29,7 @@ def makeFrame(n,total,initial,final):
                 frame.putpixel(novaCoord,novaCor)
             linha = file.readline()
         file.close()
-    frame.save('C:\\pythonscript\\imagem\\morphManual\\frames\\frame{0:03d}.png'.format(n+1))
+    frame.save(f'C:\\pythonscript\\imagem\\morphManual\\frames\\frame{n+1:03d}.png')
     imagemInicial.close()
     imagemFinal.close()
     frame.close()

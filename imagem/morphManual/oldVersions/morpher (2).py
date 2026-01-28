@@ -34,7 +34,7 @@ def makeFrame(n):
             novaCor = funcaoAfim(pixelInicial,pixelFinal,30,n+1)
             frame.putpixel(novaCoord,novaCor)
         linha = file.readline()
-    frame.save('C:\\pythonscript\\imagem\\morphManual\\frames\\frame{0:03d}.png'.format(n+1))
+    frame.save(f'C:\\pythonscript\\imagem\\morphManual\\frames\\frame{n+1:03d}.png')
     imagemInicial.close()
     imagemFinal.close()
     frame.close()

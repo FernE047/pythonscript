@@ -15,7 +15,7 @@ def coordDirection(coord,direction):
 
 BRANCO = (255,255,255,255)
 PRETO = (0,0,0,255)
-imagem = Image.open('pureLabirint\\labirint{0:03d}.png'.format(4))
+imagem = Image.open(f'pureLabirint\\labirint{4:03d}.png')
 largura,altura = imagem.size
 for x in range(1,largura-1,2):
     for y in range(1,altura-1,2):
@@ -34,5 +34,5 @@ for x in range(1,largura-1,2):
                 imagem.putpixel(coord,(0,0,255,255))
             if(len(closedDirection)==0):
                 imagem.putpixel(coord,(255,255,0,255))
-imagem.save('labirint{0:03d}.png'.format(len(listdir())))
+imagem.save(f'labirint{len(listdir()):03d}.png')
 imagem.close()

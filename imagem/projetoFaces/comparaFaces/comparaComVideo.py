@@ -51,7 +51,7 @@ def comparaFaces(face1,nome2):
     return soma/68
 
 #Constantes:
-nome = 'C:\\pythonscript\\imagem\\projetoFaces\\faces\\alinhadas\\output{0:04d}.png'.format(0)
+nome = f'C:\\pythonscript\\imagem\\projetoFaces\\faces\\alinhadas\\output{0:04d}.png'
 DETECTOR = dlib.get_frontal_face_detector()
 PREDICTOR = dlib.shape_predictor('C:\\pythonscript\\imagem\\projetoFaces\\shape_predictor_68_face_landmarks.dat')
 FA = FaceAligner(PREDICTOR, desiredFaceWidth=256)
@@ -87,7 +87,7 @@ for hora in range(horas+1):
             for face in listdir('C:\\pythonscript\\imagem\\projetoFaces\\comparaFaces\\tempFaces'):
                 diferenca = comparaFaces(faceOriginal,'C:\\pythonscript\\imagem\\projetoFaces\\comparaFaces\\tempFaces\\'+face)
                 if diferenca < maiorDiferenca:
-                    print('{0:02d}:{1:02d}:{2:02d}.0'.format(hora,minuto,segundo))
+                    print(f'{hora:02d}:{minuto:02d}:{segundo:02d}.0')
                     print(maiorDiferenca)
                     print()
                     maiorDiferenca = diferenca
