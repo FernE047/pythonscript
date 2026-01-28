@@ -1,15 +1,14 @@
-from time import time
-from time import sleep
 import os
+from time import time
 
 
-def embelezeTempo(segundos: float) -> str:
-    if segundos < 0:
-        segundos = -segundos
+def format_elapsed_time(seconds: float) -> str:
+    if seconds < 0:
+        seconds = -seconds
         sign = "-"
     else:
         sign = ""
-    total_ms = int(round(segundos * 1000))
+    total_ms = int(round(seconds * 1000))
     ms = total_ms % 1000
     total_s = total_ms // 1000
     s = total_s % 60
@@ -33,115 +32,112 @@ def embelezeTempo(segundos: float) -> str:
     return sign + ", ".join(parts)
 
 
-def renome(origemName, destinoName):
-    origem = open(origemName, "r")
-    destino = open(destinoName, "w")
-    linha = origem.readline()
-    while linha:
-        destino.write(linha)
-        linha = origem.readline()
-    origem.close()
-    destino.close()
+def rename_file(source_file_name: str, destination_file_name: str) -> None:
+    with (
+        open(source_file_name, "r", encoding="utf-8") as source_file,
+        open(destination_file_name, "w", encoding="utf-8") as destination_file,
+    ):
+        content = source_file.read()
+        destination_file.write(content)
 
 
-def alteraChainFile(termos, isTitulo):
-    if isTitulo:
-        diretorio = DIRECTORY + "chainTitle//" + str(TAMANHO)
+def update_chain_file(keywords: list[str], is_title: bool) -> None:
+    if is_title:
+        directory = f"./FanficAnime/chainTitle/{TAMANHO}"
     else:
-        diretorio = DIRECTORY + "chainStory//" + str(TAMANHO)
-    nomeTemp = diretorio + "//c.txt"
-    nomeReal = diretorio + "//chain.txt"
-    fileWrite = open(nomeTemp, "w")
-    if "chain.txt" in os.listdir(diretorio):
-        fileRead = open(nomeReal, "r")
-        linha = fileRead.readline()
-        while linha:
-            palavras = linha.split()
-            termoTestando = " ".join(palavras[:-1])
-            while termoTestando in termos:
-                palavras[-1] = str(int(palavras[-1]) + 1)
-                termos.remove(termoTestando)
-            fileWrite.write(" ".join(palavras) + "\n")
-            if not termos:
-                break
-            linha = fileRead.readline()
-        fileRead.close()
-        if termos:
-            for termo in termos:
-                fileWrite.write(termo + " 1\n")
-    else:
-        for termo in termos:
-            fileWrite.write(termo + " 1\n")
-    fileWrite.close()
-    renome(nomeTemp, nomeReal)
+        directory = f"./FanficAnime/chainStory/{TAMANHO}"
+    update_keyword_counts(keywords, directory)
+    rename_file(f"{directory}/c.txt", f"{directory}/chain.txt")
 
 
-def fazChain(texto):
-    texto = texto.replace("\n", " ")
-    texto = texto.replace("\t", " ")
-    texto = texto.replace("“", " " ")
-    texto = texto.replace("”", " " ")
-    for spaced in [".", "-", ",", "!", "?", "(", "—", ")", ":", "...", "..", "/", "\\"]:
-        texto = texto.replace(spaced, f" {spaced} ")
-    palavras = texto.split()
-    tamanhoTexto = len(palavras)
-    listaDePares = []
-    termo = " ".join(["¨" for a in range(TAMANHO)] + [palavras[0]])
-    listaDePares.append(termo)
-    for n in range(tamanhoTexto):
-        termos = palavras[n : n + TAMANHO + 1]
-        if len(termos) <= TAMANHO:
-            while len(termos) <= TAMANHO:
-                termos.append("¨")
-            termo = " ".join(termos)
-            listaDePares.append(termo)
+def update_keyword_counts(
+    keywords: list[str], directory: str
+) -> None:
+    with open(f"{directory}/c.txt", "w", encoding="utf-8") as file_write:
+        if "chain.txt" not in os.listdir(directory):
+            for keyword in keywords:
+                file_write.write(f"{keyword} 1\n")
+            return
+        with open(f"{directory}/chain.txt", "r", encoding="utf-8") as file_read:
+            line = file_read.readline()
+            while line:
+                words = line.split()
+                current_keyword = " ".join(words[:-1])
+                while current_keyword in keywords:
+                    words[-1] = str(int(words[-1]) + 1)
+                    keywords.remove(current_keyword)
+                file_write.write(" ".join(words) + "\n")
+                if not keywords:
+                    break
+                line = file_read.readline()
+        if keywords:
+            for keyword in keywords:
+                file_write.write(f"{keyword} 1\n")
+
+
+def generate_word_chain(text: str) -> list[str]:
+    text = text.replace("\n", " ")
+    text = text.replace("\t", " ")
+    text = text.replace("“", '"')
+    text = text.replace("”", '"')
+    for spaced in [".", "-", ",", "!", "?", "(", "—", ")", ":", "...", "..", "/", "/"]:
+        text = text.replace(spaced, f" {spaced} ")
+    words = text.split()
+    text_word_count = len(words)
+    word_combinations: list[str] = []
+    phrase_chunk = " ".join(["¨" for _ in range(TAMANHO)] + [words[0]])
+    word_combinations.append(phrase_chunk)
+    for n in range(text_word_count):
+        phrase_segment = words[n : n + TAMANHO + 1]
+        if len(phrase_segment) <= TAMANHO:
+            while len(phrase_segment) <= TAMANHO:
+                phrase_segment.append("¨")
+            phrase_chunk = " ".join(phrase_segment)
+            word_combinations.append(phrase_chunk)
             break
-        termo = " ".join(termos)
-        listaDePares.append(termo)
-    return listaDePares
+        phrase_chunk = " ".join(phrase_segment)
+        word_combinations.append(phrase_chunk)
+    return word_combinations
 
 
-DIRECTORY = (
-    "C:\\pythonscript\\artificialInteligence\\MarkovChainChat\\storying\\FanficAnime\\"
-)
 OVERFLOWLIMIT = 50000
 TAMANHO = 1
-termosTitulos = []
-termosHistorias = []
-total = len(os.listdir(DIRECTORY + "historias"))
-quantia = 0
-inicio = time()
-for name in os.listdir(DIRECTORY + "historias"):
-    quantia += 1
-    file = open(DIRECTORY + "historias//" + name)
-    elementos = file.readline().split(" : ")
-    if elementos[:-1]:
-        titulo = " : ".join(elementos[:-1])
-        termosTitulos += fazChain(titulo)
-    if elementos[-1:][0]:
-        historia = elementos[-1:][0]
-        termosHistorias += fazChain(historia)
-    file.close()
-    if len(termosHistorias) > OVERFLOWLIMIT:
-        alteraChainFile(termosTitulos, True)
-        termosTitulos = []
-        alteraChainFile(termosHistorias, False)
-        termosHistorias = []
-        final = time()
-        duracao = (final - inicio) / quantia
+title_keywords: list[str] = []
+story_keywords: list[str] = []
+file_names = os.listdir("./FanficAnime/stories")
+total = len(file_names)
+quantity = 0
+start_time = time()
+for name in file_names:
+    quantity += 1
+    with open(f"./FanficAnime/stories/{name}", "r", encoding="utf-8") as file:
+        story_components = file.readline().split(" : ")
+        if story_components[:-1]:
+            titulo = " : ".join(story_components[:-1])
+            title_keywords += generate_word_chain(titulo)
+        if story_components[-1:][0]:
+            historia = story_components[-1:][0]
+            story_keywords += generate_word_chain(historia)
+    if len(story_keywords) > OVERFLOWLIMIT:
+        update_chain_file(title_keywords, True)
+        title_keywords = []
+        update_chain_file(story_keywords, False)
+        story_keywords = []
+        finish_time = time()
+        elapsed_time = (finish_time - start_time) / quantity
         print(name)
-        print("duração média : " + embelezeTempo(duracao))
-        print("tempo Passado : " + embelezeTempo(final - inicio))
-        print("falta : " + embelezeTempo(duracao * (total - quantia)))
+        print("duração média : " + format_elapsed_time(elapsed_time))
+        print("tempo Passado : " + format_elapsed_time(finish_time - start_time))
+        print("falta : " + format_elapsed_time(elapsed_time * (total - quantity)))
         print()
 print("concluindo...")
-if len(termosTitulos) > OVERFLOWLIMIT:
-    alteraChainFile(termosTitulos, True)
-    termosTitulos = []
-if len(termosHistorias) > OVERFLOWLIMIT:
-    alteraChainFile(termosHistorias, False)
-    termosHistorias = []
-    final = time()
-    duracao = (final - inicio) / total
-    print("falta : " + embelezeTempo(duracao * (total - quantia)))
+if len(title_keywords) > OVERFLOWLIMIT:
+    update_chain_file(title_keywords, True)
+    title_keywords = []
+if len(story_keywords) > OVERFLOWLIMIT:
+    update_chain_file(story_keywords, False)
+    story_keywords = []
+    finish_time = time()
+    elapsed_time = (finish_time - start_time) / total
+    print("falta : " + format_elapsed_time(elapsed_time * (total - quantity)))
 print()
