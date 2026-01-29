@@ -31,18 +31,21 @@ def doAWord(nome):
     return "".join(texto)
 
 
-notSuccess = True
-while notSuccess:
-    try:
-        print("o que deseja abrir?")
-        nome = input() + "//chain.txt"
+def get_file_name() -> str:
+    is_file_name_valid = True
+    file_name = "default"
+    while is_file_name_valid:
+        print("type the file name (without .txt): ")
+        file_name = input()
         try:
-            arqInput = open(nome, "r", encoding="UTF-8")
-            arqInput.close()
-        except:
-            pass
-        notSuccess = False
-    except:
-        print("nome invalido")
+            with open(f"{file_name}.txt", "r", encoding="UTF-8") as _:
+                pass
+        except Exception as _:
+            print("invalid name")
+        is_file_name_valid = False
+    return file_name
+
+
+file_name = get_file_name()
 for a in range(1000):
-    print(doAWord(nome), end="\n")
+    print(doAWord(file_name + "//chain.txt"), end="\n")

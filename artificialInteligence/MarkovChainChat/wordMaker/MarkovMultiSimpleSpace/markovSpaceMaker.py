@@ -1,5 +1,14 @@
 from random import randint
+from typing import Any
 from numpy.random import choice
+
+IS_DEBUG = False
+
+
+def print_debug(*args: Any) -> None:
+    if IS_DEBUG:
+        for arg in args:
+            print(repr(arg))
 
 
 def getAnChar(nome, indice, indiceEspaco, anterior=""):
@@ -21,10 +30,7 @@ def getAnChar(nome, indice, indiceEspaco, anterior=""):
                     continue
             data[letra] = numero
         linha = file.readline()
-    # print(anterior)
-    # print(data)
-    # print(indice)
-    # print(indiceEspaco)
+    print_debug(anterior, data, indice, indiceEspaco)
     total = sum(list(data.values()))
     escolhido = randint(1, total)
     soma = 0
@@ -57,21 +63,24 @@ def arrumaStats(lista):
     return lista
 
 
-notSuccess = True
-while notSuccess:
-    try:
-        print("o que deseja abrir?")
-        nome = input()
+def get_file_name() -> str:
+    is_file_name_valid = True
+    file_name = "default"
+    while is_file_name_valid:
+        print("type the file name (without .txt): ")
+        file_name = input()
         try:
-            arqInput = open(nome + "//{0:03d}.txt", "r", encoding="UTF-8")
-            arqInput.close()
-        except:
-            pass
-        notSuccess = False
-    except:
-        print("nome invalido")
+            with open(f"{file_name}.txt", "r", encoding="UTF-8") as _:
+                pass
+        except Exception as _:
+            print("invalid name")
+        is_file_name_valid = False
+    return file_name
+
+
+file_name = get_file_name()
 palavrasQuant = []
-arqInput = open(nome + "//c.txt", "r", encoding="UTF-8")
+arqInput = open(file_name + "//c.txt", "r", encoding="UTF-8")
 linha = arqInput.readline()[:-1].split()
 while linha:
     palavrasQuant.append(int(linha[-1]))
@@ -85,5 +94,5 @@ for a in range(1000):
     # print(subWorldQuant)
     for b in range(subWorldQuant):
         # print(b)
-        word.append(doAWord(nome, b))
+        word.append(doAWord(file_name, b))
     print(" ".join(word), end="\n")

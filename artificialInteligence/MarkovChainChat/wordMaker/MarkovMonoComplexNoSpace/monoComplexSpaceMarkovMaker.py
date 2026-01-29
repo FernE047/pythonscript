@@ -2,7 +2,7 @@ from random import randint
 from numpy.random import choice
 
 
-def getAnChar(nome, anterior=""):
+def generate_char(nome, anterior=""):
     if not anterior:
         anterior = []
     while len(anterior) != 2:
@@ -27,16 +27,16 @@ def getAnChar(nome, anterior=""):
             return list(data.keys())[indice]
 
 
-def doAWord(nome):
+def generate_word(nome):
     texto = []
-    letra = getAnChar(nome)
+    letra = generate_char(nome)
     while letra != "¨":
         texto.append(letra)
-        letra = getAnChar(nome, texto[-2:])
+        letra = generate_char(nome, texto[-2:])
     return "".join(texto)
 
 
-def arrumaStats(lista):
+def normalize_statistics(lista):
     soma = sum(lista)
     lista = [listaa / soma for listaa in lista]
     while sum(lista) != 1:
@@ -48,32 +48,33 @@ def arrumaStats(lista):
             lista[lista.index(min(lista))] += add
     return lista
 
-
-notSuccess = True
-while notSuccess:
-    try:
-        print("o que deseja abrir?")
-        nome = input()
+def get_file_name() -> str:
+    is_file_name_valid = True
+    file_name = "default"
+    while is_file_name_valid:
+        print("type the file name (without .txt): ")
+        file_name = input()
         try:
-            arqInput = open(nome + "//c.txt", "r", encoding="UTF-8")
-            arqInput.close()
-        except:
-            pass
-        notSuccess = False
-    except:
-        print("nome invalido")
+            with open(f"{file_name}.txt", "r", encoding="UTF-8") as _:
+                pass
+        except Exception as _:
+            print("invalid name")
+        is_file_name_valid = False
+    return file_name
+
+file_name = get_file_name()
 palavrasQuant = []
-arqInput = open(nome + "//c.txt", "r", encoding="UTF-8")
+arqInput = open(file_name + "//c.txt", "r", encoding="UTF-8")
 linha = arqInput.readline()[:-1].split()
 while linha:
     palavrasQuant.append(int(linha[-1]))
     linha = arqInput.readline()[:-1]
-palavraStats = arrumaStats(palavrasQuant)
+palavraStats = normalize_statistics(palavrasQuant)
 for a in range(1000):
     word = []
     subWorldQuant = choice(
         [b for b in range(1, len(palavraStats) + 1)], 1, p=palavraStats
     )[0]
     for b in range(subWorldQuant):
-        word.append(doAWord(nome + "//chain.txt"))
+        word.append(generate_word(file_name + "//chain.txt"))
     print(" ".join(word), end="\n")

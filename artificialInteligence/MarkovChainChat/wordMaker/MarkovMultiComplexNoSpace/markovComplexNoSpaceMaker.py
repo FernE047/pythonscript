@@ -50,21 +50,24 @@ def arrumaStats(lista):
     return lista
 
 
-notSuccess = True
-while notSuccess:
-    try:
-        print("o que deseja abrir?")
-        nome = input()
+def get_file_name() -> str:
+    is_file_name_valid = True
+    file_name = "default"
+    while is_file_name_valid:
+        print("type the file name (without .txt): ")
+        file_name = input()
         try:
-            arqInput = open(nome + "//{0:03d}.txt", "r", encoding="UTF-8")
-            arqInput.close()
-        except:
-            pass
-        notSuccess = False
-    except:
-        print("nome invalido")
+            with open(f"{file_name}.txt", "r", encoding="UTF-8") as _:
+                pass
+        except Exception as _:
+            print("invalid name")
+        is_file_name_valid = False
+    return file_name
+
+
+file_name = get_file_name()
 palavrasQuant = []
-arqInput = open(nome + "//c.txt", "r", encoding="UTF-8")
+arqInput = open(file_name + "//c.txt", "r", encoding="UTF-8")
 linha = arqInput.readline()[:-1].split()
 while linha:
     palavrasQuant.append(int(linha[-1]))
@@ -76,5 +79,5 @@ for a in range(1000):
         [b for b in range(1, 1 + len(palavraStats))], 1, p=palavraStats
     )[0]
     for b in range(subWorldQuant):
-        word.append(doAWord(nome))
+        word.append(doAWord(f"{file_name}//{b:03d}.txt"))
     print(" ".join(word), end="\n")

@@ -42,21 +42,22 @@ def update_keyword_count(file_name: str, keywords: ChainData, index: int) -> Non
                 fileWrite.write(f"{keywords_flat} 1\n")
 
 
-is_file_name_valid = False
-file_name = "default"
-while not is_file_name_valid:
-    try:
+def get_file_name() -> str:
+    is_file_name_valid = True
+    file_name = "default"
+    while is_file_name_valid:
         print("type the file name (without .txt): ")
         file_name = input()
-        with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
-            is_file_name_valid = True
-            try:
-                with open(f"{file_name}/c.txt", "r", encoding="UTF-8") as file_input:
-                    file_input = open(f"{file_name}/c.txt", "w", encoding="UTF-8")
-            except Exception as _:
-                os.mkdir(file_name)
-    except Exception as _:
-        print("invalid name")
+        try:
+            with open(f"{file_name}.txt", "r", encoding="UTF-8") as _:
+                pass
+        except Exception as _:
+            print("invalid name")
+        is_file_name_valid = False
+    return file_name
+
+
+file_name = get_file_name()
 with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
     line = file.readline()[:-1]
     word_frequency: list[int] = []
