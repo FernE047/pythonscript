@@ -2,13 +2,13 @@ import os
 from time import time
 
 
-def embelezeTempo(segundos: float) -> str:
-    if segundos < 0:
-        segundos = -segundos
+def format_elapsed_time(seconds: float) -> str:
+    if seconds < 0:
+        seconds = -seconds
         sign = "-"
     else:
         sign = ""
-    total_ms = int(round(segundos * 1000))
+    total_ms = int(round(seconds * 1000))
     ms = total_ms % 1000
     total_s = total_ms // 1000
     s = total_s % 60
@@ -67,23 +67,24 @@ def alteraMonoChainFile(nome, termos):
         for termo in termos:
             fileWrite.write(" ".join(termo) + " 1\n")
     fileWrite.close()
-    renome(nomeTemp, nomeReal)
+    rename_file(nomeTemp, nomeReal)
 
 
-notSuccess = True
-while notSuccess:
+is_file_name_valid = False
+file_name = "default"
+while not is_file_name_valid:
     try:
-        print("o que deseja abrir?")
-        nome = input()
-        file = open(nome + ".txt", "r")  # , encoding = "UTF-8")
-        notSuccess = False
-        try:
-            arqInput = open(nome + "//c.txt", "w", encoding="UTF-8")
-            arqInput.close()
-        except:
-            os.mkdir(nome)
-    except:
-        print("nome invalido")
+        print("type the file name (without .txt): ")
+        file_name = input()
+        with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
+            is_file_name_valid = True
+            try:
+                with open(f"{file_name}/c.txt", "r", encoding="UTF-8") as file_input:
+                    file_input = open(f"{file_name}/c.txt", "w", encoding="UTF-8")
+            except Exception as _:
+                os.mkdir(file_name)
+    except Exception as _:
+        print("invalid name")
 inicio = time()
 file = open(nome + ".txt", "r", encoding="UTF-8")
 linha = file.readline()[1:-1]
@@ -109,5 +110,5 @@ while linha:
     linha = file.readline()[:-1]
 print(tamanho)
 fim = time()
-print(embelezeTempo(fim - inicio))
+print(format_elapsed_time(fim - inicio))
 file.close()

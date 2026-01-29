@@ -37,20 +37,21 @@ def alteraMonoChainFile(nome, termo, indice):
     renome(nomeTemp, nomeReal)
 
 
-notSuccess = True
-while notSuccess:
+is_file_name_valid = False
+file_name = "default"
+while not is_file_name_valid:
     try:
-        print("o que deseja abrir?")
-        nome = input()
-        file = open(nome + ".txt", "r")  # , encoding = "UTF-8")
-        notSuccess = False
-        try:
-            arqInput = open(f"{nome}//c.txt", "w", encoding="UTF-8")
-            arqInput.close()
-        except:
-            os.mkdir(nome)
-    except:
-        print("nome invalido")
+        print("type the file name (without .txt): ")
+        file_name = input()
+        with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
+            is_file_name_valid = True
+            try:
+                with open(f"{file_name}/c.txt", "r", encoding="UTF-8") as file_input:
+                    file_input = open(f"{file_name}/c.txt", "w", encoding="UTF-8")
+            except Exception as _:
+                os.mkdir(file_name)
+    except Exception as _:
+        print("invalid name")
 linha = file.readline()[:-1]
 palavraQuant = []
 while linha:
