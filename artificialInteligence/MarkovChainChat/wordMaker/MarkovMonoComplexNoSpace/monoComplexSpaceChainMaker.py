@@ -1,15 +1,18 @@
 import os
 from collections import Counter
 from time import time
+from typing import cast
+
+ChainData = tuple[str, str, str]
 
 
-def embelezeTempo(segundos: float) -> str:
-    if segundos < 0:
-        segundos = -segundos
+def format_elapsed_time(seconds: float) -> str:
+    if seconds < 0:
+        seconds = -seconds
         sign = "-"
     else:
         sign = ""
-    total_ms = int(round(segundos * 1000))
+    total_ms = int(round(seconds * 1000))
     ms = total_ms % 1000
     total_s = total_ms // 1000
     s = total_s % 60
@@ -42,105 +45,115 @@ def rename_file(source_file_name: str, destination_file_name: str) -> None:
         destination_file.write(content)
 
 
-def alteraMonoChainFile(nome, termos):
-    nomeTemp = nome + "//c.txt"
-    nomeReal = nome + "//chain.txt"
-    fileWrite = open(nomeTemp, "w", encoding="UTF-8")
-    amount = Counter([str(a) for a in termos])
-    if "chain.txt" in os.listdir(nome):
-        fileRead = open(nomeReal, "r", encoding="UTF-8")
-        linha = fileRead.readline()
-        while linha:
-            palavras = linha.split()
-            if palavras[:-1] in termos:
-                palavras[-1] = int(palavras[-1])
-                palavras[-1] += amount[str(palavras[:-1])]
-                while palavras[:-1] in termos:
-                    termos.remove(palavras[:-1])
-                palavras[-1] = str(palavras[-1])
-                fileWrite.write(" ".join(palavras) + "\n")
-            else:
-                fileWrite.write(linha)
-            linha = fileRead.readline()
-        used = []
-        for termo in termos:
-            if termo not in used:
-                fileWrite.write(" ".join(termo + [str(amount[str(termo)])]) + "\n")
-                used.append(termo)
-        fileRead.close()
-    else:
-        used = []
-        for termo in termos:
-            if termo not in used:
-                fileWrite.write(" ".join(termo + [str(amount[str(termo)])]) + "\n")
-                used.append(termo)
-    fileWrite.close()
-    renome(nomeTemp, nomeReal)
+def update_chain_file(file_name: str, keywords: list[ChainData]) -> None:
+    update_keywords_in_chain(file_name, keywords)
+    rename_file(f"{file_name}//c.txt", f"{file_name}//chain.txt")
+
+
+def update_keywords_in_chain(file_name: str, keyword_tuples: list[ChainData]) -> None:
+    with open(f"{file_name}//c.txt", "w", encoding="UTF-8") as file_write:
+        counter = Counter([" ".join(keyword_tuple) for keyword_tuple in keyword_tuples])
+        unique_keywords: set[ChainData] = set()
+        if "chain.txt" not in os.listdir(file_name):
+            for keyword_tuple in keyword_tuples:
+                if keyword_tuple not in unique_keywords:
+                    keyword_tuple_flat = " ".join(keyword_tuple)
+                    keyword_tuple_frequency = counter[keyword_tuple_flat]
+                    file_write.write(
+                        f"{keyword_tuple_flat} {keyword_tuple_frequency}\n"
+                    )
+                    unique_keywords.add(keyword_tuple)
+            return
+        with open(f"{file_name}//chain.txt", "r", encoding="UTF-8") as file_read:
+            line = file_read.readline()
+            while line:
+                keywords_read = cast(tuple[str, str, str, str], tuple(line.split()))
+                if keywords_read[:-1] not in keyword_tuples:
+                    file_write.write(line)
+                    line = file_read.readline()
+                    continue
+                frequency = int(keywords_read[-1])
+                keyword_tuple_flat = " ".join(keywords_read[:-1])
+                frequency += counter[keyword_tuple_flat]
+                while keywords_read[:-1] in keyword_tuples:
+                    keyword_tuples.remove(keywords_read[:-1])
+                file_write.write(f"{keyword_tuple_flat} {frequency}\n")
+                line = file_read.readline()
+            for keyword_tuple in keyword_tuples:
+                if keyword_tuple not in unique_keywords:
+                    keyword_tuple_flat = " ".join(keyword_tuple)
+                    frequency = counter[keyword_tuple_flat]
+                    file_write.write(f"{keyword_tuple_flat} {frequency}\n")
+                    unique_keywords.add(keyword_tuple)
 
 
 notSuccess = True
+file_name = "default"
 while notSuccess:
     try:
-        print("o que deseja abrir?")
-        nome = input()
-        file = open(nome + ".txt", "r")  # , encoding = "UTF-8")
-        notSuccess = False
-        try:
-            arqInput = open(nome + "//c.txt", "w", encoding="UTF-8")
-            arqInput.close()
-        except:
-            os.mkdir(nome)
-    except:
-        print("nome invalido")
-inicio = time()
-file = open(nome + ".txt", "r", encoding="UTF-8")
-linha = file.readline()[:-1]
-palavraQuant = []
-count = 0
-alterations = []
-while linha:
-    palavras = linha.split()
-    while len(palavras) > len(palavraQuant):
-        palavraQuant.append(0)
-    palavraQuant[len(palavras) - 1] += 1
-    for palavra in palavras:
-        tamanho = len(palavra)
-        letraAnterior = ""
-        for index in range(tamanho):
-            letra = palavra[index]
-            if index == 0:
-                alterations.append(["¨", "¨", letra])
-                if tamanho == 1:
-                    alterations.append(["¨", letra, "¨"])
-                    break
-                else:
-                    letraSeguinte = palavra[index + 1]
-                    alterations.append(["¨", letra, letraSeguinte])
-                    letraAnterior = letra
-                continue
-            if tamanho > 1:
-                if index >= tamanho - 1:
-                    letraSeguinte = "¨"
-                else:
-                    letraSeguinte = palavra[index + 1]
-                alterations.append([letraAnterior, letra, letraSeguinte])
-                if letraSeguinte == "¨":
-                    break
-            letraAnterior = letra
-    if count == 100:
-        alteraMonoChainFile(nome, alterations)
-        alterations = []
-        count = 0
-    else:
-        count += 1
-    linha = file.readline()[:-1]
-alteraMonoChainFile(nome, alterations)
-arqInput = open(nome + "//c.txt", "w", encoding="UTF-8")
-for index, quantity in enumerate(palavraQuant):
-    arqInput.write(f"{index} ")
-    arqInput.write(f"{quantity}\n")
-arqInput.close()
-print(tamanho)
-fim = time()
-print(embelezeTempo(fim - inicio))
-file.close()
+        print("type the file name (without .txt): ")
+        file_name = input()
+        with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
+            notSuccess = False
+            try:
+                with open(f"{file_name}//c.txt", "r", encoding="UTF-8") as file_input:
+                    file_input = open(f"{file_name}//c.txt", "w", encoding="UTF-8")
+            except Exception as _:
+                os.mkdir(file_name)
+    except Exception as _:
+        print("invalid name")
+start_time = time()
+with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
+    line = file.readline()[:-1]
+    word_frequency: list[int] = []
+    word_length = 0
+    count = 0
+    update_chain_values: list[ChainData] = []
+    while line:
+        words = line.split()
+        while len(words) > len(word_frequency):
+            word_frequency.append(0)
+        word_frequency[len(words) - 1] += 1
+        for word in words:
+            word_length = len(word)
+            previous_character = ""
+            for index in range(word_length):
+                current_character = word[index]
+                if index == 0:
+                    update_chain_values.append(("¨", "¨", current_character))
+                    if word_length == 1:
+                        update_chain_values.append(("¨", current_character, "¨"))
+                        break
+                    else:
+                        next_character = word[index + 1]
+                        update_chain_values.append(
+                            ("¨", current_character, next_character)
+                        )
+                        previous_character = current_character
+                    continue
+                if word_length > 1:
+                    if index >= word_length - 1:
+                        next_character = "¨"
+                    else:
+                        next_character = word[index + 1]
+                    update_chain_values.append(
+                        (previous_character, current_character, next_character)
+                    )
+                    if next_character == "¨":
+                        break
+                previous_character = current_character
+        if count == 100:
+            update_chain_file(file_name, update_chain_values)
+            update_chain_values = []
+            count = 0
+        else:
+            count += 1
+        line = file.readline()[:-1]
+    update_chain_file(file_name, update_chain_values)
+    with open(f"{file_name}//length.txt", "w", encoding="UTF-8") as arqInput:
+        for index, quantity in enumerate(word_frequency):
+            arqInput.write(f"{index} ")
+            arqInput.write(f"{quantity}\n")
+    print(word_length)
+    end_time = time()
+    print(format_elapsed_time(end_time - start_time))
