@@ -58,9 +58,7 @@ def update_chain_file(
             unique_terms: list[list[str]] = []
             for term in chain_element:
                 if term not in unique_terms:
-                    file_write.write(
-                        " ".join(term + [str(counter[str(term)])]) + "\n"
-                    )
+                    file_write.write(" ".join(term + [str(counter[str(term)])]) + "\n")
                     unique_terms.append(term)
                     return
         with open(f"{file_name}/{index:03d}.txt", "r", encoding="UTF-8") as file_read:

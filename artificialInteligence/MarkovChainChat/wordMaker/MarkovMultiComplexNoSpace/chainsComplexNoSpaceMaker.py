@@ -42,9 +42,10 @@ def rename_file(source_file_name: str, destination_file_name: str) -> None:
         destination_file.write(content)
 
 
-def update_chain(file_name:str, file_index: int, terms: list[list[str]]) -> None:
+def update_chain(file_name: str, file_index: int, terms: list[list[str]]) -> None:
     update_chain_file(file_name, file_index, terms)
     rename_file(f"{file_name}/c.txt", f"{file_name}/{file_index:03d}.txt")
+
 
 def update_chain_file(file_name: str, file_index: int, terms: list[list[str]]) -> None:
     with open(f"{file_name}/c.txt", "w", encoding="UTF-8") as file_write:
@@ -53,12 +54,12 @@ def update_chain_file(file_name: str, file_index: int, terms: list[list[str]]) -
             unique_terms: list[list[str]] = []
             for term in terms:
                 if term not in unique_terms:
-                    file_write.write(
-                        " ".join(term + [str(counter[str(term)])]) + "\n"
-                    )
+                    file_write.write(" ".join(term + [str(counter[str(term)])]) + "\n")
                     unique_terms.append(term)
             return
-        with open(f"{file_name}/{file_index:03d}.txt", "r", encoding="UTF-8") as file_read:
+        with open(
+            f"{file_name}/{file_index:03d}.txt", "r", encoding="UTF-8"
+        ) as file_read:
             line = file_read.readline()[:-1]
             while line:
                 words = line.split()

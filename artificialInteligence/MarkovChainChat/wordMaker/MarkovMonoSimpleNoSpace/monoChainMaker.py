@@ -51,6 +51,7 @@ def update_chain_file(file_name: str, chain_terms: list[ChainData]) -> None:
 
 def update_chain_file_contents(file_name: str, chain_terms: list[ChainData]) -> None:
     with open(f"{file_name}/c.txt", "w", encoding="UTF-8") as file_write:
+
         def write_terms(terms: ChainData, frequency: int) -> None:
             terms_flat = " ".join(terms)
             file_write.write(f"{terms_flat} {frequency}\n")
@@ -76,6 +77,7 @@ def update_chain_file_contents(file_name: str, chain_terms: list[ChainData]) -> 
                 line = file_read.readline()
             for terms in chain_terms:
                 write_terms(terms, 1)
+
 
 is_file_name_valid = False
 file_name = "default"

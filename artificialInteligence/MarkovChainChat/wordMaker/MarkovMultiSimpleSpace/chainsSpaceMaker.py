@@ -1,34 +1,40 @@
 import os
 
 
-
-def rename_file(source_file_name:str, destination_file_name:str) -> None:
-    with open(source_file_name, "r", encoding="utf-8") as source_file, open(destination_file_name, "w", encoding="utf-8") as destination_file:
+def rename_file(source_file_name: str, destination_file_name: str) -> None:
+    with (
+        open(source_file_name, "r", encoding="utf-8") as source_file,
+        open(destination_file_name, "w", encoding="utf-8") as destination_file,
+    ):
         content = source_file.read()
         destination_file.write(content)
 
-def alteraChainFile(nome,n,termo):
-    fileWrite = open(f"{nome}//c.txt","w",encoding = "UTF-8")
-    if f"{n:03d}.txt" in os.listdir(nome):
-        fileRead = open(f"{nome}//{n:03d}.txt","r",encoding = "UTF-8")
-        linha = fileRead.readline()
-        encontrou = False
-        indice = len(termo)
-        while linha:
-            if linha[:indice] == termo:
-                numero = int(linha[indice+1:])+1
-                fileWrite.write( linha[:indice+1] + str(numero) + "\n")
-                encontrou = True
-            else:
-                fileWrite.write(linha)
-            linha = fileRead.readline()
-        if not encontrou:
-            fileWrite.write(termo + " 1\n")
-        fileRead.close()
-    else :
-        fileWrite.write(termo + " 1\n")
-    fileWrite.close()
-    renome(nome,f"//{n:03d}.txt")
+
+def update_chain(file_name: str, index: int, chain_element: str) -> None:
+    update_chain_file(file_name, index, chain_element)
+    rename_file(file_name, f"/{index:03d}.txt")
+
+
+def update_chain_file(file_name: str, index: int, chain_element: str) -> None:
+    with open(f"{file_name}/c.txt", "w", encoding="UTF-8") as file_write:
+        if f"{index:03d}.txt" not in os.listdir(file_name):
+            file_write.write(chain_element + " 1\n")
+            return
+        with open(f"{file_name}/{index:03d}.txt", "r", encoding="UTF-8") as file_read:
+            line = file_read.readline()
+            element_found = False
+            element_index = len(chain_element)
+            while line:
+                if line[:element_index] == chain_element:
+                    frequency = int(line[element_index + 1 :]) + 1
+                    file_write.write(f"{line[: element_index + 1]} {frequency}\n")
+                    element_found = True
+                else:
+                    file_write.write(line)
+                line = file_read.readline()
+            if not element_found:
+                file_write.write(chain_element + " 1\n")
+
 
 is_file_name_valid = False
 file_name = "default"
@@ -45,39 +51,48 @@ while not is_file_name_valid:
                 os.mkdir(file_name)
     except Exception as _:
         print("invalid name")
-mensagem = file.readline()[1:-1]
-palavraQuant = []
-while mensagem:
-    palavras = mensagem.split()
-    while len(palavras)>len(palavraQuant):
-        palavraQuant.append(0)
-    palavraQuant[len(palavras)-1] += 1
-    for m,palavra in enumerate(palavras):
-        tamanho = len(palavra)
-        for n in range(tamanho):
-            letra = palavra[n]
-            if n == 0:
-                """if letra == "\n":
-                    letra = "¨""""
-                alteraChainFile(nome,n," ".join([str(m),letra]))
-                if tamanho == 1:
-                    alteraChainFile(nome,n+1," ".join([str(m),letra,"¨"]))
-            if tamanho > 1:
-                try:
-                    letraSeguinte = palavra[n+1]
-                except:
-                    letraSeguinte = "¨"
-                if letraSeguinte == "\n":
-                    letraSeguinte = "¨"
-                alteraChainFile(nome,n+1," ".join([str(m),letra,letraSeguinte]))
-                if letraSeguinte == "¨":
-                    break
-    mensagem = file.readline()[:-1]
-arqInput = open(nome+"//c.txt","w",encoding = "UTF-8")
-for index, quantity in enumerate(palavraQuant):
-    arqInput.write(f"{index} ")
-    arqInput.write(f"{quantity}\n")
-arqInput.close()
-print(tamanho)
-file.close()
-
+with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
+    line = file.readline()[1:-1]
+    word_frequency_map: list[int] = []
+    while line:
+        words = line.split()
+        while len(words) > len(word_frequency_map):
+            word_frequency_map.append(0)
+        word_frequency_map[len(words) - 1] += 1
+        for word_index, word in enumerate(words):
+            word_length = len(word)
+            for chair_index in range(word_length):
+                current_char = word[chair_index]
+                if chair_index == 0:
+                    """if current_char == "\n":
+                        current_char = "¨" """
+                    update_chain(
+                        file_name,
+                        chair_index,
+                        " ".join([str(word_index), current_char]),
+                    )
+                    if word_length == 1:
+                        update_chain(
+                            file_name,
+                            chair_index + 1,
+                            " ".join([str(word_index), current_char, "¨"]),
+                        )
+                if word_length > 1:
+                    try:
+                        next_char = word[chair_index + 1]
+                    except IndexError:
+                        next_char = "¨"
+                    if next_char == "\n":
+                        next_char = "¨"
+                    update_chain(
+                        file_name,
+                        chair_index + 1,
+                        " ".join([str(word_index), current_char, next_char]),
+                    )
+                    if next_char == "¨":
+                        break
+            print(word_length)
+        line = file.readline()[:-1]
+    with open(file_name + "/c.txt", "w", encoding="UTF-8") as output_chain_file:
+        for index, quantity in enumerate(word_frequency_map):
+            output_chain_file.write(f"{index} {quantity}\n")

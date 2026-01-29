@@ -17,6 +17,7 @@ def update_chain_file(file_name: str, keywords: ChainData, index: int) -> None:
     update_keyword_count(file_name, keywords, index)
     rename_file(f"{file_name}/c.txt", f"{file_name}/{index:03d}.txt")
 
+
 def update_keyword_count(file_name: str, keywords: ChainData, index: int) -> None:
     with open(f"{file_name}/c.txt", "w", encoding="UTF-8") as fileWrite:
         keywords_flat = " ".join(keywords)
@@ -27,7 +28,7 @@ def update_keyword_count(file_name: str, keywords: ChainData, index: int) -> Non
             line = file_read.readline()
             keyword_found = False
             while line:
-                palavras = cast(tuple[str,str,str,str],tuple(line.split()))
+                palavras = cast(tuple[str, str, str, str], tuple(line.split()))
                 keywords_read = cast(ChainData, tuple(palavras[:-1]))
                 if keywords_read != keywords:
                     fileWrite.write(line)

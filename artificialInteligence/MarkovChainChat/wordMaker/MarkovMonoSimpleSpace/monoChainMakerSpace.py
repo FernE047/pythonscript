@@ -58,7 +58,7 @@ while not is_file_name_valid:
         print("invalid name")
 with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
     line = file.readline()[:-1]
-    character_frequency_map:list[int] = []
+    character_frequency_map: list[int] = []
     while line:
         words = line.split()
         while len(words) > len(character_frequency_map):
