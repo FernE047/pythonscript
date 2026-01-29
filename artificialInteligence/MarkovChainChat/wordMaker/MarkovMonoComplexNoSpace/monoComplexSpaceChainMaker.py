@@ -88,14 +88,14 @@ def update_keywords_in_chain(file_name: str, keyword_tuples: list[ChainData]) ->
                     unique_keywords.add(keyword_tuple)
 
 
-notSuccess = True
+is_file_name_valid = False
 file_name = "default"
-while notSuccess:
+while not is_file_name_valid:
     try:
         print("type the file name (without .txt): ")
         file_name = input()
         with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
-            notSuccess = False
+            is_file_name_valid = True
             try:
                 with open(f"{file_name}//c.txt", "r", encoding="UTF-8") as file_input:
                     file_input = open(f"{file_name}//c.txt", "w", encoding="UTF-8")
