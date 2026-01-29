@@ -1,8 +1,11 @@
 import os
 from time import time
+from typing import cast
+
+ChainData = tuple[str, str]
 
 
-def format_elapsed_time(seconds: float) -> str:
+def print_elapsed_time(seconds: float) -> None:
     if seconds < 0:
         seconds = -seconds
         sign = "-"
@@ -29,7 +32,7 @@ def format_elapsed_time(seconds: float) -> str:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    return sign + ", ".join(parts)
+    print(sign + ", ".join(parts))
 
 
 def rename_file(source_file_name: str, destination_file_name: str) -> None:
@@ -41,34 +44,38 @@ def rename_file(source_file_name: str, destination_file_name: str) -> None:
         destination_file.write(content)
 
 
-def alteraMonoChainFile(nome, termos):
-    nomeTemp = nome + "//c.txt"
-    nomeReal = nome + "//chain.txt"
-    fileWrite = open(nomeTemp, "w", encoding="UTF-8")
-    if "chain.txt" in os.listdir(nome):
-        fileRead = open(nomeReal, "r", encoding="UTF-8")
-        linha = fileRead.readline()
-        while linha:
-            palavras = linha.split()
-            if palavras[:-1] in termos:
-                palavras[-1] = int(palavras[-1])
-                while palavras[:-1] in termos:
-                    palavras[-1] += 1
-                    termos.remove(palavras[:-1])
-                palavras[-1] = str(palavras[-1])
-                fileWrite.write(" ".join(palavras) + "\n")
-            else:
-                fileWrite.write(linha)
-            linha = fileRead.readline()
-        for termo in termos:
-            fileWrite.write(" ".join(termo) + " 1\n")
-        fileRead.close()
-    else:
-        for termo in termos:
-            fileWrite.write(" ".join(termo) + " 1\n")
-    fileWrite.close()
-    rename_file(nomeTemp, nomeReal)
+def update_chain_file(file_name: str, chain_terms: list[ChainData]) -> None:
+    update_chain_file_contents(file_name, chain_terms)
+    rename_file(f"{file_name}//c.txt", f"{file_name}//chain.txt")
 
+
+def update_chain_file_contents(file_name: str, chain_terms: list[ChainData]) -> None:
+    with open(f"{file_name}//c.txt", "w", encoding="UTF-8") as file_write:
+        def write_terms(terms: ChainData, frequency: int) -> None:
+            terms_flat = " ".join(terms)
+            file_write.write(f"{terms_flat} {frequency}\n")
+
+        if "chain.txt" not in os.listdir(file_name):
+            for terms in chain_terms:
+                write_terms(terms, 1)
+            return
+        with open(f"{file_name}//chain.txt", "r", encoding="UTF-8") as file_read:
+            line = file_read.readline()
+            while line:
+                term_list = cast(tuple[str, str, str], line.split())
+                term_tuple = cast(ChainData, tuple(term_list[:-1]))
+                if term_tuple not in chain_terms:
+                    file_write.write(line)
+                    line = file_read.readline()
+                    continue
+                frequency = int(term_list[-1])
+                while term_tuple in chain_terms:
+                    frequency += 1
+                    chain_terms.remove(term_tuple)
+                write_terms(term_tuple, frequency)
+                line = file_read.readline()
+            for terms in chain_terms:
+                write_terms(terms, 1)
 
 is_file_name_valid = False
 file_name = "default"
@@ -85,30 +92,30 @@ while not is_file_name_valid:
                 os.mkdir(file_name)
     except Exception as _:
         print("invalid name")
-inicio = time()
-file = open(nome + ".txt", "r", encoding="UTF-8")
-linha = file.readline()[1:-1]
-while linha:
-    tamanho = len(linha)
-    alterations = []
-    for n in range(tamanho):
-        palavra = linha[n]
-        if n == 0:
-            alterations.append(["¨", palavra])
-            if tamanho == 1:
-                alterations.append([palavra, "¨"])
-                break
-        if tamanho > 1:
-            if n >= tamanho - 1:
-                palavraSeguinte = "¨"
-            else:
-                palavraSeguinte = linha[n + 1]
-            alterations.append([palavra, palavraSeguinte])
-            if palavraSeguinte == "¨":
-                break
-    alteraMonoChainFile(nome, alterations)
-    linha = file.readline()[:-1]
-print(tamanho)
-fim = time()
-print(format_elapsed_time(fim - inicio))
-file.close()
+start_time = time()
+with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
+    line = file.readline()[1:-1]
+    line_length = len(line)
+    while line:
+        line_length = len(line)
+        update_chain_values: list[ChainData] = []
+        for n in range(line_length):
+            current_character = line[n]
+            if n == 0:
+                update_chain_values.append(("¨", current_character))
+                if line_length == 1:
+                    update_chain_values.append((current_character, "¨"))
+                    break
+            if line_length > 1:
+                if n >= line_length - 1:
+                    next_character = "¨"
+                else:
+                    next_character = line[n + 1]
+                update_chain_values.append((current_character, next_character))
+                if next_character == "¨":
+                    break
+        update_chain_file(file_name, update_chain_values)
+        line = file.readline()[:-1]
+    print(line_length)
+    end_time = time()
+    print_elapsed_time(end_time - start_time)
