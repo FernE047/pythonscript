@@ -11,56 +11,61 @@ def print_debug(*args: Any) -> None:
             print(repr(arg))
 
 
-def getAnChar(nome, indice, indiceEspaco, anterior=""):
-    nome += "//{0:03d}.txt"
-    file = open(nome.format(indice), encoding="utf-8")
-    linha = file.readline()
-    data = {}
-    while linha:
-        if int(linha[0]) == indiceEspaco:
-            if indice == 0:
-                letra = linha[2]
-                numero = int(linha[4:-1])
-            else:
-                if anterior == linha[2]:
-                    letra = linha[4]
-                    numero = int(linha[6:-1])
+def generate_char(
+    file_name: str, index: int, space_index: int, previous_char: str = ""
+) -> str:
+    with open(f"{file_name}/{index:03d}.txt", encoding="utf-8") as file:
+        line = file.readline()
+        character_weights: dict[str, int] = {}
+        while line:
+            if int(line[0]) == space_index:
+                if index == 0:
+                    char = line[2]
+                    frequency = int(line[4:-1])
                 else:
-                    linha = file.readline()
-                    continue
-            data[letra] = numero
-        linha = file.readline()
-    print_debug(anterior, data, indice, indiceEspaco)
-    total = sum(list(data.values()))
-    escolhido = randint(1, total)
-    soma = 0
-    for indice, valor in enumerate(data.values()):
-        soma += valor
-        if soma >= escolhido:
-            file.close()
-            return list(data.keys())[indice]
+                    if previous_char == line[2]:
+                        char = line[4]
+                        frequency = int(line[6:-1])
+                    else:
+                        line = file.readline()
+                        continue
+                character_weights[char] = frequency
+            line = file.readline()
+        print_debug(previous_char, character_weights, index, space_index)
+        total = sum(list(character_weights.values()))
+        chosen = randint(1, total)
+        cumulative_frequency = 0
+        for index, value in enumerate(character_weights.values()):
+            cumulative_frequency += value
+            if cumulative_frequency >= chosen:
+                return list(character_weights.keys())[index]
+        return ""
 
 
-def doAWord(nome, indiceEspaco):
-    mensagem = ""
-    letra = getAnChar(nome, 0, indiceEspaco)
-    while letra != "¨":
-        mensagem += letra
-        letra = getAnChar(nome, len(mensagem), indiceEspaco, letra)
-    return mensagem
+def generate_word(file_name: str, space_index: int) -> str:
+    generated_word = ""
+    char = generate_char(file_name, 0, space_index)
+    while char != "¨":
+        generated_word += char
+        char = generate_char(file_name, len(generated_word), space_index, char)
+    return generated_word
 
 
-def arrumaStats(lista):
-    soma = sum(lista)
-    lista = [value / soma for value in lista]
-    while sum(lista) != 1:
-        if sum(lista) > 1:
-            add = sum(lista) - 1
-            lista[lista.index(max(lista))] -= add
-        elif sum(lista) < 1:
-            add = 1 - sum(lista)
-            lista[lista.index(min(lista))] += add
-    return lista
+def normalize_statistics(frequency_map: list[int]) -> list[float]:
+    total_frequency = sum(frequency_map)
+    frequency_normalized = [frequency / total_frequency for frequency in frequency_map]
+    while sum(frequency_normalized) != 1:
+        if sum(frequency_normalized) > 1:
+            add = sum(frequency_normalized) - 1
+            frequency_normalized[
+                frequency_normalized.index(max(frequency_normalized))
+            ] -= add
+        elif sum(frequency_normalized) < 1:
+            add = 1 - sum(frequency_normalized)
+            frequency_normalized[
+                frequency_normalized.index(min(frequency_normalized))
+            ] += add
+    return frequency_normalized
 
 
 def get_file_name() -> str:
@@ -79,20 +84,21 @@ def get_file_name() -> str:
 
 
 file_name = get_file_name()
-palavrasQuant = []
-arqInput = open(file_name + "//c.txt", "r", encoding="UTF-8")
-linha = arqInput.readline()[:-1].split()
-while linha:
-    palavrasQuant.append(int(linha[-1]))
-    linha = arqInput.readline()[:-1]
-palavraStats = arrumaStats(palavrasQuant)
-for a in range(1000):
-    word = []
-    subWorldQuant = choice(
-        [b for b in range(1, 1 + len(palavraStats))], 1, p=palavraStats
+word_occurrence_map: list[int] = []
+with open(file_name + "/c.txt", "r", encoding="UTF-8") as markov_chain_file:
+    linha = markov_chain_file.readline()[:-1].split()
+    while linha:
+        word_occurrence_map.append(int(linha[-1]))
+        linha = markov_chain_file.readline()[:-1].split()
+word_frequencies_map = normalize_statistics(word_occurrence_map)
+for _ in range(1000):
+    generated_words: list[str] = []
+    word_quantity = choice(
+        [word_index for word_index in range(1, len(word_frequencies_map) + 1)],
+        1,
+        p=word_frequencies_map,
     )[0]
-    # print(subWorldQuant)
-    for b in range(subWorldQuant):
-        # print(b)
-        word.append(doAWord(file_name, b))
-    print(" ".join(word), end="\n")
+    for index in range(word_quantity):
+        print_debug(index)
+        generated_words.append(generate_word(file_name, index))
+    print(" ".join(generated_words), end="\n")
