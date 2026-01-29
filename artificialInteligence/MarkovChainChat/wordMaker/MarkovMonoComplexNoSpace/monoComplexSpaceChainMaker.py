@@ -47,11 +47,11 @@ def rename_file(source_file_name: str, destination_file_name: str) -> None:
 
 def update_chain_file(file_name: str, keywords: list[ChainData]) -> None:
     update_keywords_in_chain(file_name, keywords)
-    rename_file(f"{file_name}//c.txt", f"{file_name}//chain.txt")
+    rename_file(f"{file_name}/c.txt", f"{file_name}/chain.txt")
 
 
 def update_keywords_in_chain(file_name: str, keyword_tuples: list[ChainData]) -> None:
-    with open(f"{file_name}//c.txt", "w", encoding="UTF-8") as file_write:
+    with open(f"{file_name}/c.txt", "w", encoding="UTF-8") as file_write:
         counter = Counter([" ".join(keyword_tuple) for keyword_tuple in keyword_tuples])
         unique_keywords: set[ChainData] = set()
         if "chain.txt" not in os.listdir(file_name):
@@ -64,7 +64,7 @@ def update_keywords_in_chain(file_name: str, keyword_tuples: list[ChainData]) ->
                     )
                     unique_keywords.add(keyword_tuple)
             return
-        with open(f"{file_name}//chain.txt", "r", encoding="UTF-8") as file_read:
+        with open(f"{file_name}/chain.txt", "r", encoding="UTF-8") as file_read:
             line = file_read.readline()
             while line:
                 keywords_read = cast(tuple[str, str, str, str], tuple(line.split()))
@@ -97,8 +97,8 @@ while not is_file_name_valid:
         with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
             is_file_name_valid = True
             try:
-                with open(f"{file_name}//c.txt", "r", encoding="UTF-8") as file_input:
-                    file_input = open(f"{file_name}//c.txt", "w", encoding="UTF-8")
+                with open(f"{file_name}/c.txt", "r", encoding="UTF-8") as file_input:
+                    file_input = open(f"{file_name}/c.txt", "w", encoding="UTF-8")
             except Exception as _:
                 os.mkdir(file_name)
     except Exception as _:
@@ -151,10 +151,9 @@ with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
             count += 1
         line = file.readline()[:-1]
     update_chain_file(file_name, update_chain_values)
-    with open(f"{file_name}//length.txt", "w", encoding="UTF-8") as arqInput:
+    with open(f"{file_name}/length.txt", "w", encoding="UTF-8") as arqInput:
         for index, quantity in enumerate(word_frequency):
-            arqInput.write(f"{index} ")
-            arqInput.write(f"{quantity}\n")
+            arqInput.write(f"{index} {quantity}\n")
     print(word_length)
     end_time = time()
     print(format_elapsed_time(end_time - start_time))
