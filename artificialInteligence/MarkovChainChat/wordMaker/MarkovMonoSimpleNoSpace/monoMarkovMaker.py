@@ -52,4 +52,4 @@ def get_file_name() -> str:
 
 file_name = get_file_name()
 for a in range(1000):
-    print(generate_word(f"{file_name}/chain.txt"), end="\n")
+    print(generate_word(f"{file_name}/chain.txt"))
