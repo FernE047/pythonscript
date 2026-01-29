@@ -7,25 +7,24 @@ def generate_char(file_name: str, previous_chars: list[str] | None = None) -> st
         previous_chars = []
     while len(previous_chars) != 2:
         previous_chars = ["¨"] + previous_chars
-    file = open(file_name, "r", encoding="UTF-8")
-    line = file.readline()
-    character_weights: dict[str, int] = {}
-    while line:
-        chars = [line[a] for a in range(0, 5, 2)]
-        if previous_chars == chars[:2]:
-            char = chars[2]
-            frequency = int(line[6:-1])
-            character_weights[char] = frequency
+    with open(file_name, "r", encoding="UTF-8") as file:
         line = file.readline()
-    total = sum(list(character_weights.values()))
-    chosen = randint(1, total)
-    cumulative_frequency = 0
-    for index, value in enumerate(character_weights.values()):
-        cumulative_frequency += value
-        if cumulative_frequency >= chosen:
-            file.close()
-            return list(character_weights.keys())[index]
-    return ""
+        character_weights: dict[str, int] = {}
+        while line:
+            chars = [line[a] for a in range(0, 5, 2)]
+            if previous_chars == chars[:2]:
+                char = chars[2]
+                frequency = int(line[6:-1])
+                character_weights[char] = frequency
+            line = file.readline()
+        total = sum(list(character_weights.values()))
+        chosen = randint(1, total)
+        cumulative_frequency = 0
+        for index, value in enumerate(character_weights.values()):
+            cumulative_frequency += value
+            if cumulative_frequency >= chosen:
+                return list(character_weights.keys())[index]
+        return ""
 
 
 def generate_word(file_name: str) -> str:
