@@ -46,11 +46,11 @@ def rename_file(source_file_name: str, destination_file_name: str) -> None:
 
 def update_chain_file(file_name: str, chain_terms: list[ChainData]) -> None:
     update_chain_file_contents(file_name, chain_terms)
-    rename_file(f"{file_name}//c.txt", f"{file_name}//chain.txt")
+    rename_file(f"{file_name}/c.txt", f"{file_name}/chain.txt")
 
 
 def update_chain_file_contents(file_name: str, chain_terms: list[ChainData]) -> None:
-    with open(f"{file_name}//c.txt", "w", encoding="UTF-8") as file_write:
+    with open(f"{file_name}/c.txt", "w", encoding="UTF-8") as file_write:
         def write_terms(terms: ChainData, frequency: int) -> None:
             terms_flat = " ".join(terms)
             file_write.write(f"{terms_flat} {frequency}\n")
@@ -59,7 +59,7 @@ def update_chain_file_contents(file_name: str, chain_terms: list[ChainData]) -> 
             for terms in chain_terms:
                 write_terms(terms, 1)
             return
-        with open(f"{file_name}//chain.txt", "r", encoding="UTF-8") as file_read:
+        with open(f"{file_name}/chain.txt", "r", encoding="UTF-8") as file_read:
             line = file_read.readline()
             while line:
                 term_list = cast(tuple[str, str, str], line.split())
