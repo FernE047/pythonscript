@@ -2,12 +2,12 @@ from random import randint
 from numpy.random import choice
 
 
-def generate_char(file_name: str, indice:int, previous_chars: list[str] | None = None) -> str:
+def generate_char(file_name: str, index:int, previous_chars: list[str] | None = None) -> str:
     if previous_chars is None:
         previous_chars = []
     while len(previous_chars) != 2:
         previous_chars = ["¨"] + previous_chars
-    with open(f"{file_name}//{indice:03d}.txt", encoding="utf-8") as file:
+    with open(f"{file_name}/{index:03d}.txt", encoding="utf-8") as file:
         line = file.readline()
         character_weights: dict[str, int] = {}
         while line:
@@ -88,5 +88,5 @@ for _ in range(1000):
         p=word_frequencies_map,
     )[0]
     for index in range(word_quantity):
-        generated_words.append(generate_word(f"{file_name}//{index:03d}.txt"))
+        generated_words.append(generate_word(f"{file_name}/{index:03d}.txt"))
     print(" ".join(generated_words))
