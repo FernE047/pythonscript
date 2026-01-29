@@ -1,4 +1,7 @@
 import os
+from typing import cast
+
+ChainData = tuple[str, str, str]
 
 
 def rename_file(source_file_name: str, destination_file_name: str) -> None:
@@ -10,84 +13,90 @@ def rename_file(source_file_name: str, destination_file_name: str) -> None:
         destination_file.write(content)
 
 
-def alteraMonoChainFile(nome, termo, indice):
-    nomeTemp = f"{nome}//c.txt"
-    nomeReal = f"{nome}//{indice:03d}.txt"
-    fileWrite = open(nomeTemp, "w", encoding="UTF-8")
-    if f"{indice:03d}.txt" in os.listdir(nome):
-        fileRead = open(nomeReal, "r", encoding="UTF-8")
-        linha = fileRead.readline()
-        encontrou = False
-        indice = len(termo)
-        while linha:
-            palavras = linha.split()
-            if palavras[:-1] == termo:
-                palavras[-1] = str(int(palavras[-1]) + 1)
-                fileWrite.write(" ".join(palavras) + "\n")
-                encontrou = True
-            else:
-                fileWrite.write(linha)
-            linha = fileRead.readline()
-        if not encontrou:
-            fileWrite.write(" ".join(termo) + " 1\n")
-        fileRead.close()
-    else:
-        fileWrite.write(" ".join(termo) + " 1\n")
-    fileWrite.close()
-    renome(nomeTemp, nomeReal)
+def update_chain_file(file_name: str, keywords: ChainData, index: int) -> None:
+    update_keyword_count(file_name, keywords, index)
+    rename_file(f"{file_name}/c.txt", f"{file_name}/{index:03d}.txt")
+
+def update_keyword_count(file_name: str, keywords: ChainData, index: int) -> None:
+    with open(f"{file_name}/c.txt", "w", encoding="UTF-8") as fileWrite:
+        keywords_flat = " ".join(keywords)
+        if f"{index:03d}.txt" not in os.listdir(file_name):
+            fileWrite.write(f"{keywords_flat} 1\n")
+            return
+        with open(f"{file_name}/{index:03d}.txt", "r", encoding="UTF-8") as file_read:
+            line = file_read.readline()
+            keyword_found = False
+            while line:
+                palavras = cast(tuple[str,str,str,str],tuple(line.split()))
+                keywords_read = cast(ChainData, tuple(palavras[:-1]))
+                if keywords_read != keywords:
+                    fileWrite.write(line)
+                    line = file_read.readline()
+                    continue
+                frequency = int(palavras[-1]) + 1
+                fileWrite.write(f"{keywords_flat} {frequency}\n")
+                keyword_found = True
+                line = file_read.readline()
+            if not keyword_found:
+                fileWrite.write(f"{keywords_flat} 1\n")
 
 
-notSuccess = True
-while notSuccess:
+is_file_name_valid = False
+file_name = "default"
+while not is_file_name_valid:
     try:
-        print("o que deseja abrir?")
-        nome = input()
-        file = open(nome + ".txt", "r")  # , encoding = "UTF-8")
-        notSuccess = False
-        try:
-            arqInput = open(nome + "//c.txt", "w", encoding="UTF-8")
-            arqInput.close()
-        except:
-            os.mkdir(nome)
-    except:
-        print("nome invalido")
-file = open(nome + ".txt", "r")  # ,encoding = "UTF-8")
-linha = file.readline()[:-1]
-palavraQuant = []
-while linha:
-    palavras = linha.split()
-    while len(palavras) > len(palavraQuant):
-        palavraQuant.append(0)
-    palavraQuant[len(palavras) - 1] += 1
-    for m, palavra in enumerate(palavras):
-        tamanho = len(palavra)
-        letraAnterior = ""
-        for index in range(tamanho):
-            letra = palavra[index]
-            if index == 0:
-                alteraMonoChainFile(nome, ["¨", "¨", letra], m)
-                if tamanho == 1:
-                    alteraMonoChainFile(nome, ["¨", letra, "¨"], m)
-                    break
+        print("type the file name (without .txt): ")
+        file_name = input()
+        with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
+            is_file_name_valid = True
+            try:
+                with open(f"{file_name}/c.txt", "r", encoding="UTF-8") as file_input:
+                    file_input = open(f"{file_name}/c.txt", "w", encoding="UTF-8")
+            except Exception as _:
+                os.mkdir(file_name)
+    except Exception as _:
+        print("invalid name")
+with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
+    line = file.readline()[:-1]
+    word_frequency: list[int] = []
+    length = 0
+    while line:
+        words = line.split()
+        while len(words) > len(word_frequency):
+            word_frequency.append(0)
+        word_frequency[len(words) - 1] += 1
+        for word_index, word in enumerate(words):
+            length = len(word)
+            previous_character = ""
+            for index, character in enumerate(word):
+                if index == 0:
+                    update_chain_file(file_name, ("¨", "¨", character), word_index)
+                    if length == 1:
+                        update_chain_file(file_name, ("¨", character, "¨"), word_index)
+                        break
+                    next_character = word[index + 1]
+                    update_chain_file(
+                        file_name, ("¨", character, next_character), word_index
+                    )
+                    previous_character = character
+                    continue
+                if length <= 1:
+                    previous_character = character
+                    continue
+                if index >= length - 1:
+                    next_character = "¨"
                 else:
-                    letraSeguinte = palavra[index + 1]
-                    alteraMonoChainFile(nome, ["¨", letra, letraSeguinte], m)
-                    letraAnterior = letra
-                continue
-            if tamanho > 1:
-                if index >= tamanho - 1:
-                    letraSeguinte = "¨"
-                else:
-                    letraSeguinte = palavra[index + 1]
-                alteraMonoChainFile(nome, [letraAnterior, letra, letraSeguinte], m)
-                if letraSeguinte == "¨":
+                    next_character = word[index + 1]
+                update_chain_file(
+                    file_name,
+                    (previous_character, character, next_character),
+                    word_index,
+                )
+                if next_character == "¨":
                     break
-            letraAnterior = letra
-    linha = file.readline()[:-1]
-arqInput = open(nome + "//c.txt", "w", encoding="UTF-8")
-for index, quantity in enumerate(palavraQuant):
-    arqInput.write(f"{index} ")
-    arqInput.write(f"{quantity}\n")
-arqInput.close()
-print(tamanho)
-file.close()
+                previous_character = character
+        line = file.readline()[:-1]
+    with open(f"{file_name}/c.txt", "w", encoding="UTF-8") as frequency_output_file:
+        for index, quantity in enumerate(word_frequency):
+            frequency_output_file.write(f"{index} {quantity}\n")
+    print(length)
