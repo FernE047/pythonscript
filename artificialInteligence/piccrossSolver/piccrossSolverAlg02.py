@@ -1,14 +1,22 @@
 from time import time
 from PIL import Image
 
+BoardData = list[list[bool]]
+HintData = list[int]
+HintHorizontalData = list[HintData]
+VerticalHintData = tuple[int, int]
+HintVerticalData = list[VerticalHintData]
+HintsData = tuple[HintHorizontalData, HintVerticalData]
+GameData = tuple[BoardData, HintsData]
 
-def embelezeTempo(segundos: float) -> str:
-    if segundos < 0:
-        segundos = -segundos
+
+def print_elapsed_time(seconds: float) -> None:
+    if seconds < 0:
+        seconds = -seconds
         sign = "-"
     else:
         sign = ""
-    total_ms = int(round(segundos * 1000))
+    total_ms = int(round(seconds * 1000))
     ms = total_ms % 1000
     total_s = total_ms // 1000
     s = total_s % 60
@@ -29,217 +37,217 @@ def embelezeTempo(segundos: float) -> str:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    return sign + ", ".join(parts)
+    print(sign + ", ".join(parts))
 
 
-def salva(tabuleiro, nome):
-    imagem = Image.new(
-        "RGBA", (len(tabuleiro[0]), len(tabuleiro)), (255, 255, 255, 255)
-    )
-    for y, coluna in enumerate(tabuleiro):
-        for x, celula in enumerate(coluna):
-            if celula:
-                imagem.putpixel((x, y), (0, 0, 0, 255))
-    imagem.save(nome + ".png")
-    imagem.close()
+def save_board_image(board: BoardData, file_name: str) -> None:
+    image = Image.new("RGBA", (len(board[0]), len(board)), (255, 255, 255, 255))
+    for y, column in enumerate(board):
+        for x, cell in enumerate(column):
+            if cell:
+                image.putpixel((x, y), (0, 0, 0, 255))
+    image.save(f"{file_name}.png")
+    image.close()
 
 
-def situacaoCompara(situacoes, dica, ultimaCelula, limite, tamanho):
-    if dica[0] == 0:
-        if situacoes:
+def compare_states(states: list[int], hint: list[int], previous_cell: bool, limit: int, size: int) -> bool:
+    if hint[0] == 0:
+        if states:
             return False
         else:
             return True
-    if len(situacoes) > len(dica):
+    if len(states) > len(hint):
         return False
-    if situacoes:
-        if len(situacoes) > 1:
-            for index, situacao in enumerate(situacoes[:-1]):
-                if situacao != dica[index]:
-                    return False
-        else:
-            index = -1
-        if not ultimaCelula:
-            if situacoes[index + 1] != dica[index + 1]:
+    if not states:
+        if size - (limit + 1) < len(hint) + sum(hint) - 1:
+            return False
+        return True
+    index = -1
+    if len(states) > 1:
+        for index, state in enumerate(states[:-1]):
+            if state != hint[index]:
                 return False
-            if len(situacoes) < len(dica):
-                if (
-                    tamanho - (limite + 1)
-                    < len(dica[len(situacoes) :]) + sum(dica[len(situacoes) :]) - 1
-                ):
-                    return False
-        else:
-            if situacoes[index + 1] > dica[index + 1]:
+    if not previous_cell:
+        if states[index + 1] != hint[index + 1]:
+            return False
+        if len(states) < len(hint):
+            if (
+                size - (limit + 1)
+                < len(hint[len(states) :]) + sum(hint[len(states) :]) - 1
+            ):
                 return False
-            if situacoes[index + 1] == dica[index + 1]:
-                if (
-                    tamanho - (limite + 1)
-                    < len(dica[len(situacoes) :]) + sum(dica[len(situacoes) :]) - 2
-                ):
-                    return False
-            else:
-                if (
-                    tamanho - (limite + 1)
-                    < len(dica[len(situacoes) :])
-                    + sum(dica[len(situacoes) :])
-                    + dica[index + 1]
-                    - situacoes[index + 1]
-                    - 1
-                ):
-                    return False
     else:
-        if tamanho - (limite + 1) < len(dica) + sum(dica) - 1:
+        if states[index + 1] > hint[index + 1]:
+            return False
+        if states[index + 1] == hint[index + 1]:
+            if (
+                size - (limit + 1)
+                < len(hint[len(states) :]) + sum(hint[len(states) :]) - 2
+            ):
+                return False
+        else:
+            if (
+                size - (limit + 1)
+                < len(hint[len(states) :])
+                + sum(hint[len(states) :])
+                + hint[index + 1]
+                - states[index + 1]
+                - 1
+            ):
+                return False
+    return True
+
+
+def verificaColunasParcial(game:GameData, limit_y:int, minimum_x:int, limit_x:int) -> bool:
+    if minimum_x != 0:
+        minimum_x -= 1
+    for x in range(minimum_x, limit_x):
+        hint = game[1][0][x]
+        state:list[int] = []
+        previous_cell = False
+        count = 0
+        for y in range(limit_y + 1):
+            cell = game[0][y][x]
+            if previous_cell:
+                if cell:
+                    count += 1
+                else:
+                    state.append(count)
+            else:
+                if cell:
+                    count = 1
+            previous_cell = cell
+        if previous_cell:
+            state.append(count)
+        if not compare_states(state, hint, previous_cell, limit_y, len(game[0])):
             return False
     return True
 
 
-def verificaColunasParcial(jogo, limiteY, minimoX, limiteX):
-    if minimoX != 0:
-        minimoX -= 1
-    for x in range(minimoX, limiteX):
-        dica = jogo[1][0][x]
-        situacao = []
-        ultimaCelula = False
-        for y in range(limiteY + 1):
-            celula = jogo[0][y][x]
-            if ultimaCelula:
-                if celula:
-                    contagem += 1
-                else:
-                    situacao.append(contagem)
-            else:
-                if celula:
-                    contagem = 1
-            ultimaCelula = celula
-        if ultimaCelula:
-            situacao.append(contagem)
-        if not situacaoCompara(situacao, dica, ultimaCelula, limiteY, len(jogo[0])):
-            return False
-    return True
-
-
-def resolveTabuleiro(jogo):
-    if not (jogo[1][1]):
-        return jogo[0]
+def solve_board(game: GameData) -> BoardData | None:
+    #TODO fix game, it should be mutable
+    board = game[0]
+    hints = game[1]
+    vertical_hints = hints[1]
+    horizontal_hints = hints[0]
+    if not vertical_hints:
+        return board
+    current_hint = vertical_hints.pop(0)
+    if current_hint[1] == 0:
+        solved_board = solve_board(game)
+        if solved_board:
+            return solved_board
+        game = (board, (horizontal_hints, [current_hint] + vertical_hints))
+        return None
+    y = current_hint[0]
+    first_free_space = -1
+    board_width = len(horizontal_hints)
+    for x in range(board_width):
+        if board[y][x]:
+            first_free_space = x
+    if first_free_space != -1:
+        first_free_space += 2
     else:
-        dicaAtual = jogo[1][1].pop(0)
-        if dicaAtual[1] == 0:
-            solucao = resolveTabuleiro(jogo)
-            if solucao:
-                return solucao
-        else:
-            y = dicaAtual[0]
-            primeiroEspacoLivre = -1
-            tamanhoX = len(jogo[1][0])
-            for x in range(tamanhoX):
-                if jogo[0][y][x]:
-                    primeiroEspacoLivre = x
-            if primeiroEspacoLivre != -1:
-                primeiroEspacoLivre += 2
-            else:
-                primeiroEspacoLivre = 0
-            dicasY = []
-            if jogo[1][1]:
-                for dica in jogo[1][1]:
-                    if dica[0] == y:
-                        dicasY.append(dica)
-                    else:
-                        break
-                tamanhoDicasAdicionais = len(dicasY) + sum([dica[1] for dica in dicasY])
-            else:
-                tamanhoDicasAdicionais = 0
-            espacoLivreTotal = (
-                len(jogo[1][0]) - primeiroEspacoLivre - tamanhoDicasAdicionais
-            )
-            if dicaAtual[1] <= espacoLivreTotal:
-                if (dicaAtual[1] == espacoLivreTotal) and (dicasY):
-                    for x in range(
-                        primeiroEspacoLivre, primeiroEspacoLivre + dicaAtual[1]
-                    ):
-                        jogo[0][y][x] = True
-                    for dica in dicasY:
-                        jogo[1][1].pop(0)
-                        for x in range(x + 2, x + dica[1] + 2):
-                            jogo[0][y][x] = True
-                        if verificaColunasParcial(
-                            jogo, y, primeiroEspacoLivre, len(jogo[0][0])
-                        ):
-                            global triesA
-                            triesA += 1
-                            solucao = resolveTabuleiro(jogo)
-                            if solucao:
-                                return solucao
-                    for x in range(primeiroEspacoLivre, len(jogo[0][0])):
-                        jogo[0][y][x] = False
-                    jogo[1][1] = dicasY + jogo[1][1]
-                else:
-                    for inicial in range(
-                        primeiroEspacoLivre,
-                        tamanhoX - dicaAtual[1] + 1 - tamanhoDicasAdicionais,
-                    ):
-                        for x in range(inicial, inicial + dicaAtual[1]):
-                            jogo[0][y][x] = True
-                        if verificaColunasParcial(
-                            jogo, y, primeiroEspacoLivre, inicial + dicaAtual[1]
-                        ):
-                            global tries
-                            tries += 1
-                            solucao = resolveTabuleiro(jogo)
-                            if solucao:
-                                return solucao
-                        for x in range(inicial, inicial + dicaAtual[1]):
-                            jogo[0][y][x] = False
-        jogo[1][1] = [dicaAtual] + jogo[1][1]
+        first_free_space = 0
+    current_y_hints: list[VerticalHintData] = []
+    if vertical_hints:
+        for hint in vertical_hints:
+            if hint[0] != y:
+                break
+            current_y_hints.append(hint)
+        additional_hints_size = len(current_y_hints) + sum([hint[1] for hint in current_y_hints])
+    else:
+        additional_hints_size = 0
+    total_free_space = len(horizontal_hints) - first_free_space - additional_hints_size
+    if current_hint[1] > total_free_space:
+        game = (board, (horizontal_hints, [current_hint] + vertical_hints))
+        return None
+    if (current_hint[1] == total_free_space) and (current_y_hints):
+        for x in range(first_free_space, first_free_space + current_hint[1]):
+            board[y][x] = True
+        x_limit = first_free_space + current_hint[1] - 1
+        for hint in current_y_hints:
+            vertical_hints.pop(0)
+            for x in range(x_limit + 2, x_limit + hint[1] + 2):
+                board[y][x] = True
+            if verificaColunasParcial(game, y, first_free_space, len(board[0])):
+                global triesA
+                triesA += 1
+                solved_board = solve_board(game)
+                if solved_board:
+                    return solved_board
+        for x in range(first_free_space, len(board[0])):
+            board[y][x] = False
+        game = (board, (horizontal_hints, current_y_hints + vertical_hints))
+    else:
+        for inicial in range(
+            first_free_space,
+            board_width - current_hint[1] + 1 - additional_hints_size,
+        ):
+            for x in range(inicial, inicial + current_hint[1]):
+                board[y][x] = True
+            if verificaColunasParcial(
+                game, y, first_free_space, inicial + current_hint[1]
+            ):
+                global tries
+                tries += 1
+                solved_board = solve_board(game)
+                if solved_board:
+                    return solved_board
+            for x in range(inicial, inicial + current_hint[1]):
+                board[y][x] = False
+    game = (board, (horizontal_hints, [current_hint] + vertical_hints))
+    return None
 
 
-def resolveUmTabuleiro(jogo):
+def solve_piccross_board(game: GameData) -> tuple[int, BoardData | None]:
     print()
     global tries
     global triesA
     tries = 0
     triesA = 0
-    cortes = 0
-    inicio = time()
-    solucao = resolveTabuleiro(jogo)
-    fim = time()
-    print("\ntentativas: " + str(tries))
-    print("\nCortes: " + str(triesA))
-    tempo = fim - inicio
-    global tempoTotal
-    tempoTotal += tempo
-    for linha in jogo[0]:
-        print()
+    cuts_amount = 0
+    start_time = time()
+    solution_board = solve_board(game)
+    end_time = time()
+    print(f"\ntentativas: {tries}")
+    print(f"\nCortes: {triesA}")
+    duration = end_time - start_time
+    global elapsed_time
+    elapsed_time += duration
+    for linha in game[0]:
+        row = ""
         for element in linha:
             if element:
-                print("#", end="")
-            else:
-                print("0", end="")
-    print()
-    print("\n" + embelezeTempo(tempo) + "\n")
+                row += "#"
+                continue
+            row += "0"
+        print(row)
+    print_elapsed_time(duration)
+    return (cuts_amount, solution_board)
 
 
-# nome = pS("qual o nome do arquivo?")
-nome = "piccross//A{0:03d}"
-tempoTotal = 0
-for a in range(8):
-    picFile = open(nome.format(a) + ".txt")
-    config = picFile.read()
-    picFile.close()
-    horizontalConfig, verticalConfig = config.split("#")
-    horizontal = [
-        [int(n) for n in dica.split()] for dica in horizontalConfig[:-1].split("\n")
+elapsed_time = 0.0
+tries = 0
+triesA = 0
+for index in range(8):
+    with open(f"piccross/A{index:03d}.txt") as piccross_file:
+        config = piccross_file.read()
+    horizontal_hints_lines, vertical_hints_text = config.split("#")
+    horizontal_hints: HintHorizontalData = [
+        [int(n) for n in hint.split()]
+        for hint in horizontal_hints_lines[:-1].split("\n")
     ]
-    verticalDicas = verticalConfig[1:].split("\n")
-    vertical = []
-    for y, dica in enumerate(verticalDicas):
+    vertical_hints_lines = vertical_hints_text[1:].split("\n")
+    vertical_hints: HintVerticalData = []
+    for y, dica in enumerate(vertical_hints_lines):
         for numero in dica.split():
-            vertical.append([y, int(numero)])
-    tabuleiro = []
-    for _ in verticalDicas:
-        tabuleiro.append([False for _ in horizontal])
-    verticalDicas, horizontalConfig, verticalConfig, config = [None, None, None, None]
-    dicas = [horizontal, vertical]
-    jogo = [tabuleiro, dicas]
-    resolveUmTabuleiro(jogo)
-    print("\n" + embelezeTempo(tempoTotal) + "\n")
-    salva(tabuleiro, nome.format(a))
+            vertical_hints.append((y, int(numero)))
+    tabuleiro: BoardData = []
+    for _ in vertical_hints_lines:
+        tabuleiro.append([False for _ in horizontal_hints])
+    dicas: HintsData = (horizontal_hints, vertical_hints)
+    game: GameData = (tabuleiro, dicas)
+    solve_piccross_board(game)
+    print_elapsed_time(elapsed_time)
+    save_board_image(tabuleiro, f"piccross/A{index:03d}")
