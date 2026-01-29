@@ -254,19 +254,20 @@ def solve_piccross_board(
     elapsed_seconds = end_time - start_time
     global elapsed_time
     elapsed_time += elapsed_seconds
-    if solution_board is not None:
-        for board_row in solution_board:
-            print()
-            for element in board_row:
-                if element > 0:
-                    print("#", end="")
-                else:
-                    if element == 0:
-                        print("?", end="")
-                    else:
-                        print("0", end="")
-        print()
     print_elapsed_time(elapsed_seconds)
+    if solution_board is None:
+        return (cuts_amount, solution_board)
+    for board_row in solution_board:
+        row = ""
+        for element in board_row:
+            if element > 0:
+                row += "#"
+                continue
+            if element == 0:
+                row += "?"
+                continue
+            row += "0"
+        print(row)
     return (cuts_amount, solution_board)
 
 
