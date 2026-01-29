@@ -1,34 +1,38 @@
 from random import randint
 
 
-def getAnChar(nome, anterior="¨"):
-    file = open(nome, "r", encoding="UTF-8")
-    linha = file.readline()
-    data = {}
-    while linha:
-        letras = [linha[a] for a in range(0, 5, 2)]
-        if anterior == letras[0]:
-            letra = letras[1]
-            numero = int(letras[-1])
-            data[letra] = numero
-        linha = file.readline()
-    total = sum(list(data.values()))
-    escolhido = randint(1, total)
-    soma = 0
-    for indice, valor in enumerate(data.values()):
-        soma += valor
-        if soma >= escolhido:
-            file.close()
-            return list(data.keys())[indice]
+def generate_char(file_name: str, previous_chars: list[str] | None = None) -> str:
+    if previous_chars is None:
+        previous_chars = []
+    while len(previous_chars) != 2:
+        previous_chars = ["¨"] + previous_chars
+    with open(file_name, "r", encoding="UTF-8") as file:
+        line = file.readline()
+        character_weights: dict[str, int] = {}
+        while line:
+            chars = [line[a] for a in range(0, 5, 2)]
+            if previous_chars == chars[:2]:
+                char = chars[2]
+                frequency = int(line[6:-1])
+                character_weights[char] = frequency
+            line = file.readline()
+        total = sum(list(character_weights.values()))
+        chosen = randint(1, total)
+        cumulative_frequency = 0
+        for index, value in enumerate(character_weights.values()):
+            cumulative_frequency += value
+            if cumulative_frequency >= chosen:
+                return list(character_weights.keys())[index]
+        return ""
 
 
-def doAWord(nome):
-    texto = []
-    letra = getAnChar(nome)
-    while letra != "¨":
-        texto.append(letra)
-        letra = getAnChar(nome, letra)
-    return "".join(texto)
+def generate_word(file_name: str) -> str:
+    generated_chars: list[str] = []
+    char = generate_char(file_name)
+    while char != "¨":
+        generated_chars.append(char)
+        char = generate_char(file_name, generated_chars[-2:])
+    return "".join(generated_chars)
 
 
 def get_file_name() -> str:
@@ -48,4 +52,4 @@ def get_file_name() -> str:
 
 file_name = get_file_name()
 for a in range(1000):
-    print(doAWord(file_name + "//chain.txt"), end="\n")
+    print(generate_word(f"{file_name}/chain.txt"), end="\n")
