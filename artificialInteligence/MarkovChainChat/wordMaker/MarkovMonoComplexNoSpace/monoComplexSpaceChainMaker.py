@@ -68,15 +68,16 @@ def update_keywords_in_chain(file_name: str, keyword_tuples: list[ChainData]) ->
             line = file_read.readline()
             while line:
                 keywords_read = cast(tuple[str, str, str, str], tuple(line.split()))
-                if keywords_read[:-1] not in keyword_tuples:
+                keyword_tuple = cast(ChainData, tuple(keywords_read[:-1]))
+                if keyword_tuple not in keyword_tuples:
                     file_write.write(line)
                     line = file_read.readline()
                     continue
                 frequency = int(keywords_read[-1])
-                keyword_tuple_flat = " ".join(keywords_read[:-1])
+                keyword_tuple_flat = " ".join(keyword_tuple)
                 frequency += counter[keyword_tuple_flat]
-                while keywords_read[:-1] in keyword_tuples:
-                    keyword_tuples.remove(keywords_read[:-1])
+                while keyword_tuple in keyword_tuples:
+                    keyword_tuples.remove(keyword_tuple)
                 file_write.write(f"{keyword_tuple_flat} {frequency}\n")
                 line = file_read.readline()
             for keyword_tuple in keyword_tuples:
