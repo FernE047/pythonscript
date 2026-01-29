@@ -2,14 +2,16 @@ import os
 from collections import Counter
 from time import time
 
+AlterationsData = dict[int, list[list[str]]]
 
-def embelezeTempo(segundos: float) -> str:
-    if segundos < 0:
-        segundos = -segundos
+
+def print_elapsed_time(seconds: float) -> None:
+    if seconds < 0:
+        seconds = -seconds
         sign = "-"
     else:
         sign = ""
-    total_ms = int(round(segundos * 1000))
+    total_ms = int(round(seconds * 1000))
     ms = total_ms % 1000
     total_s = total_ms // 1000
     s = total_s % 60
@@ -30,7 +32,7 @@ def embelezeTempo(segundos: float) -> str:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    return sign + ", ".join(parts)
+    print(sign + ", ".join(parts))
 
 
 def rename_file(source_file_name: str, destination_file_name: str) -> None:
@@ -42,43 +44,50 @@ def rename_file(source_file_name: str, destination_file_name: str) -> None:
         destination_file.write(content)
 
 
-def alteraChainFile(nome, n, termos):
-    fileWrite = open(f"{nome}//c.txt", "w", encoding="UTF-8")
-    amount = Counter([str(a) for a in termos])
-    if f"{n:03d}.txt" in os.listdir(nome):
-        fileRead = open(f"{nome}//{n:03d}.txt", "r", encoding="UTF-8")
-        linha = fileRead.readline()[:-1]
-        while linha:
-            palavras = linha.split()
-            if palavras[:-1] in termos:
-                palavras[-1] = int(palavras[-1])
-                palavras[-1] += amount[str(palavras[:-1])]
-                while palavras[:-1] in termos:
-                    termos.remove(palavras[:-1])
-                palavras[-1] = str(palavras[-1])
-                fileWrite.write(" ".join(palavras) + "\n")
-            else:
-                fileWrite.write(linha + "\n")
-            linha = fileRead.readline()[:-1]
-        used = []
-        for termo in termos:
-            if termo not in used:
-                fileWrite.write(" ".join(termo + [str(amount[str(termo)])]) + "\n")
-                used.append(termo)
-        fileRead.close()
-    else:
-        used = []
-        for termo in termos:
-            if termo not in used:
-                fileWrite.write(" ".join(termo + [str(amount[str(termo)])]) + "\n")
-                used.append(termo)
-    fileWrite.close()
-    renome(nome, f"//{n:03d}.txt")
+def update_chain(file_name: str, index: int, chain_element: list[list[str]]) -> None:
+    update_chain_file(file_name, index, chain_element)
+    rename_file(file_name, f"/{index:03d}.txt")
 
 
-def alteraFiles(nome, alterations):
-    for n in alterations:
-        alteraChainFile(nome, n, alterations[n])
+def update_chain_file(
+    file_name: str, index: int, chain_element: list[list[str]]
+) -> None:
+    with open(f"{file_name}/c.txt", "w", encoding="UTF-8") as file_write:
+        counter = Counter([str(a) for a in chain_element])
+        if f"{index:03d}.txt" not in os.listdir(file_name):
+            unique_terms: list[list[str]] = []
+            for term in chain_element:
+                if term not in unique_terms:
+                    file_write.write(
+                        " ".join(term + [str(counter[str(term)])]) + "\n"
+                    )
+                    unique_terms.append(term)
+                    return
+        with open(f"{file_name}/{index:03d}.txt", "r", encoding="UTF-8") as file_read:
+            line = file_read.readline()[:-1]
+            while line:
+                words = line.split()
+                terms = words[:-1]
+                if terms in chain_element:
+                    frequency = int(words[-1])
+                    frequency += counter[str(terms)]
+                    while terms in chain_element:
+                        chain_element.remove(terms)
+                    words[-1] = str(frequency)
+                    file_write.write(" ".join(words) + "\n")
+                else:
+                    file_write.write(line + "\n")
+                line = file_read.readline()[:-1]
+            unique_terms = []
+            for term in chain_element:
+                if term not in unique_terms:
+                    file_write.write(" ".join(term + [str(counter[str(term)])]) + "\n")
+                    unique_terms.append(term)
+
+
+def update_chain_files(file_name: str, alterations: AlterationsData) -> None:
+    for index in alterations:
+        update_chain(file_name, index, alterations[index])
 
 
 is_file_name_valid = False
@@ -96,39 +105,37 @@ while not is_file_name_valid:
                 os.mkdir(file_name)
     except Exception as _:
         print("invalid name")
-inicio = time()
-mensagem = file.readline()[1:-1]
-count = 0
-alterations = {}
-while mensagem:
-    tamanho = len(mensagem)
-    for n in range(tamanho):
-        letra = mensagem[n]
-        if n == 0:
-            if n not in alterations:
-                alterations[n] = [[letra]]
-            else:
-                alterations[n].append([letra])
-        if tamanho > 1:
-            try:
-                letraSeguinte = mensagem[n + 1]
-            except:
-                letraSeguinte = "¨"
-            if n + 1 not in alterations:
-                alterations[n + 1] = [[letra, letraSeguinte]]
-            else:
-                alterations[n + 1].append([letra, letraSeguinte])
-            if letraSeguinte == "¨":
-                break
-    if count == 100:
-        alteraFiles(nome, alterations)
-        alterations = {}
-        count = 0
-    else:
+start_time = time()
+with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
+    line = file.readline()[1:-1]
+    count = 0
+    alterations: AlterationsData = {}
+    while line:
         count += 1
-    mensagem = file.readline()[:-1]
-alteraFiles(nome, alterations)
-print(tamanho)
-fim = time()
-print(embelezeTempo(fim - inicio))
-file.close()
+        line_length = len(line)
+        for char_index, current_char in enumerate(line):
+            if char_index == 0:
+                if char_index not in alterations:
+                    alterations[char_index] = [[current_char]]
+                else:
+                    alterations[char_index].append([current_char])
+            if line_length > 1:
+                try:
+                    next_char = line[char_index + 1]
+                except IndexError:
+                    next_char = "¨"
+                if char_index + 1 not in alterations:
+                    alterations[char_index + 1] = [[current_char, next_char]]
+                else:
+                    alterations[char_index + 1].append([current_char, next_char])
+                if next_char == "¨":
+                    break
+        if count == 100:
+            update_chain_files(file_name, alterations)
+            alterations = {}
+            count = 0
+        print(line_length)
+        line = file.readline()[:-1]
+    update_chain_files(file_name, alterations)
+    end_time = time()
+    print_elapsed_time(end_time - start_time)
