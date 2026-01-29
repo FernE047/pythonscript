@@ -1,14 +1,25 @@
 from time import time
+from typing import Literal
 from PIL import Image
 
+CellData = Literal[-1, 0, 1]
+# -1 = empty cell
+#  0 = unknown cell
+#  1 = filled cell
+BoardData = list[list[CellData]]
+HintData = list[int]
+HintAxysData = list[HintData]
+HintsData = tuple[HintAxysData, HintAxysData]
+GameData = tuple[BoardData, HintsData]
 
-def embelezeTempo(segundos: float) -> str:
-    if segundos < 0:
-        segundos = -segundos
+
+def print_elapsed_time(seconds: float) -> None:
+    if seconds < 0:
+        seconds = -seconds
         sign = "-"
     else:
         sign = ""
-    total_ms = int(round(segundos * 1000))
+    total_ms = int(round(seconds * 1000))
     ms = total_ms % 1000
     total_s = total_ms // 1000
     s = total_s % 60
@@ -29,137 +40,149 @@ def embelezeTempo(segundos: float) -> str:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    return sign + ", ".join(parts)
+    print(sign + ", ".join(parts))
 
 
-def espaco(dica):
+def calculate_space(dica: HintData) -> int:
     return len(dica) + sum(dica) - 1
 
 
-def certezasVerticais(jogo):
-    for x, dica in enumerate(jogo[1][0]):
-        altura = len(jogo[0])
-        espacoAtual = espaco(dica)
-        espacoSobra = altura - espacoAtual
-        if espacoSobra == altura:
-            for y in range(0, altura):
-                jogo[0][y][x] = -1
-        elif espacoSobra == 0:
+def solve_verticals(game: GameData) -> None:
+    vertical_hints = game[1][0]
+    board = game[0]
+    for x, hint in enumerate(vertical_hints):
+        board_height = len(board)
+        current_space = calculate_space(hint)
+        free_spaces = board_height - current_space
+        if free_spaces == board_height:
+            for y in range(0, board_height):
+                board[y][x] = -1
+            continue
+        if free_spaces == 0:
             y = -2
-            for numero in dica:
+            for number_hint in hint:
                 y += 2
                 if y != 0:
-                    jogo[0][y - 1][x] = -1
-                for y in range(y, y + numero):
-                    jogo[0][y][x] = 1
-        elif espacoSobra < max(dica):
-            for n, numero in enumerate(dica):
-                if espacoSobra < numero:
-                    if n == 0:
-                        finalY = numero - 1
-                    else:
-                        finalY = espaco(dica[n:])
-                    if n == len(dica) - 1:
-                        inicialY = altura - numero
-                    else:
-                        inicialY = espaco(dica[: n + 1])
-                    for y in range(inicialY, finalY):
-                        jogo[0][y][x] = 1
-
-
-def certezasHorizontais(jogo):
-    for y, dica in enumerate(jogo[1][1]):
-        largura = len(jogo[0][0])
-        espacoAtual = espaco(dica)
-        espacoSobra = largura - espacoAtual
-        if espacoSobra == largura:
-            for x in range(0, largura):
-                jogo[0][y][x] = -1
-        elif espacoSobra == 0:
-            x = -2
-            for numero in dica:
-                if x != -2:
-                    jogo[0][y][x + 1] = -1
-                for x in range(x + 2, x + 2 + numero):
-                    jogo[0][y][x] = 1
-        elif espacoSobra < max(dica):
-            for n, numero in enumerate(dica):
-                if espacoSobra < numero:
-                    if n == 0:
-                        finalX = numero - 1
-                    else:
-                        finalX = espaco(dica[n:])
-                    if n == len(dica) - 1:
-                        inicialX = largura - numero
-                    else:
-                        inicialX = espaco(dica[: n + 1])
-                    for x in range(inicialX, finalX):
-                        jogo[0][y][x] = 1
-
-
-def resolveTabuleiro(jogo):
-    certezasHorizontais(jogo)
-    certezasVerticais(jogo)
-
-
-def salva(tabuleiro, nome):
-    imagem = Image.new(
-        "RGBA", (len(tabuleiro[0]), len(tabuleiro)), (255, 255, 255, 255)
-    )
-    for y, coluna in enumerate(tabuleiro):
-        for x, celula in enumerate(coluna):
-            if celula == 1:
-                imagem.putpixel((x, y), (0, 0, 0, 255))
-    imagem.save(nome + ".png")
-    imagem.close()
-
-
-def resolveUmTabuleiro(jogo):
-    print()
-    inicio = time()
-    solucao = resolveTabuleiro(jogo)
-    fim = time()
-    tempo = fim - inicio
-    global tempoTotal
-    tempoTotal += tempo
-    completos = 0
-    total = 0
-    for linha in tabuleiro:
-        print()
-        for element in linha:
-            total += 1
-            completos += 1
-            if element == 1:
-                print("#", end="")
+                    board[y - 1][x] = -1
+                for y in range(y, y + number_hint):
+                    board[y][x] = 1
+            continue
+        if free_spaces >= max(hint):
+            continue
+        for hint_index, number_hint in enumerate(hint):
+            if free_spaces >= number_hint:
+                continue
+            if hint_index == 0:
+                last_y = number_hint - 1
             else:
-                if element == 0:
-                    print("?", end="")
-                    completos -= 1
-                else:
-                    print("0", end="")
-    print("\n\nPorcentagem : " + str(100 * completos / total) + "%")
-    print("\n" + embelezeTempo(tempo) + "\n")
+                last_y = calculate_space(hint[hint_index:])
+            if hint_index == len(hint) - 1:
+                first_y = board_height - number_hint
+            else:
+                first_y = calculate_space(hint[: hint_index + 1])
+            for y in range(first_y, last_y):
+                board[y][x] = 1
 
 
-nome = "piccross//A{0:03d}"
-tempoTotal = 0
-for a in range(9):
-    picFile = open(nome.format(a) + ".txt")
-    config = picFile.read()
-    picFile.close()
-    horizontalConfig, verticalConfig = config.split("#")
-    horizontal = [
-        [int(n) for n in dica.split()] for dica in horizontalConfig[:-1].split("\n")
+def solve_horizontals(game: GameData) -> None:
+    horizontal_hints = game[1][1]
+    board = game[0]
+    for y, hint in enumerate(horizontal_hints):
+        board_width = len(board[0])
+        current_space = calculate_space(hint)
+        free_spaces = board_width - current_space
+        if free_spaces == board_width:
+            for x in range(0, board_width):
+                board[y][x] = -1
+            continue
+        if free_spaces == 0:
+            x = -2
+            for number_hint in hint:
+                if x != -2:
+                    board[y][x + 1] = -1
+                for x in range(x + 2, x + 2 + number_hint):
+                    board[y][x] = 1
+            continue
+        if free_spaces >= max(hint):
+            continue
+        for hint_index, number_hint in enumerate(hint):
+            if free_spaces >= number_hint:
+                continue
+            if hint_index == 0:
+                last_x = number_hint - 1
+            else:
+                last_x = calculate_space(hint[hint_index:])
+            if hint_index == len(hint) - 1:
+                first_x = board_width - number_hint
+            else:
+                first_x = calculate_space(hint[: hint_index + 1])
+            for x in range(first_x, last_x):
+                board[y][x] = 1
+
+
+def solve_board(game: GameData) -> BoardData:
+    solve_horizontals(game)
+    solve_verticals(game)
+    return game[0]
+
+
+def save_board_image(board: BoardData, file_name: str) -> None:
+    image = Image.new("RGBA", (len(board[0]), len(board)), (255, 255, 255, 255))
+    for y, row in enumerate(board):
+        for x, cell in enumerate(row):
+            if cell == 1:
+                image.putpixel((x, y), (0, 0, 0, 255))
+    image.save(f"{file_name}.png")
+    image.close()
+
+
+def solve_piccross_board(game: GameData) -> BoardData:
+    print()
+    start_time = time()
+    solution_board = solve_board(game)
+    end_time = time()
+    duration = end_time - start_time
+    global elapsed_time
+    elapsed_time += duration
+    completed_count = 0
+    element_count = 0
+    for row in solution_board:
+        row_str = ""
+        for element in row:
+            element_count += 1
+            completed_count += 1
+            if element == 1:
+                row_str += "#"
+                continue
+            if element == 0:
+                row_str += "?"
+                completed_count -= 1
+                continue
+            row_str += "0"
+        print(row_str)
+    print("\n\nPorcentagem : " + str(100 * completed_count / element_count) + "%")
+    print_elapsed_time(duration)
+    return solution_board
+
+
+elapsed_time = 0.0
+tries = 0
+for index in range(8):
+    with open(f"piccross/A{index:03d}.txt") as piccross_file:
+        config = piccross_file.read()
+    horizontal_hints_lines, vertical_hints_lines = config.split("#")
+    horizontal_hints: HintAxysData = [
+        [int(n) for n in hint.split()]
+        for hint in horizontal_hints_lines[:-1].split("\n")
     ]
-    vertical = [
-        [int(n) for n in dica.split()] for dica in verticalConfig[1:].split("\n")
+    vertical_hints: HintAxysData = [
+        [int(n) for n in hint.split()] for hint in vertical_hints_lines[1:].split("\n")
     ]
-    horizontalConfig, verticalConfig, config = [None, None, None]
-    tabuleiro = []
-    for _ in vertical:
-        tabuleiro.append([0 for _ in horizontal]) 
-    dicas = [horizontal, vertical]
-    jogo = [tabuleiro, dicas]
-    resolveUmTabuleiro(jogo)
-    print("\n" + embelezeTempo(tempoTotal) + "\n")
-    salva(tabuleiro, f"piccross//B{a:03d}")
+    board: BoardData = []
+    for _ in vertical_hints:
+        board.append([0 for _ in horizontal_hints])
+    all_hints: HintsData = (horizontal_hints, vertical_hints)
+    game: GameData = (board, all_hints)
+    solution_board = solve_piccross_board(game)
+    print_elapsed_time(elapsed_time)
+    save_board_image(solution_board, f"piccross/A{index:03d}")
