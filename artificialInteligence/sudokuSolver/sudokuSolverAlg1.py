@@ -353,7 +353,6 @@ def create_sudoku_board(mode: Literal[1, 2]) -> SudokuBoard:
                 filled_cells_count += 1
                 continue
             print("enter a number between 0 and 9 or additional options")
-            user_input += "0"
         print()
         sudoku_board.print_grid()
     return sudoku_board
@@ -371,9 +370,9 @@ def solve_sudoku_board(board: SudokuBoard) -> SudokuBoard | None:
         board_state = board.copy()
         board_state.set_cell(empty_cell[0], empty_cell[1], possible_value)
         tries += 1
-        solucao = solve_sudoku_board(board_state)
-        if solucao:
-            return solucao
+        solution_board = solve_sudoku_board(board_state)
+        if solution_board:
+            return solution_board
     return None
 
 
@@ -389,7 +388,7 @@ def solve_single_board(sudoku_board: SudokuBoard) -> None:
         return
     solution_board.print_grid()
     end_time = time()
-    print("\ntentativas: " + str(tries))
+    print("\nattempts: " + str(tries))
     print_elapsed_time(end_time - start_time)
     print("\n\n")
 
