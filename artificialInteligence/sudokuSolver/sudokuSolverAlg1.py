@@ -326,17 +326,17 @@ def create_sudoku_board(mode: Literal[1, 2]) -> SudokuBoard:
                     sudoku_board.delete_cell(position_y, position_x)
                 continue
             if char == "l":
-                continue  # TODO apagar linha atual
+                continue  # TODO delete current line
             if char == "L":
-                continue  # TODO apagar uma linha
+                continue  # TODO delete a line
             if char == "c":
-                continue  # TODO apagar coluna atual
+                continue  # TODO delete current column
             if char == "C":
-                continue  # TODO apagar uma coluna
+                continue  # TODO delete a column
             if char == "q":
-                continue  # TODO apagar quadrante atual
+                continue  # TODO delete current block
             if char == "Q":
-                continue  # TODO apagar um quadrante
+                continue  # TODO delete a block
             if char == "o":
                 print("entry completely deleted")
                 sudoku_board = SudokuBoard()
@@ -383,11 +383,11 @@ def solve_single_board(sudoku_board: SudokuBoard) -> None:
     global tries
     tries = 0
     start_time = time()
-    solucao = solve_sudoku_board(sudoku_board)
-    if solucao is None:
+    solution_board = solve_sudoku_board(sudoku_board)
+    if solution_board is None:
         print("no solution found")
         return
-    solucao.print_grid()
+    solution_board.print_grid()
     end_time = time()
     print("\ntentativas: " + str(tries))
     print_elapsed_time(end_time - start_time)
