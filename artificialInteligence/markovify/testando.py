@@ -2,7 +2,7 @@ import markovify  # type: ignore
 import os
 
 """
-markovify doesn't ahve a stub for combine, so we need to ignore the type checking for that line.
+markovify doesn't have a stub for combine, so we need to ignore the type checking for that line.
 """
 
 combined_model = None

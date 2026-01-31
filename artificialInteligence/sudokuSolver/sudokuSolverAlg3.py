@@ -1,15 +1,42 @@
-from typing import Literal, overload
+from typing import Literal, cast, overload
 from time import time
 import os
 
+menuModeOptions = Literal[0, 1, 2, 3]
+userInputOptions = Literal[
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "p",
+    "l",
+    "L",
+    "c",
+    "C",
+    "q",
+    "Q",
+    "o",
+    "s",
+    "e",
+]
+CellData = Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+SudokuGridData = list[list[CellData]]
+CoordData = tuple[int, int]
 
-def embelezeTempo(segundos: float) -> str:
-    if segundos < 0:
-        segundos = -segundos
+
+def print_elapsed_time(seconds: float) -> None:
+    if seconds < 0:
+        seconds = -seconds
         sign = "-"
     else:
         sign = ""
-    total_ms = int(round(segundos * 1000))
+    total_ms = int(round(seconds * 1000))
     ms = total_ms % 1000
     total_s = total_ms // 1000
     s = total_s % 60
@@ -30,14 +57,34 @@ def embelezeTempo(segundos: float) -> str:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    return sign + ", ".join(parts)
+    print(sign + ", ".join(parts))
 
 
-def tiraEspaçoBranco(texto: str) -> str:
+def convert_raw_sudoku(raw_sudoku: str) -> list[CellData]:
     for espaco in [" ", "\n", "\t"]:
-        if espaco in texto:
-            texto = texto.replace(espaco, "")
-    return texto
+        if espaco in raw_sudoku:
+            raw_sudoku = raw_sudoku.replace(espaco, "")
+    parsed_sudoku: list[int] = []
+    for char in raw_sudoku:
+        if char in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]:
+            parsed_sudoku.append(int(char))
+    return cast(list[CellData], parsed_sudoku)
+
+
+def main_menu() -> menuModeOptions:
+    options = ["sair", "Input Manual", "Import Sudoku Txt", "Loop Import Folder"]
+    while True:
+        for i, option in enumerate(options):
+            print(f"{i} - {option}")
+        user_choice = input("escolha uma opcao:")
+        try:
+            choice_index = int(user_choice)
+            if 0 <= choice_index < 4:
+                return cast(menuModeOptions, choice_index)
+            else:
+                raise ValueError
+        except (ValueError, IndexError):
+            user_choice = input("not valid, try again: ")
 
 
 @overload
@@ -68,211 +115,210 @@ def choose_from_options(
             user_choice = input("not valid, try again: ")
 
 
-class Tabuleiro:
-    def __init__(self, confInicial=0):
-        self.matrizTab = []
-        self.espacosVazios = []
+class SudokuBoard:
+    def __init__(self, sudoku_board_raw: str | None = None) -> None:
+        self.grid: SudokuGridData = []
+        self.empty_cells: list[CoordData] = []
         for y in range(9):
-            self.matrizTab.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
-        if confInicial:
-            confLimpa = tiraEspaçoBranco(confInicial)
+            self.grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
+        if sudoku_board_raw is not None:
+            confLimpa = tiraEspaçoBranco(sudoku_board_raw)
             for a, valor in enumerate(list(confLimpa)):
                 if a > 80:
                     break
                 posY = a // 9
                 posX = a % 9
-                self.setElement(posY, posX, valor)
+                self.set_cell(posY, posX, valor)
                 if valor == "0":
-                    self.espacosVazios = [(posY, posX)] + self.espacosVazios
+                    self.empty_cells = [(posY, posX)] + self.empty_cells
         else:
-            self.espacosVazios = [(y, x) for x in range(9, 0, -1)] + self.espacosVazios
+            self.empty_cells = [(y, x) for x in range(9, 0, -1)] + self.empty_cells
 
-    def delElement(self, y, x):
-        self.matrizTab[y][x] = "0"
+    def delete_element(self, y: int, x: int) -> None:
+        self.grid[y][x] = 0
 
-    def getElement(self, y, x):
-        return self.matrizTab[y][x]
+    def get_cell(self, y: int, x: int) -> CellData:
+        return self.grid[y][x]
 
-    def verificaValorQuadrante(self, y, x, v):
-        yQuad = y // 3
-        xQuad = x // 3
+    def is_value_valid_in_block(self, y: int, x: int, cell_value: CellData) -> bool:
+        block_y = y // 3
+        block_x = x // 3
         for y in range(3):
             for x in range(3):
-                if self.getElement(3 * yQuad + y, 3 * xQuad + x) == v:
+                if self.get_cell(3 * block_y + y, 3 * block_x + x) == cell_value:
                     return False
         return True
 
-    def verificaValorLinha(self, y, v):
+    def is_value_valid_in_row(self, y: int, cell_value: CellData) -> bool:
         for x in range(9):
-            if self.getElement(y, x) == v:
+            if self.get_cell(y, x) == cell_value:
                 return False
         return True
 
-    def verificaValorColuna(self, x, v):
+    def is_value_valid_in_column(self, x: int, cell_value: CellData) -> bool:
         for y in range(9):
-            if self.getElement(y, x) == v:
+            if self.get_cell(y, x) == cell_value:
                 return False
         return True
 
-    def viraConfig(self):
-        chave = ""
-        for a in range(9):
-            for b in range(9):
-                chave += self.getElement(a, b)
-        return chave
-
-    def copia(self):
-        return Tabuleiro(self.viraConfig())
-
-    def verificaTabuleiro(self):
-        if self.espacosVazios:
-            return False
-        return True
-
-    def verificaValor(self, y, x, v):
-        if not (self.verificaValorQuadrante(y, x, v)):
-            return False
-        if not (self.verificaValorColuna(x, v)):
-            return False
-        if not (self.verificaValorLinha(y, v)):
-            return False
-        return True
-
-    def setElement(self, y, x, v):
-        self.matrizTab[y][x] = "0"
-        if v in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]:
-            if v == "0":
-                return True
-            else:
-                if self.verificaValor(y, x, v):
-                    self.matrizTab[y][x] = v
-                    return True
-        return False
-
-    def addEspaco(self, espaco):
-        self.espacosVazios.append(espaco)
-
-    def proximoEspaco(self):
-        espaco = self.espacosVazios[-1]
-        self.espacosVazios = self.espacosVazios[0:-1]
-        return espaco
-
-    def imprime(self):
+    def to_raw(self) -> str:
+        raw = ""
         for y in range(9):
             for x in range(9):
-                print(self.getElement(y, x), end="")
-            print()
+                raw += str(self.get_cell(y, x))
+        return raw
+
+    def copy(self) -> "SudokuBoard":
+        return SudokuBoard(self.to_raw())
+
+    def is_board_valid(self) -> bool:
+        return len(self.empty_cells) == 0
+
+    def is_value_valid(self, y: int, x: int, cell_value: CellData) -> bool:
+        if not (self.is_value_valid_in_block(y, x, cell_value)):
+            return False
+        if not (self.is_value_valid_in_column(x, cell_value)):
+            return False
+        if not (self.is_value_valid_in_row(y, cell_value)):
+            return False
+        return True
+
+    def set_cell(self, y: int, x: int, cell_value: CellData) -> bool:
+        self.grid[y][x] = 0
+        if cell_value not in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]:
+            return False
+        if cell_value == 0:
+            return True
+        if self.verificaValor(y, x, cell_value):
+            self.grid[y][x] = cell_value
+            return True
+        return False
+
+    def append_empty_cell(self, empty_coord: CoordData) -> None:
+        self.empty_cells.append(empty_coord)
+
+    def next_empty_cell(self) -> CoordData | None:
+        empty_coord = self.empty_cells[-1]
+        self.empty_cells = self.empty_cells[0:-1]
+        return empty_coord
+
+    def show(self) -> None:
+        for y in range(9):
+            row = ""
+            for x in range(9):
+                row += str(self.get_cell(y, x))
+            print(row)
 
 
-def criaTabuleiro(mode):
+def create_sudoku_board(mode: Literal[1, 2]) -> SudokuBoard:
     if mode == 2:
-        nome = input("qual o nome do arquivo?")
-        sudokuFile = open(nome + ".txt")
-        tabuleiro = Tabuleiro(sudokuFile.read())
-        return tabuleiro
-    else:
-        tabuleiro = Tabuleiro()
-        quantia = 0
-        while quantia < 81:
-            inputConfig = input("")
-            for v in inputConfig:
-                posY = quantia // 9
-                posX = quantia % 9
-                if v in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]:
-                    if tabuleiro.setElement(posY, posX, v):
-                        print("elemento " + v + " adicionado")
-                        quantia += 1
-                    else:
-                        print("elemento " + v + " não adicionado")
-                        break
-                else:
-                    if v == "p":
-                        if quantia > 0:
-                            quantia -= 1
-                            posY = quantia // 9
-                            posX = quantia % 9
-                            print(
-                                "numero "
-                                + tabuleiro.getElement(posY, posX)
-                                + " apagado"
-                            )
-                            tabuleiro.delElement(posY, posX)
-                    elif v == "l":
-                        pass  # apagar linha atual
-                    elif v == "L":
-                        pass  # apagar uma linha
-                    elif v == "c":
-                        pass  # apagar coluna atual
-                    elif v == "C":
-                        pass  # apagar uma coluna
-                    elif v == "q":
-                        pass  # apagar quadrante atual
-                    elif v == "Q":
-                        pass  # apagar um quadrante
-                    elif v == "o":
-                        print("entrada completamente apagada")
-                        tabuleiro = Tabuleiro()
-                        quantia = 0
-                    elif v == "s":
-                        tabuleiro.imprime()
-                    elif v == "e":
-                        return tabuleiro
-                    else:
-                        print("digite um numero entre 0 e 9 ou opcoes adicionais")
-                        config += "0"
-            print()
-            tabuleiro.imprime()
-        return tabuleiro
+        file_name = input("what is the sudoku file name (without .txt)? ")
+        with open(
+            f"sudokus//{file_name}.txt", "r", encoding="utf-8"
+        ) as sudoku_raw_file:
+            sudoku_board = SudokuBoard(sudoku_raw_file.read())
+        return sudoku_board
+    sudoku_board = SudokuBoard()
+    filled_cells_count = 0
+    while filled_cells_count < 81:
+        user_input = input("")
+        row_input: list[userInputOptions] = cast(
+            list[userInputOptions], user_input.strip().split("")
+        )
+        for char in row_input:
+            position_y = filled_cells_count // 9
+            position_x = filled_cells_count % 9
+            if char == "p":
+                if filled_cells_count > 0:
+                    filled_cells_count -= 1
+                    position_y = filled_cells_count // 9
+                    position_x = filled_cells_count % 9
+                    board_cell = sudoku_board.get_cell(position_y, position_x)
+                    print(f"number {board_cell} deleted")
+                    sudoku_board.delete_cell(position_y, position_x)
+                continue
+            if char == "l":
+                continue  # TODO delete current line
+            if char == "L":
+                continue  # TODO delete a line
+            if char == "c":
+                continue  # TODO delete current column
+            if char == "C":
+                continue  # TODO delete a column
+            if char == "q":
+                continue  # TODO delete current block
+            if char == "Q":
+                continue  # TODO delete a block
+            elif char == "o":
+                print("input completely cleared")
+                sudoku_board = SudokuBoard()
+                filled_cells_count = 0
+                continue
+            elif char == "s":
+                sudoku_board.show()
+                continue
+            elif char == "e":
+                return sudoku_board
+            elif char in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]:
+                sudoku_board.set_cell(position_y, position_x, cast(CellData, int(char)))
+                print(f"element {char} added")
+                filled_cells_count += 1
+                continue
+            print("type a number between 0 and 9 or additional options")
+        print()
+        sudoku_board.show()
+    return sudoku_board
 
 
-def resolveTabuleiro(tabuleiro):
+def solve_sudoku_board(sudoku_board) -> SudokuBoard | None:
     global tries
-    if tabuleiro.verificaTabuleiro():
-        return tabuleiro
-    else:
-        espacoVazio = tabuleiro.proximoEspaco()
-        if espacoVazio:
-            for value in range(1, 10):
-                if tabuleiro.setElement(espacoVazio[0], espacoVazio[1], str(value)):
-                    tries += 1
-                    solucao = resolveTabuleiro(tabuleiro)
-                    if solucao:
-                        return solucao
-            tabuleiro.delElement(espacoVazio[0], espacoVazio[1])
-            tabuleiro.addEspaco(espacoVazio)
+    if sudoku_board.verificaTabuleiro():
+        return sudoku_board
+    empty_cell = sudoku_board.proximoEspaco()
+    if not empty_cell:
+        return None
+    for value in range(1, 10):
+        cell_value = cast(CellData, value)
+        if not sudoku_board.setElement(empty_cell[0], empty_cell[1], cell_value):
+            continue
+        tries += 1
+        solution_board = solve_sudoku_board(sudoku_board)
+        if solution_board is not None:
+            return solution_board
+    sudoku_board.delElement(empty_cell[0], empty_cell[1])
+    sudoku_board.addEspaco(empty_cell)
+    return None
 
 
-def resolveUmTabuleiro(tabuleiro):
-    tabuleiro.imprime()
+def solve_single_board(sudoku_board: SudokuBoard) -> None:
+    sudoku_board.show()
     print()
     global tries
     tries = 0
-    inicio = time()
-    solucao = resolveTabuleiro(tabuleiro)
-    solucao.imprime()
-    fim = time()
-    print("\ntentativas: " + str(tries))
-    print("\n" + embelezeTempo(fim - inicio) + "\n\n\n")
+    start_time = time()
+    solution_board = solve_sudoku_board(sudoku_board)
+    if solution_board is not None:
+        solution_board.show()
+    end_time = time()
+    print(f"\nattempts: {tries}")
+    print_elapsed_time(end_time - start_time)
 
 
+tries = 0
 while True:
-    mode = choose_from_options(
-        "escolha uma opcao:",
-        ["sair", "Input Manual", "Import Sudoku Txt", "Loop Import Folder"],
-        "number",
-    )
+    mode = main_menu()
     if mode == 0:
         break
-    if mode == 3:
-        inicioTotal = time()
-        files = os.listdir("sudokus")
-        for name in files:
-            print(name, end="\n\n")
-            sudoku = open("sudokus//" + name)
-            tabuleiro = Tabuleiro(sudoku.read())
-            resolveUmTabuleiro(tabuleiro)
-        fimTotal = time()
-        print("\n" + embelezeTempo(fimTotal - inicioTotal) + "\n\n\n")
-    else:
-        tabuleiro = criaTabuleiro(mode)
-        resolveUmTabuleiro(tabuleiro)
+    if mode != 3:
+        board = create_sudoku_board(mode)
+        solve_single_board(board)
+        continue
+    start_time = time()
+    file_names = os.listdir("sudokus")
+    for file_name in file_names:
+        print(f"{file_name}\n")
+        with open(f"sudokus//{file_name}") as sudoku_board_raw:
+            board = SudokuBoard(sudoku_board_raw.read())
+            solve_single_board(board)
+    end_time = time()
+    print_elapsed_time(end_time - start_time)
