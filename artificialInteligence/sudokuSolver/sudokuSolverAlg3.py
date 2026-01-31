@@ -122,19 +122,19 @@ class SudokuBoard:
         for y in range(9):
             self.grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
         if sudoku_board_raw is not None:
-            confLimpa = tiraEspaçoBranco(sudoku_board_raw)
-            for a, valor in enumerate(list(confLimpa)):
-                if a > 80:
+            parsed_sudoku_input = convert_raw_sudoku(sudoku_board_raw)
+            for xy, value in enumerate(parsed_sudoku_input):
+                if xy > 80:
                     break
-                posY = a // 9
-                posX = a % 9
-                self.set_cell(posY, posX, valor)
-                if valor == "0":
-                    self.empty_cells = [(posY, posX)] + self.empty_cells
+                y = xy // 9
+                x = xy % 9
+                self.set_cell(y, x, value)
+                if value == 0:
+                    self.empty_cells = [(y, x)] + self.empty_cells
         else:
-            self.empty_cells = [(y, x) for x in range(9, 0, -1)] + self.empty_cells
+            self.empty_cells = [(0, x) for x in range(9, 0, -1)] + self.empty_cells
 
-    def delete_element(self, y: int, x: int) -> None:
+    def delete_cell(self, y: int, x: int) -> None:
         self.grid[y][x] = 0
 
     def get_cell(self, y: int, x: int) -> CellData:
@@ -189,7 +189,7 @@ class SudokuBoard:
             return False
         if cell_value == 0:
             return True
-        if self.verificaValor(y, x, cell_value):
+        if self.is_value_valid(y, x, cell_value):
             self.grid[y][x] = cell_value
             return True
         return False
@@ -270,23 +270,23 @@ def create_sudoku_board(mode: Literal[1, 2]) -> SudokuBoard:
     return sudoku_board
 
 
-def solve_sudoku_board(sudoku_board) -> SudokuBoard | None:
+def solve_sudoku_board(sudoku_board: SudokuBoard) -> SudokuBoard | None:
     global tries
-    if sudoku_board.verificaTabuleiro():
+    if sudoku_board.is_board_valid():
         return sudoku_board
-    empty_cell = sudoku_board.proximoEspaco()
+    empty_cell = sudoku_board.next_empty_cell()
     if not empty_cell:
         return None
     for value in range(1, 10):
         cell_value = cast(CellData, value)
-        if not sudoku_board.setElement(empty_cell[0], empty_cell[1], cell_value):
+        if not sudoku_board.set_cell(empty_cell[0], empty_cell[1], cell_value):
             continue
         tries += 1
         solution_board = solve_sudoku_board(sudoku_board)
         if solution_board is not None:
             return solution_board
-    sudoku_board.delElement(empty_cell[0], empty_cell[1])
-    sudoku_board.addEspaco(empty_cell)
+    sudoku_board.delete_cell(empty_cell[0], empty_cell[1])
+    sudoku_board.append_empty_cell(empty_cell)
     return None
 
 
