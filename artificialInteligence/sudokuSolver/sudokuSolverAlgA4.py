@@ -8,13 +8,13 @@ CoordData = tuple[int, int]
 BoardData = tuple[SudokuGridData, list[CoordData]]
 
 
-def print_elapsed_time(sceonds: float) -> None:
-    if sceonds < 0:
-        sceonds = -sceonds
+def print_elapsed_time(seconds: float) -> None:
+    if seconds < 0:
+        seconds = -seconds
         sign = "-"
     else:
         sign = ""
-    total_ms = int(round(sceonds * 1000))
+    total_ms = int(round(seconds * 1000))
     ms = total_ms % 1000
     total_s = total_ms // 1000
     s = total_s % 60
