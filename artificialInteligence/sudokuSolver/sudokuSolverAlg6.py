@@ -270,6 +270,7 @@ while True:
     if mode != 3:
         board = create_sudoku_board(mode)
         solve_single_board(board)
+        continue
     file_names = os.listdir("sudokus")
     for file_name in file_names:
         print(f"{file_name}\n")
