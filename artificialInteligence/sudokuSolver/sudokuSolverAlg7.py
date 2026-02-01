@@ -2,29 +2,6 @@ from typing import Literal, TypedDict, cast
 from time import time
 import os
 
-menuModeOptions = Literal[0, 1, 2, 3]
-userInputOptions = Literal[
-    "0",
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "p",
-    "l",
-    "L",
-    "c",
-    "C",
-    "q",
-    "Q",
-    "o",
-    "s",
-    "e",
-]
 CellData = Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 SudokuGridData = list[list[CellData]]
 CoordData = tuple[int, int]
