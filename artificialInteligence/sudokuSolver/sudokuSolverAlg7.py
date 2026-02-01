@@ -137,20 +137,20 @@ def show(board: BoardData) -> None:
 def solve_sudoku_board(board: BoardData) -> BoardData | None:
     if len(board["empty_cells"]) == 0:
         return board
-    espacoVazio = board["empty_cells"].pop(-1)
-    if not espacoVazio:
+    empty_cell = board["empty_cells"].pop(-1)
+    if not empty_cell:
         return None
     global tries
     for value in range(1, 10):
         cell_value = cast(CellData, value)
-        if not set_cell(board, espacoVazio[0], espacoVazio[1], cell_value):
+        if not set_cell(board, empty_cell[0], empty_cell[1], cell_value):
             continue
         tries += 1
         solution_board = solve_sudoku_board(board)
         if solution_board is not None:
             return solution_board
-    board["grid"][espacoVazio[0]][espacoVazio[1]] = 0
-    board["empty_cells"].append(espacoVazio)
+    board["grid"][empty_cell[0]][empty_cell[1]] = 0
+    board["empty_cells"].append(empty_cell)
     return board
 
 
