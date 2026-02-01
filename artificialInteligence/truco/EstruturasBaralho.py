@@ -10,17 +10,17 @@ class Card:
         self.suit = suit
         self.rank = rank
 
-    def compare(self, obj: Any, leading_card: "Card") -> Literal[-1, 0, 1]:
+    def compare(self, obj: Any, highest_rank: int) -> Literal[-1, 0, 1]:
         if not isinstance(obj, Card):
             return 1
-        if self.rank == leading_card.rank:
-            if obj.rank != leading_card.rank:
+        if self.rank == highest_rank:
+            if obj.rank != highest_rank:
                 return 1
             if self.suit > obj.suit:
                 return 1
             else:
                 return -1
-        if obj.rank == leading_card.rank:
+        if obj.rank == highest_rank:
             return -1
         if self.rank > obj.rank:
             return 1
@@ -28,7 +28,7 @@ class Card:
             return 0
         return -1
 
-    def show(self) -> None:
+    def print_card(self) -> None:
         print(str(self))
 
     def __str__(self) -> str:
@@ -92,10 +92,11 @@ class Deck:
         return len(self.deck)
 
     def __str__(self) -> str:
-        texto = ""
+        text = ""
         for index, card in enumerate(self.deck):
-            texto += ("0" + str(index) if index < 10 else str(index)) + " : " + str(card) + "\n"
-        return texto
+            trailing_zero = "0" if index < 10 else ""
+            text += f"{trailing_zero}{index} : {card}\n"
+        return text
 
     def __eq__(self, other_deck: Any) -> bool:
         if isinstance(other_deck, Deck) is False:

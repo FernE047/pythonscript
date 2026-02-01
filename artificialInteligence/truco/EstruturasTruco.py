@@ -1,298 +1,265 @@
+from typing import Literal
 from EstruturasBaralho import Deck
 from EstruturasBaralho import Card
 from random import randint
 
-
-class Mao:
-    def __init__(self):
-        self.cartas = []
-
-    def imprime(self):
-        for carta in self.cartas:
-            print(str(carta))
-
-    def add(self, carta):
-        self.cartas.append(carta)
-
-    def getCarta(self, indice):
-        return self.getCartas()[indice]
-
-    def getCartas(self):
-        return self.cartas
-
-    def removeCarta(self, indice):
-        return self.cartas.pop(indice)
-
-    def __str__(self):
-        texto = ""
-        for carta in self.cartas:
-            texto += str(carta) + "\n"
-        return texto
-
-    def __len__(self):
-        return len(self.cartas)
+GameModeOptions = Literal["random", "highest"]
 
 
-class Jogador:
-    def __init__(self, ordem, isHuman=False):
-        self.mao = Mao()
-        self.isHuman = isHuman
-        self.indice = ordem
-        texto = "xyzSTUVWXYZ345678abcdefghijklmnopqrstuvw"
-        self.embaralhamento = ""
-        for a in range(randint(10, 100)):
-            self.embaralhamento += texto[randint(0, 39)]
-        self.corte = randint(0, 39)
+class CardsHand:
+    def __init__(self) -> None:
+        self.deck: list[Card] = []
 
-    def embaralha(self, baralho):
-        baralho.embaralha(self.embaralhamento)
+    def show(self) -> None:
+        for card in self.deck:
+            print(str(card))
 
-    def corta(self, baralho):
-        # if isHuman:
-        baralho.corta(self.corte)
+    def add(self, card: Card) -> None:
+        self.deck.append(card)
 
-    def distribuiCartas(self, baralho, jogadores):
-        # if isHuman:
-        viraVez = randint(1, len(jogadores) * 3)
-        cartaCont = 0
+    def get_card(self, index: int) -> Card:
+        return self.get_cards()[index]
+
+    def get_cards(self) -> list[Card]:
+        return self.deck
+
+    def remove_card(self, index: int) -> Card:
+        return self.deck.pop(index)
+
+    def __str__(self) -> str:
+        text = ""
+        for card in self.deck:
+            text += str(card) + "\n"
+        return text
+
+    def __len__(self) -> int:
+        return len(self.deck)
+
+
+class Player:
+    def __init__(self, play_order: int, is_human: bool = False) -> None:
+        self.player_hand = CardsHand()
+        self.is_human = is_human
+        self.play_order = play_order
+        shuffling_seed = "xyzSTUVWXYZ345678abcdefghijklmnopqrstuvw"
+        self.unique_shuffling_seed = ""
+        for _ in range(randint(10, 100)):
+            self.unique_shuffling_seed += shuffling_seed[randint(0, 39)]
+        self.cut_position = randint(0, 39)
+
+    def shuffle(self, deck: Deck) -> None:
+        deck.shuffle(self.unique_shuffling_seed)
+
+    def cut(self, deck: Deck) -> None:
+        deck.cut_deck(self.cut_position)
+
+    def deal_cards(self, deck: Deck, players: list["Player"]) -> Card:
+        card_turning_point = randint(1, len(players) * 3)
+        card_count = 0
+        leading_card = Card(0, 0)
         for _ in range(3):
-            for jogador in jogadores:
-                jogador.recebeCarta(baralho.pegaCarta())
-                cartaCont += 1
-                if cartaCont == viraVez:
-                    vira = baralho.pegaCarta()
-        return vira
+            for player in players:
+                player.receive_card(deck.draw_card())
+                card_count += 1
+                if card_count == card_turning_point:
+                    leading_card = deck.draw_card()
+        return leading_card
 
-    def jogaAleatorio(self):
-        return self.mao.removeCarta(randint(0, len(self.mao) - 1))
+    def play_random_card(self) -> Card:
+        return self.player_hand.remove_card(randint(0, len(self.player_hand) - 1))
 
-    def jogaMaior(self, manilha):
-        maiorCartaIndice = 0
-        maiorCarta = self.mao.getCarta(maiorCartaIndice)
-        for indice in range(1, len(self.mao)):
-            carta = self.mao.getCarta(indice)
-            if carta.compara(maiorCarta, manilha) == 1:
-                maiorCartaIndice = indice
-                maiorCarta = self.mao.getCarta(maiorCartaIndice)
-        return self.mao.removeCarta(maiorCartaIndice)
+    def play_highest_card(self, highest_rank: int) -> Card:
+        highest_card_index = 0
+        highest_card = self.player_hand.get_card(highest_card_index)
+        for index in range(1, len(self.player_hand)):
+            card = self.player_hand.get_card(index)
+            if card.compare(highest_card, highest_rank) == 1:
+                highest_card_index = index
+                highest_card = self.player_hand.get_card(highest_card_index)
+        return self.player_hand.remove_card(highest_card_index)
 
-    def recebeCarta(self, carta):
-        self.mao.add(carta)
+    def receive_card(self, card: Card) -> None:
+        self.player_hand.add(card)
 
-    def imprime(self):
-        if self.isHuman:
-            print("Jogador " + str(self.indice) + ":")
-        else:
-            print("PC " + str(self.indice) + ":")
-        self.mao.imprime()
+    def print_player(self) -> None:
+        print(str(self))
 
-    def __str__(self):
-        texto = ""
-        if self.isHuman:
-            texto += "Jogador "
-        else:
-            texto += "PC "
-        texto += str(self.indice) + ":\n"
-        texto += str(self.mao)
+    def __str__(self) -> str:
+        if self.is_human:
+            return f"Jogador : {self.play_order}:\n{self.player_hand}"
+        return f"PC : {self.play_order}:\n{self.player_hand}"
 
 
-class Partida:
-    def __init__(self, vira, jogadores, jogadorInicial):
-        self.jogadores = jogadores
-        self.jogadores_qtd = len(jogadores)
-        self.manilha = (vira.figura + 1) % 10
-        self.rodada = 0
-        self.vira = vira
-        self.vez = jogadorInicial % self.jogadores_qtd
-        self.ganhadoresDasRodadas = [-1, -1, -1]
-        self.ganhadores = []
-        self.rodadas = []
-        self.isEmpatado = False
+class TrucoRound:
+    def __init__(
+        self, leading_card: Card, players: list[Player], initial_player_index: int
+    ) -> None:
+        self.players = players
+        self.players_count = len(players)
+        self.highest_rank = (leading_card.rank + 1) % 10
+        self.round = 0
+        self.leading_card = leading_card
+        self.turn = initial_player_index % self.players_count
+        self.round_winners = [-1, -1, -1]
+        self.winners: list[int] = []
+        self.rounds: list[list[Card]] = []
+        self.is_draw = False
 
-    def jogaRodada(self, modo="random"):
-        totalJogadores = self.jogadores_qtd
-        rodada = [0 for a in range(totalJogadores)]
-        maiorCarta = (self.vez + 1) % totalJogadores
-        empate = False
+    def play_round(self, game_mode: GameModeOptions = "random") -> None:
+        totalJogadores = self.players_count
+        empty_card = Card(0, 0)
+        current_round: list[Card] = [empty_card for _ in range(totalJogadores)]
+        highest_card_index = (self.turn + 1) % totalJogadores
+        is_draw = False
         print()
-        for n in range(totalJogadores):
-            jogador = self.jogadores[self.vez]
-            if self.isEmpatado:
-                rodada[self.vez] = jogador.jogaMaior(self.manilha)
-                self.isEmpatado = False
+        for _ in range(totalJogadores):
+            current_player = self.players[self.turn]
+            if self.is_draw:
+                current_round[self.turn] = current_player.play_highest_card(
+                    self.highest_rank
+                )
+                self.is_draw = False
             else:
-                if modo == "maior":
-                    rodada[self.vez] = jogador.jogaMaior(self.manilha)
+                if game_mode == "highest":
+                    current_round[self.turn] = current_player.play_highest_card(
+                        self.highest_rank
+                    )
                 else:
-                    rodada[self.vez] = jogador.jogaAleatorio()
+                    current_round[self.turn] = current_player.play_random_card()
             print(
                 "Jogador "
-                if jogador.isHuman
-                else "PC " + str(self.vez) + " : " + str(rodada[self.vez])
+                if current_player.is_human
+                else "PC " + str(self.turn) + " : " + str(current_round[self.turn])
             )
-            situacao = rodada[self.vez].compara(rodada[maiorCarta], self.manilha)
-            if situacao == 1:
-                maiorCarta = self.vez
+            situation = current_round[self.turn].compare(
+                current_round[highest_card_index], self.highest_rank
+            )
+            if situation == 1:
+                highest_card_index = self.turn
                 print("maior")
-                empate = False
-            elif situacao == 0:
+                is_draw = False
+            elif situation == 0:
                 print("empatou")
-                empate = True
-            self.vez += 1
-            self.vez %= totalJogadores
+                is_draw = True
+            self.turn += 1
+            self.turn %= totalJogadores
         print()
-        if empate:
-            self.isEmpatado = True
+        if is_draw:
+            self.is_draw = True
         else:
-            self.isEmpatado = False
-            self.ganhadoresDasRodadas[self.rodada] = maiorCarta % totalJogadores
-            self.vez = maiorCarta
-        self.rodadas.append(rodada)
-        self.rodada += 1
+            self.is_draw = False
+            self.round_winners[self.round] = highest_card_index % totalJogadores
+            self.turn = highest_card_index
+        self.rounds.append(current_round)
+        self.round += 1
 
-    def isFinished(self):
-        if self.ganhadores:
+    def is_finished(self) -> bool:
+        if self.winners:
             return True
-        if self.rodada == 0:
+        if self.round == 0:
             return False
-        if self.ganhadoresDasRodadas[0] == -1:
-            if self.rodada == 1:
+
+        def update_winners(round_index: int) -> None:
+            self.winners = [
+                player_index
+                for player_index in range(
+                    self.round_winners[round_index] % 2, self.players_count, 2
+                )
+            ]
+
+        if self.round_winners[0] == -1:
+            if self.round == 1:
                 return False
-            else:
-                if self.ganhadoresDasRodadas[1] == -1:
-                    if self.rodada == 2:
-                        return False
-                    else:
-                        if self.ganhadoresDasRodadas[2] == -1:
-                            self.ganhadores = [a for a in range(self.jogadores_qtd)]
-                            return True
-                        else:
-                            self.ganhadores = [
-                                a
-                                for a in range(
-                                    self.ganhadoresDasRodadas[2] % 2,
-                                    self.jogadores_qtd,
-                                    2,
-                                )
-                            ]
-                            return True
-                else:
-                    self.ganhadores = [
-                        a
-                        for a in range(
-                            self.ganhadoresDasRodadas[1] % 2, self.jogadores_qtd, 2
-                        )
-                    ]
-                    return True
-        else:
-            if self.rodada == 1:
+            if self.round_winners[1] != -1:
+                update_winners(1)
+                return True
+            if self.round == 2:
                 return False
+            if self.round_winners[2] == -1:
+                self.winners = [
+                    player_index for player_index in range(self.players_count)
+                ]
+                return True
             else:
-                if self.ganhadoresDasRodadas[1] == self.ganhadoresDasRodadas[0]:
-                    self.ganhadores = [
-                        a
-                        for a in range(
-                            self.ganhadoresDasRodadas[0] % 2, self.jogadores_qtd, 2
-                        )
-                    ]
-                    return True
-                else:
-                    if self.ganhadoresDasRodadas[1] == -1:
-                        self.ganhadores = [
-                            a
-                            for a in range(
-                                self.ganhadoresDasRodadas[0] % 2, self.jogadores_qtd, 2
-                            )
-                        ]
-                        return True
-                    else:
-                        if self.rodada == 2:
-                            return False
-                        else:
-                            if self.ganhadoresDasRodadas[2] == -1:
-                                self.ganhadores = [
-                                    a
-                                    for a in range(
-                                        self.ganhadoresDasRodadas[0] % 2,
-                                        self.jogadores_qtd,
-                                        2,
-                                    )
-                                ]
-                                return True
-                            else:
-                                self.ganhadores = [
-                                    a
-                                    for a in range(
-                                        self.ganhadoresDasRodadas[2] % 2,
-                                        self.jogadores_qtd,
-                                        2,
-                                    )
-                                ]
-                                return True
+                update_winners(2)
+                return True
+        if self.round == 1:
+            return False
+        if self.round_winners[1] == self.round_winners[0]:
+            update_winners(0)
+            return True
+        if self.round_winners[1] == -1:
+            update_winners(0)
+            return True
+        if self.round == 2:
+            return False
+        if self.round_winners[2] == -1:
+            update_winners(0)
+            return True
+        update_winners(2)
+        return True
 
-    def devolveCartas(self, baralho):
-        for rodada in self.rodadas:
-            for carta in rodada:
-                baralho.addCarta(carta)
-        for indice in range(3 - self.rodada):
-            for jogador in self.jogadores:
-                baralho.addCarta(jogador.mao.removeCarta(indice))
-        baralho.addCarta(self.vira)
+    def return_cards_to_deck(self, deck: Deck) -> None:
+        for game_round in self.rounds:
+            for card in game_round:
+                deck.add_card(card)
+        for index in range(3 - self.round):
+            for jogador in self.players:
+                deck.add_card(jogador.player_hand.remove_card(index))
+        deck.add_card(self.leading_card)
 
-    def whoWon(self):
-        return self.ganhadores
+    def get_winners(self) -> list[int]:
+        return self.winners
 
-    def imprime(self):
-        for jogador in self.jogadores:
-            jogador.imprime()
-            print()
-        self.vira.imprime()
+    def print_round(self) -> None:
+        print(self)
 
-    def __str__(self):
-        texto = ""
-        for jogador in self.jogadores():
-            texto += str(jogador) + "\n\n"
-        texto += str(self.vira)
-        return texto
+    def __str__(self) -> str:
+        text = ""
+        for player in self.players:
+            text += f"{player}\n\n"
+        text += str(self.leading_card)
+        return text
 
 
-class Jogo:
-    def __init__(self, participantes):
-        self.baralho = Deck()
-        self.jogadores = [Jogador(a) for a in range(participantes)]
-        self.pontos = [0 for a in range(participantes)]
-        self.vez = 0
-        self.ultimaPartida = 0
+class Game:
+    def __init__(self, num_players: Literal[4, 6]) -> None:
+        self.deck = Deck()
+        self.players = [Player(a) for a in range(num_players)]
+        self.points = [0 for _ in range(num_players)]
+        self.num_players = num_players
+        self.turn = 0
+        self.last_round: TrucoRound | None = None
 
-    def jogaPartida(self, modo="random"):
-        self.getJogador(0).embaralha(self.baralho)
-        self.getJogador(-1).corta(self.baralho)
-        vira = self.getJogador(0).distribuiCartas(
-            self.baralho, [self.getJogador(a) for a in range(1, self.jogadores_qtd + 1)]
+    def jogaPartida(self, game_mode: GameModeOptions = "random") -> None:
+        self.get_player(0).shuffle(self.deck)
+        self.get_player(-1).cut(self.deck)
+        leading_card = self.get_player(0).deal_cards(
+            self.deck, [self.get_player(a) for a in range(1, self.num_players + 1)]
         )
-        partida = Partida(vira, self.jogadores, self.vez + 1)
-        partida.imprime()
-        while not partida.isFinished():
-            partida.jogaRodada(modo=modo)
-        ganhadores = partida.whoWon()
-        print(ganhadores)
-        for ganhador in ganhadores:
-            self.pontos[ganhador] += 1
-        partida.devolveCartas(self.baralho)
-        self.vez += 1
-        self.ultimaPartida = partida
+        round = TrucoRound(leading_card, self.players, self.turn + 1)
+        round.print_round()
+        while not round.is_finished():
+            round.play_round(game_mode=game_mode)
+        winners = round.get_winners()
+        print(winners)
+        for winner in winners:
+            self.points[winner] += 1
+        round.return_cards_to_deck(self.deck)
+        self.turn += 1
+        self.last_round = round
 
-    def getJogador(self, indice):
-        return self.jogadores[(self.vez + indice) % self.jogadores_qtd]
+    def get_player(self, indice: int) -> Player:
+        return self.players[(self.turn + indice) % self.num_players]
 
 
-##jogo = Jogo(6)
-##jogo.jogaPartida()
-##print(5*"\n")
-##n = 1
-##while(12 not in jogo.pontos):
-##    jogo.jogaPartida(modo = "maior")
-##    print(5*"\n")
-##    n += 1
-##print(jogo.pontos)
-##print(n)
+game = Game(6)
+game.jogaPartida()
+print(5 * "\n")
+round_counter = 1
+while 12 not in game.points:
+    game.jogaPartida(game_mode="highest")
+    print(5 * "\n")
+    round_counter += 1
+print(game.points)
+print(round_counter)
