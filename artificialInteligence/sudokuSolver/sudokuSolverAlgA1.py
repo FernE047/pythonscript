@@ -69,17 +69,17 @@ def create_sudoku_board(sudoku_board_raw: str) -> BoardData:
 
 def find_valid_candidates(board: BoardData, y: int, x: int) -> list[CellData]:
     block_y = y // 3
-    block_X = x // 3
+    block_x = x // 3
     possible_values: list[CellData] = [1, 2, 3, 4, 5, 6, 7, 8, 9]
     board[0][y][x] = 0
     for y_offset in range(3):
         for x_offset in range(3):
             if (
-                board[0][3 * block_y + y_offset][3 * block_X + x_offset]
+                board[0][3 * block_y + y_offset][3 * block_x + x_offset]
                 in possible_values
             ):
                 possible_values.remove(
-                    board[0][3 * block_y + y_offset][3 * block_X + x_offset]
+                    board[0][3 * block_y + y_offset][3 * block_x + x_offset]
                 )
     if block_y == 0:
         for y_offset in range(3, 9):
@@ -96,11 +96,11 @@ def find_valid_candidates(board: BoardData, y: int, x: int) -> list[CellData]:
         for y_offset in range(6, 9):
             if board[0][y_offset][x] in possible_values:
                 possible_values.remove(board[0][y_offset][x])
-    if block_X == 0:
+    if block_x == 0:
         for x_offset in range(3, 9):
             if board[0][y][x_offset] in possible_values:
                 possible_values.remove(board[0][y][x_offset])
-    elif block_X == 2:
+    elif block_x == 2:
         for x_offset in range(0, 6):
             if board[0][y][x_offset] in possible_values:
                 possible_values.remove(board[0][y][x_offset])
