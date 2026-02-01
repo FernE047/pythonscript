@@ -28,10 +28,10 @@ class Card:
             return 0
         return -1
 
-    def imprime(self):
+    def show(self) -> None:
         print(str(self))
 
-    def __str__(self):
+    def __str__(self) -> str:
         text = ""
         ranks = ["4", "5", "6", "7", "Q", "J", "K", "A", "2", "3"]
         suits = ["Ouro", "Espadilha", "Copas", "Paus"]
@@ -40,12 +40,12 @@ class Card:
         text += suits[self.suit]
         return text
 
-    def __eq__(self, obj: Any):
-        if not isinstance(obj, Card):
+    def __eq__(self, other_card: Any) -> bool:
+        if not isinstance(other_card, Card):
             return False
-        if self.suit != obj.suit:
+        if self.suit != other_card.suit:
             return False
-        if self.rank != obj.rank:
+        if self.rank != other_card.rank:
             return False
         return True
 
@@ -73,35 +73,34 @@ class Deck:
         for _ in range(cut_total):
             self.add_card(self.draw_card())
 
-    def imprime(self):
-        for n, carta in enumerate(self.deck):
-            print(("0" + str(n) if n < 10 else str(n)) + " : " + str(carta))
+    def show(self) -> None:
+        print(str(self))
 
-    def pegaCarta(self, cima=True):
-        if cima:
+    def draw_card(self, from_top: bool = True) -> Card:
+        if from_top:
             return self.deck.pop(0)
         else:
             return self.deck.pop(-1)
 
-    def addCarta(self, carta, baixo=True):
-        if baixo:
-            self.deck = self.deck + [carta]
+    def add_card(self, card: Card, bottom: bool = True) -> None:
+        if bottom:
+            self.deck = self.deck + [card]
         else:
-            self.deck = [carta] + self.deck
+            self.deck = [card] + self.deck
 
     def __len__(self):
         return len(self.deck)
 
-    def __str__(self):
+    def __str__(self) -> str:
         texto = ""
-        for n, carta in enumerate(self.deck):
-            texto += ("0" + str(n) if n < 10 else str(n)) + " : " + str(carta) + "\n"
+        for index, card in enumerate(self.deck):
+            texto += ("0" + str(index) if index < 10 else str(index)) + " : " + str(card) + "\n"
         return texto
 
-    def __eq__(self, obj):
-        if not type(self) is type(obj):
+    def __eq__(self, other_deck: Any) -> bool:
+        if isinstance(other_deck, Deck) is False:
             return False
-        for n, carta in enumerate(self.deck):
-            if carta != obj.cartas[n]:
+        for index, card in enumerate(self.deck):
+            if card != other_deck.deck[index]:
                 return False
         return True
