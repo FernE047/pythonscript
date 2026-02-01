@@ -72,41 +72,44 @@ def create_sudoku_board(sudoku_board_raw: str) -> BoardData:
 
 
 def is_value_valid(board: BoardData, y: int, x: int, cell_value: CellData) -> bool:
-    yQuad = y // 3
-    xQuad = x // 3
-    for a in range(3):
-        for b in range(3):
-            if board["grid"][3 * yQuad + a][3 * xQuad + b] == cell_value:
+    block_y = y // 3
+    block_x = x // 3
+    for y_offset in range(3):
+        for x_offset in range(3):
+            if (
+                board["grid"][3 * block_y + y_offset][3 * block_x + x_offset]
+                == cell_value
+            ):
                 return False
-    if yQuad == 0:
-        for a in range(3, 9):
-            if board["grid"][a][x] == cell_value:
+    if block_y == 0:
+        for y_offset in range(3, 9):
+            if board["grid"][y_offset][x] == cell_value:
                 return False
-    elif yQuad == 2:
-        for a in range(0, 6):
-            if board["grid"][a][x] == cell_value:
-                return False
-    else:
-        for a in range(3):
-            if board["grid"][a][x] == cell_value:
-                return False
-        for a in range(6, 9):
-            if board["grid"][a][x] == cell_value:
-                return False
-    if xQuad == 0:
-        for b in range(3, 9):
-            if board["grid"][y][b] == cell_value:
-                return False
-    elif xQuad == 2:
-        for b in range(0, 6):
-            if board["grid"][y][b] == cell_value:
+    elif block_y == 2:
+        for y_offset in range(0, 6):
+            if board["grid"][y_offset][x] == cell_value:
                 return False
     else:
-        for b in range(3):
-            if board["grid"][y][b] == cell_value:
+        for y_offset in range(3):
+            if board["grid"][y_offset][x] == cell_value:
                 return False
-        for b in range(6, 9):
-            if board["grid"][y][b] == cell_value:
+        for y_offset in range(6, 9):
+            if board["grid"][y_offset][x] == cell_value:
+                return False
+    if block_x == 0:
+        for x_offset in range(3, 9):
+            if board["grid"][y][x_offset] == cell_value:
+                return False
+    elif block_x == 2:
+        for x_offset in range(0, 6):
+            if board["grid"][y][x_offset] == cell_value:
+                return False
+    else:
+        for x_offset in range(3):
+            if board["grid"][y][x_offset] == cell_value:
+                return False
+        for x_offset in range(6, 9):
+            if board["grid"][y][x_offset] == cell_value:
                 return False
     return True
 
