@@ -1,4 +1,4 @@
-from typing import Literal, cast, overload
+from typing import Literal, cast
 from time import time
 import os
 
@@ -83,34 +83,6 @@ def main_menu() -> menuModeOptions:
                 return cast(menuModeOptions, choice_index)
             else:
                 raise ValueError
-        except (ValueError, IndexError):
-            user_choice = input("not valid, try again: ")
-
-
-@overload
-def choose_from_options(
-    prompt: str, options: list[str], mode: Literal["text"]
-) -> str: ...
-
-
-@overload
-def choose_from_options(
-    prompt: str, options: list[str], mode: Literal["number"]
-) -> int: ...
-
-
-def choose_from_options(
-    prompt: str, options: list[str], mode: Literal["text", "number"] = "text"
-) -> str | int:
-    while True:
-        for i, option in enumerate(options):
-            print(f"{i} - {option}")
-        user_choice = input(prompt)
-        try:
-            if mode == "number":
-                return int(user_choice)
-            else:
-                return options[int(user_choice)]
         except (ValueError, IndexError):
             user_choice = input("not valid, try again: ")
 
@@ -317,7 +289,7 @@ while True:
     file_names = os.listdir("sudokus")
     for file_name in file_names:
         print(f"{file_name}\n")
-        with open(f"sudokus//{file_name}") as sudoku_board_raw:
+        with open(f"sudokus//{file_name}", "r", encoding="utf-8") as sudoku_board_raw:
             board = SudokuBoard(sudoku_board_raw.read())
             solve_single_board(board)
     end_time = time()
