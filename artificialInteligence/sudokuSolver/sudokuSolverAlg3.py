@@ -93,18 +93,18 @@ class SudokuBoard:
         self.empty_cells: list[CoordData] = []
         for y in range(9):
             self.grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
-        if sudoku_board_raw is not None:
-            parsed_sudoku_input = convert_raw_sudoku(sudoku_board_raw)
-            for xy, value in enumerate(parsed_sudoku_input):
-                if xy > 80:
-                    break
-                y = xy // 9
-                x = xy % 9
-                self.set_cell(y, x, value)
-                if value == 0:
-                    self.empty_cells = [(y, x)] + self.empty_cells
-        else:
+        if sudoku_board_raw is  None:
             self.empty_cells = [(0, x) for x in range(9, 0, -1)] + self.empty_cells
+            return
+        parsed_sudoku_input = convert_raw_sudoku(sudoku_board_raw)
+        for xy, value in enumerate(parsed_sudoku_input):
+            if xy > 80:
+                break
+            y = xy // 9
+            x = xy % 9
+            self.set_cell(y, x, value)
+            if value == 0:
+                self.empty_cells = [(y, x)] + self.empty_cells
 
     def delete_cell(self, y: int, x: int) -> None:
         self.grid[y][x] = 0
