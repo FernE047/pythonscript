@@ -249,7 +249,7 @@ def solve_single_board(sudoku_board: SudokuBoard) -> None:
     end_time = time()
     if solution_board is not None:
         solution_board.show()
-    print("\ntentativas: " + str(tries))
+    print(f"\nAttempts: {tries}")
     elapsed_duration = end_time - start_time
     global elapsed_time
     elapsed_time += elapsed_duration
