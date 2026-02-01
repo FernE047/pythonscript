@@ -1,5 +1,5 @@
-from EstruturasBaralho import Baralho
-from EstruturasBaralho import Carta
+from EstruturasBaralho import Deck
+from EstruturasBaralho import Card
 from random import randint
 
 
@@ -258,7 +258,7 @@ class Partida:
 
 class Jogo:
     def __init__(self, participantes):
-        self.baralho = Baralho()
+        self.baralho = Deck()
         self.jogadores = [Jogador(a) for a in range(participantes)]
         self.pontos = [0 for a in range(participantes)]
         self.vez = 0

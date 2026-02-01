@@ -1,27 +1,30 @@
-from random import shuffle
 from random import randint
+from typing import Any, Literal, cast
+
+SuitOptions = Literal[0, 1, 2, 3]
+RankOptions = Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 
-class Carta:
-    def __init__(self, naipe, figura):
-        self.naipe = naipe
-        self.figura = figura
+class Card:
+    def __init__(self, suit: SuitOptions, rank: RankOptions) -> None:
+        self.suit = suit
+        self.rank = rank
 
-    def compara(self, obj, figuraManilha):
-        if not type(self) is type(obj):
+    def compare(self, obj: Any, leading_card: "Card") -> Literal[-1, 0, 1]:
+        if not isinstance(obj, Card):
             return 1
-        if self.figura == figuraManilha:
-            if obj.figura != figuraManilha:
+        if self.rank == leading_card.rank:
+            if obj.rank != leading_card.rank:
                 return 1
-            if self.naipe > obj.naipe:
+            if self.suit > obj.suit:
                 return 1
             else:
                 return -1
-        if obj.figura == figuraManilha:
+        if obj.rank == leading_card.rank:
             return -1
-        if self.figura > obj.figura:
+        if self.rank > obj.rank:
             return 1
-        if obj.figura == self.figura:
+        if obj.rank == self.rank:
             return 0
         return -1
 
@@ -29,74 +32,76 @@ class Carta:
         print(str(self))
 
     def __str__(self):
-        texto = ""
-        figuras = ["4", "5", "6", "7", "Q", "J", "K", "A", "2", "3"]
-        naipes = ["Ouro", "Espadilha", "Copas", "Paus"]
-        texto += figuras[self.figura]
-        texto += " "
-        texto += naipes[self.naipe]
-        return texto
+        text = ""
+        ranks = ["4", "5", "6", "7", "Q", "J", "K", "A", "2", "3"]
+        suits = ["Ouro", "Espadilha", "Copas", "Paus"]
+        text += ranks[self.rank]
+        text += " "
+        text += suits[self.suit]
+        return text
 
-    def __eq__(self, obj):
-        if not type(self) is type(obj):
+    def __eq__(self, obj: Any):
+        if not isinstance(obj, Card):
             return False
-        if self.naipe != obj.naipe:
+        if self.suit != obj.suit:
             return False
-        if self.figura != obj.figura:
+        if self.rank != obj.rank:
             return False
         return True
 
 
-class Baralho:
-    def __init__(self):
-        self.cartas = []
-        for figura in range(10):
-            for naipe in range(4):
-                carta = Carta(naipe, figura)
-                self.cartas.append(carta)
+class Deck:
+    def __init__(self) -> None:
+        self.deck: list[Card] = []
+        for rank in range(10):
+            for suit in range(4):
+                suit_ = cast(SuitOptions, suit)
+                rank_ = cast(RankOptions, rank)
+                carta = Card(suit_, rank_)
+                self.deck.append(carta)
 
-    def embaralha(self, seed):
-        for elemento in list(seed):
-            carta = self.cartas.pop(ord(elemento) % 40)
-            self.cartas = [carta] + self.cartas
+    def shuffle(self, seed: str) -> None:
+        for char in list(seed):
+            card = self.deck.pop(ord(char) % 40)
+            self.deck = [card] + self.deck
 
-    def corta(self, numero=-1):
-        if numero < 0:
-            corteTotal = randint(0, len(self) - 1)
+    def cut_deck(self, cut_position: int = -1) -> None:
+        if cut_position < 0:
+            cut_total = randint(0, len(self) - 1)
         else:
-            corteTotal = numero
-        for _ in range(corteTotal):
-            self.addCarta(self.pegaCarta())
+            cut_total = cut_position
+        for _ in range(cut_total):
+            self.add_card(self.draw_card())
 
     def imprime(self):
-        for n, carta in enumerate(self.cartas):
+        for n, carta in enumerate(self.deck):
             print(("0" + str(n) if n < 10 else str(n)) + " : " + str(carta))
 
     def pegaCarta(self, cima=True):
         if cima:
-            return self.cartas.pop(0)
+            return self.deck.pop(0)
         else:
-            return self.cartas.pop(-1)
+            return self.deck.pop(-1)
 
     def addCarta(self, carta, baixo=True):
         if baixo:
-            self.cartas = self.cartas + [carta]
+            self.deck = self.deck + [carta]
         else:
-            self.cartas = [carta] + self.cartas
+            self.deck = [carta] + self.deck
 
     def __len__(self):
-        return len(self.cartas)
+        return len(self.deck)
 
     def __str__(self):
         texto = ""
-        for n, carta in enumerate(self.cartas):
+        for n, carta in enumerate(self.deck):
             texto += ("0" + str(n) if n < 10 else str(n)) + " : " + str(carta) + "\n"
         return texto
 
     def __eq__(self, obj):
         if not type(self) is type(obj):
             return False
-        for n, carta in enumerate(self.cartas):
+        for n, carta in enumerate(self.deck):
             if carta != obj.cartas[n]:
                 return False
         return True
