@@ -1,14 +1,47 @@
+from typing import Literal, TypedDict, cast
 from time import time
 import os
 
+menuModeOptions = Literal[0, 1, 2, 3]
+userInputOptions = Literal[
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "p",
+    "l",
+    "L",
+    "c",
+    "C",
+    "q",
+    "Q",
+    "o",
+    "s",
+    "e",
+]
+CellData = Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+SudokuGridData = list[list[CellData]]
+CoordData = tuple[int, int]
 
-def embelezeTempo(segundos: float) -> str:
-    if segundos < 0:
-        segundos = -segundos
+
+class BoardData(TypedDict):
+    grid: SudokuGridData
+    empty_cells: list[CoordData]
+
+
+def print_elapsed_time(seconds: float) -> None:
+    if seconds < 0:
+        seconds = -seconds
         sign = "-"
     else:
         sign = ""
-    total_ms = int(round(segundos * 1000))
+    total_ms = int(round(seconds * 1000))
     ms = total_ms % 1000
     total_s = total_ms // 1000
     s = total_s % 60
@@ -29,134 +62,142 @@ def embelezeTempo(segundos: float) -> str:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    return sign + ", ".join(parts)
+    print(sign + ", ".join(parts))
 
 
-def tiraEspaçoBranco(texto: str) -> str:
+def convert_raw_sudoku(raw_sudoku: str) -> list[CellData]:
     for espaco in [" ", "\n", "\t"]:
-        if espaco in texto:
-            texto = texto.replace(espaco, "")
-    return texto
+        if espaco in raw_sudoku:
+            raw_sudoku = raw_sudoku.replace(espaco, "")
+    parsed_sudoku: list[int] = []
+    for char in raw_sudoku:
+        if char in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]:
+            parsed_sudoku.append(int(char))
+    return cast(list[CellData], parsed_sudoku)
 
 
-def criaTabuleiro(config):
-    matriz = []
-    espacosVazios = []
-    tabuleiro = {"matriz": matriz, "espacos": espacosVazios}
-    for y in range(9):
-        tabuleiro["matriz"].append([0, 0, 0, 0, 0, 0, 0, 0, 0])
-    confLimpa = tiraEspaçoBranco(config)
-    for a, valor in enumerate(list(confLimpa)):
-        if a > 80:
+def create_sudoku_board(sudoku_board_raw: str) -> BoardData:
+    grid: SudokuGridData = []
+    empty_cells: list[CoordData] = []
+    board: BoardData = {"grid": grid, "empty_cells": empty_cells}
+    for _ in range(9):
+        board["grid"].append([0, 0, 0, 0, 0, 0, 0, 0, 0])
+    parsed_sudoku_input = convert_raw_sudoku(sudoku_board_raw)
+    for xy, value in enumerate(parsed_sudoku_input):
+        if xy > 80:
             break
-        posY = a // 9
-        posX = a % 9
-        tabuleiro["matriz"][posY][posX] = valor
-        if valor == "0":
-            tabuleiro["espacos"] = [(posY, posX)] + tabuleiro["espacos"]
-    return tabuleiro
+        y = xy // 9
+        x = xy % 9
+        board["grid"][y][x] = value
+        if value == 0:
+            board["empty_cells"] = [(y, x)] + board["empty_cells"]
+    return board
 
 
-def verificaValor(tabuleiro, y, x, v):
+def is_value_valid(board: BoardData, y: int, x: int, cell_value: CellData) -> bool:
     yQuad = y // 3
     xQuad = x // 3
     for a in range(3):
         for b in range(3):
-            if tabuleiro["matriz"][3 * yQuad + a][3 * xQuad + b] == v:
+            if board["grid"][3 * yQuad + a][3 * xQuad + b] == cell_value:
                 return False
     if yQuad == 0:
         for a in range(3, 9):
-            if tabuleiro["matriz"][a][x] == v:
+            if board["grid"][a][x] == cell_value:
                 return False
     elif yQuad == 2:
         for a in range(0, 6):
-            if tabuleiro["matriz"][a][x] == v:
+            if board["grid"][a][x] == cell_value:
                 return False
     else:
         for a in range(3):
-            if tabuleiro["matriz"][a][x] == v:
+            if board["grid"][a][x] == cell_value:
                 return False
         for a in range(6, 9):
-            if tabuleiro["matriz"][a][x] == v:
+            if board["grid"][a][x] == cell_value:
                 return False
     if xQuad == 0:
         for b in range(3, 9):
-            if tabuleiro["matriz"][y][b] == v:
+            if board["grid"][y][b] == cell_value:
                 return False
     elif xQuad == 2:
         for b in range(0, 6):
-            if tabuleiro["matriz"][y][b] == v:
+            if board["grid"][y][b] == cell_value:
                 return False
     else:
         for b in range(3):
-            if tabuleiro["matriz"][y][b] == v:
+            if board["grid"][y][b] == cell_value:
                 return False
         for b in range(6, 9):
-            if tabuleiro["matriz"][y][b] == v:
+            if board["grid"][y][b] == cell_value:
                 return False
     return True
 
 
-def setElement(tabuleiro, y, x, v):
-    tabuleiro["matriz"][y][x] = "0"
-    if v in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]:
-        if v == "0":
-            return True
-        else:
-            if verificaValor(tabuleiro, y, x, v):
-                tabuleiro["matriz"][y][x] = v
-                return True
+def set_cell(board: BoardData, y: int, x: int, cell_value: CellData) -> bool:
+    board["grid"][y][x] = 0
+    if cell_value not in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]:
+        return False
+    if cell_value == 0:
+        return True
+    if is_value_valid(board, y, x, cell_value):
+        board["grid"][y][x] = cell_value
+        return True
     return False
 
 
-def imprime(tabuleiro):
+def show(board: BoardData) -> None:
     for y in range(9):
+        row = ""
         for x in range(9):
-            print(tabuleiro["matriz"][y][x], end="")
+            row += str(board["grid"][y][x])
         print()
 
 
-def resolveTabuleiro(tabuleiro):
-    if tabuleiro["espacos"]:
-        espacoVazio = tabuleiro["espacos"].pop(-1)
-        if espacoVazio:
-            global tries
-            for value in range(1, 10):
-                if setElement(tabuleiro, espacoVazio[0], espacoVazio[1], str(value)):
-                    tries += 1
-                    solucao = resolveTabuleiro(tabuleiro)
-                    if solucao:
-                        return solucao
-            tabuleiro["matriz"][espacoVazio[0]][espacoVazio[1]] = "0"
-            tabuleiro["espacos"].append(espacoVazio)
-    else:
-        return tabuleiro
+def solve_sudoku_board(board: BoardData) -> BoardData | None:
+    if len(board["empty_cells"]) == 0:
+        return board
+    espacoVazio = board["empty_cells"].pop(-1)
+    if not espacoVazio:
+        return None
+    global tries
+    for value in range(1, 10):
+        cell_value = cast(CellData, value)
+        if not set_cell(board, espacoVazio[0], espacoVazio[1], cell_value):
+            continue
+        tries += 1
+        solution_board = solve_sudoku_board(board)
+        if solution_board is not None:
+            return solution_board
+    board["grid"][espacoVazio[0]][espacoVazio[1]] = 0
+    board["empty_cells"].append(espacoVazio)
+    return board
 
 
-def resolveUmTabuleiro(tabuleiro):
-    imprime(tabuleiro)
+def solve_single_board(board: BoardData) -> None:
+    show(board)
     print()
     global tries
     tries = 0
-    inicio = time()
-    solucao = resolveTabuleiro(tabuleiro)
-    fim = time()
-    imprime(solucao)
-    print("\ntentativas: " + str(tries))
-    tempo = fim - inicio
-    global tempoTotal
-    tempoTotal += tempo
-    print("\n" + embelezeTempo(tempo) + "\n\n\n")
+    start_time = time()
+    solution_board = solve_sudoku_board(board)
+    end_time = time()
+    if solution_board is not None:
+        show(solution_board)
+    print(f"\nAttempts: {tries}")
+    elapsed_duration = end_time - start_time
+    global elapsed_time
+    elapsed_time += elapsed_duration
+    print_elapsed_time(elapsed_duration)
 
 
+tries = 0
+elapsed_time = 0.0
 while True:
-    global tempoTotal
-    tempoTotal = 0
-    files = os.listdir("sudokus")
-    for name in files:
-        print(name, end="\n\n")
-        sudoku = open("sudokus//" + name)
-        tabuleiro = criaTabuleiro(sudoku.read())
-        sudoku.close()
-        resolveUmTabuleiro(tabuleiro)
-    print("\n" + embelezeTempo(tempoTotal) + "\n\n\n")
+    file_names = os.listdir("sudokus")
+    for file_name in file_names:
+        print(f"{file_name}\n")
+        with open(f"sudokus//{file_name}", "r", encoding="utf-8") as sudoku_board_raw:
+            board = create_sudoku_board(sudoku_board_raw.read())
+        solve_single_board(board)
+    print_elapsed_time(elapsed_time)
