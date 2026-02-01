@@ -1,14 +1,20 @@
+from typing import Literal, cast
 from time import time
 import os
 
+CellData = Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+SudokuGridData = list[list[CellData]]
+CoordData = tuple[int, int]
+BoardData = tuple[SudokuGridData, list[CoordData]]
 
-def embelezeTempo(segundos: float) -> str:
-    if segundos < 0:
-        segundos = -segundos
+
+def print_elapsed_time(seconds: float) -> None:
+    if seconds < 0:
+        seconds = -seconds
         sign = "-"
     else:
         sign = ""
-    total_ms = int(round(segundos * 1000))
+    total_ms = int(round(seconds * 1000))
     ms = total_ms % 1000
     total_s = total_ms // 1000
     s = total_s % 60
@@ -29,115 +35,118 @@ def embelezeTempo(segundos: float) -> str:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    return sign + ", ".join(parts)
+    print(sign + ", ".join(parts))
 
 
-def tiraEspaçoBranco(texto: str) -> str:
+def convert_raw_sudoku(raw_sudoku: str) -> list[CellData]:
     for espaco in [" ", "\n", "\t"]:
-        if espaco in texto:
-            texto = texto.replace(espaco, "")
-    return texto
+        if espaco in raw_sudoku:
+            raw_sudoku = raw_sudoku.replace(espaco, "")
+    parsed_sudoku: list[int] = []
+    for char in raw_sudoku:
+        if char in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]:
+            parsed_sudoku.append(int(char))
+    return cast(list[CellData], parsed_sudoku)
 
 
-def criaTabuleiro(config):
-    matriz = []
-    espacosVazios = []
-    tabuleiro = [matriz, espacosVazios]
-    for y in range(9):
-        tabuleiro[0].append(["0", "0", "0", "0", "0", "0", "0", "0", "0"])
-    confLimpa = tiraEspaçoBranco(config)
-    for a, valor in enumerate(list(confLimpa)):
-        if a > 80:
+def create_sudoku_board(sudoku_board_raw: str) -> BoardData:
+    grid: SudokuGridData = []
+    empty_cells: list[CoordData] = []
+    board: BoardData = (grid, empty_cells)
+    for _ in range(9):
+        board[0].append([0, 0, 0, 0, 0, 0, 0, 0, 0])
+    parsed_sudoku_input = convert_raw_sudoku(sudoku_board_raw)
+    for xy, value in enumerate(parsed_sudoku_input):
+        if xy > 80:
             break
-        posY = a // 9
-        posX = a % 9
-        tabuleiro[0][posY][posX] = valor
-        if valor == "0":
-            tabuleiro[1] = [(posY, posX)] + tabuleiro[1]
-    return tabuleiro
+        y = xy // 9
+        x = xy % 9
+        board[0][y][x] = value
+        if value == 0:
+            board[1].append((y, x))
+    return board
 
 
-def possibilidades(tabuleiro, y, x):
-    yQuad = (y // 3) * 3
-    xQuad = (x // 3) * 3
-    lista = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
-    tabuleiro[0][y][x] = "0"
-    for a in range(3):
-        for b in range(3):
-            if tabuleiro[0][yQuad + a][xQuad + b] in lista:
-                lista.remove(tabuleiro[0][yQuad + a][xQuad + b])
-    if yQuad == 0:
-        for a in range(3, 9):
-            if tabuleiro[0][a][x] in lista:
-                lista.remove(tabuleiro[0][a][x])
-    elif yQuad == 6:
-        for a in range(0, 6):
-            if tabuleiro[0][a][x] in lista:
-                lista.remove(tabuleiro[0][a][x])
+def find_valid_candidates(board: BoardData, y: int, x: int) -> list[CellData]:
+    block_y = (y // 3) * 3
+    block_x = (x // 3) * 3
+    possible_values: list[CellData] = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    board[0][y][x] = 0
+    for y_offset in range(3):
+        for x_offset in range(3):
+            if board[0][block_y + y_offset][block_x + x_offset] in possible_values:
+                possible_values.remove(board[0][block_y + y_offset][block_x + x_offset])
+    if block_y == 0:
+        for y_offset in range(3, 9):
+            if board[0][y_offset][x] in possible_values:
+                possible_values.remove(board[0][y_offset][x])
+    elif block_y == 6:
+        for y_offset in range(0, 6):
+            if board[0][y_offset][x] in possible_values:
+                possible_values.remove(board[0][y_offset][x])
     else:
-        for a in range(3):
-            if tabuleiro[0][a][x] in lista:
-                lista.remove(tabuleiro[0][a][x])
-        for a in range(6, 9):
-            if tabuleiro[0][a][x] in lista:
-                lista.remove(tabuleiro[0][a][x])
-    if not (lista):
-        return lista
-    if xQuad == 0:
-        for b in range(3, 9):
-            if tabuleiro[0][y][b] in lista:
-                lista.remove(tabuleiro[0][y][b])
-    elif xQuad == 6:
-        for b in range(0, 6):
-            if tabuleiro[0][y][b] in lista:
-                lista.remove(tabuleiro[0][y][b])
+        for y_offset in range(3):
+            if board[0][y_offset][x] in possible_values:
+                possible_values.remove(board[0][y_offset][x])
+        for y_offset in range(6, 9):
+            if board[0][y_offset][x] in possible_values:
+                possible_values.remove(board[0][y_offset][x])
+    if not (possible_values):
+        return possible_values
+    if block_x == 0:
+        for x_offset in range(3, 9):
+            if board[0][y][x_offset] in possible_values:
+                possible_values.remove(board[0][y][x_offset])
+    elif block_x == 6:
+        for x_offset in range(0, 6):
+            if board[0][y][x_offset] in possible_values:
+                possible_values.remove(board[0][y][x_offset])
     else:
-        for b in range(3):
-            if tabuleiro[0][y][b] in lista:
-                lista.remove(tabuleiro[0][y][b])
-        for b in range(6, 9):
-            if tabuleiro[0][y][b] in lista:
-                lista.remove(tabuleiro[0][y][b])
-    return lista
+        for x_offset in range(3):
+            if board[0][y][x_offset] in possible_values:
+                possible_values.remove(board[0][y][x_offset])
+        for x_offset in range(6, 9):
+            if board[0][y][x_offset] in possible_values:
+                possible_values.remove(board[0][y][x_offset])
+    return possible_values
 
 
-def resolveTabuleiro(tabuleiro):
-    if tabuleiro[1]:
-        espacoVazio = tabuleiro[1].pop(-1)
-        global tries
-        for value in possibilidades(tabuleiro, espacoVazio[0], espacoVazio[1]):
-            tabuleiro[0][espacoVazio[0]][espacoVazio[1]] = value
-            tries += 1
-            solucao = resolveTabuleiro(tabuleiro)
-            if solucao:
-                return solucao
-        tabuleiro[0][espacoVazio[0]][espacoVazio[1]] = "0"
-        tabuleiro[1].append(espacoVazio)
-    else:
-        return tabuleiro
+def solve_sudoku_board(board: BoardData) -> BoardData | None:
+    if len(board[1]) == 0:
+        return board
+    empty_cell = board[1].pop(-1)
+    global tries
+    for value in find_valid_candidates(board, empty_cell[0], empty_cell[1]):
+        board[0][empty_cell[0]][empty_cell[1]] = value
+        tries += 1
+        solution_board = solve_sudoku_board(board)
+        if solution_board:
+            return solution_board
+    board[0][empty_cell[0]][empty_cell[1]] = 0
+    board[1].append(empty_cell)
+    return None
 
 
-def resolveUmTabuleiro(tabuleiro):
+def solve_single_board(board: BoardData) -> None:
     print()
     global tries
     tries = 0
-    inicio = time()
-    solucao = resolveTabuleiro(tabuleiro)
-    fim = time()
-    print("\ntentativas: " + str(tries))
-    tempo = fim - inicio
-    global tempoTotal
-    tempoTotal += tempo
-    print("\n" + embelezeTempo(tempo) + "\n\n\n")
+    start_time = time()
+    solve_sudoku_board(board)
+    end_time = time()
+    print(f"\nattempts: {tries}")
+    elapsed_duration = end_time - start_time
+    global elapsed_time
+    elapsed_time += elapsed_duration
+    print_elapsed_time(elapsed_duration)
 
 
-global tempoTotal
-tempoTotal = 0
-files = os.listdir("sudokus")
-for name in files:
-    print(name, end="\n\n")
-    sudoku = open("sudokus//" + name)
-    tabuleiro = criaTabuleiro(sudoku.read())
-    sudoku.close()
-    resolveUmTabuleiro(tabuleiro)
-print("\n" + embelezeTempo(tempoTotal) + "\n\n\n")
+tries = 0
+elapsed_time = 0.0
+file_names = os.listdir("sudokus")
+for file_name in file_names:
+    print(f"{file_name}\n")
+    with open(f"sudokus//{file_name}", "r", encoding="utf-8") as sudoku_board_raw:
+        board = create_sudoku_board(sudoku_board_raw.read())
+    solve_single_board(board)
+print_elapsed_time(elapsed_time)
