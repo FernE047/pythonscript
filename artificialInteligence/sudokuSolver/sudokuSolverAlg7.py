@@ -151,7 +151,7 @@ def solve_sudoku_board(board: BoardData) -> BoardData | None:
             return solution_board
     board["grid"][empty_cell[0]][empty_cell[1]] = 0
     board["empty_cells"].append(empty_cell)
-    return board
+    return None
 
 
 def solve_single_board(board: BoardData) -> None:
