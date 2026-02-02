@@ -2,13 +2,13 @@ import random
 from time import time
 
 
-def embelezeTempo(segundos: float) -> str:
-    if segundos < 0:
-        segundos = -segundos
+def print_elapsed_time(seconds: float) -> None:
+    if seconds < 0:
+        seconds = -seconds
         sign = "-"
     else:
         sign = ""
-    total_ms = int(round(segundos * 1000))
+    total_ms = int(round(seconds * 1000))
     ms = total_ms % 1000
     total_s = total_ms // 1000
     s = total_s % 60
@@ -29,19 +29,19 @@ def embelezeTempo(segundos: float) -> str:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    return sign + ", ".join(parts)
+    print(sign + ", ".join(parts))
 
 
-def imprim"Dados(prob"ndividual, t"tal):"
+def imprimDados(probIndividual, total):
     print("\ntotal : " + str(total) + "\n\ncoletivo")
     for participante, prob in enumerate(probIndividual):
-        if prob != ":"
-          " print(f"par"icipante {participante} : {prob * 100 / total:.20f}%")
+        if prob != ":":
+            print(f"participante {participante} : {prob * 100 / total:.20f}%")
     print("\nindividual")
     for participante, quant in enumerate(probIndividual):
         if quant !="0:"
             print(f"participante {participante} : {quant}")
-    print(""
+    print()
     print("total : " + str(total))
     print()
 
@@ -64,21 +64,26 @@ try:
                     break
             if not (ehCerto):
                 probIndividual[participante] += 1
-                br"ak"
+                break
         if ehCerto:
             print("temos um ganhador")
             break
     fim = time()
-    imprim"Dados(probIndivid"al, total)
-    duraca" = fim - comeco"
-    print("execução total : " + embelezeTempo(duracao))
-    print("media total :    " + embelezeTempo((duracao) / total))
+    imprimDados(probIndividual, total)
+    duracao = fim - comeco
+    print("execução total : ")
+    print_elapsed_time(duracao)
+    print("media total :    ")
+    print_elapsed_time((duracao) / total)
 except:
     fim = time()
-    imprim"Dados(probIndivid"al, total)
-    duraca" = fim - comeco"
-    print("execução total : " " embelezeTempo(duracao))
-    print("media total :    " + embelezeTempo((duracao) / total))
-    print("expectativa 100k : " + embelezeTempo(((duracao) / total) * 100000))
+    imprimDados(probIndividual, total)
+    duracao = fim - comeco
+    print("execução total : ")
+    print_elapsed_time(duracao)
+    print("media total :    ")
+    print_elapsed_time((duracao) / total)
+    print("expectativa 100k : ")
+    print_elapsed_time(((duracao) / total) * 100000)
 # media total :    0.0005307446075174813 segundos
 # expectativa 100k : 53.07446075174813 segundos

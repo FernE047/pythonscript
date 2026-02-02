@@ -13,13 +13,13 @@ import dlib
 import cv2
 
 
-def embelezeTempo(segundos: float) -> str:
-    if segundos < 0:
-        segundos = -segundos
+def print_elapsed_time(seconds: float) -> None:
+    if seconds < 0:
+        seconds = -seconds
         sign = "-"
     else:
         sign = ""
-    total_ms = int(round(segundos * 1000))
+    total_ms = int(round(seconds * 1000))
     ms = total_ms % 1000
     total_s = total_ms // 1000
     s = total_s % 60
@@ -40,7 +40,7 @@ def embelezeTempo(segundos: float) -> str:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    return sign + ", ".join(parts)
+    print(sign + ", ".join(parts))
 
 
 def capturaFaces(nome):
@@ -169,12 +169,7 @@ for hora in range(horas + 1):
                 finalFirst = time()
                 duracao = finalFirst - inicioFirst
                 first = False
-                print(
-                    "o processo completo demorará em média : "
-                    + embelezeTempo(
-                        duracao * (segundos + minutos * 60 + horas * 60 * 60)
-                    )
-                )
+                print_elapsed_time(duracao * (segundos + minutos * 60 + horas * 60 * 60))
                 finalFirst, inicioFirst, duracao = [None, None, None]
             if maiorDiferenca == 0:
                 break
@@ -184,4 +179,4 @@ for hora in range(horas + 1):
         break
 final = time()
 duracao = final - inicio
-print("o processo completo demorou : " + embelezeTempo(duracao))
+print_elapsed_time(duracao)

@@ -4,13 +4,13 @@ from os import listdir
 from time import time
 
 
-def embelezeTempo(segundos: float) -> str:
-    if segundos < 0:
-        segundos = -segundos
+def print_elapsed_time(seconds: float) -> None:
+    if seconds < 0:
+        seconds = -seconds
         sign = "-"
     else:
         sign = ""
-    total_ms = int(round(segundos * 1000))
+    total_ms = int(round(seconds * 1000))
     ms = total_ms % 1000
     total_s = total_ms // 1000
     s = total_s % 60
@@ -31,7 +31,7 @@ def embelezeTempo(segundos: float) -> str:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    return sign + ", ".join(parts)
+    print(sign + ", ".join(parts))
 
 def openFrame(frame):
     return Image.open(frame).crop((40,70,1039,479))
@@ -155,8 +155,9 @@ for n in range(150,framesTotais):
     duracao = fim-inicio
     inicio = time()
     print()
-    print(str(n) + " : " + embelezeTempo(duracao))
-    print(embelezeTempo(duracao*(framesTotais-n)))
+    print(f"{n} : ")
+    print_elapsed_time(duracao)
+    print_elapsed_time(duracao*(framesTotais-n))
     mapa.save("mapa.png")
 mapa.save("mapa.png")
 frameAtual.close()
@@ -164,4 +165,4 @@ ultimoFrame.close()
 mapa.save("mapa.png")
 fimTotal = time()
 duracao = fimTotal-inicioTotal
-print(embelezeTempo(duracao))
+print_elapsed_time(duracao)

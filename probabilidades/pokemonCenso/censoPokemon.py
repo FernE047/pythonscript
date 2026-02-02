@@ -5,13 +5,13 @@ import requests, bs4, re
 import bs4
 
 
-def embelezeTempo(segundos: float) -> str:
-    if segundos < 0:
-        segundos = -segundos
+def print_elapsed_time(seconds: float) -> None:
+    if seconds < 0:
+        seconds = -seconds
         sign = "-"
     else:
         sign = ""
-    total_ms = int(round(segundos * 1000))
+    total_ms = int(round(seconds * 1000))
     ms = total_ms % 1000
     total_s = total_ms // 1000
     s = total_s % 60
@@ -32,7 +32,7 @@ def embelezeTempo(segundos: float) -> str:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    return sign + ", ".join(parts)
+    print(sign + ", ".join(parts))
 
 
 def procuraTipo(informacao, alolan, mega=False):
@@ -195,8 +195,9 @@ try:
                         BD[f"{a:03d}{add}"] = pokemonDados
                         debugImprime(pokemonDados, a)
         duracao = time() - inicio
-        print(embelezeTempo(duracao))
-        print("falta = " + embelezeTempo(duracao * (TOTAL - a)))
+        print_elapsed_time(duracao)
+        print("falta = ")
+        print_elapsed_time(duracao * (TOTAL - a))
     BD.close()
 except Exception as e:
     print(e)

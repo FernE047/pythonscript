@@ -7,13 +7,13 @@ from os import listdir
 from time import time
 
 
-def embelezeTempo(segundos: float) -> str:
-    if segundos < 0:
-        segundos = -segundos
+def print_elapsed_time(seconds: float) -> None:
+    if seconds < 0:
+        seconds = -seconds
         sign = "-"
     else:
         sign = ""
-    total_ms = int(round(segundos * 1000))
+    total_ms = int(round(seconds * 1000))
     ms = total_ms % 1000
     total_s = total_ms // 1000
     s = total_s % 60
@@ -34,7 +34,7 @@ def embelezeTempo(segundos: float) -> str:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    return sign + ", ".join(parts)
+    print(sign + ", ".join(parts))
 
 def openFrame(frame):
     return im.imread(frame)[42:1039,78:479,:]
@@ -83,7 +83,8 @@ def comparaFrames(mapa,frameB,posicao):
     yAdd = probabilidades[indiceX].index(maximo)-DDP
     xAdd = indiceX - DDP
     duracao = fim-inicio
-    print(str(posicao) + " : " + embelezeTempo(duracao))
+    print(f"{posicao} : ")
+    print_elapsed_time(duracao)
     return [-xAdd,-yAdd]
 
 def ampliaMapa(mapa,ampliacao,posicao,adds):
@@ -156,8 +157,9 @@ for n in range(90,framesTotais):
     duracao = fim-inicio
     inicio = time()
     print()
-    print(str(n) + " : " + embelezeTempo(duracao))
-    print(embelezeTempo(duracao*(framesTotais-n)))
+    print(f"{n} : ")
+    print_elapsed_time(duracao)
+    print_elapsed_time(duracao*(framesTotais-n))
     print(adds)"""
     mapa.savefig("mapa.png")
 #except:
@@ -165,5 +167,5 @@ for n in range(90,framesTotais):
 #    pass
 fimTotal = time()
 duracao = fimTotal-inicioTotal
-print(embelezeTempo(duracao))
+print_elapsed_time(duracao)
 mapa.savefig("mapa.png")

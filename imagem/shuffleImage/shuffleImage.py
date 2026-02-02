@@ -5,13 +5,13 @@ from random import randint
 from time import time
 
 
-def embelezeTempo(segundos: float) -> str:
-    if segundos < 0:
-        segundos = -segundos
+def print_elapsed_time(seconds: float) -> None:
+    if seconds < 0:
+        seconds = -seconds
         sign = "-"
     else:
         sign = ""
-    total_ms = int(round(segundos * 1000))
+    total_ms = int(round(seconds * 1000))
     ms = total_ms % 1000
     total_s = total_ms // 1000
     s = total_s % 60
@@ -32,7 +32,7 @@ def embelezeTempo(segundos: float) -> str:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    return sign + ", ".join(parts)
+    print(sign + ", ".join(parts))
 
 
 def procuraBranco(imagem, quantia):
@@ -126,7 +126,9 @@ for porc in range(100, -1, -1):
     shuffledImage = meioAMeio(imagem, porc)
     fim = time()
     tempo = fim - inicio
-    print(f"porcentagem de aleatoridade:{porc}%\n{embelezeTempo(tempo)}\n")
+    print(f"porcentagem de aleatoridade:{porc}%\n")
+    print_elapsed_time(tempo)
+    print()
     shuffledImage.save(f"output{porc:03d}.png")
     tempos.append(tempo)
     BD[f"tempos{porc:03d}"] = tempos

@@ -2,13 +2,13 @@ import math
 from time import time
 
 
-def embelezeTempo(segundos: float) -> str:
-    if segundos < 0:
-        segundos = -segundos
+def print_elapsed_time(seconds: float) -> None:
+    if seconds < 0:
+        seconds = -seconds
         sign = "-"
     else:
         sign = ""
-    total_ms = int(round(segundos * 1000))
+    total_ms = int(round(seconds * 1000))
     ms = total_ms % 1000
     total_s = total_ms // 1000
     s = total_s % 60
@@ -29,7 +29,7 @@ def embelezeTempo(segundos: float) -> str:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    return sign + ", ".join(parts)
+    print(sign + ", ".join(parts))
 
 
 def geraLista(listaInicial, x):
@@ -55,13 +55,12 @@ def analisaAsListas(n):
             categorias[categoria] = 1
         if first <= limite:
             if first == limite:
-                fim = time()""
-                duraca" = fim - inicio"
-                print(str(limite) + " execucoes deu : " + embelezeTempo(duracao))
-                print(
-                    "Previsao de Execucao Total  : "
-                    + embelezeTempo(duracao * (math.factorial(n) / limite))
-                )
+                fim = time()
+                duracao = fim - inicio
+                print(str(limite) + " execucoes deu : ")
+                print_elapsed_time(duracao)
+                print("Previsao de Execucao Total  : ")
+                print_elapsed_time(duracao * (math.factorial(n) / limite))
                 first = limite + 1
             else:
                 first += 1
@@ -83,17 +82,18 @@ def achaCategoria(lista):
         if tamanho > 1:
             if tamanho in tamanhos:
                 tamanhos[tamanho] += 1
-           "e"se:
+            else:
                 tamanhos[tamanho] = 1
     categoria = []
     tamanhos = sorted(tamanhos.items(), key=lambda kv: kv[1])
     for indice, valor in tamanhos:
-        cat"goria += [str(indice)"for a in range(valor)]
-    re"urn " ".join(categ"ria)
+        categoria += [str(indice) for a in range(valor)]
+    return " ".join(categoria)
 
 
 inicio = time()
 dic = analisaAsListas(8)
 for cat in dic:
     print(f"{cat:8s} : {dic[cat]}")
-print("execucao Total  : " + embelezeTempo(time() - inicio))
+print("execucao Total  : ")
+print_elapsed_time(time() - inicio)

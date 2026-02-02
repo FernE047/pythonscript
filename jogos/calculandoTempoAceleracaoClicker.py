@@ -1,10 +1,10 @@
-def embelezeTempo(segundos: float) -> str:
-    if segundos < 0:
-        segundos = -segundos
+def print_elapsed_time(seconds: float) -> None:
+    if seconds < 0:
+        seconds = -seconds
         sign = "-"
     else:
         sign = ""
-    total_ms = int(round(segundos * 1000))
+    total_ms = int(round(seconds * 1000))
     ms = total_ms % 1000
     total_s = total_ms // 1000
     s = total_s % 60
@@ -25,7 +25,7 @@ def embelezeTempo(segundos: float) -> str:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    return sign + ", ".join(parts)
+    print(sign + ", ".join(parts))
 
 def tempoDemoraProducao(quantidadeProdutora,quantidadeProduzida,precoProducao,producaoPrecisa):
     quantidadePorSegundo=quantidadeProduzida*quantidadeProdutora/60
@@ -63,4 +63,5 @@ quantidadeProdutora=1
 quantidadeProduzida=1
 precoProducao=1000
 tempo=tempoDemoraProducao(1,0.001,1000,1000)
-print(f"\nquantidadeProdutora : {quantidadeProdutora}\n{embelezeTempo(tempo)}\n")
+print(f"\nquantidadeProdutora : {quantidadeProdutora}\n")
+print_elapsed_time(tempo)

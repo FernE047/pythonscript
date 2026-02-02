@@ -3,13 +3,13 @@ import gc
 from time import time
 
 
-def embelezeTempo(segundos: float) -> str:
-    if segundos < 0:
-        segundos = -segundos
+def print_elapsed_time(seconds: float) -> None:
+    if seconds < 0:
+        seconds = -seconds
         sign = "-"
     else:
         sign = ""
-    total_ms = int(round(segundos * 1000))
+    total_ms = int(round(seconds * 1000))
     ms = total_ms % 1000
     total_s = total_ms // 1000
     s = total_s % 60
@@ -30,7 +30,7 @@ def embelezeTempo(segundos: float) -> str:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    return sign + ", ".join(parts)
+    print(sign + ", ".join(parts))
 
 #esse algoritmo faz o morph completo
 
@@ -39,7 +39,7 @@ def fazProcesso(processo,nome):
     subprocess.call (processo)
     fim = time()
     duracao = fim-inicio
-    print(nome+" demorou : "+embelezeTempo(duracao))
+    print_elapsed_time(duracao)
     
 inicioDef = time()
 #fazProcesso("python C:\\pythonscript\\imagem\\morphManual\\preparaMorph.py ","limpar directory")
@@ -51,5 +51,5 @@ fazProcesso("python C:\\pythonscript\\imagem\\morphManual\\addBackground.py ","f
 fazProcesso("python C:\\pythonscript\\imagem\\morphManual\\fazGif.py ","fazer Gif")
 fimDef = time()
 print("\nfinalizado")
-print("execução : "+embelezeTempo(fimDef-inicioDef))
+print_elapsed_time(fimDef-inicioDef)
 gc.collect()

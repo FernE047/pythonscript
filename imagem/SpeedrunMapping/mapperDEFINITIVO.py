@@ -5,13 +5,13 @@ from os import remove
 from time import time
 
 
-def embelezeTempo(segundos: float) -> str:
-    if segundos < 0:
-        segundos = -segundos
+def print_elapsed_time(seconds: float) -> None:
+    if seconds < 0:
+        seconds = -seconds
         sign = "-"
     else:
         sign = ""
-    total_ms = int(round(segundos * 1000))
+    total_ms = int(round(seconds * 1000))
     ms = total_ms % 1000
     total_s = total_ms // 1000
     s = total_s % 60
@@ -32,7 +32,7 @@ def embelezeTempo(segundos: float) -> str:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    return sign + ", ".join(parts)
+    print(sign + ", ".join(parts))
 
 
 def openFrame(frame):
@@ -157,11 +157,12 @@ for n, frame in enumerate(listdir(diretorioVideo)):
     fim = time()
     duracao = fim - inicio
     inicio = time()
-    print(str(n) + " : " + embelezeTempo(duracao * (totalFiles - n)))
+    print(f"{n} : ")
+    print_elapsed_time(duracao * (totalFiles - n))
     mapa.save("mapa.png")
 frameAtual.close()
 fimTotal = time()
 duracao = fimTotal - inicioTotal
-print(embelezeTempo(duracao))
+print_elapsed_time(duracao)
 mapa.save("mapa.png")
 mapa.close()

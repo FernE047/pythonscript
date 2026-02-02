@@ -1,13 +1,13 @@
 from time import time
 
 
-def embelezeTempo(segundos: float) -> str:
-    if segundos < 0:
-        segundos = -segundos
+def print_elapsed_time(seconds: float) -> None:
+    if seconds < 0:
+        seconds = -seconds
         sign = "-"
     else:
         sign = ""
-    total_ms = int(round(segundos * 1000))
+    total_ms = int(round(seconds * 1000))
     ms = total_ms % 1000
     total_s = total_ms // 1000
     s = total_s % 60
@@ -28,7 +28,7 @@ def embelezeTempo(segundos: float) -> str:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    return sign + ", ".join(parts)
+    print(sign + ", ".join(parts))
 
 
 def pos(a, pot):
@@ -62,10 +62,12 @@ def faz(limit, pot):
         fim = time()
         duracao = fim - inicio
         if duracao >= tempoRecorde:
-            print(str(t) + " :" + embelezeTempo(duracao))
+            print(str(t) + " :")
+            print_elapsed_time(duracao)
             tempoRecorde = duracao
             resto = limit - t
-            print("falta :" + embelezeTempo(duracao * resto))
+            print("falta :")
+            print_elapsed_time(duracao * resto)
 
 
 faz(10000, 2)

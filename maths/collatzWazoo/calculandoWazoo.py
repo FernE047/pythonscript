@@ -4,13 +4,13 @@ from estruturas import Regra
 from time import time
 
 
-def embelezeTempo(segundos: float) -> str:
-    if segundos < 0:
-        segundos = -segundos
+def print_elapsed_time(seconds: float) -> None:
+    if seconds < 0:
+        seconds = -seconds
         sign = "-"
     else:
         sign = ""
-    total_ms = int(round(segundos * 1000))
+    total_ms = int(round(seconds * 1000))
     ms = total_ms % 1000
     total_s = total_ms // 1000
     s = total_s % 60
@@ -84,10 +84,11 @@ for a in range(inicial,final):
     print(collatzFuturo)
     collatzFuturo.salva(a+1)
     tempos.append(fim-inicio)
-    print(embelezeTempo(tempos[-1]))
+    print_elapsed_time(tempos[-1])
     print("\n")
 if(len(tempos)>1):
     somaTempos=0
     for tempo in tempos:
         somaTempos+=tempo
-    print("total : "+embelezeTempo(somaTempos))
+    print("total : ")
+    print_elapsed_time(somaTempos)

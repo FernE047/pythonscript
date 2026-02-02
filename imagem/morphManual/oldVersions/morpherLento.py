@@ -21,13 +21,13 @@ def pegaInteiro(
             print("valor inválido, tente novamente")
 
 
-def embelezeTempo(segundos: float) -> str:
-    if segundos < 0:
-        segundos = -segundos
+def print_elapsed_time(seconds: float) -> None:
+    if seconds < 0:
+        seconds = -seconds
         sign = "-"
     else:
         sign = ""
-    total_ms = int(round(segundos * 1000))
+    total_ms = int(round(seconds * 1000))
     ms = total_ms % 1000
     total_s = total_ms // 1000
     s = total_s % 60
@@ -48,7 +48,7 @@ def embelezeTempo(segundos: float) -> str:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    return sign + ", ".join(parts)
+    print(sign + ", ".join(parts))
 
 def funcaoAfim(inicio,fim,total,n):
     elemento = []
@@ -104,8 +104,8 @@ with open("config.txt", "r", encoding="utf-8") as file:
             fim = time()
             duracao = fim-inicio
             print("são "+str(tamanhoFile)+" transformações")
-            print("uma execução demorou : "+embelezeTempo(duracao))
-            print("execução Total demorará : "+embelezeTempo(duracao*tamanhoFile))
+            print_elapsed_time(duracao)
+            print_elapsed_time(duracao*tamanhoFile)
             fim,inicio,duracao,tamanhoFile = [None,None,None,None]
             firstTime = False
 with imageio.get_writer("bulbasaurEvolve.gif", mode="I") as writer:
@@ -116,4 +116,4 @@ fimDef = time()
 imagemInicial.close()
 imagemFinal.close()
 print("\nfinalizado")
-print("execução : "+embelezeTempo(fimDef-inicioDef))
+print_elapsed_time(fimDef-inicioDef)
