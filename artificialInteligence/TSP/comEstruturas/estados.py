@@ -1,14 +1,11 @@
-# NoBatch
-
-
 class Estado:
     def __init__(self, grafo, caminhoFeito=None, trajetoTotal=None):
         self.grafo = grafo
-        if caminhoFeito == None:
+        if caminhoFeito is None:
             self.caminho = []
         else:
             self.caminho = caminhoFeito
-        if trajetoTotal == None:
+        if trajetoTotal is None:
             self.custo = 0
         else:
             self.custo = trajetoTotal
