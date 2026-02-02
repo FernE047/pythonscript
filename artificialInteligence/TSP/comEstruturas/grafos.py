@@ -1,70 +1,70 @@
-# NoBatch
+CoordData = tuple[int, int]
 
 
-class Grafo:
-    def __init__(self, tamanho=None, grafoBase=None):
-        if grafoBase == None:
-            if tamanho == None:
-                self.tamanho = 1
-                self.matriz = [[0]]
-            else:
-                self.tamanho = tamanho
-                self.matriz = [[0 for n in range(tamanho)] for m in range(tamanho)]
-        else:
-            self.tamanho = len(grafoBase)
-            self.matriz = grafoBase
+class Graph:
+    def __init__(
+        self, size: int | None = None, base_graph: list[list[float]] | None = None
+    ) -> None:
+        if base_graph is not None:
+            self.size = len(base_graph)
+            self.graph_matrix = base_graph
+            return
+        if size is None:
+            self.size = 1
+            self.graph_matrix = [[0.0]]
+            return
+        self.size = size
+        self.graph_matrix = [[0.0 for _ in range(size)] for _ in range(size)]
 
-    def getElement(self, coord):
-        return self.matriz[coord[0]][coord[1]]
+    def get_element(self, coord: CoordData) -> float:
+        return self.graph_matrix[coord[0]][coord[1]]
 
-    def setElement(self, coord, valor, symmetry=True):
-        self.matriz[coord[0]][coord[1]] = valor
+    def set_element(
+        self, coord: CoordData, value: float, symmetry: bool = True
+    ) -> None:
+        self.graph_matrix[coord[0]][coord[1]] = value
         if symmetry:
-            self.matriz[coord[1]][coord[0]] = valor
+            self.graph_matrix[coord[1]][coord[0]] = value
 
-    def imprime(self):
+    def imprime(self) -> None:
         print(str(self))
 
-    def __str__(self):
-        texto = []
-        for linha in self.matriz:
-            texto.append(
-                " ".join(
-                    [
-                        " " * (3 - len(str(elemento))) + str(elemento)
-                        for elemento in linha
-                    ]
-                )
+    def __str__(self) -> str:
+        text: list[str] = []
+        for node_row in self.graph_matrix:
+            text.append(
+                " ".join([" " * (3 - len(str(node))) + str(node) for node in node_row])
             )
-        return "\n".join(texto)
+        return "\n".join(text)
 
-    def __len__(self):
-        return self.tamanho
+    def __len__(self) -> int:
+        return self.size
 
 
-def GrafoFromArq(nome, lim=None):
-    file = open(nome)
-    linha = file.readline()
-    vertices = []
-    if lim:
-        indice = 1
-    while linha:
-        if lim:
-            if indice == lim:
-                break
-        elementos = linha.split()
-        x = elementos[2]
-        y = elementos[1]
-        vertices.append((float(x), float(y)))
-        linha = file.readline()
-        if lim:
-            indice += 1
-    grafo = Grafo(len(vertices))
-    for n, origem in enumerate(vertices):
-        for m, destino in enumerate(vertices):
-            coord = (n, m)
-            distancia = (
-                (destino[0] - origem[0]) ** 2 + (destino[1] - origem[1]) ** 2
-            ) ** 0.5
-            grafo.setElement(coord, distancia, False)
-    return grafo
+def get_graph_from_file(file_name: str, limit: None | int = None) -> Graph:
+    with open(file_name, "r", encoding="utf-8") as file:
+        line = file.readline()
+        vertexes: list[tuple[float, float]] = []
+        index = 0
+        if limit is not None:
+            index = 1
+        while line:
+            if limit is not None:
+                if index == limit:
+                    break
+            elementos = line.split()
+            x_str = elementos[2]
+            y_str = elementos[1]
+            vertexes.append((float(x_str), float(y_str)))
+            line = file.readline()
+            if limit is not None:
+                index += 1
+        graph = Graph(len(vertexes))
+        for x, source in enumerate(vertexes):
+            for y, destination in enumerate(vertexes):
+                coord = (x, y)
+                distance = (
+                    (destination[0] - source[0]) ** 2 + (destination[1] - source[1]) ** 2
+                ) ** 0.5
+                graph.set_element(coord, distance, False)
+    return graph

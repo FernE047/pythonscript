@@ -1,5 +1,5 @@
-from grafos import Grafo
-from grafos import GrafoFromArq
+from grafos import Graph
+from grafos import get_graph_from_file
 from estados import Estado
 
 
@@ -58,17 +58,17 @@ grafo = [
     [10, 10, 10, 0, 1],
     [10, 1, 10, 10, 0],
 ]
-grafo = Grafo(grafoBase=grafo)
+grafo = Graph(base_graph=grafo)
 estadoInicial = Estado(grafo)
 solucao = solvePorLargura(estadoInicial)
 solucao.imprime()
-grafo = Grafo(4)
-grafo.setElement([0, 1], 1)
-grafo.setElement([0, 2], 2)
-grafo.setElement([0, 3], 4)
-grafo.setElement([1, 2], 2)
-grafo.setElement([1, 3], 3)
-grafo.setElement([2, 3], 5)
+grafo = Graph(4)
+grafo.set_element([0, 1], 1)
+grafo.set_element([0, 2], 2)
+grafo.set_element([0, 3], 4)
+grafo.set_element([1, 2], 2)
+grafo.set_element([1, 3], 3)
+grafo.set_element([2, 3], 5)
 estadoInicial = Estado(grafo)
 solucao = solvePorProfundidade(estadoInicial)
 print(iterations)
@@ -77,7 +77,7 @@ iterations = 0
 cortes = 0
 solucao.imprime()
 for a in range(1, 23):
-    grafo = GrafoFromArq("grafo0004.txt", lim=a)
+    grafo = get_graph_from_file("grafo0004.txt", limit=a)
     estadoInicial = Estado(grafo)
     solucao = solvePorProfundidade(estadoInicial)
     solucao.imprime()
