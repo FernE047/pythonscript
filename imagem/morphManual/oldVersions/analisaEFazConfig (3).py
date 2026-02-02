@@ -249,7 +249,7 @@ def procuraContornoVerde(imagem,tom):
     return contorno
 
 def procuraBlob(linhaAtual,imagem,tom,blob,linhaAnterior = None):
-    if(linhaAnterior == None):
+    if(linhaAnterior is None):
         linhaAnterior = []
     proximaLinha = []
     for coord in linhaAtual:
@@ -283,7 +283,7 @@ def procuraBlobs(imagem,linhaAtual = None):
                         tons.append(pixel[1])
     tons.sort()
     for tom in tons:
-        if((tom == 255)and(linhaAtual != None)):
+        if (tom == 255) and (linhaAtual is not None):
             blob = []
         else:
             linhaAtual = procuraContornoVerde(imagem,tom)

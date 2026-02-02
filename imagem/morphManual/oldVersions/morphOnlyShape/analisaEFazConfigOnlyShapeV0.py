@@ -74,7 +74,7 @@ def procuraContornoVerde(imagem):
     return contorno
 
 def procuraBlob(linhaAtual,imagem,blob,linhaAnterior = None):
-    if(linhaAnterior == None):
+    if(linhaAnterior is None):
         linhaAnterior = []
     proximaLinha = []
     for coord in linhaAtual:

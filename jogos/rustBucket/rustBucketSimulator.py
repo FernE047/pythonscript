@@ -33,7 +33,7 @@ class Node:
             self.type = 1
         else:
             self.type = ["misc","slime","porco","fantasma","lula","polvo","verde"].index(aType)
-        if aCaminhoFeito == None:
+        if aCaminhoFeito is None:
             self.caminhoFeito = []
         else:
             self.caminhoFeito = aCaminhoFeito
@@ -106,7 +106,7 @@ class Node:
         texto.append("TIPO : " + self.getType())
         texto.append(str(self.coord))
         texto.append(str(self.getValue()))
-        if self.caminhoFeito != None:
+        if self.caminhoFeito is not None:
             if self.type == 2:
                 lista = self.caminhoFeito[1:]
             else:
