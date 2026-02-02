@@ -1,4 +1,9 @@
 from time import time
+from typing import Literal
+
+GraphData = list[list[float]]
+VertexData = tuple[float, float]
+StateData = tuple[float, list[int]]
 
 
 def print_elapsed_time(seconds: float) -> None:
@@ -31,141 +36,143 @@ def print_elapsed_time(seconds: float) -> None:
     print(sign + ", ".join(parts))
 
 
-def GrafoFromArq(nome, lim=None):
-    with open(nome, "r", encoding="utf-8") as file:
-        linha = file.readline()
-        vertices = []
-        if lim:
-            indice = 1
-        while linha:
-            if lim:
-                if indice == lim:
+def get_graph_from_file(file_name: str, nodes_limit: int | None = None) -> GraphData:
+    with open(file_name, "r", encoding="utf-8") as file:
+        lines = file.read().splitlines()
+        vertexes: list[VertexData] = []
+        index = 0
+        if nodes_limit:
+            index = 1
+        for line in lines:
+            line = line.strip()
+            if not line:
+                break
+            if nodes_limit:
+                if index == nodes_limit:
                     break
-            elementos = linha.split()
-            x = elementos[2]
-            y = elementos[1]
-            vertices.append((float(x), float(y)))
-            linha = file.readline()
-            if lim:
-                indice += 1
-        grafo = [[0 for _ in vertices] for _ in vertices]
-        for n, origem in enumerate(vertices):
-            for m, destino in enumerate(vertices):
-                distancia = (
-                    (destino[0] - origem[0]) ** 2 + (destino[1] - origem[1]) ** 2
-                ) ** 0.5
-                grafo[n][m] = distancia
-    return grafo
+            coordinates = line.split()
+            x_str = coordinates[2]
+            y_str = coordinates[1]
+            vertexes.append((float(x_str), float(y_str)))
+            if nodes_limit:
+                index += 1
+        graph = [[0.0 for _ in vertexes] for _ in vertexes]
+        for x, source in enumerate(vertexes):
+            for y, destination in enumerate(vertexes):
+                distance_x = abs(destination[0] - source[0])
+                distance_y = abs(destination[1] - source[1])
+                distance = (distance_x**2 + distance_y**2) ** 0.5
+                graph[x][y] = distance
+    return graph
 
 
-def geraFilhos(estado):
-    global grafo
-    filhos = []
-    for index in range(len(grafo)):
-        if index not in estado[1]:
-            filhos.append(fazMovimento(estado, index))
-    return filhos
+def generate_next_states(state: StateData) -> list[StateData]:
+    global graph
+    next_states: list[StateData] = []
+    for index in range(len(graph)):
+        if index not in state[1]:
+            next_states.append(build_path_with_edge(state, index))
+    return next_states
 
 
-def fazMovimento(estado, movimento):
-    custo = estado[0]
-    if estado[1]:
-        global grafo
-        custo += grafo[estado[1][-1]][movimento]
-    caminho = estado[1] + [movimento]
-    return (custo, caminho)
+def build_path_with_edge(state:StateData, move: int) -> StateData:
+    cost = state[0]
+    if state[1]:
+        global graph
+        cost += graph[state[1][-1]][move]
+    path = state[1] + [move]
+    return (cost, path)
 
 
-def imprime(duracao):
-    global grafo
-    global solucao
-    estado = (0, [])
-    for linha in grafo:
+def print_solution_summary(duration: float) -> None:
+    global graph
+    global solution_state
+    state: StateData = (0, [])
+    for line in graph:
         print(
             " ".join(
-                [" " * (3 - len(str(elemento))) + str(elemento) for elemento in linha]
+                [" " * (3 - len(str(element))) + str(element) for element in line]
             )
         )
     print()
-    for movimento in solucao[1]:
-        estado = fazMovimento(estado, movimento)
-        print("caminho : " + str(estado[1]))
-        print("custo   : " + str(estado[0]), end="\n\n")
+    for move in solution_state[1]:
+        state = build_path_with_edge(state, move)
+        print("caminho : " + str(state[1]))
+        print("custo   : " + str(state[0]), end="\n\n")
     print("iteracoes : " + str(iterations))
-    print("cortes    : " + str(cortes))
-    print_elapsed_time(duracao)
+    print("cortes    : " + str(cut_count))
+    print_elapsed_time(duration)
     print("\n\n\n")
 
 
-def solvePorProfundidade(estado, menorEstado=None):
+def depth_first_search(state: StateData, best_state: StateData | None = None) -> StateData:
     global iterations
-    global cortes
+    global cut_count
     iterations += 1
-    filhos = geraFilhos(estado)
-    if len(filhos) == 0:
-        if menorEstado == None:
-            return estado
-        else:
-            if estado[0] < menorEstado[0]:
-                return estado
-    for filho in filhos:
-        if menorEstado == None:
-            menorEstado = solvePorProfundidade(filho, menorEstado)
-        else:
-            if filho[0] < menorEstado[0]:
-                menorEstado = solvePorProfundidade(filho, menorEstado)
-            else:
-                cortes += 1
-    return menorEstado
+    children = generate_next_states(state)
+    if len(children) == 0:
+        if best_state is None:
+            return state
+        if state[0] < best_state[0]:
+            return state
+    for child in children:
+        if best_state is None:
+            best_state = depth_first_search(child, best_state)
+            continue
+        if child[0] < best_state[0]:
+            best_state = depth_first_search(child, best_state)
+            continue
+        cut_count += 1
+    assert best_state is not None
+    return best_state
 
 
-def solvePorLargura(estado):
+def breadth_first_search(state: StateData) -> StateData:
     global iterations
     iterations += 1
-    menorEstado = "a"
-    estados = [estado]
-    while estados:
-        proximosEstados = []
-        for estado in estados:
-            filhos = geraFilhos(estado)
-            if filhos:
-                for filho in filhos:
-                    if filho not in proximosEstados:
-                        proximosEstados.append(filho)
-            else:
-                if menorEstado == "a":
-                    menorEstado = estado
-                else:
-                    if estado[0] < menorEstado[0]:
-                        menorEstado = estado
-        estados = proximosEstados.copy()
-    return menorEstado
+    best_state: StateData | None = None
+    states = [state]
+    while states:
+        next_states: list[StateData] = []
+        for state in states:
+            next_generation = generate_next_states(state)
+            if len(next_generation) == 0:
+                if best_state is None:
+                    best_state = state
+                    continue
+                if state[0] < best_state[0]:
+                    best_state = state
+                continue
+            for generated_state in next_generation:
+                if generated_state not in next_states:
+                    next_states.append(generated_state)
+        states = next_states.copy()
+    assert best_state is not None
+    return best_state
 
 
-def solve(grafo, mode=1):
+def solve(mode: Literal[0, 1] = 1) -> None:
     global iterations
-    global cortes
-    global solucao
-    global estadoInicial
-    inicio = time()
+    global cut_count
+    global solution_state
+    start_time = time()
     iterations = 0
-    cortes = 0
-    estadoInicial = (0, [])
+    cut_count = 0
+    initial_state: StateData = (0, [])
     if mode:
-        solucao = solvePorProfundidade(estadoInicial)
+        solution_state = depth_first_search(initial_state)
     else:
-        solucao = solvePorLargura(estadoInicial)
-    final = time()
-    imprime(final - inicio)
+        solution_state = breadth_first_search(initial_state)
+    end_time = time()
+    print_solution_summary(end_time - start_time)
 
 
 silent = False
 iterations = 0
-cortes = 0
-estadoInicial = ()
-solucao = ()
+cut_count = 0
+solution_state: StateData = (0, [])
 
-grafo = [
+graph: GraphData = [
     [0, 10, 10, 1, 10],
     [10, 0, 1, 10, 10],
     [1, 10, 0, 10, 10],
@@ -173,12 +180,12 @@ grafo = [
     [10, 1, 10, 10, 0],
 ]
 
-solve(grafo, 0)
+solve(0)
 
-grafo = [[0, 1, 2, 4], [1, 0, 2, 3], [2, 2, 0, 5], [4, 3, 5, 0]]
+graph = [[0, 1, 2, 4], [1, 0, 2, 3], [2, 2, 0, 5], [4, 3, 5, 0]]
 
-solve(grafo, 1)
+solve(1)
 
-for a in range(1, 23):
-    grafo = GrafoFromArq("grafo0004.txt", lim=a)
-    solve(grafo, 1)
+for node_limit in range(1, 23):
+    graph = get_graph_from_file("grafo0004.txt", nodes_limit=node_limit)
+    solve(1)
