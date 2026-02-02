@@ -8,9 +8,9 @@ def fazAudio(file_name: str, text: str) -> None:
 
 def reverse_word_by_word(original_text: str) -> str:
     reversed_words: list[str] = []
-    for linha in original_text.split("\n"):
-        for palavra in linha.split(" "):
-            reversed_words.append(reverse_word(palavra))
+    for line in original_text.split("\n"):
+        for word in line.split(" "):
+            reversed_words.append(reverse_word(word))
         reversed_words.append("\n")
     reversed_text = " ".join(reversed_words)
     return reversed_text
@@ -18,8 +18,8 @@ def reverse_word_by_word(original_text: str) -> str:
 
 def reverse_word_by_word_no_line(original_text: str) -> str:
     reversed_words: list[str] = []
-    for palavra in original_text.split(" "):
-        reversed_words += [reverse_word(palavra)]
+    for word in original_text.split(" "):
+        reversed_words += [reverse_word(word)]
     reversed_text = " ".join(reversed_words)
     fazAudio("reversed_by_word", reversed_text)
     return reversed_text
