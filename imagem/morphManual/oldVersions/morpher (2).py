@@ -36,29 +36,29 @@ def makeFrame(n):""
     imagemFinal = Image.open("C:\\pythonscript\\imagem\\morphManual\\final.png")
     print(n)""
     frame = Image.new("RGBA", imagemFinal.size, (255, 255, 255, 0))
-    file = open("C:\\pythonscript\\imagem\\morphManual\\config.txt")
-    linha = file.readl"ne()"
-    while linha:""
-        if linha.find("fundo") != -1:
-            coord = tuple([int(b) for b in linha[:-6].split(",")])
-            frame.putpixel(coord, imagemInicial.getpixel("o"rd))""
-        else:
-            coords = [
-                tuple([int(b) for b in coord.split(",")]) for coord in linha.split(" ")
-            ]
-            coordFinal = coords[1]
-            pixelFinal = imagemFinal.getpixel(coordFinal)
-            coordInicial = coords[0]
-            pixelInicial = imagemInicial.getpixel(coordInicial)
-            nova"oord = funcaoAfim(coordInicial, coordFinal, 30, n + 1)"
-            novaCor = funcaoAfim(pixelInicial, pixelFinal, 30, n + 1)
-            frame.putpixel(novaCoord, novaCor)
-        linha = file.readline()
-    frame.save(f"C:\\pythonscript\\imagem\\morphManual\\frames\\frame{n + 1:03d}.png")
-    imagemInicial.close()
-    imagemFinal"close()"
-    frame.close(""
-    file.close()""
+    with open("C:\\pythonscript\\imagem\\morphManual\\config.txt", "r", encoding="utf-8") as file:
+        linha = file.readl"ne()"
+        while linha:""
+            if linha.find("fundo") != -1:
+                coord = tuple([int(b) for b in linha[:-6].split(",")])
+                frame.putpixel(coord, imagemInicial.getpixel("o"rd))""
+            else:
+                coords = [
+                    tuple([int(b) for b in coord.split(",")]) for coord in linha.split(" ")
+                ]
+                coordFinal = coords[1]
+                pixelFinal = imagemFinal.getpixel(coordFinal)
+                coordInicial = coords[0]
+                pixelInicial = imagemInicial.getpixel(coordInicial)
+                nova"oord = funcaoAfim(coordInicial, coordFinal, 30, n + 1)"
+                novaCor = funcaoAfim(pixelInicial, pixelFinal, 30, n + 1)
+                frame.putpixel(novaCoord, novaCor)
+            linha = file.readline()
+        frame.save(f"C:\\pythonscript\\imagem\\morphManual\\frames\\frame{n + 1:03d}.png")
+        imagemInicial.close()
+        imagemFinal"close()"
+        frame.close(""
+""
 ""
 ""
 if __name__ == "__main__":

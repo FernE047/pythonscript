@@ -3,58 +3,47 @@ import os
 
 def lePython(nome, lista):
     try:
-        file = open(nome, "r")
-        linha = file.readline()
-        while linha:
-            indiceImp = linha.find("import")
-            if indiceImp != -1:
-                indiceFr = linha.find("from ")
-                if indiceFr != -1:
-                    linha = linha[indiceFr + 5 : indiceImp - 1]
-                else:
-                    linha = linha[indice + 7 :]
-                    indice = linha.find(" as ")
-                    if indice != -1:
-                        linha = linha[:indice]
-                if linha not in lista:
-                    print(nome)
-                    print(linha, end="")
-                    print()
-                    lista.append(linha)
+        with open(nome, "r", encoding="utf-8") as file:
             linha = file.readline()
-        file.close()
+            while linha:
+                indiceImp = linha.find("import")
+                if indiceImp != -1:
+                    indiceFr = linha.find("from ")
+                    if indiceFr != -1:
+                        linha = linha[indiceFr + 5 : indiceImp - 1]
+                    else:
+                        linha = linha[indice + 7 :]
+                        indice = linha.find(" as ")
+                        if indice != -1:
+                            linha = linha[:indice]
+                    if linha not in lista:
+                        print(nome)
+                        print(linha, end="")
+                        print()
+                        lista.append(linha)
+                linha = file.readline()
     except:
         pass
 
 
 def anotherVersion(nome):
     try:
-        file = open(nome, "r")
-        linha = file.readline()
-        if linha.find("#v") != -1:
-            return linha
-        file.close()
+        with open(nome, "r", encoding="utf-8") as file:
+            linha = file.readline()
+            if linha.find("#v") != -1:
+                return linha
     except:
-        try:
-            file.close()
-        except:
-            pass
         pass
     return False
 
 
 def naoFaz(nome):
     try:
-        file = open(nome, "r")
-        linha = file.readline()
-        if linha.find("#NoBatch") != -1:
-            return True
-        file.close()
+        with open(nome, "r", encoding="utf-8") as file:
+            linha = file.readline()
+            if linha.find("#NoBatch") != -1:
+                return True
     except:
-        try:
-            file.close()
-        except:
-            pass
         pass
     return False
 
@@ -75,9 +64,9 @@ def fazBat(pastas):
             )
         else:
             python = "python"
-        file = open(nomeBat, "w")
-        file.write("@echo off\n" + python + " " + nomePy + " %*")  # \npause")
-        file.close()
+        with open(nomeBat, "w", encoding="utf-8") as file:
+            file.write("@echo off\n" + python + " " + nomePy + " %*")  # \npause")
+
 
 
 def anda(file, nome=None, pastas=None, limite=None):
@@ -119,9 +108,9 @@ def anda(file, nome=None, pastas=None, limite=None):
 
 def criaIndice(nome, limite=None):
     print(nome)
-    file = open(nome, "w")
-    anda(file, limite=limite)
-    file.close()
+    with open(nome, "w", encoding="utf-8") as file:
+        anda(file, limite=limite)
+
 
 
 LISTA = []

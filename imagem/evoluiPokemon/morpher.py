@@ -46,25 +46,24 @@ def makeFrame(args):
     imagemFinal = Image.open("C:\\pythonscript\\imagem\\evoluiPokemon\\final.png")
     print("Fazendo Frame : " + str(n))
     frame = Image.new("RGBA", imagemFinal.size, (255, 255, 255, 0))
-    file = open("C:\\pythonscript\\imagem\\evoluiPokemon\\config.txt", "r")
-    linha = file.readline()
-    while linha:
-        if linha.find("fundo") != -1:
-            coord = tuple([int(b) for b in linha[:-6].split(",")])
-            frame.putpixel(coord, imagemInicial.getpixel(coord))
-        else:
-            coords = [
-                tuple([int(b) for b in coord.split(",")]) for coord in linha.split(" ")
-            ]
-            coordFinal = coords[1]
-            pixelFinal = imagemFinal.getpixel(coordFinal)
-            coordInicial = coords[0]
-            pixelInicial = imagemInicial.getpixel(coordInicial)
-            novaCoord = funcaoCoord(coordInicial, coordFinal, total, n + 1)
-            novaCor = funcaoCor(pixelInicial, pixelFinal, total, n + 1)
-            frame.putpixel(novaCoord, novaCor)
+    with open("C:\\pythonscript\\imagem\\evoluiPokemon\\config.txt", "r", encoding="utf-8") as file:
         linha = file.readline()
-    file.close()
+        while linha:
+            if linha.find("fundo") != -1:
+                coord = tuple([int(b) for b in linha[:-6].split(",")])
+                frame.putpixel(coord, imagemInicial.getpixel(coord))
+            else:
+                coords = [
+                    tuple([int(b) for b in coord.split(",")]) for coord in linha.split(" ")
+                ]
+                coordFinal = coords[1]
+                pixelFinal = imagemFinal.getpixel(coordFinal)
+                coordInicial = coords[0]
+                pixelInicial = imagemInicial.getpixel(coordInicial)
+                novaCoord = funcaoCoord(coordInicial, coordFinal, total, n + 1)
+                novaCor = funcaoCor(pixelInicial, pixelFinal, total, n + 1)
+                frame.putpixel(novaCoord, novaCor)
+            linha = file.readline()
     print("\tFrame Terminado : " + str(n))
     frame.save(f"C:\\pythonscript\\imagem\\evoluiPokemon\\frames\\frame{n + 1:03d}.png")
     imagemInicial.close()

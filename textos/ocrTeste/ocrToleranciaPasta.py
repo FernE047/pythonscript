@@ -57,20 +57,19 @@ def applyTolerancia(img, tolerancia):
 
 
 start = time.time()
-curso = open("passadeira Candy.txt", "w")
-directory = ""
-pasta = os.path.join(directory, "PAPPDF", "PDFJaFeitos", "pasadeira Croche Candy")
-imagens = [os.path.join(pasta, arquivo) for arquivo in os.listdir(pasta)]
-for imagem in imagens:
-    print("\n" + imagem)
-    startProcessing = time.time()
-    phrase = ocr.image_to_string(applyTolerancia(imagem, 20), lang="por")
-    phraseBonita = tiraEspaçoBranco(phrase)
-    endProcessing = time.time()
-    print(str(len(phraseBonita)))
-    print("procesamento: " + embelezeTempo(endProcessing - startProcessing))
-    print(phraseBonita)
-    curso.write(phraseBonita + "\n\n")
-final = time.time()
-curso.close()
+with open("passadeira Candy.txt", "w", encoding="utf-8") as curso:
+    directory = ""
+    pasta = os.path.join(directory, "PAPPDF", "PDFJaFeitos", "pasadeira Croche Candy")
+    imagens = [os.path.join(pasta, arquivo) for arquivo in os.listdir(pasta)]
+    for imagem in imagens:
+        print("\n" + imagem)
+        startProcessing = time.time()
+        phrase = ocr.image_to_string(applyTolerancia(imagem, 20), lang="por")
+        phraseBonita = tiraEspaçoBranco(phrase)
+        endProcessing = time.time()
+        print(str(len(phraseBonita)))
+        print("procesamento: " + embelezeTempo(endProcessing - startProcessing))
+        print(phraseBonita)
+        curso.write(phraseBonita + "\n\n")
+    final = time.time()
 print("demorou " + embelezeTempo(final - start))

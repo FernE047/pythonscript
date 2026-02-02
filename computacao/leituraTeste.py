@@ -1,11 +1,9 @@
-file = open("vazio.txt")
-print(file)
-linha = file.readline()
-while linha:
-    print(linha)
+with open("vazio.txt", "r", encoding="utf-8") as file:
+    print(file)
     linha = file.readline()
-file.close()
-file = open("escritaTeste.txt", "w")
-file.write("hello world")
-file.write("\n")
-file.close()
+    while linha:
+        print(linha)
+        linha = file.readline()
+with open("escritaTeste.txt", "w", encoding="utf-8") as file:
+    file.write("hello world")
+    file.write("\n")

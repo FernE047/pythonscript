@@ -79,32 +79,31 @@ for nParte in range(quantiaPartes):
         if(firstTime):
             inicio = time()
         frame = Image.open(nomeFrame.format(n+1))
-        file = open(nomeFile.format(nParte))
-        linha = file.readline()
-        while(linha):
-            if(linha[0] in ["a","v"]):
-                linha = file.readline()
-                continue
-            coords = [tuple([int(b) for b in coord.split(",")]) for coord in linha.split(" ")]
-            coordFinal = coords[1]
-            pixelFinal = imagemFinal.getpixel(coordFinal)
-            coordInicial = coords[0]
-            pixelInicial = imagemInicial.getpixel(coordInicial)
-            novaCoord = funcaoAfim(coordInicial,coordFinal,quantiaFrames,n+1)
-            novaCor = funcaoAfim(pixelInicial,pixelFinal,quantiaFrames,n+1)
-            frame.putpixel(novaCoord,novaCor)
+        with open(nomeFile.format(nParte), "r", encoding="utf-8") as file:
             linha = file.readline()
-        frame.save(nomeFrame.format(n+1))
-        frame.close()
-        if(firstTime):
-            fim = time()
-            duracao = fim-inicio
-            print("são "+str(quantiaFrames)+" frames")
-            print("uma execução demorou : "+embelezeTempo(duracao))
-            print("execução Total demorará : "+embelezeTempo(duracao*quantiaFrames))
-            fim,inicio,duracao,tamanhoFile = [None,None,None,None]
-            firstTime = False
-        file.close()
+            while(linha):
+                if(linha[0] in ["a","v"]):
+                    linha = file.readline()
+                    continue
+                coords = [tuple([int(b) for b in coord.split(",")]) for coord in linha.split(" ")]
+                coordFinal = coords[1]
+                pixelFinal = imagemFinal.getpixel(coordFinal)
+                coordInicial = coords[0]
+                pixelInicial = imagemInicial.getpixel(coordInicial)
+                novaCoord = funcaoAfim(coordInicial,coordFinal,quantiaFrames,n+1)
+                novaCor = funcaoAfim(pixelInicial,pixelFinal,quantiaFrames,n+1)
+                frame.putpixel(novaCoord,novaCor)
+                linha = file.readline()
+            frame.save(nomeFrame.format(n+1))
+            frame.close()
+            if(firstTime):
+                fim = time()
+                duracao = fim-inicio
+                print("são "+str(quantiaFrames)+" frames")
+                print("uma execução demorou : "+embelezeTempo(duracao))
+                print("execução Total demorará : "+embelezeTempo(duracao*quantiaFrames))
+                fim,inicio,duracao,tamanhoFile = [None,None,None,None]
+                firstTime = False
     subprocess.call ("python C:\\pythonscript\\imagem\\morphManual\\fazGif.py ")
 imagemInicial.close()
 imagemFinal.close()

@@ -398,40 +398,39 @@ def configPart(data):
     print(n)
     parteInicial = Image.fromarray(imagemInicial)
     parteFinal = Image.fromarray(imagemFinal)
-    fileConfig = open(f"partesConfig\\parte{n:02d}Config.txt","w")
-    if n == 1:
-        fazFundo(fileConfig,parteInicial,parteFinal)
-    else:
-        hasRGB = hasColor(parteInicial)
-        print(hasRGB)
-        if(hasRGB[0]):
-            coordVermelhosInicial = procuraCor(parteInicial,0)
-            coordVermelhosFinal = procuraCor(parteFinal,0)
-        if(hasRGB[2]):
-            linhaAzulInicial = procuraLinhaAzul(parteInicial,inicio = hasRGB[2])
-            linhaAzulFinal = procuraLinhaAzul(parteFinal)
-            if not hasRGB[2]:
-                escreveLinhas(linhaAzulInicial,linhaAzulFinal,fileConfig)
-        if(hasRGB[1]):
+    with open(f"partesConfig\\parte{n:02d}Config.txt","w", encoding="utf-8") as fileConfig:
+        if n == 1:
+            fazFundo(fileConfig,parteInicial,parteFinal)
+        else:
+            hasRGB = hasColor(parteInicial)
+            print(hasRGB)
+            if(hasRGB[0]):
+                coordVermelhosInicial = procuraCor(parteInicial,0)
+                coordVermelhosFinal = procuraCor(parteFinal,0)
             if(hasRGB[2]):
-                blobsInicial = [linhaAzulInicial]
-                blobsFinal = [linhaAzulFinal]
-            elif(hasRGB[0]):
-                blobsInicial = [[a[0] for a in coordVermelhosInicial]]
-                blobsFinal = [[a[0] for a in coordVermelhosFinal]]
-            else:
-                blobsInicial = [procuraContornoVerde(parteInicial)]
-                blobsFinal = [procuraContornoVerde(parteFinal)]
-            procuraBlob(parteInicial,blobsInicial)
-            procuraBlob(parteFinal,blobsFinal)
-            escreveBlobs(blobsInicial,blobsFinal,fileConfig)
-        if(hasRGB[0]):
-        for coordInicial, coordFinal in zip(coordVermelhosInicial, coordVermelhosFinal):
-            for coord_i, coord_f in zip(coordInicial, coordFinal):
-                fileConfig.write(str(coord_i[0])+","+str(coord_i[1]))
-                fileConfig.write(" "+str(coord_f[0])+","+str(coord_f[1])+"\n")
-        print()
-    fileConfig.close()
+                linhaAzulInicial = procuraLinhaAzul(parteInicial,inicio = hasRGB[2])
+                linhaAzulFinal = procuraLinhaAzul(parteFinal)
+                if not hasRGB[2]:
+                    escreveLinhas(linhaAzulInicial,linhaAzulFinal,fileConfig)
+            if(hasRGB[1]):
+                if(hasRGB[2]):
+                    blobsInicial = [linhaAzulInicial]
+                    blobsFinal = [linhaAzulFinal]
+                elif(hasRGB[0]):
+                    blobsInicial = [[a[0] for a in coordVermelhosInicial]]
+                    blobsFinal = [[a[0] for a in coordVermelhosFinal]]
+                else:
+                    blobsInicial = [procuraContornoVerde(parteInicial)]
+                    blobsFinal = [procuraContornoVerde(parteFinal)]
+                procuraBlob(parteInicial,blobsInicial)
+                procuraBlob(parteFinal,blobsFinal)
+                escreveBlobs(blobsInicial,blobsFinal,fileConfig)
+            if(hasRGB[0]):
+            for coordInicial, coordFinal in zip(coordVermelhosInicial, coordVermelhosFinal):
+                for coord_i, coord_f in zip(coordInicial, coordFinal):
+                    fileConfig.write(str(coord_i[0])+","+str(coord_i[1]))
+                    fileConfig.write(" "+str(coord_f[0])+","+str(coord_f[1])+"\n")
+            print()
     parteInicial.close()
     parteFinal.close()
 

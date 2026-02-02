@@ -1,5 +1,4 @@
 #cria um programa python
 
-f = open("clone.py", "w")
-f.write("print("new program")\n")
-f.close()
+with open("clone.py", "w") as file:
+    file.write("print(\"new program\")\n")

@@ -424,64 +424,61 @@ def fazConfig(quantiaFrames):
     imagemInicialPNG = Image.fromarray(imagemInicialPDN.layers[0].image)
     imagemFinalPNG = Image.fromarray(imagemFinalPDN.layers[0].image)
     quantiaPartes = len(imagemInicialPDN.layers)
-    file = open("config.txt","w")
-    partes = None
-    for nParte in range(1,quantiaPartes):
-        print(nParte)
-        parteInicial = Image.fromarray(imagemInicialPDN.layers[nParte].image)
-        parteFinal = Image.fromarray(imagemFinalPDN.layers[nParte].image)
-        if nParte == 1:
-            if(parteInicial.getpixel((0,0))==(255,255,255,255)):
-                fazFundo(file,parteInicial,parteFinal)
-                continue
-        fileConfig = open(nomeConfig.format(nParte),"w")
-        hasRGB = hasColor(parteInicial)
-        print(hasRGB)
-        if(hasRGB[0]):
-            coordVermelhosInicial = procuraCor(parteInicial,0)
-            coordVermelhosFinal = procuraCor(parteFinal,0)
-        if(hasRGB[2]):
-            linhaAzulInicial = procuraLinhaAzul(parteInicial,primeiro = hasRGB[2])
-            linhaAzulFinal = procuraLinhaAzul(parteFinal)
-            escreveLinhas(imagemInicialPNG,imagemFinalPNG,linhaAzulInicial,linhaAzulFinal,fileConfig,quantiaFrames)
-        if(hasRGB[3]):
-            linhaAzulInicial = procuraLinhaAzulIterativo(parteInicial,inicio = hasRGB[3])
-            linhaAzulFinal = procuraLinhaAzulIterativo(parteFinal)
-            escreveLinhas(imagemInicialPNG,imagemFinalPNG,linhaAzulInicial,linhaAzulFinal,fileConfig,quantiaFrames)
-        if(hasRGB[1]):
-            if(hasRGB[2])or(hasRGB[3]):
-                blobsInicial = [linhaAzulInicial]
-                procuraBlob(parteInicial,linhaAzulInicial,blobsInicial)
-                blobsFinal = [linhaAzulFinal]
-                procuraBlob(parteFinal,linhaAzulFinal,blobsFinal)
-            elif(hasRGB[0]):
-                blobsInicial = [[a[0] for a in coordVermelhosInicial]]
-                procuraBlob(parteInicial,blobsInicial[0],blobsInicial)
-                blobsFinal = [[a[0] for a in coordVermelhosFinal]]
-                procuraBlob(parteFinal,blobsFinal[0],blobsFinal)
-            else:
-                blobsInicial = []
-                procuraBlob(parteInicial,[],blobsInicial)
-                blobsFinal = []
-                procuraBlob(parteFinal,[],blobsFinal)
-            escreveBlobs(imagemInicialPNG,imagemFinalPNG,blobsInicial,blobsFinal,fileConfig,quantiaFrames)
-        if(hasRGB[0]):
-            for coordInicial, coordFinal in zip(coordVermelhosInicial, coordVermelhosFinal):
-                for coord_i, coord_f in zip(coordInicial, coordFinal):
-                    fileConfig.write(str(coord_i[0])+","+str(coord_i[1]))
-                    fileConfig.write(" "+str(coord_f[0])+","+str(coord_f[1])+"\n")
-        print()
-        fileConfig.close()
-        parteInicial.close()
-        parteFinal.close()
-    for nParte in range(1,quantiaPartes):
-        fileConfig = open(nomeConfig.format(nParte),"r")
-        linha = fileConfig.readline()
-        while(linha):
-            file.write(linha)
-            linha = fileConfig.readline()
-        fileConfig.close()
-    file.close()
+    with open("config.txt","w", encoding = "utf-8") as file:
+        partes = None
+        for nParte in range(1,quantiaPartes):
+            print(nParte)
+            parteInicial = Image.fromarray(imagemInicialPDN.layers[nParte].image)
+            parteFinal = Image.fromarray(imagemFinalPDN.layers[nParte].image)
+            if nParte == 1:
+                if(parteInicial.getpixel((0,0))==(255,255,255,255)):
+                    fazFundo(file,parteInicial,parteFinal)
+                    continue
+            with open(nomeConfig.format(nParte),"w", encoding = "utf-8") as fileConfig:
+                hasRGB = hasColor(parteInicial)
+                print(hasRGB)
+                if(hasRGB[0]):
+                    coordVermelhosInicial = procuraCor(parteInicial,0)
+                    coordVermelhosFinal = procuraCor(parteFinal,0)
+                if(hasRGB[2]):
+                    linhaAzulInicial = procuraLinhaAzul(parteInicial,primeiro = hasRGB[2])
+                    linhaAzulFinal = procuraLinhaAzul(parteFinal)
+                    escreveLinhas(imagemInicialPNG,imagemFinalPNG,linhaAzulInicial,linhaAzulFinal,fileConfig,quantiaFrames)
+                if(hasRGB[3]):
+                    linhaAzulInicial = procuraLinhaAzulIterativo(parteInicial,inicio = hasRGB[3])
+                    linhaAzulFinal = procuraLinhaAzulIterativo(parteFinal)
+                    escreveLinhas(imagemInicialPNG,imagemFinalPNG,linhaAzulInicial,linhaAzulFinal,fileConfig,quantiaFrames)
+                if(hasRGB[1]):
+                    if(hasRGB[2])or(hasRGB[3]):
+                        blobsInicial = [linhaAzulInicial]
+                        procuraBlob(parteInicial,linhaAzulInicial,blobsInicial)
+                        blobsFinal = [linhaAzulFinal]
+                        procuraBlob(parteFinal,linhaAzulFinal,blobsFinal)
+                    elif(hasRGB[0]):
+                        blobsInicial = [[a[0] for a in coordVermelhosInicial]]
+                        procuraBlob(parteInicial,blobsInicial[0],blobsInicial)
+                        blobsFinal = [[a[0] for a in coordVermelhosFinal]]
+                        procuraBlob(parteFinal,blobsFinal[0],blobsFinal)
+                    else:
+                        blobsInicial = []
+                        procuraBlob(parteInicial,[],blobsInicial)
+                        blobsFinal = []
+                        procuraBlob(parteFinal,[],blobsFinal)
+                    escreveBlobs(imagemInicialPNG,imagemFinalPNG,blobsInicial,blobsFinal,fileConfig,quantiaFrames)
+                if(hasRGB[0]):
+                    for coordInicial, coordFinal in zip(coordVermelhosInicial, coordVermelhosFinal):
+                        for coord_i, coord_f in zip(coordInicial, coordFinal):
+                            fileConfig.write(str(coord_i[0])+","+str(coord_i[1]))
+                            fileConfig.write(" "+str(coord_f[0])+","+str(coord_f[1])+"\n")
+                print()
+            parteInicial.close()
+            parteFinal.close()
+        for nParte in range(1,quantiaPartes):
+            with open(nomeConfig.format(nParte),"r", encoding = "utf-8") as fileConfig:
+                linha = fileConfig.readline()
+                while(linha):
+                    file.write(linha)
+                    linha = fileConfig.readline()
     return [imagemInicialPNG,imagemFinalPNG]
 
 def funcaoAfim(inicio,fim,total,n):
@@ -504,31 +501,30 @@ print("\n tamanho: "+str(imagemInicial.size),end="\n\n")
 for n in range(quantiaFrames):
     print(n)
     frame = Image.new("RGBA",imagemFinal.size,(255,255,255,0))
-    file = open("config.txt")
-    linha = file.readline()
-    while(linha):
-        if(linha.find("fundo")!=-1):
-            coord = tuple([int(b) for b in linha[:-6].split(",")])
-            frame.putpixel(coord,imagemInicial.getpixel(coord))
-        else:
-            dados = [tuple([int(b) for b in coord.split(",")]) for coord in linha.split(" ")]
-            novaCoord = []
-            for m in range(2):
-                A = dados[m][0]
-                B = dados[m][1]
-                novaCoord.append(int((n+1)*A/(quantiaFrames+1)+B))
-            novaCoord = tuple(novaCoord)
-            novaCor = []
-            for m in range(3):
-                A = dados[m+2][0]
-                B = dados[m+2][1]
-                novaCor.append(int((n+1)*A/(quantiaFrames+1)+B))
-            novaCor.append(255)
-            novaCor = tuple(novaCor)
-            frame.putpixel(novaCoord,novaCor)
+    with open("config.txt", "r", encoding="utf-8") as file:
         linha = file.readline()
-    frame.save(nomeFrame.format(n+1))
-    frame.close()
-    file.close()
+        while(linha):
+            if(linha.find("fundo")!=-1):
+                coord = tuple([int(b) for b in linha[:-6].split(",")])
+                frame.putpixel(coord,imagemInicial.getpixel(coord))
+            else:
+                dados = [tuple([int(b) for b in coord.split(",")]) for coord in linha.split(" ")]
+                novaCoord = []
+                for m in range(2):
+                    A = dados[m][0]
+                    B = dados[m][1]
+                    novaCoord.append(int((n+1)*A/(quantiaFrames+1)+B))
+                novaCoord = tuple(novaCoord)
+                novaCor = []
+                for m in range(3):
+                    A = dados[m+2][0]
+                    B = dados[m+2][1]
+                    novaCor.append(int((n+1)*A/(quantiaFrames+1)+B))
+                novaCor.append(255)
+                novaCor = tuple(novaCor)
+                frame.putpixel(novaCoord,novaCor)
+            linha = file.readline()
+        frame.save(nomeFrame.format(n+1))
+        frame.close()
 imagemInicial.close()
 imagemFinal.close()

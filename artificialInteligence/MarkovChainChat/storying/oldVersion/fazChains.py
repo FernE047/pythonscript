@@ -64,10 +64,9 @@ def faz_chain(text: str, is_title: bool = False) -> None:
 
 for file_name in os.listdir("stories"):
     print(file_name)
-    file = open(f"stories/{file_name}", "r", encoding="utf-8")
-    title_and_story_parts = file.readline().split(" : ")
-    story = title_and_story_parts[-1:][0]
-    title = ": ".join(title_and_story_parts[:-1])
-    faz_chain(title, is_title=True)
-    faz_chain(story)
-    file.close()
+    with open(f"stories/{file_name}", "r", encoding="utf-8") as file:
+        title_and_story_parts = file.readline().split(" : ")
+        story = title_and_story_parts[-1:][0]
+        title = ": ".join(title_and_story_parts[:-1])
+        faz_chain(title, is_title=True)
+        faz_chain(story)

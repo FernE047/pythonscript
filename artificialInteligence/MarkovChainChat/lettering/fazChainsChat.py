@@ -12,7 +12,6 @@ def update_term_count(index: int, keyword: str) -> None:
             file_write.write(keyword + " 1\n")
             return
         with open(f"chain/{index:03d}.txt", "r", encoding="utf-8") as file_read:
-            file_read = open(f"chain/{index:03d}.txt", "r", encoding="utf-8")
             line = file_read.readline()
             keyword_found = False
             index = len(keyword)
@@ -26,7 +25,6 @@ def update_term_count(index: int, keyword: str) -> None:
                 line = file_read.readline()
             if not keyword_found:
                 file_write.write(keyword + " 1\n")
-            file_read.close()
 
 
 def update_chain_file(index: int, keyword: str) -> None:

@@ -368,11 +368,10 @@ def configPart(indice):
     print("a")
     parteFinal = ImagemParte(indice,"C:\\pythonscript\\imagem\\morphManual\\final.pdn")
     print("b")
-    fileConfig = open(f"C:\\pythonscript\\imagem\\morphManual\\partesConfig\\parte{indice:02d}Config.txt","w")
-    print("c")
-    parteInicial.escreveArea(parteFinal,fileConfig)
-    print("\tParte Terminada : " + str(indice))
-    fileConfig.close()
+    with open(f"C:\\pythonscript\\imagem\\morphManual\\partesConfig\\parte{indice:02d}Config.txt","w", encoding = "utf-8") as fileConfig:
+        print("c")
+        parteInicial.escreveArea(parteFinal,fileConfig)
+        print("\tParte Terminada : " + str(indice))
         
 if __name__ == "__main__":
     limpaPasta("C:\\pythonscript\\imagem\\morphManual\\partesConfig")

@@ -14,9 +14,9 @@ def fazBat(nome):
     nomeBat = "C:\\JavaProgs\\" + nomeProject + ".bat"
     print(nomeBat)
     nomeJava = pasta + "\\" + nomeProject
-    file = open(nomeBat, "w")
-    file.write("@echo off\njava " + nomeJava + " %*")  # \npause")
-    file.close()
+    with open(nomeBat, "w",encoding="utf-8") as file:
+        file.write("@echo off\njava " + nomeJava + " %*")  # \npause")
+
 
 
 def fazBatProject(nome):
@@ -24,10 +24,8 @@ def fazBatProject(nome):
     nomeBat = "C:\\JavaProgs\\" + nomeProject + ".bat"
     print(nomeBat)
     nomeJava = pasta + "\\teste.Teste"
-    file = open(nomeBat, "w")
-    file.write("@echo off\njava " + nomeJava + " %*")  # \npause")
-    file.close()
-
+    with open(nomeBat, "w",encoding="utf-8") as file:
+        file.write("@echo off\njava " + nomeJava + " %*")  # \npause()
 
 diretorio = "C:\\JavaProgs"
 for pasta in [diretorio + "\\" + folder for folder in os.listdir(diretorio)]:

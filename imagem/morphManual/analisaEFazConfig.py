@@ -621,10 +621,9 @@ def configPart(indice):
     print("Fazendo Parte : " + str(indice))
     parteInicial = ImagemParte(f"C:\\pythonscript\\imagem\\morphManual\\partes\\iniciais\\{indice:03d}.png")
     parteFinal = ImagemParte(f"C:\\pythonscript\\imagem\\morphManual\\partes\\finais\\{indice:03d}.png")
-    fileConfig = open(f"C:\\pythonscript\\imagem\\morphManual\\partes\\config\\{indice:03d}.txt","w")
-    parteInicial.escreveArea(parteFinal,fileConfig)
-    print("\tParte Terminada : " + str(indice))
-    fileConfig.close()
+    with open(f"C:\\pythonscript\\imagem\\morphManual\\partes\\config\\{indice:03d}.txt","w", encoding="utf-8") as fileConfig:
+        parteInicial.escreveArea(parteFinal,fileConfig)
+        print("\tParte Terminada : " + str(indice))
         
 if __name__ == "__main__":
     quantiaPartes = len(os.listdir("C:\\pythonscript\\imagem\\morphManual\\partes\\finais"))

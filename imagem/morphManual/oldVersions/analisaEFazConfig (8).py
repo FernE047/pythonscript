@@ -361,28 +361,27 @@ def configPart(data):
     print("Fazendo Parte : " + str(n))
     parteInicial = Image.fromarray(imagemInicial)
     parteFinal = Image.fromarray(imagemFinal)
-    fileConfig = open(f"partesConfig\\parte{n:02d}Config.txt","w")
-    if n == 1:
-        fazFundo(fileConfig,parteInicial,parteFinal)
-    else:
-        hasRGB = hasColor(parteInicial)
-        if(hasRGB[1]):
-            linhaAzulInicial = procuraLinhaAzul(parteInicial,inicio = hasRGB[1])
-            linhaAzulFinal = procuraLinhaAzul(parteFinal)
-        if(hasRGB[0]):
-            if(hasRGB[1]):
-                blobInicial = [linhaAzulInicial]
-                blobFinal = [linhaAzulFinal]
-            else:
-                blobInicial = [procuraContornoVerde(parteInicial)]
-                blobFinal = [procuraContornoVerde(parteFinal)]
-            procuraBlob(parteInicial,blobInicial)
-            procuraBlob(parteFinal,blobFinal)
-            escreveBlobs(blobInicial,blobFinal,fileConfig)
+    with open(f"partesConfig\\parte{n:02d}Config.txt","w", encoding="utf-8") as fileConfig:
+        if n == 1:
+            fazFundo(fileConfig,parteInicial,parteFinal)
         else:
-            escreveLinhas(linhaAzulInicial,linhaAzulFinal,fileConfig)
-    print("\tParte Terminada : " + str(n))
-    fileConfig.close()
+            hasRGB = hasColor(parteInicial)
+            if(hasRGB[1]):
+                linhaAzulInicial = procuraLinhaAzul(parteInicial,inicio = hasRGB[1])
+                linhaAzulFinal = procuraLinhaAzul(parteFinal)
+            if(hasRGB[0]):
+                if(hasRGB[1]):
+                    blobInicial = [linhaAzulInicial]
+                    blobFinal = [linhaAzulFinal]
+                else:
+                    blobInicial = [procuraContornoVerde(parteInicial)]
+                    blobFinal = [procuraContornoVerde(parteFinal)]
+                procuraBlob(parteInicial,blobInicial)
+                procuraBlob(parteFinal,blobFinal)
+                escreveBlobs(blobInicial,blobFinal,fileConfig)
+            else:
+                escreveLinhas(linhaAzulInicial,linhaAzulFinal,fileConfig)
+        print("\tParte Terminada : " + str(n))
     parteInicial.close()
     parteFinal.close()
 

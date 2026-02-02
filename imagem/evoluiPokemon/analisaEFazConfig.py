@@ -403,7 +403,6 @@ if __name__ == "__main__":
     parteFinal = Image.open("C:\\pythonscript\\imagem\\evoluiPokemon\\final.png")
     areaFinal = Area(parteFinal)
     parteFinal.close()
-    fileConfig = open("C:\\pythonscript\\imagem\\evoluiPokemon\\config.txt", "w")
-    areaInicial.escreve(areaFinal, fileConfig)
-    print("\Analise Terminada : " + str(0))
-    fileConfig.close()
+    with open("C:\\pythonscript\\imagem\\evoluiPokemon\\config.txt", "w", encoding="utf-8") as fileConfig:
+        areaInicial.escreve(areaFinal, fileConfig)
+        print("\Analise Terminada : " + str(0))

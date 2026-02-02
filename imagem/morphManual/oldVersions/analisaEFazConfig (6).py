@@ -399,55 +399,51 @@ imagemFinal = pypdn.read("final.pdn")
 Image.fromarray(imagemInicial.layers[0].image).save("inicial.png")
 Image.fromarray(imagemFinal.layers[0].image).save("final.png")
 quantiaPartes = len(imagemInicial.layers)
-file = open("config.txt","w")
-partes = None
-for nParte in range(1,quantiaPartes):
-    print(nParte)
-    parteInicial = Image.fromarray(imagemInicial.layers[nParte].image)
-    parteFinal = Image.fromarray(imagemFinal.layers[nParte].image)
-    if nParte == 1:
-        fileConfig = open(nomeConfig.format(nParte),"w")
-        fazFundo(file,parteInicial,parteFinal)
-        fileConfig.close()
-        continue
-    fileConfig = open(nomeConfig.format(nParte),"w")
-    hasRGB = hasColor(parteInicial)
-    print(hasRGB)
-    if(hasRGB[0]):
-        coordVermelhosInicial = procuraCor(parteInicial,0)
-        coordVermelhosFinal = procuraCor(parteFinal,0)
-    if(hasRGB[2]):
-        linhaAzulInicial = procuraLinhaAzul(parteInicial,inicio = hasRGB[2])
-        linhaAzulFinal = procuraLinhaAzul(parteFinal)
-        if not hasRGB[2]:
-            escreveLinhas(linhaAzulInicial,linhaAzulFinal,fileConfig)
-    if(hasRGB[1]):
-        if(hasRGB[2]):
-            blobsInicial = [linhaAzulInicial]
-            blobsFinal = [linhaAzulFinal]
-        elif(hasRGB[0]):
-            blobsInicial = [[a[0] for a in coordVermelhosInicial]]
-            blobsFinal = [[a[0] for a in coordVermelhosFinal]]
-        else:
-            blobsInicial = [procuraContornoVerde(parteInicial)]
-            blobsFinal = [procuraContornoVerde(parteFinal)]
-        procuraBlob(parteInicial,blobsInicial)
-        procuraBlob(parteFinal,blobsFinal)
-        escreveBlobs(blobsInicial,blobsFinal,fileConfig)
-    if(hasRGB[0]):
-        for coordInicial, coordFinal in zip(coordVermelhosInicial, coordVermelhosFinal):
-            for coord_i, coord_f in zip(coordInicial, coordFinal):
-                fileConfig.write(str(coord_i[0]) + "," + str(coord_i[1]))
-                fileConfig.write(" " + str(coord_f[0]) + "," + str(coord_f[1]) + "\n")
-    print()
-    fileConfig.close()
-    parteInicial.close()
-    parteFinal.close()
-for nParte in range(1,quantiaPartes):
-    fileConfig = open(nomeConfig.format(nParte),"r")
-    linha = fileConfig.readline()
-    while(linha):
-        file.write(linha)
-        linha = fileConfig.readline()
-    fileConfig.close()
-file.close()
+with open("config.txt","w", encoding= "utf-8") as file:
+    partes = None
+    for nParte in range(1,quantiaPartes):
+        print(nParte)
+        parteInicial = Image.fromarray(imagemInicial.layers[nParte].image)
+        parteFinal = Image.fromarray(imagemFinal.layers[nParte].image)
+        if nParte == 1:
+            with open(nomeConfig.format(nParte),"w", encoding= "utf-8"  ) as fileConfig:
+                fazFundo(file,parteInicial,parteFinal)
+            continue
+        with open(nomeConfig.format(nParte),"w") as fileConfig:
+            hasRGB = hasColor(parteInicial)
+            print(hasRGB)
+            if(hasRGB[0]):
+                coordVermelhosInicial = procuraCor(parteInicial,0)
+                coordVermelhosFinal = procuraCor(parteFinal,0)
+            if(hasRGB[2]):
+                linhaAzulInicial = procuraLinhaAzul(parteInicial,inicio = hasRGB[2])
+                linhaAzulFinal = procuraLinhaAzul(parteFinal)
+                if not hasRGB[2]:
+                    escreveLinhas(linhaAzulInicial,linhaAzulFinal,fileConfig)
+            if(hasRGB[1]):
+                if(hasRGB[2]):
+                    blobsInicial = [linhaAzulInicial]
+                    blobsFinal = [linhaAzulFinal]
+                elif(hasRGB[0]):
+                    blobsInicial = [[a[0] for a in coordVermelhosInicial]]
+                    blobsFinal = [[a[0] for a in coordVermelhosFinal]]
+                else:
+                    blobsInicial = [procuraContornoVerde(parteInicial)]
+                    blobsFinal = [procuraContornoVerde(parteFinal)]
+                procuraBlob(parteInicial,blobsInicial)
+                procuraBlob(parteFinal,blobsFinal)
+                escreveBlobs(blobsInicial,blobsFinal,fileConfig)
+            if(hasRGB[0]):
+                for coordInicial, coordFinal in zip(coordVermelhosInicial, coordVermelhosFinal):
+                    for coord_i, coord_f in zip(coordInicial, coordFinal):
+                        fileConfig.write(str(coord_i[0]) + "," + str(coord_i[1]))
+                        fileConfig.write(" " + str(coord_f[0]) + "," + str(coord_f[1]) + "\n")
+            print()
+        parteInicial.close()
+        parteFinal.close()
+    for nParte in range(1,quantiaPartes):
+        with open(nomeConfig.format(nParte),"r", encoding= "utf-8") as fileConfig:
+            linha = fileConfig.readline()
+            while(linha):
+                file.write(linha)
+                linha = fileConfig.readline()

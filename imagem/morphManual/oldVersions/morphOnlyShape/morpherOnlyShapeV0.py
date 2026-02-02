@@ -11,16 +11,15 @@ def funcaoAfim(inicio,fim,total,n):
 
 imagemInicial = Image.open("C:\\pythonscript\\imagem\\morphOnlyShape\\inicial.png")
 imagemFinal = Image.new("RGBA",imagemInicial.size,(0,0,0,0))
-file = open("C:\\pythonscript\\imagem\\morphOnlyShape\\config.txt")
-linha = file.readline()
-while(linha):
-    coords = [tuple([int(b) for b in coord.split(",")]) for coord in linha.split(" ")]
-    coordInicial = coords[0]
-    coordFinal = coords[1]
-    cor = imagemInicial.getpixel(coordInicial)
-    imagemFinal.putpixel(coordFinal,cor)
+with open("C:\\pythonscript\\imagem\\morphOnlyShape\\config.txt", "r", encoding="utf-8") as file:
     linha = file.readline()
-imagemFinal.save("C:\\pythonscript\\imagem\\morphOnlyShape\\final.png")
-file.close()
+    while(linha):
+        coords = [tuple([int(b) for b in coord.split(",")]) for coord in linha.split(" ")]
+        coordInicial = coords[0]
+        coordFinal = coords[1]
+        cor = imagemInicial.getpixel(coordInicial)
+        imagemFinal.putpixel(coordFinal,cor)
+        linha = file.readline()
+    imagemFinal.save("C:\\pythonscript\\imagem\\morphOnlyShape\\final.png")
 imagemInicial.close()
 imagemFinal.close()

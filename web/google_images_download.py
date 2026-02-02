@@ -242,15 +242,15 @@ def single_image():
     image_name = str(url[(url.rfind("/")) + 1:])
     if "?" in image_name:
         image_name = image_name[:image_name.find("?")]
+    path_name = main_directory + "/" + image_name
     if ".jpg" in image_name or ".gif" in image_name or ".png" in image_name or ".bmp" in image_name or ".svg" in image_name or ".webp" in image_name or ".ico" in image_name:
-        output_file = open(main_directory + "/" + image_name, "wb")
+        output_file_name = path_name
     else:
-        output_file = open(main_directory + "/" + image_name + ".jpg", "wb")
-        image_name = image_name + ".jpg"
-
-    data = response.read()
-    output_file.write(data)
-    response.close()
+        output_file_name = path_name + ".jpg"
+    with open(output_file_name, "wb") as output_file:
+        data = response.read()
+        output_file.write(data)
+        response.close()
     print("completed ====> " + image_name)
     return
 
@@ -335,22 +335,20 @@ def bulk_download(search_keyword,suffix_keywords,limit,main_directory,delay_time
                         image_name = str(items[k][(items[k].rfind("/")) + 1:])
                         if "?" in image_name:
                             image_name = image_name[:image_name.find("?")]
+                        base_name = f"{main_directory}/{dir_name}/{success_count + 1:03d}. {image_name}"
                         if ".jpg" in image_name or ".JPG" in image_name or ".gif" in image_name or ".png" in image_name or ".bmp" in image_name or ".svg" in image_name or ".webp" in image_name or ".ico" in image_name:
-                            output_file = open(f"{main_directory}/{dir_name}/{success_count + 1:03d}. {image_name}", "wb")
+                            output_file_name = f"{base_name}"
                         else:
                             if args.format:
-                                output_file = open(
-                                    f"{main_directory}/{dir_name}/{success_count + 1:03d}. {image_name}.{args.format}",
-                                    "wb")
+                                output_file_name = f"{base_name}.{args.format}"
                                 image_name = image_name + "." + args.format
                             else:
-                                output_file = open(
-                                    f"{main_directory}/{dir_name}/{success_count + 1:03d}. {image_name}.jpg", "wb")
+                                output_file_name = f"{base_name}.jpg"
                                 image_name = image_name + ".jpg"
-
-                        data = response.read()
-                        output_file.write(data)
-                        response.close()
+                        with open(output_file_name, "wb") as output_file:
+                            data = response.read()
+                            output_file.write(data)
+                            response.close()
 
                         print("Completed ====> " + str(success_count + 1) + ". " + image_name)
                         k = k + 1

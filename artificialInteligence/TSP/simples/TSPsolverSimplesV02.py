@@ -32,29 +32,29 @@ def embelezeTempo(segundos: float) -> str:
 
 
 def GrafoFromArq(nome, lim=None):
-    file = open(nome)
-    linha = file.readline()
-    vertices = []
-    if lim:
-        indice = 1
-    while linha:
-        if lim:
-            if indice == lim:
-                break
-        elementos = linha.split()
-        x = elementos[2]
-        y = elementos[1]
-        vertices.append((float(x), float(y)))
+    with open(nome, "r", encoding="utf-8") as file:
         linha = file.readline()
+        vertices = []
         if lim:
-            indice += 1
-    grafo = [[0 for _ in vertices] for _ in vertices]
-    for n, origem in enumerate(vertices):
-        for m, destino in enumerate(vertices):
-            distancia = (
-                (destino[0] - origem[0]) ** 2 + (destino[1] - origem[1]) ** 2
-            ) ** 0.5
-            grafo[n][m] = distancia
+            indice = 1
+        while linha:
+            if lim:
+                if indice == lim:
+                    break
+            elementos = linha.split()
+            x = elementos[2]
+            y = elementos[1]
+            vertices.append((float(x), float(y)))
+            linha = file.readline()
+            if lim:
+                indice += 1
+        grafo = [[0 for _ in vertices] for _ in vertices]
+        for n, origem in enumerate(vertices):
+            for m, destino in enumerate(vertices):
+                distancia = (
+                    (destino[0] - origem[0]) ** 2 + (destino[1] - origem[1]) ** 2
+                ) ** 0.5
+                grafo[n][m] = distancia
     return grafo
 
 
