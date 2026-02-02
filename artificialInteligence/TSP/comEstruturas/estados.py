@@ -1,57 +1,59 @@
-class Estado:
-    def __init__(self, grafo, caminhoFeito=None, trajetoTotal=None):
-        self.grafo = grafo
-        if caminhoFeito is None:
-            self.caminho = []
+from typing import Any
+from artificialInteligence.TSP.comEstruturas.grafos import Graph
+
+
+class State:
+    def __init__(
+        self,
+        graph: Graph,
+        current_path: list[int] | None = None,
+        total_cost: float | int | None = None,
+    ):
+        self.graph = graph
+        if current_path is None:
+            self.path = []
         else:
-            self.caminho = caminhoFeito
-        if trajetoTotal is None:
-            self.custo = 0
+            self.path = current_path
+        if total_cost is None:
+            self.path_cost = 0.0
         else:
-            self.custo = trajetoTotal
+            self.path_cost = float(total_cost)
 
-    def geraFilhos(self):
-        filhos = []
-        for index in range(len(self.grafo)):
-            if index not in self.caminho:
-                filhos.append(self.fazMovimento(index))
-        return filhos
+    def next_states(self) -> list["State"]:
+        children: list["State"] = []
+        for index in range(len(self.graph)):
+            if index not in self.path:
+                children.append(self.apply_move(index))
+        return children
 
-    def fazMovimento(self, movimento):
-        estado = self.copy()
-        custoTotal = estado.custo
-        if self.caminho:
-            custoTotal += self.grafo.getElement((self.caminho[-1], movimento))
-        caminhoFeito = estado.caminho + [movimento]
-        return Estado(self.grafo, caminhoFeito, custoTotal)
+    def apply_move(self, move: int) -> "State":
+        total_cost = self.path_cost
+        if self.path:
+            total_cost += self.graph.get_element((self.path[-1], move))
+        path_done = self.path + [move]
+        return State(self.graph, path_done, total_cost)
 
-    def copy(self):
-        caminhoFeito = self.caminho.copy()
-        return Estado(self.grafo, caminhoFeito, self.custo)
-
-    def imprime(self):
-        estado = Estado(self.grafo)
-        self.grafo.imprime()
+    def show_path(self) -> "State":
+        # show the full path step by step
+        state = State(self.graph)
+        self.graph.show()
         print()
-        print(str(estado), end="\n\n")
-        for movimento in self.caminho[1:]:
-            estado = estado.fazMovimento(movimento)
-            print(str(estado), end="\n\n")
+        print(str(state), end="\n\n")
+        for move in self.path[1:]:
+            state = state.apply_move(move)
+            print(str(state), end="\n\n")
         print("\n\n\n\n\n\n")
-        return estado
+        return state
 
-    def __str__(self):
-        texto = ""
-        texto += "caminho : " + str(self.caminho)
-        texto += "\ncusto   : " + str(self.custo)
-        return texto
+    def __str__(self) -> str:
+        return f"path : {self.path}\ncost : {self.path_cost}"
 
-    def __eq__(self, obj):
-        if type(obj) is type(self):
-            if self.custo != obj.custo:
+    def __eq__(self, other_state: Any) -> bool:
+        if not isinstance(other_state, State):
+            return False
+        if self.path_cost != other_state.path_cost:
+            return False
+        for node in self.path:
+            if node not in other_state.path:
                 return False
-            for elemento in self.caminho:
-                if elemento not in obj.caminho:
-                    return False
-            return True
-        return False
+        return True

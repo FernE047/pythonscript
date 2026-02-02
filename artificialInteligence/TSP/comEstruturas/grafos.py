@@ -26,7 +26,7 @@ class Graph:
         if symmetry:
             self.graph_matrix[coord[1]][coord[0]] = value
 
-    def imprime(self) -> None:
+    def show(self) -> None:
         print(str(self))
 
     def __str__(self) -> str:
@@ -64,7 +64,8 @@ def get_graph_from_file(file_name: str, limit: None | int = None) -> Graph:
             for y, destination in enumerate(vertexes):
                 coord = (x, y)
                 distance = (
-                    (destination[0] - source[0]) ** 2 + (destination[1] - source[1]) ** 2
+                    (destination[0] - source[0]) ** 2
+                    + (destination[1] - source[1]) ** 2
                 ) ** 0.5
                 graph.set_element(coord, distance, False)
     return graph

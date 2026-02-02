@@ -1,6 +1,6 @@
 from grafos import Graph
 from grafos import get_graph_from_file
-from estados import Estado
+from estados import State
 
 
 def solvePorProfundidade(estado, menorEstado=None):
@@ -59,9 +59,9 @@ grafo = [
     [10, 1, 10, 10, 0],
 ]
 grafo = Graph(base_graph=grafo)
-estadoInicial = Estado(grafo)
+estadoInicial = State(grafo)
 solucao = solvePorLargura(estadoInicial)
-solucao.imprime()
+solucao.show_path()
 grafo = Graph(4)
 grafo.set_element([0, 1], 1)
 grafo.set_element([0, 2], 2)
@@ -69,18 +69,18 @@ grafo.set_element([0, 3], 4)
 grafo.set_element([1, 2], 2)
 grafo.set_element([1, 3], 3)
 grafo.set_element([2, 3], 5)
-estadoInicial = Estado(grafo)
+estadoInicial = State(grafo)
 solucao = solvePorProfundidade(estadoInicial)
 print(iterations)
 print(cortes)
 iterations = 0
 cortes = 0
-solucao.imprime()
+solucao.show_path()
 for a in range(1, 23):
     grafo = get_graph_from_file("grafo0004.txt", limit=a)
-    estadoInicial = Estado(grafo)
+    estadoInicial = State(grafo)
     solucao = solvePorProfundidade(estadoInicial)
-    solucao.imprime()
+    solucao.show_path()
     print("iteracoes : " + str(iterations))
     print("cortes    : " + str(cortes))
     print("\n\n\n")
