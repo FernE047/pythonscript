@@ -71,16 +71,16 @@ def generate_next_states(state: StateData) -> list[StateData]:
     next_states: list[StateData] = []
     for index in range(len(graph)):
         if index not in state[1]:
-            next_states.append(build_path_with_edge(state, index))
+            next_states.append(build_path(state, index))
     return next_states
 
 
-def build_path_with_edge(state:StateData, move: int) -> StateData:
+def build_path(state: StateData, destination: int) -> StateData:
     cost = state[0]
     if state[1]:
         global graph
-        cost += graph[state[1][-1]][move]
-    path = state[1] + [move]
+        cost += graph[state[1][-1]][destination]
+    path = state[1] + [destination]
     return (cost, path)
 
 
@@ -90,37 +90,37 @@ def print_solution_summary(duration: float) -> None:
     state: StateData = (0, [])
     for line in graph:
         print(
-            " ".join(
-                [" " * (3 - len(str(element))) + str(element) for element in line]
-            )
+            " ".join([" " * (3 - len(str(element))) + str(element) for element in line])
         )
     print()
-    for move in solution_state[1]:
-        state = build_path_with_edge(state, move)
-        print("caminho : " + str(state[1]))
-        print("custo   : " + str(state[0]), end="\n\n")
-    print("iteracoes : " + str(iterations))
-    print("cortes    : " + str(cut_count))
+    for destination in solution_state[1]:
+        state = build_path(state, destination)
+        print(f"caminho : {state[1]}")
+        print(f"custo   : {state[0]}\n")
+    print(f"iteracoes : {iterations}")
+    print(f"cortes    : {cut_count}")
     print_elapsed_time(duration)
     print("\n\n\n")
 
 
-def depth_first_search(state: StateData, best_state: StateData | None = None) -> StateData:
+def depth_first_search(
+    state: StateData, best_state: StateData | None = None
+) -> StateData:
     global iterations
     global cut_count
     iterations += 1
-    children = generate_next_states(state)
-    if len(children) == 0:
+    next_states = generate_next_states(state)
+    if len(next_states) == 0:
         if best_state is None:
             return state
         if state[0] < best_state[0]:
             return state
-    for child in children:
+    for next_state in next_states:
         if best_state is None:
-            best_state = depth_first_search(child, best_state)
+            best_state = depth_first_search(next_state, best_state)
             continue
-        if child[0] < best_state[0]:
-            best_state = depth_first_search(child, best_state)
+        if next_state[0] < best_state[0]:
+            best_state = depth_first_search(next_state, best_state)
             continue
         cut_count += 1
     assert best_state is not None
@@ -167,7 +167,6 @@ def solve(mode: Literal[0, 1] = 1) -> None:
     print_solution_summary(end_time - start_time)
 
 
-silent = False
 iterations = 0
 cut_count = 0
 solution_state: StateData = (0, [])
