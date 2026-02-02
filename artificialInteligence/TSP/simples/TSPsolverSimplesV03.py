@@ -1,5 +1,9 @@
 from time import time
 
+GraphData = list[list[float]]
+VertexData = tuple[float, float]
+StateData = tuple[float, list[int]]
+
 
 def print_elapsed_time(seconds: float) -> None:
     if seconds < 0:
@@ -31,108 +35,108 @@ def print_elapsed_time(seconds: float) -> None:
     print(sign + ", ".join(parts))
 
 
-def GrafoFromArq(nome, lim=None):
-    with open(nome, "r", encoding="utf-8") as file:
-        linha = file.readline()
-        vertices = []
-        if lim:
-            indice = 1
-        while linha:
-            if lim:
-                if indice == lim:
+def get_graph_from_file(file_name: str, nodes_limit: int | None = None) -> GraphData:
+    with open(file_name, "r", encoding="utf-8") as file:
+        lines = file.read().splitlines()
+        vertexes: list[VertexData] = []
+        index = 0
+        if nodes_limit:
+            index = 1
+        for line in lines:
+            line = line.strip()
+            if not line:
+                break
+            if nodes_limit:
+                if index == nodes_limit:
                     break
-            elementos = linha.split()
-            x = elementos[2]
-            y = elementos[1]
-            vertices.append((float(x), float(y)))
-            linha = file.readline()
-            if lim:
-                indice += 1
-        grafo = [[0 for _ in vertices] for _ in vertices]
-        for n, origem in enumerate(vertices):
-            for m, destino in enumerate(vertices):
-                distancia = (
-                    (destino[0] - origem[0]) ** 2 + (destino[1] - origem[1]) ** 2
-                ) ** 0.5
-                grafo[n][m] = distancia
-    return grafo
+            coordinates = line.split()
+            x_str = coordinates[2]
+            y_str = coordinates[1]
+            vertexes.append((float(x_str), float(y_str)))
+            if nodes_limit:
+                index += 1
+        graph = [[0.0 for _ in vertexes] for _ in vertexes]
+        for x, source in enumerate(vertexes):
+            for y, destination in enumerate(vertexes):
+                distance_x = abs(destination[0] - source[0])
+                distance_y = abs(destination[1] - source[1])
+                distance = (distance_x**2 + distance_y**2) ** 0.5
+                graph[x][y] = distance
+    return graph
 
 
-def imprime(duracao):
-    global grafo
-    global solucao
-    estado = [0, []]
-    for linha in grafo:
+def print_solution_summary(duration: float) -> None:
+    global graph
+    global solution_state
+    state: StateData = (0, [])
+    for line in graph:
         print(
-            " ".join(
-                [" " * (3 - len(str(elemento))) + str(elemento) for elemento in linha]
-            )
+            " ".join([" " * (3 - len(str(element))) + str(element) for element in line])
         )
     print()
-    for movimento in solucao[1]:
-        if estado[1]:
-            estado[0] += grafo[estado[1][-1]][movimento]
-        estado[1].append(movimento)
-        print("caminho : " + str(estado[1]))
-        print("custo   : " + str(estado[0]), end="\n\n")
-    print("iteracoes : " + str(iterations))
-    print("cortes    : " + str(cortes))
-    print_elapsed_time(duracao)
+    for destination in solution_state[1]:
+        if state[1]:
+            state = (state[0] + graph[state[1][-1]][destination], state[1])
+        state = (state[0], state[1] + [destination])
+        print(f"caminho : {state[1]}")
+        print(f"custo   : {state[0]}\n")
+    print(f"iteracoes : {iterations}")
+    print(f"cortes    : {cut_count}")
+    print_elapsed_time(duration)
     print("\n\n\n")
 
 
-def solvePorProfundidade(estado, menorEstado=None):
+def depth_first_search(
+    state: StateData, best_state: StateData | None = None
+) -> StateData:
     global iterations
-    global cortes
-    global grafo
-    if len(estado[1]) == len(grafo):
-        if menorEstado == None:
-            return [estado[0], estado[1].copy()]
-        else:
-            if estado[0] < menorEstado[0]:
-                return [estado[0], estado[1].copy()]
-            else:
-                return menorEstado
+    global cut_count
+    global graph
+    if len(state[1]) == len(graph):
+        if best_state is None:
+            return (state[0], state[1].copy())
+        if state[0] < best_state[0]:
+            return (state[0], state[1].copy())
+        return best_state
     iterations += 1
-    for index in range(len(grafo)):
-        if index not in estado[1]:
-            if estado[1]:
-                estado[0] += grafo[estado[1][-1]][index]
-            estado[1].append(index)
-            if menorEstado == None:
-                menorEstado = solvePorProfundidade(estado, menorEstado)
+    for index in range(len(graph)):
+        if index in state[1]:
+            continue
+        if state[1]:
+            state = (state[0] + graph[state[1][-1]][index], state[1])
+        state[1].append(index)
+        if best_state is None:
+            best_state = depth_first_search(state, best_state)
+        else:
+            if state[0] < best_state[0]:
+                best_state = depth_first_search(state, best_state)
             else:
-                if estado[0] < menorEstado[0]:
-                    menorEstado = solvePorProfundidade(estado, menorEstado)
-                else:
-                    cortes += 1
-            estado[1].remove(index)
-            if estado[1]:
-                estado[0] -= grafo[estado[1][-1]][index]
-    return menorEstado
+                cut_count += 1
+        state[1].remove(index)
+        if state[1]:
+            state = (state[0] - graph[state[1][-1]][index], state[1])
+    assert best_state is not None
+    return best_state
 
 
-def solve(grafo, mode=1):
+def solve() -> None:
     global iterations
-    global cortes
-    global solucao
-    global estadoInicial
-    inicio = time()
+    global cut_count
+    global solution_state
+    start_time = time()
     iterations = 0
-    cortes = 0
-    estadoInicial = [0, []]
-    solucao = solvePorProfundidade(estadoInicial)
-    final = time()
-    imprime(final - inicio)
+    cut_count = 0
+    initial_state: StateData = (0, [])
+    solution_state = depth_first_search(initial_state)
+    end_time = time()
+    print_solution_summary(end_time - start_time)
 
 
-silent = False
 iterations = 0
-cortes = 0
-estadoInicial = ()
-solucao = ()
+cut_count = 0
+solution_state: StateData = (0, [])
 
-grafo = [
+graph: GraphData = [
     [0, 10, 10, 1, 10],
     [10, 0, 1, 10, 10],
     [1, 10, 0, 10, 10],
@@ -140,12 +144,12 @@ grafo = [
     [10, 1, 10, 10, 0],
 ]
 
-solve(grafo)
+solve()
 
-grafo = [[0, 1, 2, 4], [1, 0, 2, 3], [2, 2, 0, 5], [4, 3, 5, 0]]
+graph = [[0, 1, 2, 4], [1, 0, 2, 3], [2, 2, 0, 5], [4, 3, 5, 0]]
 
-solve(grafo)
+solve()
 
-for a in range(1, 23):
-    grafo = GrafoFromArq("grafo0004.txt", lim=a)
-    solve(grafo)
+for node_limit in range(1, 23):
+    graph = get_graph_from_file("grafo0004.txt", nodes_limit=node_limit)
+    solve()
