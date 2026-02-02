@@ -7,6 +7,18 @@ def turn_color_to_string(color: tuple[int, int, int]) -> str:
     return f"RGB: ({color_list})"
 
 
+def get_pixel_color(x: int, y: int) -> tuple[int, int, int] | None:
+    screenshot = pyautogui.screenshot()
+    color_captured = screenshot.getpixel((x, y))
+    if color_captured is None:
+        return None
+    if isinstance(color_captured, float) or isinstance(color_captured, int):
+        return (int(color_captured), int(color_captured), int(color_captured))
+    if len(color_captured) <= 3:
+        return None
+    return (color_captured[0], color_captured[1], color_captured[2])
+
+
 print("Press Ctrl-C to quit.")
 try:
     while True:
@@ -14,20 +26,9 @@ try:
             key = msvcrt.getch()
             print(key)
         x, y = pyautogui.position()
-        color_captured = pyautogui.screenshot().getpixel((x, y))
-        if color_captured is None:
+        pixel_color = get_pixel_color(x, y)
+        if pixel_color is None:
             continue
-        pixel_color = (0, 0, 0)
-        if isinstance(color_captured, float) or isinstance(color_captured, int):
-            pixel_color = (
-                int(color_captured),
-                int(color_captured),
-                int(color_captured),
-            )
-        else:
-            if len(color_captured) <= 3:
-                continue
-            pixel_color = (color_captured[0], color_captured[1], color_captured[2])
         text = f"X: {str(x).rjust(4)} Y: {str(y).rjust(4)} {turn_color_to_string(pixel_color)}"
         print(text, end="")
         print("\b" * len(text), end="", flush=True)
