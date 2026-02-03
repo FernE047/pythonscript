@@ -12,6 +12,52 @@ class Config:
         self.steps = 0
 
 
+    def update_debug(self, program_script: str) -> None:
+        if program_script == "config.debug ON":
+            self.debug = True
+            self.debug_final = True
+            print("config.debug ACTIVATED")
+            return
+        if program_script == "config.debug OFF":
+            self.debug = False
+            self.debug_final = False
+            print("config.debug DESACTIVATED")
+            return
+        if program_script == "config.debug FINAL ON":
+            self.debug_final = True
+            print("config.debug FINAL ACTIVATED")
+            return
+        if program_script == "config.debug FINAL OFF":
+            self.debug_final = False
+            print("config.debug FINAL DESACTIVATED")
+            return
+        if program_script.find("config.debug LIMIT STEPS ") != -1:
+            self.limit_steps = int(program_script[20:])
+            print(f"config.limit_steps={self.limit_steps}")
+            print("config.debug FINAL ACTIVATED")
+            self.debug_final = True
+            return
+        if program_script.find("config.debug LIMIT VALUE ") != -1:
+            self.limit_value = int(program_script[19:])
+            print(f"config.limit_value={self.limit_value}")
+            return
+        if program_script.find("config.debug LIMIT ") != -1:
+            self.limit_exec = int(program_script[13:])
+            print(f"config.limit_exec={self.limit_exec}")
+            return
+        if program_script.find("config.debug LIMITES ") != -1:
+            limits = int(program_script[14:])
+            self.limit_exec = limits
+            self.limit_steps = limits
+            self.limit_value = limits
+            print(f"config.limit_exec={self.limit_exec}")
+            print(f"config.limit_value={self.limit_value}")
+            print(f"config.limit_steps={self.limit_steps}")
+            print("config.debug FINAL ACTIVATED")
+            self.debug_final = True
+            return
+
+
 def count_brackets(program_script: str) -> int:
     loop = 0
     for char in program_script:
@@ -128,52 +174,6 @@ def execute_program(
     return memory_tape
 
 
-def change_config_debug(config: Config, program_script: str) -> None:
-    if program_script == "config.debug ON":
-        config.debug = True
-        config.debug_final = True
-        print("config.debug ACTIVATED")
-        return
-    if program_script == "config.debug OFF":
-        config.debug = False
-        config.debug_final = False
-        print("config.debug DESACTIVATED")
-        return
-    if program_script == "config.debug FINAL ON":
-        config.debug_final = True
-        print("config.debug FINAL ACTIVATED")
-        return
-    if program_script == "config.debug FINAL OFF":
-        config.debug_final = False
-        print("config.debug FINAL DESACTIVATED")
-        return
-    if program_script.find("config.debug LIMIT STEPS ") != -1:
-        config.limit_steps = int(program_script[20:])
-        print(f"config.limit_steps={config.limit_steps}")
-        print("config.debug FINAL ACTIVATED")
-        config.debug_final = True
-        return
-    if program_script.find("config.debug LIMIT VALUE ") != -1:
-        config.limit_value = int(program_script[19:])
-        print(f"config.limit_value={config.limit_value}")
-        return
-    if program_script.find("config.debug LIMIT ") != -1:
-        config.limit_exec = int(program_script[13:])
-        print(f"config.limit_exec={config.limit_exec}")
-        return
-    if program_script.find("config.debug LIMITES ") != -1:
-        limits = int(program_script[14:])
-        config.limit_exec = limits
-        config.limit_steps = limits
-        config.limit_value = limits
-        print(f"config.limit_exec={config.limit_exec}")
-        print(f"config.limit_value={config.limit_value}")
-        print(f"config.limit_steps={config.limit_steps}")
-        print("config.debug FINAL ACTIVATED")
-        config.debug_final = True
-        return
-
-
 config = Config()
 while True:
     config.isOut = 2
@@ -181,7 +181,7 @@ while True:
     print("escreva o programa")
     program_script = input()
     if program_script.find("config.debug") != -1:
-        change_config_debug(config, program_script)
+        config.update_debug(program_script)
         continue
     if program_script == "0":
         break
