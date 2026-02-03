@@ -12,34 +12,71 @@ HintAxysData = list[HintData]
 HintsData = tuple[HintAxysData, HintAxysData]
 
 
-def print_elapsed_time(seconds: float) -> None:
-    if seconds < 0:
-        seconds = -seconds
-        sign = "-"
-    else:
-        sign = ""
-    total_ms = int(round(seconds * 1000))
-    ms = total_ms % 1000
-    total_s = total_ms // 1000
-    s = total_s % 60
-    total_min = total_s // 60
-    m = total_min % 60
-    total_h = total_min // 60
-    h = total_h % 24
-    d = total_h // 24
-    parts: list[str] = []
+class TimeCounter:
+    def __init__(self) -> None:
+        self.total_time = 0.0
+        self.start_time = 0.0
+        self.end_time = 0.0
+        self.elapsed_time = 0.0
 
-    def add(value: int, singular: str, plural: str) -> None:
-        if value:
-            parts.append(f"{value} {singular if value == 1 else plural}")
+    def start(self) -> None:
+        self.start_time = time()
 
-    add(d, "day", "days")
-    add(h, "hour", "hours")
-    add(m, "minute", "minutes")
-    add(s, "second", "seconds")
-    if ms or not parts:
-        parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(sign + ", ".join(parts))
+    def stop(self) -> None:
+        self.end_time = time()
+        self.elapsed_time = self.end_time - self.start_time
+        self.total_time += self.elapsed_time
+        self.print_elapsed_time(print_total=False)
+
+    def print_elapsed_time(self, print_total: bool = False) -> None:
+        elapsed_time = self.elapsed_time
+        if print_total:
+            elapsed_time = self.total_time
+        if elapsed_time < 0:
+            elapsed_time = -elapsed_time
+            sign = "-"
+        else:
+            sign = ""
+        total_ms = int(round(elapsed_time * 1000))
+        ms = total_ms % 1000
+        total_s = total_ms // 1000
+        s = total_s % 60
+        total_min = total_s // 60
+        m = total_min % 60
+        total_h = total_min // 60
+        h = total_h % 24
+        d = total_h // 24
+        parts: list[str] = []
+
+        def add(value: int, singular: str, plural: str) -> None:
+            if value:
+                parts.append(f"{value} {singular if value == 1 else plural}")
+
+        add(d, "day", "days")
+        add(h, "hour", "hours")
+        add(m, "minute", "minutes")
+        add(s, "second", "seconds")
+        if ms or not parts:
+            parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
+        text = ", ".join(parts)
+        print(f"\n{sign}{text}\n\n\n")
+
+
+class AttemptCounter:
+    def __init__(self) -> None:
+        self.attempts = 0
+
+    def increment(self) -> None:
+        self.attempts += 1
+
+    def reset(self) -> None:
+        self.attempts = 0
+
+    def get_attempts(self) -> int:
+        return self.attempts
+
+    def __str__(self) -> str:
+        return f"Attempts: {self.attempts}"
 
 
 def save_board_image(board: BoardData, file_name: str) -> None:
@@ -222,18 +259,20 @@ def generate_row_possibilities(
     return row_cases
 
 
-def solve_board(board: BoardData, hints: HintsData, row_index: int) -> BoardData | None:
+def solve_board(
+    board: BoardData, hints: HintsData, row_index: int, attempt_counter: AttemptCounter
+) -> BoardData | None:
     if row_index == len(board):
         return board
-    global tries
     source_row = board[row_index]
     row_hints = hints[1][row_index]
-    for possible_row in generate_row_possibilities(
+    possible_rows = generate_row_possibilities(
         len(board[0]), row_hints, hints, board, row_index
-    ):
-        tries += 1
+    )
+    for possible_row in possible_rows:
+        attempt_counter.increment()
         board[row_index] = possible_row
-        solution = solve_board(board, hints, row_index + 1)
+        solution = solve_board(board, hints, row_index + 1, attempt_counter)
         if solution:
             return solution
     board[row_index] = source_row
@@ -241,22 +280,20 @@ def solve_board(board: BoardData, hints: HintsData, row_index: int) -> BoardData
 
 
 def solve_piccross_board(
-    board: BoardData, hints: HintsData
-) -> tuple[int, BoardData | None]:
+    board: BoardData,
+    hints: HintsData,
+    time_counter: TimeCounter,
+    attempt_counter: AttemptCounter,
+) -> BoardData | None:
     print()
-    global tries
-    tries = 0
-    cuts_amount = 0
-    start_time = time()
-    solution_board = solve_board(board, hints, 0)
-    end_time = time()
-    print("\ntentativas: " + str(tries))
-    elapsed_seconds = end_time - start_time
-    global elapsed_time
-    elapsed_time += elapsed_seconds
-    print_elapsed_time(elapsed_seconds)
+    attempt_counter.reset()
+    time_counter.start()
+    solution_board = solve_board(board, hints, 0, attempt_counter)
+    time_counter.stop()
+    print(f"\n{attempt_counter}")
+    time_counter.print_elapsed_time(True)
     if solution_board is None:
-        return (cuts_amount, solution_board)
+        return None
     for board_row in solution_board:
         row = ""
         for element in board_row:
@@ -268,12 +305,12 @@ def solve_piccross_board(
                 continue
             row += "0"
         print(row)
-    return (cuts_amount, solution_board)
+    return solution_board
 
 
 def main() -> None:
-    elapsed_time = 0.0
-    tries = 0
+    time_counter = TimeCounter()
+    attempt_counter = AttemptCounter()
     for index in range(8):
         with open(f"piccross/A{index:03d}.txt") as piccross_file:
             config = piccross_file.read()
@@ -290,11 +327,13 @@ def main() -> None:
         for _ in vertical_hints:
             board.append([0 for _ in horizontal_hints])
         all_hints: HintsData = (horizontal_hints, vertical_hints)
-        cuts_amount, solution_board = solve_piccross_board(board, all_hints)
-        print_elapsed_time(elapsed_time)
+        solution_board = solve_piccross_board(
+            board, all_hints, time_counter, attempt_counter
+        )
+        time_counter.print_elapsed_time(True)
         if solution_board is not None:
             save_board_image(solution_board, f"piccross/A{index:03d}")
-    print_elapsed_time(elapsed_time)
+    time_counter.print_elapsed_time(True)
 
 
 if __name__ == "__main__":
