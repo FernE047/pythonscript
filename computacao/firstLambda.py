@@ -1,60 +1,65 @@
-def pegaInteiro(
-    mensagem: str,
-    minimo: int | None = None,
-    maximo: int | None = None,
-    saida: str | None = None,
-) -> int | str:
+# first lambda function I made in python, then I became addicted to them. now I prefer def statements tho
+
+
+from typing import Callable
+
+
+def get_integer_input(
+    message: str,
+    minimum: int | None = None,
+    maximum: int | None = None,
+) -> int | None:
     while True:
-        entrada = input(f"{mensagem} : ")
-        if saida is not None and entrada == saida:
-            return saida
+        user_input = input(f"{message} : ")
+        if user_input == "exit":
+            return None
         try:
-            valor = int(entrada)
-            if (minimo is not None) and (valor < minimo):
-                print(f"valor deve ser maior ou igual a {minimo}")
+            value = int(user_input)
+            if (minimum is not None) and (value < minimum):
+                print(f"value must be at least {minimum}")
                 continue
-            if (maximo is not None) and (valor > maximo):
-                print(f"valor deve ser menor ou igual a {maximo}")
+            if (maximum is not None) and (value > maximum):
+                print(f"value must be at most {maximum}")
                 continue
-            return valor
+            return value
         except Exception as _:
-            print("valor inválido, tente novamente")
+            print("invalid value, please try again")
 
 
-def polinomio(coefiecientes, x):
-    total = len(coefiecientes)
-    y = 0
-    for n, coeficiente in enumerate(coeficientes):
-        y += coeficiente * x ** (total - n - 1)
-    return y
+def compute_polynomial_value(coefficients: list[int], x: int) -> int | float:
+    degree_of_polynomial = len(coefficients)
+    polynomial_value = 0
+    for term_index, coefficient in enumerate(coefficients):
+        polynomial_value += coefficient * x ** (degree_of_polynomial - term_index - 1)
+    return polynomial_value
 
 
-def equation(coeficientes):
-    return lambda x: polinomio(coeficientes, x)
+def generate_equation(coefficients: list[int]) -> Callable[[int], int | float]:
+    return lambda x: compute_polynomial_value(coefficients, x)
 
 
-def intervalo(coeficientes, n):
-    funcao = equation(coeficientes)
-    comecoEfim = int(n / 2)
-    print("intervalo entre -" + str(comecoEfim) + " e " + str(comecoEfim))
-    for m in range(-comecoEfim, comecoEfim):
-        print(str(m) + " : " + str(funcao(m)))
+def display_value_intervals(coefficients: list[int], interval_size: int) -> None:
+    equation = generate_equation(coefficients)
+    half_range = int(interval_size / 2)
+    print(f"interval between -{half_range} and {half_range}")
+    for value in range(-half_range, half_range):
+        print(f"{value} : {equation(value)}")
 
 
 while True:
-    potencia = pegaInteiro("digite a maior potencia", saida="exit")
-    if potencia == "exit":
+    max_power = get_integer_input("enter the maximum power of the polynomial")
+    if max_power is None:
         break
-    coeficientes = []
-    for a in range(potencia + 1):
-        texto = "digite o coeficiente de x elevado a " + str(potencia - a)
-        coeficientes = [pegaInteiro(texto, saida="exit")] + coeficientes
-        if coeficientes[0] == "exit":
+    coefficients: list[int] = []
+    for a in range(max_power + 1):
+        new_coefficient = get_integer_input(
+            f"enter the coefficient of x raised to {max_power - a}"
+        )
+        if new_coefficient is None:
             break
-    if coeficientes[0] == "exit":
+        coefficients = [new_coefficient] + coefficients
+    print(coefficients)
+    interval_size = get_integer_input("enter the size of the interval to evaluate")
+    if interval_size is None:
         break
-    print(coeficientes)
-    n = pegaInteiro("digite o tamanho do intervalo", saida="exit")
-    if n == "exit":
-        break
-    intervalo(coeficientes, n)
+    display_value_intervals(coefficients, interval_size)
