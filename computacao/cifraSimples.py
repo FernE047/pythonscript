@@ -1,29 +1,34 @@
 from string import ascii_uppercase
 from string import ascii_lowercase
 
-def trocaLetra(letra,n):
-    n%=26
-    if(letra in ascii_lowercase):
-        letrinhas=list(ascii_lowercase)
-        indice=(n+letrinhas.index(letra))%26
-        letra=letrinhas[indice]
-    elif(letra in ascii_uppercase):
-        letronas=list(ascii_uppercase)
-        indice=(n+letronas.index(letra))%26
-        letra=letronas[indice]
-    return(letra)
 
-def cifra(texto, n):
-    novoTexto=""
-    for a in list(texto):
-        novoTexto+=trocaLetra(a,n)
-    return(novoTexto)
+def shift_letter(letter: str, shift_amount: int) -> str:
+    shift_amount %= 26
+    if letter in ascii_lowercase:
+        lowercase_letters = list(ascii_lowercase)
+        index = (shift_amount + lowercase_letters.index(letter)) % 26
+        return lowercase_letters[index]
+    if letter not in ascii_uppercase:
+        return letter
+    uppercase_letters = list(ascii_uppercase)
+    index = (shift_amount + uppercase_letters.index(letter)) % 26
+    return uppercase_letters[index]
 
-def todasCifras(texto):
-    print(texto,end="\n\n")
-    for n in range(1,26):
-        print(f"{n:02d}:")
-        print(cifra(texto,n),end="\n\n")
-            
-texto=input("digite alguma coisa e cifraremos")
-todasCifras(texto)
+
+def cipher_text(input_text: str, shift_amount: int) -> str:
+    encrypted_text = ""
+    for char in list(input_text):
+        encrypted_text += shift_letter(char, shift_amount)
+    return encrypted_text
+
+
+def print_all_ciphers(input_text: str) -> None:
+    print(f"{input_text}\n")
+    for shift_amount in range(1, 26):
+        print(f"{shift_amount:02d}:")
+        encrypted_text = cipher_text(input_text, shift_amount)
+        print(f"{encrypted_text}\n")
+
+
+text = input("type something and we will cypher!!!: \n")
+print_all_ciphers(text)
