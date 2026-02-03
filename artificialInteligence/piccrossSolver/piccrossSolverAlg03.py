@@ -13,34 +13,53 @@ HintsData = tuple[HintAxysData, HintAxysData]
 GameData = tuple[BoardData, HintsData]
 
 
-def print_elapsed_time(seconds: float) -> None:
-    if seconds < 0:
-        seconds = -seconds
-        sign = "-"
-    else:
-        sign = ""
-    total_ms = int(round(seconds * 1000))
-    ms = total_ms % 1000
-    total_s = total_ms // 1000
-    s = total_s % 60
-    total_min = total_s // 60
-    m = total_min % 60
-    total_h = total_min // 60
-    h = total_h % 24
-    d = total_h // 24
-    parts: list[str] = []
+class TimeManager:
+    def __init__(self) -> None:
+        self.total_time = 0.0
+        self.start_time = 0.0
+        self.end_time = 0.0
+        self.elapsed_time = 0.0
 
-    def add(value: int, singular: str, plural: str) -> None:
-        if value:
-            parts.append(f"{value} {singular if value == 1 else plural}")
+    def start(self) -> None:
+        self.start_time = time()
 
-    add(d, "day", "days")
-    add(h, "hour", "hours")
-    add(m, "minute", "minutes")
-    add(s, "second", "seconds")
-    if ms or not parts:
-        parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(sign + ", ".join(parts))
+    def stop(self) -> None:
+        self.end_time = time()
+        self.elapsed_time = self.end_time - self.start_time
+        self.total_time += self.elapsed_time
+
+    def print_elapsed_time(self, print_total: bool = False) -> None:
+        elapsed_time = self.elapsed_time
+        if print_total:
+            elapsed_time = self.total_time
+        if elapsed_time < 0:
+            elapsed_time = -elapsed_time
+            sign = "-"
+        else:
+            sign = ""
+        total_ms = int(round(elapsed_time * 1000))
+        ms = total_ms % 1000
+        total_s = total_ms // 1000
+        s = total_s % 60
+        total_min = total_s // 60
+        m = total_min % 60
+        total_h = total_min // 60
+        h = total_h % 24
+        d = total_h // 24
+        parts: list[str] = []
+
+        def add(value: int, singular: str, plural: str) -> None:
+            if value:
+                parts.append(f"{value} {singular if value == 1 else plural}")
+
+        add(d, "day", "days")
+        add(h, "hour", "hours")
+        add(m, "minute", "minutes")
+        add(s, "second", "seconds")
+        if ms or not parts:
+            parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
+        text = ", ".join(parts)
+        print(f"\n{sign}{text}\n\n\n")
 
 
 def calculate_space(dica: HintData) -> int:
@@ -136,14 +155,12 @@ def save_board_image(board: BoardData, file_name: str) -> None:
     image.close()
 
 
-def solve_piccross_board(game: GameData) -> BoardData:
+def solve_piccross_board(game: GameData, time_manager: TimeManager) -> BoardData:
     print()
-    start_time = time()
+    time_manager.start()
     solution_board = solve_board(game)
-    end_time = time()
-    duration = end_time - start_time
-    global elapsed_time
-    elapsed_time += duration
+    time_manager.stop()
+    time_manager.print_elapsed_time()
     completed_count = 0
     element_count = 0
     for row in solution_board:
@@ -161,13 +178,11 @@ def solve_piccross_board(game: GameData) -> BoardData:
             row_str += "0"
         print(row_str)
     print("\n\nPorcentagem : " + str(100 * completed_count / element_count) + "%")
-    print_elapsed_time(duration)
     return solution_board
 
 
 def main() -> None:
-    elapsed_time = 0.0
-    tries = 0
+    time_manager = TimeManager()
     for index in range(8):
         with open(f"piccross/A{index:03d}.txt") as piccross_file:
             config = piccross_file.read()
@@ -185,8 +200,8 @@ def main() -> None:
             board.append([0 for _ in horizontal_hints])
         all_hints: HintsData = (horizontal_hints, vertical_hints)
         game: GameData = (board, all_hints)
-        solution_board = solve_piccross_board(game)
-        print_elapsed_time(elapsed_time)
+        solution_board = solve_piccross_board(game, time_manager)
+        time_manager.print_elapsed_time(print_total=True)
         save_board_image(solution_board, f"piccross/A{index:03d}")
 
 
