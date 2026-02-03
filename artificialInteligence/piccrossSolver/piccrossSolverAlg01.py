@@ -26,12 +26,9 @@ class TimeCounter:
         self.end_time = time()
         self.elapsed_time = self.end_time - self.start_time
         self.total_time += self.elapsed_time
-        self.print_elapsed_time(print_total=False)
 
-    def print_elapsed_time(self, print_total: bool = False) -> None:
-        elapsed_time = self.elapsed_time
-        if print_total:
-            elapsed_time = self.total_time
+    def print_elapsed_time(self) -> None:
+        elapsed_time = self.total_time
         if elapsed_time < 0:
             elapsed_time = -elapsed_time
             sign = "-"
@@ -291,7 +288,7 @@ def solve_piccross_board(
     solution_board = solve_board(board, hints, 0, attempt_counter)
     time_counter.stop()
     print(f"\n{attempt_counter}")
-    time_counter.print_elapsed_time(True)
+    time_counter.print_elapsed_time()
     if solution_board is None:
         return None
     for board_row in solution_board:
@@ -330,10 +327,10 @@ def main() -> None:
         solution_board = solve_piccross_board(
             board, all_hints, time_counter, attempt_counter
         )
-        time_counter.print_elapsed_time(True)
+        time_counter.print_elapsed_time()
         if solution_board is not None:
             save_board_image(solution_board, f"piccross/A{index:03d}")
-    time_counter.print_elapsed_time(True)
+    time_counter.print_elapsed_time()
 
 
 if __name__ == "__main__":
