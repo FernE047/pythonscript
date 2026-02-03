@@ -12,7 +12,7 @@ def ackerman(m: int, n: int) -> int:
         result_value = ackerman(m - 1, ackerman(m, n - 1))
         level -= 2
         return result_value
-    print("erro")
+    print("error")
     return n - 1
 
 
