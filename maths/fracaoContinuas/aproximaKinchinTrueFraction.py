@@ -31,8 +31,8 @@ for b in range(10):
         a+=1
         lista.append(a)
         if khinchinPerto(lista,b%2):
-            lista.pop(-1)
+            lista.pop()
             break
         else:
-            lista.pop(-1)
+            lista.pop()
     print(lista)

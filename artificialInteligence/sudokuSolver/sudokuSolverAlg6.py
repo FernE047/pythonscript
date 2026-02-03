@@ -227,7 +227,7 @@ def create_sudoku_board(mode: Literal[1, 2]) -> SudokuBoard:
 def solve_sudoku_board(sudoku_board: SudokuBoard) -> SudokuBoard | None:
     if len(sudoku_board.empty_cells) == 0:
         return sudoku_board
-    empty_cell = sudoku_board.empty_cells.pop(-1)
+    empty_cell = sudoku_board.empty_cells.pop()
     if not empty_cell:
         return None
     global tries

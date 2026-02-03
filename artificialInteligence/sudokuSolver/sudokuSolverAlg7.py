@@ -137,7 +137,7 @@ def show(board: BoardData) -> None:
 def solve_sudoku_board(board: BoardData) -> BoardData | None:
     if len(board["empty_cells"]) == 0:
         return board
-    empty_cell = board["empty_cells"].pop(-1)
+    empty_cell = board["empty_cells"].pop()
     if not empty_cell:
         return None
     global tries

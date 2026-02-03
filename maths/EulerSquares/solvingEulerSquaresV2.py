@@ -61,7 +61,7 @@ def solve(x,y,matriz,usados):
             solucao = solve(x+1,y,matriz,usados)
         if solucao:
             return solucao
-        usados.pop(-1)
+        usados.pop()
         matriz[y][x] = (0,0)
 
 iterations = 0

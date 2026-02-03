@@ -7,7 +7,7 @@ def proximo(numero):
     proximo=numero**POT
     proximoLista=list(str(proximo))
     while(len(proximoLista)>tamanhoSeed):
-        proximoLista.pop(-1)
+        proximoLista.pop()
     return(int("".join(proximoLista)))
     
 

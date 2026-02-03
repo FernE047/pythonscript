@@ -104,7 +104,7 @@ def explore_directory(
                 folder_list=folder_list,
                 folder_limit=folder_limit,
             )
-            folder_list.pop(-1)
+            folder_list.pop()
         else:
             if file.find("txt") != -1:
                 output_file.write(f"{len(folder_list) * '\t'}{file}\n")
@@ -112,7 +112,7 @@ def explore_directory(
                 output_file.write(f"{len(folder_list) * '\t'}{file}\n")
                 folder_list.append(file)
                 create_batch_file(folder_list)
-                folder_list.pop(-1)
+                folder_list.pop()
 
 
 def generate_index(file_name: str, folder_limit: int | None = None) -> None:

@@ -80,7 +80,7 @@ class Deck:
         if from_top:
             return self.deck.pop(0)
         else:
-            return self.deck.pop(-1)
+            return self.deck.pop()
 
     def add_card(self, card: Card, bottom: bool = True) -> None:
         if bottom:

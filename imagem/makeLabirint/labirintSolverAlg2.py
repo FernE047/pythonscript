@@ -104,11 +104,11 @@ while coord != FINAL:
         if len(directionsList) == 1:                            #se o caminho for fechado, volte para trás
             coord = coordOppositeDirection(coord,path[-2])
             coord = coordOppositeDirection(coord,path[-2])
-            path.pop(-1)
+            path.pop()
             while len(possibleDirections(coord,imagem)) == 2:
                 coord = coordOppositeDirection(coord,path[-2])
                 coord = coordOppositeDirection(coord,path[-2])
-                path.pop(-1)
+                path.pop()
         elif len(directionsList) == 2:                          #se só houver uma possibilidade siga ela
             if directionsList[0] != oppositeDirection(path[-2]):
                 path[-1] = directionsList[0]
@@ -122,11 +122,11 @@ while coord != FINAL:
             if path[-1] == 4:                                   #se todas as direções foram testadas, volte para trás
                 coord = coordOppositeDirection(coord,path[-2])
                 coord = coordOppositeDirection(coord,path[-2])
-                path.pop(-1)
+                path.pop()
                 while len(possibleDirections(coord,imagem)) == 2:
                     coord = coordOppositeDirection(coord,path[-2])
                     coord = coordOppositeDirection(coord,path[-2])
-                    path.pop(-1)
+                    path.pop()
             else:                                               #se tem direções faltando, vá
                 path[-1] +=1
                 if(path[-1] != oppositeDirection(path[-2])):
@@ -139,7 +139,7 @@ final = time()
 print("caminhos testados : "+str(it))
 print("iterações feitas : "+str(it2))
 print_elapsed_time(final-inicio)
-path.pop(-1)
+path.pop()
 coord = INICIAL
 imagem.putpixel(coord,VERMELHO)
 for direction in path:

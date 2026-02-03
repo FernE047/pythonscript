@@ -118,7 +118,7 @@ while len(imagens) > 2**numeroPossivel:
     if modo == "1":
         imagens.pop(random.randint(0, len(imagens) - 1))
     elif modo == "2":
-        imagens.pop(-1)
+        imagens.pop()
     elif modo == "3":
         imagens.pop(0)
     elif modo == "4":

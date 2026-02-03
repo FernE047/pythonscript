@@ -155,7 +155,7 @@ class Linha:
                     linhaDeBaixo = novaCamada[n]
             while novaCamada[0] != linhaDeBaixo:
                 novaCamada = [novaCamada[-1]] + novaCamada
-                novaCamada.pop(-1)
+                novaCamada.pop()
             pontuacao = 0
             for a in range(4):
                 if a % 2 == 0:

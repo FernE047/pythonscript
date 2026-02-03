@@ -34,8 +34,8 @@ if __name__ == "__main__":
     backFinal = makeBackground("final")#Image.open("C:\\pythonscript\\imagem\\morphManual\\backgroundfinal.png")#
     frames = ["C:\\pythonscript\\imagem\\morphManual\\frames\\"+a for a in os.listdir("C:\\pythonscript\\imagem\\morphManual\\frames")]
     frames.pop(0)
-    frames.pop(-1)
-    frames.pop(-1)
+    frames.pop()
+    frames.pop()
     total = len(frames)
     for n,frameName in enumerate(frames):
         frame = Image.open(frameName)

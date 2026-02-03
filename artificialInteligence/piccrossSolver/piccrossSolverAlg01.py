@@ -175,7 +175,7 @@ def generate_row_possibilities(
                 row_case.append(1)
             row_case.append(-1)
         # remove the last added empty cell
-        row_case.pop(-1)
+        row_case.pop()
         return [row_case]
     row_cases: list[list[CellData]] = []
     hint_length = row_hints[0]

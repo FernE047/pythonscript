@@ -154,7 +154,7 @@ def randomNumber(number):
         newNumber.pop(0)
         if(newNumber==SEEDLEN):
             break
-        newNumber.pop(-1)
+        newNumber.pop()
     newNumber=int("".join(newNumber))
     return newNumber
 
@@ -282,7 +282,7 @@ while True:
     estrategia1=choose_from_options("digite a estrategia do player 1",ESTRATEGIAS)
     ESTRATEGIAS.pop(0)
     if(estrategia1=="aleatorios"):
-        ESTRATEGIAS.pop(-1)
+        ESTRATEGIAS.pop()
         estrategia1=ESTRATEGIAS[randint(len(ESTRATEGIAS))-1]
         estrategia2=ESTRATEGIAS[randint(len(ESTRATEGIAS))-1]
         ESTRATEGIAS+=["humano"]

@@ -35,7 +35,7 @@ with imageio.get_writer(nomeGif, mode="I") as writer:
     nome = frames.pop(0)
     for a in range(10):
         colocaImagemNoGif(writer, nome)
-    ultimoNome = frames.pop(-1)
+    ultimoNome = frames.pop()
     for frame in frames:
         colocaImagemNoGif(writer, frame)
     for a in range(10):

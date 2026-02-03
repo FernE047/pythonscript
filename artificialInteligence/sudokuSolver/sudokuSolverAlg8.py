@@ -120,7 +120,7 @@ def set_cell(board: BoardData, y: int, x: int, cell_value: CellData) -> bool:
 def solve_sudoku_board(board: BoardData) -> BoardData | None:
     if len(board[1]) == 0:
         return board
-    empty_cell = board[1].pop(-1)
+    empty_cell = board[1].pop()
     if not empty_cell:
         return None
     global tries

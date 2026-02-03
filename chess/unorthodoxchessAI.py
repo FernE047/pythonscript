@@ -88,7 +88,7 @@ def create_board(
         for t in range(board_size):
             position.append(t)
             board.append(create_board(dimensions - 1, board_size, position))
-            position.pop(-1)
+            position.pop()
     return board
 
 
@@ -145,13 +145,13 @@ def apply_vertical_symmetry(
                     1 if peca["player"] == 2 else 2,
                     reflected_position + position[1:],
                 )
-                position.pop(-1)
+                position.pop()
         return
     boardy = cast(list[BoardData], boardy)
     for a in range(board_size):
         position.append(a)
         apply_vertical_symmetry(board, boardy[a], current_dimension - 1, position)
-        position.pop(-1)
+        position.pop()
 
 
 def rotate_board(
@@ -185,7 +185,7 @@ def rotate_board(
                 places_piece(
                     new_board, peca["piece"], peca["player"], alternative_position
                 )
-                position.pop(-1)
+                position.pop()
     else:
         for position_index in range(board_size):
             position.append(position_index)
@@ -197,7 +197,7 @@ def rotate_board(
                 current_dimension - 1,
                 position,
             )
-            position.pop(-1)
+            position.pop()
     if current_dimension == board_dimensions:
         return new_board
     return None
@@ -245,7 +245,7 @@ def find_the_pieces(
         for coordinate, boardy in enumerate(board):
             position.append(coordinate)
             find_the_pieces(boardy, player_1_pieces, player_2_pieces, position)
-            position.pop(-1)
+            position.pop()
         return (player_1_pieces, player_2_pieces)
     if board["player"] == 1:
         player_1_pieces.append((board["piece"], position.copy()))

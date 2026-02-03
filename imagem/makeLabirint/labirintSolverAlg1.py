@@ -31,7 +31,7 @@ def labirintSolver(labirint,coord,path):
                 nextPixel = labirint.getpixel(nextCoord)
                 nextPixel = labirint.getpixel(testCoord)
             except:
-                path.pop(-1)
+                path.pop()
                 continue
             if nextPixel == BRANCO:
                 if nextCoord == FINAL:
@@ -42,7 +42,7 @@ def labirintSolver(labirint,coord,path):
                 imagem.putpixel(testCoord,VERMELHO)
                 imagem.putpixel(nextCoord,VERMELHO)
                 break
-            path.pop(-1)
+            path.pop()
 
 BRANCO = (255,255,255,255)
 PRETO = (0,0,0,255)

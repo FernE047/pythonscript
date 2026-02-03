@@ -224,7 +224,7 @@ def find_valid_candidates(board: BoardData, y: int, x: int) -> list[CellData]:
 def solve_sudoku_board(board: BoardData) -> BoardData | None:
     if len(board[1]) == 0:
         return board
-    empty_cell = board[1].pop(-1)
+    empty_cell = board[1].pop()
     global tries
     for value in find_valid_candidates(board, empty_cell[0], empty_cell[1]):
         board[0][empty_cell[0]][empty_cell[1]] = value

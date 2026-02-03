@@ -26,7 +26,7 @@ while(escolhas!=0):
             baralho+=4*[a]
     random.shuffle(baralho)
     soma=[0,0]
-    maos=[[baralho.pop(-1)],[]]
+    maos=[[baralho.pop()],[]]
     while(escolhas!=2):
         print("suas cartas:")
         soma[0]=apresentar(0)
@@ -40,13 +40,13 @@ while(escolhas!=0):
         print("2:parar")
         escolhas=int(input())
         if(escolhas==1):
-            maos[0].append(baralho.pop(-1))
+            maos[0].append(baralho.pop())
         else:
             break
     while(soma[1]<=soma[0]):
         if(soma[0]==21):
             break
-        maos[1].append(baralho.pop(-1))
+        maos[1].append(baralho.pop())
         print("dealer cartas:")
         soma[1]=apresentar(1)
         time.sleep(1)
