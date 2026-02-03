@@ -12,34 +12,64 @@ class BoardData(TypedDict):
     empty_cells: list[CoordData]
 
 
-def print_elapsed_time(seconds: float) -> None:
-    if seconds < 0:
-        seconds = -seconds
-        sign = "-"
-    else:
-        sign = ""
-    total_ms = int(round(seconds * 1000))
-    ms = total_ms % 1000
-    total_s = total_ms // 1000
-    s = total_s % 60
-    total_min = total_s // 60
-    m = total_min % 60
-    total_h = total_min // 60
-    h = total_h % 24
-    d = total_h // 24
-    parts: list[str] = []
+class TimeManager:
+    def __init__(self) -> None:
+        self.start_time = 0.0
+        self.end_time = 0.0
+        self.elapsed_time = 0.0
 
-    def add(value: int, singular: str, plural: str) -> None:
-        if value:
-            parts.append(f"{value} {singular if value == 1 else plural}")
+    def start(self) -> None:
+        self.start_time = time()
 
-    add(d, "day", "days")
-    add(h, "hour", "hours")
-    add(m, "minute", "minutes")
-    add(s, "second", "seconds")
-    if ms or not parts:
-        parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(sign + ", ".join(parts))
+    def stop(self) -> None:
+        self.end_time = time()
+        self.elapsed_time += self.end_time - self.start_time
+        self.print_elapsed_time()
+
+    def print_elapsed_time(self) -> None:
+        elapsed_time = self.elapsed_time
+        if elapsed_time < 0:
+            elapsed_time = -elapsed_time
+            sign = "-"
+        else:
+            sign = ""
+        total_ms = int(round(elapsed_time * 1000))
+        ms = total_ms % 1000
+        total_s = total_ms // 1000
+        s = total_s % 60
+        total_min = total_s // 60
+        m = total_min % 60
+        total_h = total_min // 60
+        h = total_h % 24
+        d = total_h // 24
+        parts: list[str] = []
+
+        def add(value: int, singular: str, plural: str) -> None:
+            if value:
+                parts.append(f"{value} {singular if value == 1 else plural}")
+
+        add(d, "day", "days")
+        add(h, "hour", "hours")
+        add(m, "minute", "minutes")
+        add(s, "second", "seconds")
+        if ms or not parts:
+            parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
+        text = ", ".join(parts)
+        print(f"\n{sign}{text}\n\n\n")
+
+
+class CounterManager:
+    def __init__(self) -> None:
+        self.attempts = 0
+
+    def increment(self) -> None:
+        self.attempts += 1
+
+    def display(self) -> None:
+        print(str(self))
+
+    def __str__(self) -> str:
+        return f"\nAttempts : {self.attempts}"
 
 
 def convert_raw_sudoku(raw_sudoku: str) -> list[CellData]:
@@ -134,19 +164,18 @@ def show(board: BoardData) -> None:
         print()
 
 
-def solve_sudoku_board(board: BoardData) -> BoardData | None:
+def solve_sudoku_board(board: BoardData, counter_manager: CounterManager) -> BoardData | None:
     if len(board["empty_cells"]) == 0:
         return board
     empty_cell = board["empty_cells"].pop()
     if not empty_cell:
         return None
-    global tries
     for value in range(1, 10):
         cell_value = cast(CellData, value)
         if not set_cell(board, empty_cell[0], empty_cell[1], cell_value):
             continue
-        tries += 1
-        solution_board = solve_sudoku_board(board)
+        counter_manager.increment()
+        solution_board = solve_sudoku_board(board, counter_manager)
         if solution_board is not None:
             return solution_board
     board["grid"][empty_cell[0]][empty_cell[1]] = 0
@@ -154,26 +183,20 @@ def solve_sudoku_board(board: BoardData) -> BoardData | None:
     return None
 
 
-def solve_single_board(board: BoardData) -> None:
+def solve_single_board(board: BoardData, time_manager: TimeManager) -> None:
     show(board)
     print()
-    global tries
-    tries = 0
-    start_time = time()
-    solution_board = solve_sudoku_board(board)
-    end_time = time()
+    counter_manager = CounterManager()
+    time_manager.start()
+    solution_board = solve_sudoku_board(board, counter_manager)
+    time_manager.stop()
     if solution_board is not None:
         show(solution_board)
-    print(f"\nAttempts: {tries}")
-    elapsed_duration = end_time - start_time
-    global elapsed_time
-    elapsed_time += elapsed_duration
-    print_elapsed_time(elapsed_duration)
+    counter_manager.display()
 
 
 def main() -> None:
-    tries = 0
-    elapsed_time = 0.0
+    time_manager = TimeManager()
     while True:
         file_names = os.listdir("sudokus")
         for file_name in file_names:
@@ -182,8 +205,8 @@ def main() -> None:
                 f"sudokus//{file_name}", "r", encoding="utf-8"
             ) as sudoku_board_raw:
                 board = create_sudoku_board(sudoku_board_raw.read())
-            solve_single_board(board)
-        print_elapsed_time(elapsed_time)
+            solve_single_board(board, time_manager)
+        time_manager.print_elapsed_time()
 
 
 if __name__ == "__main__":

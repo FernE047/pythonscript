@@ -31,34 +31,64 @@ CellData = Literal["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 SudokuGridData = list[list[CellData]]
 
 
-def print_elapsed_time(seconds: float) -> None:
-    if seconds < 0:
-        seconds = -seconds
-        sign = "-"
-    else:
-        sign = ""
-    total_ms = int(round(seconds * 1000))
-    ms = total_ms % 1000
-    total_s = total_ms // 1000
-    s = total_s % 60
-    total_min = total_s // 60
-    m = total_min % 60
-    total_h = total_min // 60
-    h = total_h % 24
-    d = total_h // 24
-    parts: list[str] = []
+class TimeManager:
+    def __init__(self) -> None:
+        self.start_time = 0.0
+        self.end_time = 0.0
+        self.elapsed_time = 0.0
 
-    def add(value: int, singular: str, plural: str) -> None:
-        if value:
-            parts.append(f"{value} {singular if value == 1 else plural}")
+    def start(self) -> None:
+        self.start_time = time()
 
-    add(d, "day", "days")
-    add(h, "hour", "hours")
-    add(m, "minute", "minutes")
-    add(s, "second", "seconds")
-    if ms or not parts:
-        parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(sign + ", ".join(parts))
+    def stop(self) -> None:
+        self.end_time = time()
+        self.elapsed_time = self.end_time - self.start_time
+        self.print_elapsed_time()
+
+    def print_elapsed_time(self) -> None:
+        elapsed_time = self.elapsed_time
+        if elapsed_time < 0:
+            elapsed_time = -elapsed_time
+            sign = "-"
+        else:
+            sign = ""
+        total_ms = int(round(elapsed_time * 1000))
+        ms = total_ms % 1000
+        total_s = total_ms // 1000
+        s = total_s % 60
+        total_min = total_s // 60
+        m = total_min % 60
+        total_h = total_min // 60
+        h = total_h % 24
+        d = total_h // 24
+        parts: list[str] = []
+
+        def add(value: int, singular: str, plural: str) -> None:
+            if value:
+                parts.append(f"{value} {singular if value == 1 else plural}")
+
+        add(d, "day", "days")
+        add(h, "hour", "hours")
+        add(m, "minute", "minutes")
+        add(s, "second", "seconds")
+        if ms or not parts:
+            parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
+        text = ", ".join(parts)
+        print(f"\n{sign}{text}\n\n\n")
+
+
+class CounterManager:
+    def __init__(self) -> None:
+        self.attempts = 0
+
+    def increment(self) -> None:
+        self.attempts += 1
+
+    def display(self) -> None:
+        print(str(self))
+
+    def __str__(self) -> str:
+        return f"\nAttempts : {self.attempts}"
 
 
 def main_menu() -> menuModeOptions:
@@ -358,8 +388,7 @@ def create_sudoku_board(mode: Literal[1, 2]) -> SudokuBoard:
     return sudoku_board
 
 
-def solve_sudoku_board(board: SudokuBoard) -> SudokuBoard | None:
-    global tries
+def solve_sudoku_board(board: SudokuBoard, counter_manager: CounterManager) -> SudokuBoard | None:
     if board.is_board_valid():
         return board
     empty_cell = board.find_next_empty_cell()
@@ -369,8 +398,8 @@ def solve_sudoku_board(board: SudokuBoard) -> SudokuBoard | None:
     for possible_value in possible_values:
         board_state = board.copy()
         board_state.set_cell(empty_cell[0], empty_cell[1], possible_value)
-        tries += 1
-        solution_board = solve_sudoku_board(board_state)
+        counter_manager.increment()
+        solution_board = solve_sudoku_board(board_state, counter_manager)
         if solution_board:
             return solution_board
     return None
@@ -379,22 +408,20 @@ def solve_sudoku_board(board: SudokuBoard) -> SudokuBoard | None:
 def solve_single_board(sudoku_board: SudokuBoard) -> None:
     sudoku_board.print_grid()
     print()
-    global tries
-    tries = 0
-    start_time = time()
-    solution_board = solve_sudoku_board(sudoku_board)
+    counter_manager = CounterManager()
+    time_manager = TimeManager()
+    time_manager.start()
+    solution_board = solve_sudoku_board(sudoku_board, counter_manager)
     if solution_board is None:
         print("no solution found")
         return
     solution_board.print_grid()
-    end_time = time()
-    print("\nattempts: " + str(tries))
-    print_elapsed_time(end_time - start_time)
+    time_manager.stop()
+    counter_manager.display()
     print("\n\n")
 
 
 def main() -> None:
-    tries = 0
     while True:
         mode = main_menu()
         if mode == 0:
