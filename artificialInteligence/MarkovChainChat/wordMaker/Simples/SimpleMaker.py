@@ -4,26 +4,40 @@
 this code is beyond broken. this is her grave. let it rest in peace...
 """
 
+"""
+Warning to next developers: I removed all the global variables to make the code less terrible.
+However, this made the code even more unreadable, because now all functions depend on variables
+that are not passed as parameters.
+Good luck trying to understand this mess.
+"""
+
 from numpy.random import choice
 
 
+class FrequencyManager:
+    def __init__(self) -> None:
+        self.letters = list("aeiouqwrtypsdfghjklzxcvbnm0123456789")
+        self.letter_occurrences = [0 for _ in self.letters]
+        self.vowel_frequencies = []
+        self.consonant_frequencies = []
+        self.initial_letter_occurrences = []
+        self.word_counts = []
+        self.word_stats = []
+        self.word_length_frequencies = []
+        self.word_lengths = []
+
+
 def randomMidVowels():
-    global letras
-    global vowel_frequencies
     letrasPossiveis = letras[0:5]
     return choice(letrasPossiveis, 1, p=vowel_frequencies)[0]
 
 
 def randomMidCons():
-    global letras
-    global consonant_frequencies
     letrasPossiveis = letras[5:]
     return choice(letrasPossiveis, 1, p=consonant_frequencies)[0]
 
 
 def firstLetter():
-    global letras
-    global initial_letter_occurrences
     letraAdicional = ""
     letra = choice(letras, 1, p=initial_letter_occurrences)[0]
     if letra == "q":
@@ -74,10 +88,6 @@ def makeSubWord(tamanhos, tamanhoStats):
 
 
 def generate_word() -> str:
-    global word_counts
-    global word_stats
-    global word_length_frequencies
-    global word_lengths
     words_quantity = choice(word_counts, 1, p=word_stats)[0]
     words: list[str] = []
     for word_index in range(words_quantity):
@@ -131,11 +141,12 @@ def clean_line(line: str) -> str:
 
 def main() -> None:
     nome = get_file_name()
+    frequencies_manager = FrequencyManager()
     letras = list("aeiouqwrtypsdfghjklzxcvbnm0123456789")
     with open(f"{nome}.txt", "r", encoding="UTF-8") as markov_chain_file:
         line = markov_chain_file.readline()
-        initial_letter_occurrences = [0 for _ in letras]
-        letter_occurrences = [0 for _ in letras]
+        initial_letter_occurrences = [0 for _ in frequencies_manager.letras]
+        letter_occurrences = [0 for _ in frequencies_manager.letras]
         word_lengths: list[list[int]] = []
         word_length_occurrences: list[list[int]] = []
         word_counts: list[int] = []
