@@ -1,33 +1,36 @@
+# this was one of the first times I used classes in python
+
+
 class User:
     seq = 0
-    objects = []
+    objects: list["User"] = []
 
-    def __init__(self, nome, idade):
-        self.id = None
+    def __init__(self, nome: str, idade: int) -> None:
+        self.id: None | int = None
         self.nome = nome
         self.idade = idade
 
-    def save(self):
+    def save(self) -> None:
         self.__class__.seq += 1
         self.id = self.__class__.seq
         self.__class__.objects.append(self)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.nome
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<{self.__class__.__name__}: {self.id} - {self.nome} - {self.idade}>\n"
 
     @classmethod
-    def all(cls):
+    def all(cls) -> list["User"]:
         return cls.objects
 
 
 if __name__ == "__main__":
-    u1 = User("Regis", 35)
-    u1.save()
-    print(u1)
-    u2 = User("Fabio", 20)
-    u2.save()
-    print(u2)
+    user_1 = User("Regis", 35)
+    user_1.save()
+    print(user_1)
+    user_2 = User("Fabio", 20)
+    user_2.save()
+    print(user_2)
     print(User.all())
