@@ -10,34 +10,76 @@ HintsData = tuple[HintHorizontalData, HintVerticalData]
 GameData = tuple[BoardData, HintsData]
 
 
-def print_elapsed_time(seconds: float) -> None:
-    if seconds < 0:
-        seconds = -seconds
-        sign = "-"
-    else:
-        sign = ""
-    total_ms = int(round(seconds * 1000))
-    ms = total_ms % 1000
-    total_s = total_ms // 1000
-    s = total_s % 60
-    total_min = total_s // 60
-    m = total_min % 60
-    total_h = total_min // 60
-    h = total_h % 24
-    d = total_h // 24
-    parts: list[str] = []
+class TimeManager:
+    def __init__(self) -> None:
+        self.total_time = 0.0
+        self.start_time = 0.0
+        self.end_time = 0.0
+        self.elapsed_time = 0.0
 
-    def add(value: int, singular: str, plural: str) -> None:
-        if value:
-            parts.append(f"{value} {singular if value == 1 else plural}")
+    def start(self) -> None:
+        self.start_time = time()
 
-    add(d, "day", "days")
-    add(h, "hour", "hours")
-    add(m, "minute", "minutes")
-    add(s, "second", "seconds")
-    if ms or not parts:
-        parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(sign + ", ".join(parts))
+    def stop(self) -> None:
+        self.end_time = time()
+        self.elapsed_time = self.end_time - self.start_time
+        self.total_time += self.elapsed_time
+
+    def print_elapsed_time(self, print_total: bool = False) -> None:
+        elapsed_time = self.elapsed_time
+        if print_total:
+            elapsed_time = self.total_time
+        if elapsed_time < 0:
+            elapsed_time = -elapsed_time
+            sign = "-"
+        else:
+            sign = ""
+        total_ms = int(round(elapsed_time * 1000))
+        ms = total_ms % 1000
+        total_s = total_ms // 1000
+        s = total_s % 60
+        total_min = total_s // 60
+        m = total_min % 60
+        total_h = total_min // 60
+        h = total_h % 24
+        d = total_h // 24
+        parts: list[str] = []
+
+        def add(value: int, singular: str, plural: str) -> None:
+            if value:
+                parts.append(f"{value} {singular if value == 1 else plural}")
+
+        add(d, "day", "days")
+        add(h, "hour", "hours")
+        add(m, "minute", "minutes")
+        add(s, "second", "seconds")
+        if ms or not parts:
+            parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
+        text = ", ".join(parts)
+        print(f"\n{sign}{text}\n\n\n")
+
+
+class CounterManager:
+    def __init__(self) -> None:
+        self.attempts = 0
+        self.heuristic_cuts = 0
+
+    def increment_attempts(self) -> None:
+        self.attempts += 1
+
+    def increment_cuts(self) -> None:
+        self.heuristic_cuts += 1
+
+    def reset_all(self) -> None:
+        self.attempts = 0
+        self.heuristic_cuts = 0
+
+    def display(self) -> None:
+        print(f"\nAttempts : {self.attempts}")
+        print(f"\nCuts : {self.heuristic_cuts}")
+
+    def __str__(self) -> str:
+        return f"\nAttempts : {self.attempts}\nCuts : {self.heuristic_cuts}"
 
 
 def save_board_image(board: BoardData, file_name: str) -> None:
@@ -128,7 +170,9 @@ def verificaColunasParcial(
     return True
 
 
-def solve_board(game: GameData) -> BoardData | None:
+def solve_board(
+    game: GameData, counter_manager: CounterManager
+) -> BoardData | None:
     # TODO fix game, it should be mutable
     board = game[0]
     hints = game[1]
@@ -138,7 +182,7 @@ def solve_board(game: GameData) -> BoardData | None:
         return board
     current_hint = vertical_hints.pop(0)
     if current_hint[1] == 0:
-        solved_board = solve_board(game)
+        solved_board = solve_board(game, counter_manager)
         if solved_board:
             return solved_board
         game = (board, (horizontal_hints, [current_hint] + vertical_hints))
@@ -177,9 +221,8 @@ def solve_board(game: GameData) -> BoardData | None:
             for x in range(x_limit + 2, x_limit + hint[1] + 2):
                 board[y][x] = True
             if verificaColunasParcial(game, y, first_free_space, len(board[0])):
-                global triesA
-                triesA += 1
-                solved_board = solve_board(game)
+                counter_manager.increment_cuts()
+                solved_board = solve_board(game, counter_manager)
                 if solved_board:
                     return solved_board
         for x in range(first_free_space, len(board[0])):
@@ -195,9 +238,8 @@ def solve_board(game: GameData) -> BoardData | None:
             if verificaColunasParcial(
                 game, y, first_free_space, inicial + current_hint[1]
             ):
-                global tries
-                tries += 1
-                solved_board = solve_board(game)
+                counter_manager.increment_attempts()
+                solved_board = solve_board(game, counter_manager)
                 if solved_board:
                     return solved_board
             for x in range(inicial, inicial + current_hint[1]):
@@ -206,21 +248,15 @@ def solve_board(game: GameData) -> BoardData | None:
     return None
 
 
-def solve_piccross_board(game: GameData) -> tuple[int, BoardData | None]:
+def solve_piccross_board(
+    game: GameData, timer_manager: TimeManager, counter_manager: CounterManager
+) -> BoardData | None:
     print()
-    global tries
-    global triesA
-    tries = 0
-    triesA = 0
-    cuts_amount = 0
-    start_time = time()
-    solution_board = solve_board(game)
-    end_time = time()
-    print(f"\ntentativas: {tries}")
-    print(f"\nCortes: {triesA}")
-    duration = end_time - start_time
-    global elapsed_time
-    elapsed_time += duration
+    counter_manager.reset_all()
+    timer_manager.start()
+    solution_board = solve_board(game, counter_manager)
+    timer_manager.stop()
+    counter_manager.display()
     for linha in game[0]:
         row = ""
         for element in linha:
@@ -229,14 +265,13 @@ def solve_piccross_board(game: GameData) -> tuple[int, BoardData | None]:
                 continue
             row += "0"
         print(row)
-    print_elapsed_time(duration)
-    return (cuts_amount, solution_board)
+    timer_manager.print_elapsed_time()
+    return solution_board
 
 
 def main() -> None:
-    elapsed_time = 0.0
-    tries = 0
-    triesA = 0
+    timer_manager = TimeManager()
+    counter_manager = CounterManager()
     for index in range(8):
         with open(f"piccross/A{index:03d}.txt") as piccross_file:
             config = piccross_file.read()
@@ -255,8 +290,8 @@ def main() -> None:
             tabuleiro.append([False for _ in horizontal_hints])
         dicas: HintsData = (horizontal_hints, vertical_hints)
         game: GameData = (tabuleiro, dicas)
-        solve_piccross_board(game)
-        print_elapsed_time(elapsed_time)
+        solve_piccross_board(game, timer_manager, counter_manager)
+        timer_manager.print_elapsed_time(print_total=True)
         save_board_image(tabuleiro, f"piccross/A{index:03d}")
 
 
