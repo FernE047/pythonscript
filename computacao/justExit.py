@@ -1,4 +1,4 @@
-# só termina a execução do programa se digitado "exit"
+# terminating a program using sys.exit()
 import sys
 
 while True:
@@ -6,4 +6,4 @@ while True:
     response = input()
     if response == "exit":
         sys.exit()
-    print("You typed " + response + ".")
+    print(f"You typed {response}.")
