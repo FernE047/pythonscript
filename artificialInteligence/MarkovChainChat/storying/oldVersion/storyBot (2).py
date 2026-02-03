@@ -1,14 +1,20 @@
 from random import randint
 
 
-def generate_start_text(is_title: bool) -> list[str]:
-    global CHAINSIZE
-    first_word = generate_word(is_title)
-    if is_title:
-        chain_directory = f"chainTitle/{CHAINSIZE}"
-    else:
-        chain_directory = f"chainStory/{CHAINSIZE}"
-    chain_file_path = f"{chain_directory}/chain.txt"
+class ChainManager:
+    def __init__(self, chain_size: int) -> None:
+        self.chain_size = chain_size
+
+    def get_chain_path(self, is_title: bool) -> str:
+        if is_title:
+            return f"chainTitle/{self.chain_size}/chain.txt"
+        else:
+            return f"chainStory/{self.chain_size}/chain.txt"
+
+
+def generate_start_text(is_title: bool, chain_manager: ChainManager) -> list[str]:
+    first_word = generate_word(is_title, chain_manager)
+    chain_file_path = chain_manager.get_chain_path(is_title)
     with open(chain_file_path, "r", encoding="utf-8") as file:
         line = file.readline().lower()
         word_frequency_map: dict[str, int] = {}
@@ -33,19 +39,16 @@ def generate_start_text(is_title: bool) -> list[str]:
             cumulative += value
             if cumulative >= chosen:
                 return [first_word] + list(word_frequency_map.keys())[index].split()
-    return ["¨" for _ in range(CHAINSIZE + 1)]
+    return ["¨" for _ in range(chain_manager.chain_size + 1)]
 
 
-def generate_word(is_title: bool, previous_words: list[str] | None = None) -> str:
-    global CHAINSIZE
+def generate_word(
+    is_title: bool, chain_manager: ChainManager, previous_words: list[str] | None = None
+) -> str:
     if previous_words is None:
-        previous_words = ["¨" for _ in range(CHAINSIZE)]
-    if is_title:
-        chain_directory = f"chainTitle/{CHAINSIZE}"
-    else:
-        chain_directory = f"chainStory/{CHAINSIZE}"
+        previous_words = ["¨" for _ in range(chain_manager.chain_size)]
+    chain_file_name = chain_manager.get_chain_path(is_title)
     previous_phrase = " ".join(previous_words)
-    chain_file_name = f"{chain_directory}/chain.txt"
     with open(chain_file_name, "r", encoding="utf-8") as file:
         line = file.readline().lower()
         word_frequency_map: dict[str, int] = {}
@@ -74,10 +77,9 @@ def generate_word(is_title: bool, previous_words: list[str] | None = None) -> st
     return "¨"
 
 
-def generate_text(is_title: bool) -> str:
-    global CHAINSIZE
+def generate_text(is_title: bool, chain_manager: ChainManager) -> str:
     generated_words: list[str] = []
-    initial_words = generate_start_text(is_title)
+    initial_words = generate_start_text(is_title, chain_manager)
     for word in initial_words[:-1]:
         if word == "¨":
             return " ".join(generated_words)
@@ -88,14 +90,18 @@ def generate_text(is_title: bool) -> str:
     while word != "¨":
         generated_words.append(word)
         print(word, end=" ")
-        word = generate_word(is_title, generated_words[index : index + CHAINSIZE])
+        word = generate_word(
+            is_title,
+            chain_manager,
+            generated_words[index : index + chain_manager.chain_size],
+        )
         index += 1
     return " ".join(generated_words)
 
 
-CHAINSIZE = 2
+chain_manager = ChainManager(chain_size=2)
 for a in range(10):
-    generate_text(True)
+    generate_text(True, chain_manager)
     print(" : ", end="")
-    generate_text(False)
+    generate_text(False, chain_manager)
     print("\n")
