@@ -1,5 +1,6 @@
-# pega um termo e imprime a quantia de caracteres
+# second script I made in python
+# takes a term and prints the number of characters
 
-print("escreva um termo")
-termo = input()
-print("o termo " + termo + " tem " + str(len(termo)) + " caracteres")
+print("enter a term")
+term = input()
+print(f"The term {term} has {len(term)} characters")
