@@ -234,9 +234,15 @@ def makeRandomFullName(sex=""):
     return " ".join(lista)
 
 
-s = ["m", "f"]
-g = ["\nmasculinos:", "\nfemininos:"]
-for n in range(2):
-    print(g[n])
-    for b in range(100):
-        print(f"{b:02d} : {makeRandomFullName(s[n])}")
+
+def main() -> None:
+    s = ["m", "f"]
+    g = ["\nmasculinos:", "\nfemininos:"]
+    for n in range(2):
+        print(g[n])
+        for b in range(100):
+            print(f"{b:02d} : {makeRandomFullName(s[n])}")
+
+
+if __name__ == "__main__":
+    main()

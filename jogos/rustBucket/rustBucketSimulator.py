@@ -241,16 +241,22 @@ def leMapa(mapa):
                 elementos.append(Elemento("caveiraEstatua",coord))
     return elementos
 
-imagem = Image.open("input.png")
-elementos = leMapa(imagem)
-a = 0
-while True:
-    for elemento in elementos[1:]:
-        print("b")
-        print(elemento.type)
-        elemento.nextTurn(elementos,imagem)
-    imagem.save("anima\\frame"+str(a)+".png")
-    a += 1
-    if(imagem.getpixel(elementos[0].coord) not in ((255,0,0,255),(255,0,0))):
-        break
-imagem.close()
+
+def main() -> None:
+    imagem = Image.open("input.png")
+    elementos = leMapa(imagem)
+    a = 0
+    while True:
+        for elemento in elementos[1:]:
+            print("b")
+            print(elemento.type)
+            elemento.nextTurn(elementos,imagem)
+        imagem.save("anima\\frame"+str(a)+".png")
+        a += 1
+        if(imagem.getpixel(elementos[0].coord) not in ((255,0,0,255),(255,0,0))):
+            break
+    imagem.close()
+
+
+if __name__ == "__main__":
+    main()

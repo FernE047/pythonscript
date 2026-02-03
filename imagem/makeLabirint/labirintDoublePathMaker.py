@@ -79,28 +79,34 @@ def corrigeLabirint(imagem):
                 imagem.putpixel((x, y), BRANCO)
 
 
-BRANCO = (255, 255, 255, 255)
-PRETO = (0, 0, 0, 255)
-AZUL = (0, 0, 255, 255)
-VERMELHO = (255, 0, 0, 255)
-pathQuant = 300
-largura = 100
-altura = 100
-if not largura % 2:
-    largura += 1
-if not altura % 2:
-    altura += 1
-verticesAbertosInicio = [(1, 1)]
-verticesAbertosFinal = [(largura - 2, altura - 2)]
-imagem = Image.new("RGBA", (largura, altura), (0, 0, 0, 255))
-imagem.putpixel((1, 1), (AZUL))
-imagem.putpixel((largura - 2, altura - 2), (VERMELHO))
-while verticesAbertosInicio or verticesAbertosFinal:
-    makeALabirint(imagem, verticesAbertosInicio, AZUL)
-    makeALabirint(imagem, verticesAbertosFinal, VERMELHO)
-makeAPath(imagem, pathQuant)
-corrigeLabirint(imagem)
-name = f"pureLabirint//labirint{len(listdir('pureLabirint')):04d}.png"
-print(name)
-imagem.save(name)
-imagem.close()
+
+def main() -> None:
+    BRANCO = (255, 255, 255, 255)
+    PRETO = (0, 0, 0, 255)
+    AZUL = (0, 0, 255, 255)
+    VERMELHO = (255, 0, 0, 255)
+    pathQuant = 300
+    largura = 100
+    altura = 100
+    if not largura % 2:
+        largura += 1
+    if not altura % 2:
+        altura += 1
+    verticesAbertosInicio = [(1, 1)]
+    verticesAbertosFinal = [(largura - 2, altura - 2)]
+    imagem = Image.new("RGBA", (largura, altura), (0, 0, 0, 255))
+    imagem.putpixel((1, 1), (AZUL))
+    imagem.putpixel((largura - 2, altura - 2), (VERMELHO))
+    while verticesAbertosInicio or verticesAbertosFinal:
+        makeALabirint(imagem, verticesAbertosInicio, AZUL)
+        makeALabirint(imagem, verticesAbertosFinal, VERMELHO)
+    makeAPath(imagem, pathQuant)
+    corrigeLabirint(imagem)
+    name = f"pureLabirint//labirint{len(listdir('pureLabirint')):04d}.png"
+    print(name)
+    imagem.save(name)
+    imagem.close()
+
+
+if __name__ == "__main__":
+    main()

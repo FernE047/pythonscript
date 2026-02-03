@@ -114,10 +114,15 @@ def siteProcura(site: str, html: str) -> bs4.ResultSet[bs4.element.Tag]:
     return informacao
 
 
-print("digite o termo de pesquisa")
-termoInicial = input()
-startTime = time.time()
-encontrarLong(termoInicial)
-endTime = time.time()
-realTime = endTime - startTime
-print("levou " + str(realTime) + " segundos")
+
+def main() -> None:
+    print("digite o termo de pesquisa")
+    termoInicial = input()
+    startTime = time.time()
+    encontrarLong(termoInicial)
+    endTime = time.time()
+    realTime = endTime - startTime
+    print("levou " + str(realTime) + " segundos")
+
+if __name__ == "__main__":
+    main()

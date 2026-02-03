@@ -31,11 +31,16 @@ def leCoords(coord):
         return trueCoord
 
 
-coordenadas = []
-coordenada = ""
-while coordenada != 0:
-    coordenada = input()
-    realCoord = leCoords(coordenada)
-    if realCoord:
-        coordenadas.append(realCoord)
-    print(coordenadas)
+
+def main() -> None:
+    coordenadas = []
+    coordenada = ""
+    while coordenada != 0:
+        coordenada = input()
+        realCoord = leCoords(coordenada)
+        if realCoord:
+            coordenadas.append(realCoord)
+        print(coordenadas)
+
+if __name__ == "__main__":
+    main()

@@ -11,9 +11,15 @@ def walkTree(diretorio=""):
         else:
             yield diretorio+"\\"+folder
 
-files = []
-for arquivo in walkTree():
-    if arquivo.find(".py")!= -1:
-        files.append(arquivo)
-        print(arquivo)
-print(len(files))
+
+def main() -> None:
+    files = []
+    for arquivo in walkTree():
+        if arquivo.find(".py")!= -1:
+            files.append(arquivo)
+            print(arquivo)
+    print(len(files))
+
+
+if __name__ == "__main__":
+    main()

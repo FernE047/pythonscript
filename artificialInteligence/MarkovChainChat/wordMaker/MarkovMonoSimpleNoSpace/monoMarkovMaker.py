@@ -50,6 +50,11 @@ def get_file_name() -> str:
     return file_name
 
 
-file_name = get_file_name()
-for a in range(1000):
-    print(generate_word(f"{file_name}/chain.txt"))
+def main() -> None:
+    file_name = get_file_name()
+    for _ in range(1000):
+        print(generate_word(f"{file_name}/chain.txt"))
+
+
+if __name__ == "__main__":
+    main()

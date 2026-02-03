@@ -10,7 +10,12 @@ def fazImagem(pontoFinal,nome):
             image.putpixel((x,y),tuple([int(a) for a in hsv_to_rgb(0,0,distancia((x,y),pontoFinal)/D*255)]))
     image.save(nome)
 
-fazImagem((255,255),"C:\\Users\\Programador\\Desktop\\pic1.png")
-fazImagem((127,127),"C:\\Users\\Programador\\Desktop\\pic2.png")
-fazImagem((185,220),"C:\\Users\\Programador\\Desktop\\pic3.png")
 
+def main() -> None:
+    fazImagem((255,255),"C:\\Users\\Programador\\Desktop\\pic1.png")
+    fazImagem((127,127),"C:\\Users\\Programador\\Desktop\\pic2.png")
+    fazImagem((185,220),"C:\\Users\\Programador\\Desktop\\pic3.png")
+
+
+if __name__ == "__main__":
+    main()

@@ -84,11 +84,17 @@ def calcula(board,ultimo,total,imp):
             total=calcula(newBoard,n,total,imp)
     return(total)
 
-total=0
-for n in range(9):
-    boardOriginal=[0,0,0,0,0,0,0,0,0]
-    boardOriginal[n]=1
-    imp=False
-    total=calcula(boardOriginal,n,total,imp)
-    print(n)
-print(str(total))
+
+def main() -> None:
+    total=0
+    for n in range(9):
+        boardOriginal=[0,0,0,0,0,0,0,0,0]
+        boardOriginal[n]=1
+        imp=False
+        total=calcula(boardOriginal,n,total,imp)
+        print(n)
+    print(str(total))
+
+
+if __name__ == "__main__":
+    main()

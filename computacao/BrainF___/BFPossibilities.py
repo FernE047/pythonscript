@@ -173,33 +173,38 @@ def execute_bf(
     return memory_tape
 
 
-config = Config()
-found_results: list[int] = []
-optimal_step_count: dict[int, str] = {}
-potLimite = 10
-while config.valid_script_count <= 10**potLimite:
-    config.steps = 0
-    programa = generate_code(config)
-    quantiaColcheteAberto = check_bracket_balance(programa)
-    if quantiaColcheteAberto == 0:
-        memory_tape: tuple[int, int, list[int]] | list[int] = [0]
-        memory_tape = execute_bf(programa, memory_tape, config)
-        if config.enable_print:
-            print(config.valid_script_count, end="/")
-            print(config.script_id, end="\t")
-            print(programa, end="\t")
-            print(memory_tape, end="\t")
-            print("passos: " + str(config.steps))
-        if isinstance(memory_tape, list):
-            for result_output in memory_tape:
-                if config.steps == config.limit_exec:
-                    break
-                if result_output not in found_results:
-                    found_results.append(result_output)
-                    optimal_step_count[result_output] = programa
-        config.valid_script_count += 1
-    config.script_id += 1
-    if config.script_id % (7 * 10 ** (potLimite - 2)) == 0:
+def main() -> None:
+    config = Config()
+    found_results: list[int] = []
+    optimal_step_count: dict[int, str] = {}
+    potLimite = 10
+    while config.valid_script_count <= 10**potLimite:
+        config.steps = 0
+        programa = generate_code(config)
+        quantiaColcheteAberto = check_bracket_balance(programa)
+        if quantiaColcheteAberto == 0:
+            memory_tape: tuple[int, int, list[int]] | list[int] = [0]
+            memory_tape = execute_bf(programa, memory_tape, config)
+            if config.enable_print:
+                print(config.valid_script_count, end="/")
+                print(config.script_id, end="\t")
+                print(programa, end="\t")
+                print(memory_tape, end="\t")
+                print("passos: " + str(config.steps))
+            if isinstance(memory_tape, list):
+                for result_output in memory_tape:
+                    if config.steps == config.limit_exec:
+                        break
+                    if result_output not in found_results:
+                        found_results.append(result_output)
+                        optimal_step_count[result_output] = programa
+            config.valid_script_count += 1
+        config.script_id += 1
+        if config.script_id % (7 * 10 ** (potLimite - 2)) == 0:
+            display_results(optimal_step_count, config)
+    for _ in range(min(optimal_step_count), max(optimal_step_count) + 1):
         display_results(optimal_step_count, config)
-for a in range(min(optimal_step_count), max(optimal_step_count) + 1):
-    display_results(optimal_step_count, config)
+
+
+if __name__ == "__main__":
+    main()

@@ -273,69 +273,74 @@ def random_study(folder: str, mode: str) -> None:  # TODO implement partial modu
             return
 
 
-while True:
-    user_choice = choose_from_options(
-        "choose a category : ", ["Exit", "Create New"] + os.listdir("./categories")
-    )
-    if user_choice == "Exit":
-        break
-    if user_choice == "Create New":
-        new_category_name = input("type the new category name : ")
-        folder = f"./categories/{new_category_name.title()}"
-        evaluation_folder = f"./evaluations/{new_category_name.title()}"
-        print(folder)
-        if not os.path.exists(folder):
-            os.makedirs(folder)
-            os.makedirs(evaluation_folder)
-        else:
-            print("already exists")
-        continue
-    folder = "./categories/" + user_choice
-    evaluation_folder = "./evaluations/" + user_choice
+def main() -> None:
     while True:
-        options = ["Back"]
-        options += ["Modules"]
-        if len(os.listdir(folder)) != 0:
-            options += ["Random"]
-        user_choice = choose_from_options("choose an option : ", options)
-        if user_choice == "Back":
-            break
-        if user_choice == "Modules":
-            while True:
-                options = ["Back"]
-                options += ["New"]
-                categories = os.listdir(folder)
-                user_choice = choose_from_options(
-                    "choose an option : ", options + categories
-                )
-                if user_choice == "Back":
-                    break
-                if user_choice == "New":
-                    module = input("type the new module name : ")
-                    new_module(folder, evaluation_folder, module.title())
-                    continue
-                module = user_choice
-                options = ["Back"]
-                options += ["View"]
-                options += ["Study"]
-                options += ["Edit"]
-                options += ["Delete"]
-                user_choice = choose_from_options("choose an option : ", options)
-                if user_choice == "View":
-                    print_module(f"{folder}/{module}")
-                if user_choice == "Edit":
-                    edit_module(folder, module)
-                if user_choice == "Delete":
-                    delete_module(folder, module)
-                if user_choice == "Study":
-                    study_module(folder, module)
-        if user_choice == "Random":
-            modules = os.listdir(folder)
-            options = ["Back", "Total"]
-            if len(modules) > 1:
-                options.extend(["Simple", "Partial Total", "Partial Simple"])
-            while True:
-                user_choice = choose_from_options("choose an option : ", options)
-                if user_choice == "Back":
-                    break
-                random_study(folder, user_choice)
+        user_choice = choose_from_options(
+            "choose a category : ", ["Exit", "Create New"] + os.listdir("./categories")
+        )
+        if user_choice == "Exit":
+            return
+        if user_choice == "Create New":
+            new_category_name = input("type the new category name : ")
+            folder = f"./categories/{new_category_name.title()}"
+            evaluation_folder = f"./evaluations/{new_category_name.title()}"
+            print(folder)
+            if not os.path.exists(folder):
+                os.makedirs(folder)
+                os.makedirs(evaluation_folder)
+            else:
+                print("already exists")
+            continue
+        folder = "./categories/" + user_choice
+        evaluation_folder = "./evaluations/" + user_choice
+        while True:
+            options = ["Back"]
+            options += ["Modules"]
+            if len(os.listdir(folder)) != 0:
+                options += ["Random"]
+            user_choice = choose_from_options("choose an option : ", options)
+            if user_choice == "Back":
+                break
+            if user_choice == "Modules":
+                while True:
+                    options = ["Back"]
+                    options += ["New"]
+                    categories = os.listdir(folder)
+                    user_choice = choose_from_options(
+                        "choose an option : ", options + categories
+                    )
+                    if user_choice == "Back":
+                        break
+                    if user_choice == "New":
+                        module = input("type the new module name : ")
+                        new_module(folder, evaluation_folder, module.title())
+                        continue
+                    module = user_choice
+                    options = ["Back"]
+                    options += ["View"]
+                    options += ["Study"]
+                    options += ["Edit"]
+                    options += ["Delete"]
+                    user_choice = choose_from_options("choose an option : ", options)
+                    if user_choice == "View":
+                        print_module(f"{folder}/{module}")
+                    if user_choice == "Edit":
+                        edit_module(folder, module)
+                    if user_choice == "Delete":
+                        delete_module(folder, module)
+                    if user_choice == "Study":
+                        study_module(folder, module)
+            if user_choice == "Random":
+                modules = os.listdir(folder)
+                options = ["Back", "Total"]
+                if len(modules) > 1:
+                    options.extend(["Simple", "Partial Total", "Partial Simple"])
+                while True:
+                    user_choice = choose_from_options("choose an option : ", options)
+                    if user_choice == "Back":
+                        break
+                    random_study(folder, user_choice)
+
+
+if __name__ == "__main__":
+    main()

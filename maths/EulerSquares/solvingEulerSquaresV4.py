@@ -183,12 +183,18 @@ def fazMatriz(tamanho,indice):
             coloca(matriz,(0,x,i),x)
     return matriz
 
-iterations = 0
-profundidade = 0
-tamanho = 5
-indice = 2
-matriz = []
-fazMatriz(tamanho,indice)
-usados = [[a,a] for a in range(tamanho)]
-matriz = solve(matriz,(1,0,0),usados)
-imprime()
+
+def main() -> None:
+    iterations = 0
+    profundidade = 0
+    tamanho = 5
+    indice = 2
+    matriz = []
+    fazMatriz(tamanho,indice)
+    usados = [[a,a] for a in range(tamanho)]
+    matriz = solve(matriz,(1,0,0),usados)
+    imprime()
+
+
+if __name__ == "__main__":
+    main()

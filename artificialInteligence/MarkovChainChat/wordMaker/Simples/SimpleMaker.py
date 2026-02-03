@@ -1,4 +1,4 @@
-#type: ignore
+# type: ignore
 
 """
 this code is beyond broken. this is her grave. let it rest in peace...
@@ -129,62 +129,67 @@ def clean_line(line: str) -> str:
     return line
 
 
-nome = get_file_name()
-letras = list("aeiouqwrtypsdfghjklzxcvbnm0123456789")
-with open(f"{nome}.txt", "r", encoding="UTF-8") as markov_chain_file:
-    line = markov_chain_file.readline()
-    initial_letter_occurrences = [0 for _ in letras]
-    letter_occurrences = [0 for _ in letras]
-    word_lengths: list[list[int]] = []
-    word_length_occurrences: list[list[int]] = []
-    word_counts:list[int] = []
-    word_stats:list[int] = []
-    while line:
-        line = clean_line(line)
-        palavras = line[:-1].split(" ")
-        while len(palavras) > len(word_counts):
-            word_counts.append(len(word_counts) + 1)
-            word_stats.append(0)
-            word_lengths.append([])
-            word_length_occurrences.append([])
-        if len(palavras) in word_counts:
-            word_stats[len(palavras) - 1] += 1
-        for m, palavra in enumerate(palavras):
-            current_word_length = word_lengths[m]
-            current_occurrences = word_length_occurrences[m]
-            for n, caracter in enumerate(list(palavra)):
-                try:
-                    if n == 0:
-                        initial_letter_occurrences[letras.index(caracter)] += 1
-                    else:
-                        letter_occurrences[letras.index(caracter)] += 1
-                except ValueError:
-                    pass
-            tamanho = len(palavra)
-            if tamanho not in current_word_length:
-                current_word_length.append(tamanho)
-                current_occurrences.append(1)
-            else:
-                current_occurrences[current_word_length.index(tamanho)] += 1
+def main() -> None:
+    nome = get_file_name()
+    letras = list("aeiouqwrtypsdfghjklzxcvbnm0123456789")
+    with open(f"{nome}.txt", "r", encoding="UTF-8") as markov_chain_file:
         line = markov_chain_file.readline()
-    initial_letter_frequencies = normalize_statistics(initial_letter_occurrences)
-    vowel_frequencies = normalize_statistics(letter_occurrences[0:5])
-    consonant_frequencies = normalize_statistics(letter_occurrences[5:])
-    word_length_frequencies: list[float] = []
-    for current_occurrences in word_length_occurrences:
-        current_word_length_frequencies = normalize_statistics(current_occurrences)
-        for word_length_frequency in current_word_length_frequencies:
-            word_length_frequencies.append(word_length_frequency)
-    word_frequencies = normalize_statistics(word_stats)
-number = -1
-while number < 0:
-    print("how many words?")
-    try:
-        number = int(input())
-    except ValueError:
-        print("invalid number")
-        continue
-    if number < 0:
-        print("invalid number")
-for a in range(number):
-    print(generate_word())
+        initial_letter_occurrences = [0 for _ in letras]
+        letter_occurrences = [0 for _ in letras]
+        word_lengths: list[list[int]] = []
+        word_length_occurrences: list[list[int]] = []
+        word_counts: list[int] = []
+        word_stats: list[int] = []
+        while line:
+            line = clean_line(line)
+            palavras = line[:-1].split(" ")
+            while len(palavras) > len(word_counts):
+                word_counts.append(len(word_counts) + 1)
+                word_stats.append(0)
+                word_lengths.append([])
+                word_length_occurrences.append([])
+            if len(palavras) in word_counts:
+                word_stats[len(palavras) - 1] += 1
+            for m, palavra in enumerate(palavras):
+                current_word_length = word_lengths[m]
+                current_occurrences = word_length_occurrences[m]
+                for n, caracter in enumerate(list(palavra)):
+                    try:
+                        if n == 0:
+                            initial_letter_occurrences[letras.index(caracter)] += 1
+                        else:
+                            letter_occurrences[letras.index(caracter)] += 1
+                    except ValueError:
+                        pass
+                tamanho = len(palavra)
+                if tamanho not in current_word_length:
+                    current_word_length.append(tamanho)
+                    current_occurrences.append(1)
+                else:
+                    current_occurrences[current_word_length.index(tamanho)] += 1
+            line = markov_chain_file.readline()
+        initial_letter_frequencies = normalize_statistics(initial_letter_occurrences)
+        vowel_frequencies = normalize_statistics(letter_occurrences[0:5])
+        consonant_frequencies = normalize_statistics(letter_occurrences[5:])
+        word_length_frequencies: list[float] = []
+        for current_occurrences in word_length_occurrences:
+            current_word_length_frequencies = normalize_statistics(current_occurrences)
+            for word_length_frequency in current_word_length_frequencies:
+                word_length_frequencies.append(word_length_frequency)
+        word_frequencies = normalize_statistics(word_stats)
+    number = -1
+    while number < 0:
+        print("how many words?")
+        try:
+            number = int(input())
+        except ValueError:
+            print("invalid number")
+            continue
+        if number < 0:
+            print("invalid number")
+    for _ in range(number):
+        print(generate_word())
+
+
+if __name__ == "__main__":
+    main()

@@ -253,21 +253,28 @@ def solve_single_board(sudoku_board: SudokuBoard) -> None:
     print_elapsed_time(end_time - start_time)
 
 
-tries = 0
-while True:
-    mode = main_menu()
-    if mode == 0:
-        break
-    if mode != 3:
-        board = create_sudoku_board(mode)
-        solve_single_board(board)
-        continue
-    start_time = time()
-    file_names = os.listdir("sudokus")
-    for file_name in file_names:
-        print(f"{file_name}\n")
-        with open(f"sudokus//{file_name}", "r", encoding="utf-8") as sudoku_board_raw:
-            board = SudokuBoard(sudoku_board_raw.read())
+def main() -> None:
+    tries = 0
+    while True:
+        mode = main_menu()
+        if mode == 0:
+            break
+        if mode != 3:
+            board = create_sudoku_board(mode)
             solve_single_board(board)
-    end_time = time()
-    print_elapsed_time(end_time - start_time)
+            continue
+        start_time = time()
+        file_names = os.listdir("sudokus")
+        for file_name in file_names:
+            print(f"{file_name}\n")
+            with open(
+                f"sudokus//{file_name}", "r", encoding="utf-8"
+            ) as sudoku_board_raw:
+                board = SudokuBoard(sudoku_board_raw.read())
+                solve_single_board(board)
+        end_time = time()
+        print_elapsed_time(end_time - start_time)
+
+
+if __name__ == "__main__":
+    main()

@@ -94,75 +94,81 @@ def mergeTwoImages(img1, img2):
     return novaImagem
 
 
-print("diga um assunto")
-assunto = input()
-imagens = pI.pegaAssunto(assunto)
-quantia = len(imagens)
-nome = assunto
-numeroPossivel = 0
-while 2**numeroPossivel < quantia:
-    numeroPossivel += 1
-numeroPossivel -= 1
-print("modo de exclusão")
-print("4-maiores")
-print("3-primeiras")
-print("2-ultimas")
-print("1-aleatorio")
-print("0-seleção")
-modo = input()
-print("com exclusão ou sem?[1/0]")
-exc = input()
-delete = exc == "1"
-inicio = time()
-while len(imagens) > 2**numeroPossivel:
-    if modo == "1":
-        imagens.pop(random.randint(0, len(imagens) - 1))
-    elif modo == "2":
-        imagens.pop()
-    elif modo == "3":
-        imagens.pop(0)
-    elif modo == "4":
-        maior = 0
-        tamanho = 0
-        for index, imagem in enumerate(imagens):
-            tamanhoTeste = Image.open(imagem).size
-            tamanhoTeste = tamanhoTeste[0] * tamanhoTeste[1]
-            if tamanhoTeste >= tamanho:
-                tamanho = tamanhoTeste
-                maior = index
-        imagens.pop(maior)
-    else:
-        for index, imagem in enumerate(imagens):
-            print(f"{index:04d} - {imagem}")
-        print("\ndigite qual ou quais excluir")
-        exclusao = input()
-        if exclusao.find(",") == -1:
-            imagens.pop(int(exclusao))
+
+def main() -> None:
+    print("diga um assunto")
+    assunto = input()
+    imagens = pI.pegaAssunto(assunto)
+    quantia = len(imagens)
+    nome = assunto
+    numeroPossivel = 0
+    while 2**numeroPossivel < quantia:
+        numeroPossivel += 1
+    numeroPossivel -= 1
+    print("modo de exclusão")
+    print("4-maiores")
+    print("3-primeiras")
+    print("2-ultimas")
+    print("1-aleatorio")
+    print("0-seleção")
+    modo = input()
+    print("com exclusão ou sem?[1/0]")
+    exc = input()
+    delete = exc == "1"
+    inicio = time()
+    while len(imagens) > 2**numeroPossivel:
+        if modo == "1":
+            imagens.pop(random.randint(0, len(imagens) - 1))
+        elif modo == "2":
+            imagens.pop()
+        elif modo == "3":
+            imagens.pop(0)
+        elif modo == "4":
+            maior = 0
+            tamanho = 0
+            for index, imagem in enumerate(imagens):
+                tamanhoTeste = Image.open(imagem).size
+                tamanhoTeste = tamanhoTeste[0] * tamanhoTeste[1]
+                if tamanhoTeste >= tamanho:
+                    tamanho = tamanhoTeste
+                    maior = index
+            imagens.pop(maior)
         else:
-            exclusoes = exclusao.split(",")
-            for item in exclusoes:
-                if len(imagens) > 2**numeroPossivel:
-                    if int(item) < len(imagens):
-                        imagens.pop(int(item))
-                else:
-                    break
-print(2**numeroPossivel)
-print(len(imagens))
-for potencia in range(numeroPossivel):
-    metade = int(len(imagens) / 2)
-    nomeMedio = nome + " medio"
-    pasta = [nomeMedio, nomeMedio + " " + str(metade)]
-    newImages = []
-    for index in range(metade):
-        img1 = imagens[index]
-        img2 = imagens[index + metade]
-        imagem = mergeTwoImages(img1, img2)
-        img = pI.salva(nomeMedio + str(index), imagem, pasta=pasta, extensao=".png")
-        newImages.append(img)
-    imagens = newImages
-if delete:
-    pI.delete(nomeMedio, pastaOutput=True)
-imagem.save("mediaFinal.png")
-pI.salva(nomeMedio, imagem, pasta="media", extensao=".png")
-fim = time()
-print_elapsed_time(fim - inicio)
+            for index, imagem in enumerate(imagens):
+                print(f"{index:04d} - {imagem}")
+            print("\ndigite qual ou quais excluir")
+            exclusao = input()
+            if exclusao.find(",") == -1:
+                imagens.pop(int(exclusao))
+            else:
+                exclusoes = exclusao.split(",")
+                for item in exclusoes:
+                    if len(imagens) > 2**numeroPossivel:
+                        if int(item) < len(imagens):
+                            imagens.pop(int(item))
+                    else:
+                        break
+    print(2**numeroPossivel)
+    print(len(imagens))
+    for potencia in range(numeroPossivel):
+        metade = int(len(imagens) / 2)
+        nomeMedio = nome + " medio"
+        pasta = [nomeMedio, nomeMedio + " " + str(metade)]
+        newImages = []
+        for index in range(metade):
+            img1 = imagens[index]
+            img2 = imagens[index + metade]
+            imagem = mergeTwoImages(img1, img2)
+            img = pI.salva(nomeMedio + str(index), imagem, pasta=pasta, extensao=".png")
+            newImages.append(img)
+        imagens = newImages
+    if delete:
+        pI.delete(nomeMedio, pastaOutput=True)
+    imagem.save("mediaFinal.png")
+    pI.salva(nomeMedio, imagem, pasta="media", extensao=".png")
+    fim = time()
+    print_elapsed_time(fim - inicio)
+
+
+if __name__ == "__main__":
+    main()

@@ -23,20 +23,25 @@ def tamanhoParaTitulo():
 def procuraTextoEmLista(palavra,lista):
     
 
-while True:
-    print("\n\nqual o primeiro termo?")
-    termo=input().lower()
-    tituloTamanho=tamanhoParaTitulo()
-    print("tamanho do titulo "+tituloTamanho+" palavras")
-    informacao=pesquisaGoogle(termo,adicao="+site%3A%2Ffanfiction.com.br%2F")
-    tituloOficial=[termo]
-    titulos=[]
-    while (len(tituloOficial)<=tituloTamanho):
-        for info in informacao:
-            newInfo=info.select(".LC20lb")
-            if(newInfo):
-                texto=newInfo[0].get_text().lower()
-                indice=procuraTextoEmLista(termo,texto.split())
-                titulos+=[texto]
-    print("\ntitulo\n")
-            
+
+def main() -> None:
+    while True:
+        print("\n\nqual o primeiro termo?")
+        termo=input().lower()
+        tituloTamanho=tamanhoParaTitulo()
+        print("tamanho do titulo "+tituloTamanho+" palavras")
+        informacao=pesquisaGoogle(termo,adicao="+site%3A%2Ffanfiction.com.br%2F")
+        tituloOficial=[termo]
+        titulos=[]
+        while (len(tituloOficial)<=tituloTamanho):
+            for info in informacao:
+                newInfo=info.select(".LC20lb")
+                if(newInfo):
+                    texto=newInfo[0].get_text().lower()
+                    indice=procuraTextoEmLista(termo,texto.split())
+                    titulos+=[texto]
+        print("\ntitulo\n")
+                
+
+if __name__ == "__main__":
+    main()

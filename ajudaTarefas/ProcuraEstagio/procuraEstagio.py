@@ -92,50 +92,55 @@ def refine_job_results(
     return refined_jobs
 
 
-sites = [
-    "http://empregacampinas.com.br/page/{}/?s=est%C3%A1gio",
-    "http://empregacampinas.com.br/categoria/vaga/page/{}/",
-]
-choice = choose_from_options("", ["estágio", "emprego", "tudo"], mode="number")
-if choice < 2:
-    sites = [sites[choice]]
-search_locations = ["Campinas", "Sumaré", "Sumare"]
-search_keywords = [
-    "e-commerce",
-    "TI",
-    "tecnologia",
-    "programador",
-    "programadores",
-    "Web",
-]
-browser = webbrowser.get(
-    "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s"
-)
-final_job_listings: list[jobListingData] = []
-for site in sites:
-    for page in range(1, 10):
-        information = get_tag_site(site.format(page), ".thumbnail")
-        vagasDisponiveis = filter_job_listing(information)
-        if search_locations:
-            vagasDisponiveis = refine_job_results(
-                vagasDisponiveis, search_locations, ["title"]
-            )
-        if search_keywords:
-            vagasDisponiveis = refine_job_results(
-                vagasDisponiveis, search_keywords, ["title", "description"]
-            )
-        final_job_listings.extend(vagasDisponiveis)
-while True:
-    options = [job["title"] for job in final_job_listings]
-    choice = choose_from_options(
-        "choose : ", options + ["all", "exit"], mode="number"
+def main() -> None:
+    sites = [
+        "http://empregacampinas.com.br/page/{}/?s=est%C3%A1gio",
+        "http://empregacampinas.com.br/categoria/vaga/page/{}/",
+    ]
+    choice = choose_from_options("", ["estágio", "emprego", "tudo"], mode="number")
+    if choice < 2:
+        sites = [sites[choice]]
+    search_locations = ["Campinas", "Sumaré", "Sumare"]
+    search_keywords = [
+        "e-commerce",
+        "TI",
+        "tecnologia",
+        "programador",
+        "programadores",
+        "Web",
+    ]
+    browser = webbrowser.get(
+        "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s"
     )
-    if choice < len(options):
-        browser.open(final_job_listings[choice]["site"])
-        final_job_listings.pop(choice)
-        continue
-    choice -= len(options)
-    if choice != 0:
-        break
-    for job in final_job_listings:
-        browser.open(job["site"])
+    final_job_listings: list[jobListingData] = []
+    for site in sites:
+        for page in range(1, 10):
+            information = get_tag_site(site.format(page), ".thumbnail")
+            vagasDisponiveis = filter_job_listing(information)
+            if search_locations:
+                vagasDisponiveis = refine_job_results(
+                    vagasDisponiveis, search_locations, ["title"]
+                )
+            if search_keywords:
+                vagasDisponiveis = refine_job_results(
+                    vagasDisponiveis, search_keywords, ["title", "description"]
+                )
+            final_job_listings.extend(vagasDisponiveis)
+    while True:
+        options = [job["title"] for job in final_job_listings]
+        choice = choose_from_options(
+            "choose : ", options + ["all", "exit"], mode="number"
+        )
+        if choice < len(options):
+            browser.open(final_job_listings[choice]["site"])
+            final_job_listings.pop(choice)
+            continue
+        choice -= len(options)
+        if choice != 0:
+            return
+        for job in final_job_listings:
+            browser.open(job["site"])
+
+
+if __name__ == "__main__":
+    main()

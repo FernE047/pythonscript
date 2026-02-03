@@ -484,6 +484,11 @@ def remove_book(system: System) -> None:
     database.close()
 
 
-system = System()
-menu(system)
-system.close_shelf()
+def main() -> None:
+    system = System()
+    menu(system)
+    system.close_shelf()
+
+
+if __name__ == "__main__":
+    main()

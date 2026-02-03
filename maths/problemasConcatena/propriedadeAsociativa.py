@@ -16,6 +16,12 @@ def testaBase(num, zero=False, iguais=False):
                     print("")
 
 
-for base in range(2, 21):
-    print("base " + str(base) + " :\n")
-    testaBase(base, zero=True, iguais=True)
+
+def main() -> None:
+    for base in range(2, 21):
+        print("base " + str(base) + " :\n")
+        testaBase(base, zero=True, iguais=True)
+
+
+if __name__ == "__main__":
+    main()

@@ -156,9 +156,14 @@ def corrigeFrame(nome):
     imagem.save(nome)
     imagem.close()
 
-if __name__ == "__main__":
+
+def main() -> None:
     frames = ["C:\\pythonscript\\imagem\\morphManual\\frames\\"+a for a in os.listdir("C:\\pythonscript\\imagem\\morphManual\\frames")]
     frames.pop(0)
     frames.pop()
     p = multiprocessing.Pool(os.cpu_count())
     p.map(corrigeFrame,frames)
+
+
+if __name__ == "__main__":
+    main()

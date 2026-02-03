@@ -46,44 +46,49 @@ def imprimDados(probIndividual, total):
     print()
 
 
-total = 0
-participante = 1
-probIndividual = [0 for a in range(100)]
-inicioDefinitivo = time()
-comeco = time()
-try:
-    while True:
-        total += 1
-        for participante in range(100):
-            ehCerto = False
-            chutes = random.sample(range(participante, 100), 50)
-            for tentativa in range(50):
-                chute = chutes[tentativa]
-                if chute == participante:
-                    ehCerto = True
+
+def main() -> None:
+    total = 0
+    participante = 1
+    probIndividual = [0 for a in range(100)]
+    inicioDefinitivo = time()
+    comeco = time()
+    try:
+        while True:
+            total += 1
+            for participante in range(100):
+                ehCerto = False
+                chutes = random.sample(range(participante, 100), 50)
+                for tentativa in range(50):
+                    chute = chutes[tentativa]
+                    if chute == participante:
+                        ehCerto = True
+                        break
+                if not (ehCerto):
+                    probIndividual[participante] += 1
                     break
-            if not (ehCerto):
-                probIndividual[participante] += 1
+            if ehCerto:
+                print("temos um ganhador")
                 break
-        if ehCerto:
-            print("temos um ganhador")
-            break
-    fim = time()
-    imprimDados(probIndividual, total)
-    duracao = fim - comeco
-    print("execução total : ")
-    print_elapsed_time(duracao)
-    print("media total :    ")
-    print_elapsed_time((duracao) / total)
-except:
-    fim = time()
-    imprimDados(probIndividual, total)
-    duracao = fim - comeco
-    print("execução total : ")
-    print_elapsed_time(duracao)
-    print("media total :    ")
-    print_elapsed_time((duracao) / total)
-    print("expectativa 100k : ")
-    print_elapsed_time(((duracao) / total) * 100000)
-# media total :    0.0005307446075174813 segundos
-# expectativa 100k : 53.07446075174813 segundos
+        fim = time()
+        imprimDados(probIndividual, total)
+        duracao = fim - comeco
+        print("execução total : ")
+        print_elapsed_time(duracao)
+        print("media total :    ")
+        print_elapsed_time((duracao) / total)
+    except:
+        fim = time()
+        imprimDados(probIndividual, total)
+        duracao = fim - comeco
+        print("execução total : ")
+        print_elapsed_time(duracao)
+        print("media total :    ")
+        print_elapsed_time((duracao) / total)
+        print("expectativa 100k : ")
+        print_elapsed_time(((duracao) / total) * 100000)
+    # media total :    0.0005307446075174813 segundos
+    # expectativa 100k : 53.07446075174813 segundos
+
+if __name__ == "__main__":
+    main()

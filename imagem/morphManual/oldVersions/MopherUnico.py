@@ -489,42 +489,48 @@ def funcaoAfim(inicio,fim,total,n):
         elemento.append(int(A*n+B))
     return tuple(elemento)
 
-quantiaFrames = 30#pegaInteiro("quantos frames?")
-limpaPasta("C:\\pythonscript\\imagem\\morphManual\\partesConfig")
-limpaPasta("C:\\pythonscript\\imagem\\morphManual\\frames")
-limpaPasta("C:\\pythonscript\\imagem\\morphManual\\frames\\resized")
-nomeFrame = "frames\\frame{0:03d}.png"
-imagemInicial,imagemFinal = fazConfig(quantiaFrames)
-imagemInicial.save(nomeFrame.format(0))
-imagemFinal.save(nomeFrame.format(quantiaFrames+1))
-print("\n tamanho: "+str(imagemInicial.size),end="\n\n")
-for n in range(quantiaFrames):
-    print(n)
-    frame = Image.new("RGBA",imagemFinal.size,(255,255,255,0))
-    with open("config.txt", "r", encoding="utf-8") as file:
-        linha = file.readline()
-        while(linha):
-            if(linha.find("fundo")!=-1):
-                coord = tuple([int(b) for b in linha[:-6].split(",")])
-                frame.putpixel(coord,imagemInicial.getpixel(coord))
-            else:
-                dados = [tuple([int(b) for b in coord.split(",")]) for coord in linha.split(" ")]
-                novaCoord = []
-                for m in range(2):
-                    A = dados[m][0]
-                    B = dados[m][1]
-                    novaCoord.append(int((n+1)*A/(quantiaFrames+1)+B))
-                novaCoord = tuple(novaCoord)
-                novaCor = []
-                for m in range(3):
-                    A = dados[m+2][0]
-                    B = dados[m+2][1]
-                    novaCor.append(int((n+1)*A/(quantiaFrames+1)+B))
-                novaCor.append(255)
-                novaCor = tuple(novaCor)
-                frame.putpixel(novaCoord,novaCor)
+
+def main() -> None:
+    quantiaFrames = 30#pegaInteiro("quantos frames?")
+    limpaPasta("C:\\pythonscript\\imagem\\morphManual\\partesConfig")
+    limpaPasta("C:\\pythonscript\\imagem\\morphManual\\frames")
+    limpaPasta("C:\\pythonscript\\imagem\\morphManual\\frames\\resized")
+    nomeFrame = "frames\\frame{0:03d}.png"
+    imagemInicial,imagemFinal = fazConfig(quantiaFrames)
+    imagemInicial.save(nomeFrame.format(0))
+    imagemFinal.save(nomeFrame.format(quantiaFrames+1))
+    print("\n tamanho: "+str(imagemInicial.size),end="\n\n")
+    for n in range(quantiaFrames):
+        print(n)
+        frame = Image.new("RGBA",imagemFinal.size,(255,255,255,0))
+        with open("config.txt", "r", encoding="utf-8") as file:
             linha = file.readline()
-        frame.save(nomeFrame.format(n+1))
-        frame.close()
-imagemInicial.close()
-imagemFinal.close()
+            while(linha):
+                if(linha.find("fundo")!=-1):
+                    coord = tuple([int(b) for b in linha[:-6].split(",")])
+                    frame.putpixel(coord,imagemInicial.getpixel(coord))
+                else:
+                    dados = [tuple([int(b) for b in coord.split(",")]) for coord in linha.split(" ")]
+                    novaCoord = []
+                    for m in range(2):
+                        A = dados[m][0]
+                        B = dados[m][1]
+                        novaCoord.append(int((n+1)*A/(quantiaFrames+1)+B))
+                    novaCoord = tuple(novaCoord)
+                    novaCor = []
+                    for m in range(3):
+                        A = dados[m+2][0]
+                        B = dados[m+2][1]
+                        novaCor.append(int((n+1)*A/(quantiaFrames+1)+B))
+                    novaCor.append(255)
+                    novaCor = tuple(novaCor)
+                    frame.putpixel(novaCoord,novaCor)
+                linha = file.readline()
+            frame.save(nomeFrame.format(n+1))
+            frame.close()
+    imagemInicial.close()
+    imagemFinal.close()
+
+
+if __name__ == "__main__":
+    main()

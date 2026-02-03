@@ -39,5 +39,10 @@ def generate_text(is_title: bool) -> str:
     return " ".join(word_list)
 
 
-for a in range(10):
-    print(generate_text(True) + " : " + generate_text(False), end="\n\n")
+def main() -> None:
+    for _ in range(10):
+        print(generate_text(True) + " : " + generate_text(False), end="\n\n")
+
+
+if __name__ == "__main__":
+    main()

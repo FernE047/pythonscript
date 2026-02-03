@@ -46,20 +46,25 @@ def display_value_intervals(coefficients: list[int], interval_size: int) -> None
         print(f"{value} : {equation(value)}")
 
 
-while True:
-    max_power = get_integer_input("enter the maximum power of the polynomial")
-    if max_power is None:
-        break
-    coefficients: list[int] = []
-    for a in range(max_power + 1):
-        new_coefficient = get_integer_input(
-            f"enter the coefficient of x raised to {max_power - a}"
-        )
-        if new_coefficient is None:
+def main() -> None:
+    while True:
+        max_power = get_integer_input("enter the maximum power of the polynomial")
+        if max_power is None:
             break
-        coefficients = [new_coefficient] + coefficients
-    print(coefficients)
-    interval_size = get_integer_input("enter the size of the interval to evaluate")
-    if interval_size is None:
-        break
-    display_value_intervals(coefficients, interval_size)
+        coefficients: list[int] = []
+        for a in range(max_power + 1):
+            new_coefficient = get_integer_input(
+                f"enter the coefficient of x raised to {max_power - a}"
+            )
+            if new_coefficient is None:
+                break
+            coefficients = [new_coefficient] + coefficients
+        print(coefficients)
+        interval_size = get_integer_input("enter the size of the interval to evaluate")
+        if interval_size is None:
+            break
+        display_value_intervals(coefficients, interval_size)
+
+
+if __name__ == "__main__":
+    main()

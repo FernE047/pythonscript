@@ -111,9 +111,15 @@ def achaTodasCorrentes(lista):
     return (" ".join(categoria), correntes)
 
 
-inicio = time()
-dic = analisaAsListas(10)
-for cat in dic:
-    print(f"{cat:8s} : {dic[cat]}")
-print("execucao Total  : ")
-print_elapsed_time(time() - inicio)
+
+def main() -> None:
+    inicio = time()
+    dic = analisaAsListas(10)
+    for cat in dic:
+        print(f"{cat:8s} : {dic[cat]}")
+    print("execucao Total  : ")
+    print_elapsed_time(time() - inicio)
+
+
+if __name__ == "__main__":
+    main()

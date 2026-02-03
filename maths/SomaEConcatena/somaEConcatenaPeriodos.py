@@ -37,26 +37,32 @@ def pegaPeriodo(termoA,termoB):
         else:
             return(periodo)
 
-while True:
-    print("modo:\n\n1 - tudo\n2 - não\n3 - sim")
-    modo=input()
-    print("limite")
-    limite=int(input())
-    print("final")
-    final=int(input())
-    for numeroTeste in range(final+1):
-        termo=str(numeroTeste)
-        sucesso,termos=chegaAFim(termo,limite)
-        if(not(sucesso)):
-            periodo1=pegaPeriodo(termos[-1],termos[-3])
-            periodo2=pegaPeriodo(termos[-2],termos[-4])
-            if((periodo1=="")or(periodo2=="")):
-                if(modo!="3"):
-                    #print(termo+" não tem periodos")
-                    print(termo)
-            else:
-                if(modo!="2"):
-                    print("\n"+termo+" tem periodos:")
-                    print("periodo 1:"+periodo1)
-                    print("periodo 2:"+periodo2)
-            #print("\n".join(termos))
+
+def main() -> None:
+    while True:
+        print("modo:\n\n1 - tudo\n2 - não\n3 - sim")
+        modo=input()
+        print("limite")
+        limite=int(input())
+        print("final")
+        final=int(input())
+        for numeroTeste in range(final+1):
+            termo=str(numeroTeste)
+            sucesso,termos=chegaAFim(termo,limite)
+            if(not(sucesso)):
+                periodo1=pegaPeriodo(termos[-1],termos[-3])
+                periodo2=pegaPeriodo(termos[-2],termos[-4])
+                if((periodo1=="")or(periodo2=="")):
+                    if(modo!="3"):
+                        #print(termo+" não tem periodos")
+                        print(termo)
+                else:
+                    if(modo!="2"):
+                        print("\n"+termo+" tem periodos:")
+                        print("periodo 1:"+periodo1)
+                        print("periodo 2:"+periodo2)
+                # print("\n".join(termos))
+
+
+if __name__ == "__main__":
+    main()

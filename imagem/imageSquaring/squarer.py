@@ -23,19 +23,24 @@ def detectCorners(imagem):
                 
                 
 
-nome = "C:\\pythonscript\\Imagens\\PokedexSemFundo\\pokemon{0:03d}.png"
-for a in range(762):
-    print(nome.format(a))
-    imagem = Image.open(nome.format(a))
-    largura,altura = imagem
-    xMenor,xMaior,yMenor,yMaior = detectCorners(imagem)
-    tamanhoX = xMaior-xMenor+1
-    tamanhoY = yMaior-yMenor+1
-    if tamanhoX>tamanhoY:
-        tamanhoMaximo = tamanhoX
-    else:
-        tamanhoMaximo = tamanhoY
-    for t in range(tamanhoMaximo):
-        for x in range(xMenor,xMaior+1):
-            for y in range(yMenor,yMaior+1):
-                if y+tamanhoY
+
+def main() -> None:
+    nome = "C:\\pythonscript\\Imagens\\PokedexSemFundo\\pokemon{0:03d}.png"
+    for a in range(762):
+        print(nome.format(a))
+        imagem = Image.open(nome.format(a))
+        largura,altura = imagem
+        xMenor,xMaior,yMenor,yMaior = detectCorners(imagem)
+        tamanhoX = xMaior-xMenor+1
+        tamanhoY = yMaior-yMenor+1
+        if tamanhoX>tamanhoY:
+            tamanhoMaximo = tamanhoX
+        else:
+            tamanhoMaximo = tamanhoY
+        for t in range(tamanhoMaximo):
+            for x in range(xMenor,xMaior+1):
+                for y in range(yMenor,yMaior+1):
+                    if y+tamanhoY
+
+if __name__ == "__main__":
+    main()

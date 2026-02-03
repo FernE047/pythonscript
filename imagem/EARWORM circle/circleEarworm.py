@@ -95,4 +95,10 @@ def fazImagem(info):
     return imagem.rotate(90)
 
 
-cadaMusicaFaca(fazImagem, pastaDir="EarwormCircle")  # ,debug=True)
+
+def main() -> None:
+    cadaMusicaFaca(fazImagem, pastaDir="EarwormCircle")  # ,debug=True)
+
+
+if __name__ == "__main__":
+    main()

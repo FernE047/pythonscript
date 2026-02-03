@@ -45,20 +45,26 @@ def makeALabirint(imagem,verticesAbertos):
         if doThePop:
             verticesAbertos.pop(indice)
 
-BRANCO = (255,255,255,255)
-PRETO = (0,0,0,255)
-largura = 25
-altura = 25
-if not largura%2:
-    largura += 1
-if not altura%2:
-    altura +=1
-verticesAbertosInicio = [(1,1)]
-imagem = Image.new("RGBA",(largura,altura),(0,0,0,255))
-imagem.putpixel((1,1),(BRANCO))
-while verticesAbertos:
-    makeALabirint(imagem,verticesAbertosInicio)
-name = f"pureLabirint//labirint{len(listdir("pureLabirint")):04d}.png"
-print(name)
-imagem.save(name)
-imagem.close()
+
+def main() -> None:
+    BRANCO = (255,255,255,255)
+    PRETO = (0,0,0,255)
+    largura = 25
+    altura = 25
+    if not largura%2:
+        largura += 1
+    if not altura%2:
+        altura +=1
+    verticesAbertosInicio = [(1,1)]
+    imagem = Image.new("RGBA",(largura,altura),(0,0,0,255))
+    imagem.putpixel((1,1),(BRANCO))
+    while verticesAbertos:
+        makeALabirint(imagem,verticesAbertosInicio)
+    name = f"pureLabirint//labirint{len(listdir("pureLabirint")):04d}.png"
+    print(name)
+    imagem.save(name)
+    imagem.close()
+
+
+if __name__ == "__main__":
+    main()

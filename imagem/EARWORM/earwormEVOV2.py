@@ -31,4 +31,10 @@ def fazImagem(info):
         return imagem
 
 
-cadaMusicaFaca(fazImagem)
+
+def main() -> None:
+    cadaMusicaFaca(fazImagem)
+
+
+if __name__ == "__main__":
+    main()

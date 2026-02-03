@@ -11,7 +11,6 @@ class Config:
         self.isOut = 2
         self.steps = 0
 
-
     def update_debug(self, program_script: str) -> None:
         if program_script == "config.debug ON":
             self.debug = True
@@ -68,7 +67,7 @@ def count_brackets(program_script: str) -> int:
     return loop
 
 
-def findLoopEnd(program_script:str, read_index: int) -> int:
+def findLoopEnd(program_script: str, read_index: int) -> int:
     open_bracket_count = 0
     while True:
         read_index += 1
@@ -174,28 +173,35 @@ def execute_program(
     return memory_tape
 
 
-config = Config()
-while True:
-    config.isOut = 2
-    config.steps = 0
-    print("escreva o programa")
-    program_script = input()
-    if program_script.find("config.debug") != -1:
-        config.update_debug(program_script)
-        continue
-    if program_script == "0":
-        break
-    open_bracket_count = count_brackets(program_script)
-    memory_tape = [0]
-    if open_bracket_count < 0:
-        print("falta " + str(-open_bracket_count) + " colchete: [")
-        continue
-    if open_bracket_count > 0:
-        print("falta " + str(open_bracket_count) + " colchete: ]")
-        continue
-    memory_tape = cast(list[int], execute_program(program_script, memory_tape, config))
-    if config.debug_final:
-        print("")
-        print(program_script)
-        print(memory_tape)
-        print(f"steps: {config.steps}")
+def main() -> None:
+    config = Config()
+    while True:
+        config.isOut = 2
+        config.steps = 0
+        print("escreva o programa")
+        program_script = input()
+        if program_script.find("config.debug") != -1:
+            config.update_debug(program_script)
+            continue
+        if program_script == "0":
+            break
+        open_bracket_count = count_brackets(program_script)
+        memory_tape = [0]
+        if open_bracket_count < 0:
+            print("falta " + str(-open_bracket_count) + " colchete: [")
+            continue
+        if open_bracket_count > 0:
+            print("falta " + str(open_bracket_count) + " colchete: ]")
+            continue
+        memory_tape = cast(
+            list[int], execute_program(program_script, memory_tape, config)
+        )
+        if config.debug_final:
+            print("")
+            print(program_script)
+            print(memory_tape)
+            print(f"steps: {config.steps}")
+
+
+if __name__ == "__main__":
+    main()

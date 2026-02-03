@@ -1,12 +1,13 @@
 from time import time
 
+
 class TimeCounter:
     def __init__(self) -> None:
         self.total_time = 0.0
         self.start_time = 0.0
         self.end_time = 0.0
         self.elapsed_time = 0.0
-    
+
     def start(self) -> None:
         self.start_time = time()
 
@@ -15,7 +16,6 @@ class TimeCounter:
         self.elapsed_time = self.end_time - self.start_time
         self.total_time += self.elapsed_time
         self.print_elapsed_time(print_total=False)
-
 
     def print_elapsed_time(self, print_total: bool = False) -> None:
         elapsed_time = self.elapsed_time
@@ -50,12 +50,16 @@ class TimeCounter:
         text = ", ".join(parts)
         print(f"\n{sign}{text}\n\n\n")
 
+
 def resolve_board(
     board: tuple[list[list[bool]], tuple[int, int]],
-) -> list[tuple[int, int]] | None: #TODO: implement solver
+) -> list[tuple[int, int]] | None:  # TODO: implement solver
     return None
 
-def solve_one_board(board: tuple[list[list[bool]], tuple[int, int]], timer: TimeCounter) -> None:
+
+def solve_one_board(
+    board: tuple[list[list[bool]], tuple[int, int]], timer: TimeCounter
+) -> None:
     print()
     tries = 0
     timer.start()
@@ -64,21 +68,27 @@ def solve_one_board(board: tuple[list[list[bool]], tuple[int, int]], timer: Time
     print("\ntries: " + str(tries))
     timer.print_elapsed_time()
 
-timer = TimeCounter()
-for pos in (
-    (0, 0),
-    (0, 1),
-    (0, 2),
-    (0, 3),
-    (1, 1),
-    (1, 2),
-    (1, 3),
-    (2, 2),
-    (2, 3),
-    (3, 3),
-):
-    matriz = [[False for _ in range(8)] for _ in range(8)]
-    matriz[pos[0]][pos[1]] = True
-    board = (matriz, pos)
-    solve_one_board(board, timer)
-timer.print_elapsed_time(print_total=True)
+
+def main() -> None:
+    timer = TimeCounter()
+    for pos in (
+        (0, 0),
+        (0, 1),
+        (0, 2),
+        (0, 3),
+        (1, 1),
+        (1, 2),
+        (1, 3),
+        (2, 2),
+        (2, 3),
+        (3, 3),
+    ):
+        matriz = [[False for _ in range(8)] for _ in range(8)]
+        matriz[pos[0]][pos[1]] = True
+        board = (matriz, pos)
+        solve_one_board(board, timer)
+    timer.print_elapsed_time(print_total=True)
+
+
+if __name__ == "__main__":
+    main()

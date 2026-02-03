@@ -56,22 +56,28 @@ def applyTolerancia(img, tolerancia):
     return imagemNew
 
 
-start = time.time()
-with open("passadeira Candy.txt", "w", encoding="utf-8") as curso:
-    directory = ""
-    pasta = os.path.join(directory, "PAPPDF", "PDFJaFeitos", "pasadeira Croche Candy")
-    imagens = [os.path.join(pasta, arquivo) for arquivo in os.listdir(pasta)]
-    for imagem in imagens:
-        print("\n" + imagem)
-        startProcessing = time.time()
-        phrase = ocr.image_to_string(applyTolerancia(imagem, 20), lang="por")
-        phraseBonita = tiraEspaçoBranco(phrase)
-        endProcessing = time.time()
-        print(str(len(phraseBonita)))
-        print("procesamento: ")
-        print_elapsed_time(endProcessing - startProcessing)
-        print(phraseBonita)
-        curso.write(phraseBonita + "\n\n")
-    final = time.time()
-print("demorou ")
-print_elapsed_time(final - start)
+
+def main() -> None:
+    start = time.time()
+    with open("passadeira Candy.txt", "w", encoding="utf-8") as curso:
+        directory = ""
+        pasta = os.path.join(directory, "PAPPDF", "PDFJaFeitos", "pasadeira Croche Candy")
+        imagens = [os.path.join(pasta, arquivo) for arquivo in os.listdir(pasta)]
+        for imagem in imagens:
+            print("\n" + imagem)
+            startProcessing = time.time()
+            phrase = ocr.image_to_string(applyTolerancia(imagem, 20), lang="por")
+            phraseBonita = tiraEspaçoBranco(phrase)
+            endProcessing = time.time()
+            print(str(len(phraseBonita)))
+            print("procesamento: ")
+            print_elapsed_time(endProcessing - startProcessing)
+            print(phraseBonita)
+            curso.write(phraseBonita + "\n\n")
+        final = time.time()
+    print("demorou ")
+    print_elapsed_time(final - start)
+
+
+if __name__ == "__main__":
+    main()

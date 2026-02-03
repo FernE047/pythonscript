@@ -34,13 +34,19 @@ def print_elapsed_time(seconds: float) -> None:
     print(sign + ", ".join(parts))
 
 
-start = time.time()
-nome = os.path.join("jap", "1.png")
-print("\n" + nome)
-imagem = Image.open(nome)
-largura, altura = imagem.size()
-# phrase = ocr.image_to_string(Image.open(nome), lang="jp")
-# print(phrase)
-# final=time.time()
-# print("demorou ")
-# print_elapsed_time(final-start)
+
+def main() -> None:
+    start = time.time()
+    nome = os.path.join("jap", "1.png")
+    print("\n" + nome)
+    imagem = Image.open(nome)
+    largura, altura = imagem.size()
+    # phrase = ocr.image_to_string(Image.open(nome), lang="jp")
+    # print(phrase)
+    # final=time.time()
+    # print("demorou ")
+    # print_elapsed_time(final-start)
+
+
+if __name__ == "__main__":
+    main()

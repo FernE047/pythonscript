@@ -18,6 +18,7 @@ def update_mono_chain_file(keywords: list[str], is_title: bool) -> None:
     update_keyword_frequency(keywords, directory)
     rename_file(f"{directory}/c.txt", f"{directory}/chain.txt")
 
+
 def update_keyword_frequency(keywords: list[str], directory: str) -> None:
     with open(f"{directory}/c.txt", "w", encoding="utf-8") as file_write:
         if "chain.txt" not in os.listdir(directory):
@@ -39,7 +40,7 @@ def update_keyword_frequency(keywords: list[str], directory: str) -> None:
                 file_write.write(" ".join(keywords) + " 1\n")
 
 
-def generate_markov_chain(text:str, is_title:bool=False) -> None:
+def generate_markov_chain(text: str, is_title: bool = False) -> None:
     words = text.split()
     length = len(words)
     for index in range(length):
@@ -59,11 +60,16 @@ def generate_markov_chain(text:str, is_title:bool=False) -> None:
                 return
 
 
-for name in os.listdir("stories"):
-    print(name)
-    with open(f"stories/{name}", "r", encoding="utf-8") as  file:
-        title_and_story_parts = file.readline().split(" : ")
-        story = title_and_story_parts[-1:][0]
-        title = " : ".join(title_and_story_parts[:-1])
-        generate_markov_chain(title, is_title=True)
-        generate_markov_chain(story)
+def main() -> None:
+    for name in os.listdir("stories"):
+        print(name)
+        with open(f"stories/{name}", "r", encoding="utf-8") as file:
+            title_and_story_parts = file.readline().split(" : ")
+            story = title_and_story_parts[-1:][0]
+            title = " : ".join(title_and_story_parts[:-1])
+            generate_markov_chain(title, is_title=True)
+            generate_markov_chain(story)
+
+
+if __name__ == "__main__":
+    main()

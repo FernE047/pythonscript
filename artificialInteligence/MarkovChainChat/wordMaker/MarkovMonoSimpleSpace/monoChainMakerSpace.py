@@ -56,35 +56,40 @@ def get_file_name() -> str:
     return file_name
 
 
-file_name = get_file_name()
-with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
-    line = file.readline()[:-1]
-    character_frequency_map: list[int] = []
-    while line:
-        words = line.split()
-        while len(words) > len(character_frequency_map):
-            character_frequency_map.append(0)
-        character_frequency_map[len(words) - 1] += 1
-        for word_index, word in enumerate(words):
-            word_length = len(word)
-            for char_index in range(word_length):
-                char = word[char_index]
-                if char_index == 0:
-                    update_chain(file_name, ("¨", char), word_index)
-                    if word_length == 1:
-                        update_chain(file_name, (char, "¨"), word_index)
-                        break
-                if word_length > 1:
-                    if char_index >= word_length - 1:
-                        next_char = "¨"
-                    else:
-                        next_char = word[char_index + 1]
-                    update_chain(file_name, (char, next_char), word_index)
-                    if next_char == "¨":
-                        break
-            print(word_length)
+def main() -> None:
+    file_name = get_file_name()
+    with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
         line = file.readline()[:-1]
-    with open(f"{file_name}/c.txt", "w", encoding="UTF-8") as character_count_file:
-        for index, quantity in enumerate(character_frequency_map):
-            character_count_file.write(f"{index} ")
-            character_count_file.write(f"{quantity}\n")
+        character_frequency_map: list[int] = []
+        while line:
+            words = line.split()
+            while len(words) > len(character_frequency_map):
+                character_frequency_map.append(0)
+            character_frequency_map[len(words) - 1] += 1
+            for word_index, word in enumerate(words):
+                word_length = len(word)
+                for char_index in range(word_length):
+                    char = word[char_index]
+                    if char_index == 0:
+                        update_chain(file_name, ("¨", char), word_index)
+                        if word_length == 1:
+                            update_chain(file_name, (char, "¨"), word_index)
+                            break
+                    if word_length > 1:
+                        if char_index >= word_length - 1:
+                            next_char = "¨"
+                        else:
+                            next_char = word[char_index + 1]
+                        update_chain(file_name, (char, next_char), word_index)
+                        if next_char == "¨":
+                            break
+                print(word_length)
+            line = file.readline()[:-1]
+        with open(f"{file_name}/c.txt", "w", encoding="UTF-8") as character_count_file:
+            for index, quantity in enumerate(character_frequency_map):
+                character_count_file.write(f"{index} ")
+                character_count_file.write(f"{quantity}\n")
+
+
+if __name__ == "__main__":
+    main()

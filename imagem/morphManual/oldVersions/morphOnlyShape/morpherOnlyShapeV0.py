@@ -9,17 +9,23 @@ def funcaoAfim(inicio,fim,total,n):
         elemento.append(int(A*n+B))
     return tuple(elemento)
 
-imagemInicial = Image.open("C:\\pythonscript\\imagem\\morphOnlyShape\\inicial.png")
-imagemFinal = Image.new("RGBA",imagemInicial.size,(0,0,0,0))
-with open("C:\\pythonscript\\imagem\\morphOnlyShape\\config.txt", "r", encoding="utf-8") as file:
-    linha = file.readline()
-    while(linha):
-        coords = [tuple([int(b) for b in coord.split(",")]) for coord in linha.split(" ")]
-        coordInicial = coords[0]
-        coordFinal = coords[1]
-        cor = imagemInicial.getpixel(coordInicial)
-        imagemFinal.putpixel(coordFinal,cor)
+
+def main() -> None:
+    imagemInicial = Image.open("C:\\pythonscript\\imagem\\morphOnlyShape\\inicial.png")
+    imagemFinal = Image.new("RGBA",imagemInicial.size,(0,0,0,0))
+    with open("C:\\pythonscript\\imagem\\morphOnlyShape\\config.txt", "r", encoding="utf-8") as file:
         linha = file.readline()
-    imagemFinal.save("C:\\pythonscript\\imagem\\morphOnlyShape\\final.png")
-imagemInicial.close()
-imagemFinal.close()
+        while(linha):
+            coords = [tuple([int(b) for b in coord.split(",")]) for coord in linha.split(" ")]
+            coordInicial = coords[0]
+            coordFinal = coords[1]
+            cor = imagemInicial.getpixel(coordInicial)
+            imagemFinal.putpixel(coordFinal,cor)
+            linha = file.readline()
+        imagemFinal.save("C:\\pythonscript\\imagem\\morphOnlyShape\\final.png")
+    imagemInicial.close()
+    imagemFinal.close()
+
+
+if __name__ == "__main__":
+    main()

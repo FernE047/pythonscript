@@ -37,17 +37,23 @@ def pegaPeriodo(termoA,termoB):
         else:
             return(periodo)
 
-while True:
-    print("limite")
-    limite=int(input())
-    print("primeiro termo")
-    termo=input()
-    sucesso,termos=chegaAFim(termo,limite)
-    if(sucesso):
-        print("termo "+termo+" chega a fim em "+str(len(termos)-1))
-        print(",".join(termos))
-    else:
-        print(termo+" estorou o limite:")
-        print("\n".join(termos))
-        print("periodo 1:"+pegaPeriodo(termos[-1],termos[-3]))
-        print("periodo 2:"+pegaPeriodo(termos[-2],termos[-4]))
+
+def main() -> None:
+    while True:
+        print("limite")
+        limite=int(input())
+        print("primeiro termo")
+        termo=input()
+        sucesso,termos=chegaAFim(termo,limite)
+        if(sucesso):
+            print("termo "+termo+" chega a fim em "+str(len(termos)-1))
+            print(",".join(termos))
+        else:
+            print(termo+" estorou o limite:")
+            print("\n".join(termos))
+            print("periodo 1:"+pegaPeriodo(termos[-1],termos[-3]))
+            print("periodo 2:"+pegaPeriodo(termos[-2],termos[-4]))
+
+
+if __name__ == "__main__":
+    main()

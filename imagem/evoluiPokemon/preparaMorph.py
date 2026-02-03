@@ -39,9 +39,15 @@ def salvaLayers(nome):
     im.close()
 
 
-print("IREI EXCLUIR !!!!!")
-input()
-limpaPasta("C:\\pythonscript\\imagem\\evoluiPokemon\\frames")
-limpaPasta("C:\\pythonscript\\imagem\\evoluiPokemon\\frames\\resized")
-salvaLayers("inicial")
-salvaLayers("final")
+
+def main() -> None:
+    print("IREI EXCLUIR !!!!!")
+    input()
+    limpaPasta("C:\\pythonscript\\imagem\\evoluiPokemon\\frames")
+    limpaPasta("C:\\pythonscript\\imagem\\evoluiPokemon\\frames\\resized")
+    salvaLayers("inicial")
+    salvaLayers("final")
+
+
+if __name__ == "__main__":
+    main()

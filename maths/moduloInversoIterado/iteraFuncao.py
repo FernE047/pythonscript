@@ -58,14 +58,20 @@ def itera(funcao,inicio=0):
         valor=funcao(valor)
     print(str(a+1)+" : "+str(valor)+" : "+fatoresPrimos(valor))
 
-while True:
-    base = pegaInteiro("\nescreva base")
-    if(base==0):
-        break
-    resto = pegaInteiro("escreva resto")
-    comeco = pegaInteiro("escreva o inicio")
-    funcao = lambda x : formula(base,resto,x)
-    if(resto==0):
-        itera(funcao,inicio=comeco)
-    else:
-        itera(funcao,inicio=comeco)
+
+def main() -> None:
+    while True:
+        base = pegaInteiro("\nescreva base")
+        if(base==0):
+            break
+        resto = pegaInteiro("escreva resto")
+        comeco = pegaInteiro("escreva o inicio")
+        funcao = lambda x : formula(base,resto,x)
+        if(resto==0):
+            itera(funcao,inicio=comeco)
+        else:
+            itera(funcao,inicio=comeco)
+
+
+if __name__ == "__main__":
+    main()

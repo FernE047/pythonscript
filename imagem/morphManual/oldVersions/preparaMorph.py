@@ -33,10 +33,16 @@ def salvaLayers(nome,pasta):
         new_im.save(f"{pasta}\\parte{n-1:02d}{nome[:-4]}.png")
         new_im.close()
 
-limpaPasta("C:\\pythonscript\\imagem\\morphManual\\partes\\partesIniciais")
-limpaPasta("C:\\pythonscript\\imagem\\morphManual\\partes\\partesFinais")
-limpaPasta("C:\\pythonscript\\imagem\\morphManual\\partes\\partesConfig")
-limpaPasta("C:\\pythonscript\\imagem\\morphManual\\frames")
-limpaPasta("C:\\pythonscript\\imagem\\morphManual\\frames\\resized")
-salvaLayers("inicial.pdn","partesIniciais")
-salvaLayers("final.pdn","partesFinais")
+
+def main() -> None:
+    limpaPasta("C:\\pythonscript\\imagem\\morphManual\\partes\\partesIniciais")
+    limpaPasta("C:\\pythonscript\\imagem\\morphManual\\partes\\partesFinais")
+    limpaPasta("C:\\pythonscript\\imagem\\morphManual\\partes\\partesConfig")
+    limpaPasta("C:\\pythonscript\\imagem\\morphManual\\frames")
+    limpaPasta("C:\\pythonscript\\imagem\\morphManual\\frames\\resized")
+    salvaLayers("inicial.pdn","partesIniciais")
+    salvaLayers("final.pdn","partesFinais")
+
+
+if __name__ == "__main__":
+    main()

@@ -27,23 +27,29 @@ def print_elapsed_time(seconds: float) -> None:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
     print(sign + ", ".join(parts))
 
-quantia=1
-while quantia!=0:
-    trying = True
-    while trying:
-        try:
-            print("\nquantos termos a pesquisar?")
-            quantia = int(input())
-            trying = False
-        except:
-            print("digite um número")
-    if(quantia!=0):
-        minimo = quantia*25
-        media = quantia*50
-        maximo = quantia*75
-        print("\nminimo : ")
-        print_elapsed_time(minimo)
-        print("media : ")
-        print_elapsed_time(media)
-        print("maximo : ")
-        print_elapsed_time(maximo)
+
+def main() -> None:
+    quantia=1
+    while quantia!=0:
+        trying = True
+        while trying:
+            try:
+                print("\nquantos termos a pesquisar?")
+                quantia = int(input())
+                trying = False
+            except:
+                print("digite um número")
+        if(quantia!=0):
+            minimo = quantia*25
+            media = quantia*50
+            maximo = quantia*75
+            print("\nminimo : ")
+            print_elapsed_time(minimo)
+            print("media : ")
+            print_elapsed_time(media)
+            print("maximo : ")
+            print_elapsed_time(maximo)
+
+
+if __name__ == "__main__":
+    main()

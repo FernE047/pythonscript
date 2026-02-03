@@ -117,52 +117,59 @@ def ampliaMapa(mapa,ampliacao,posicao,adds):
         novoMapa.paste(mapa,(0,0))
         novoMapa.paste(ampliacao,novaPosicao)
     return novoMapa,novaPosicao
-            
-PY = 20 #PASSOSY             menor mais lento e melhor
-PX = 60 #PASSOSX             menor mais lento e melhor
-DDP = 15 #DISTANCIADEPROCURA maior mais lento e melhor
-DT = DDP*2+1 #DISTANCIATOTAL
 
-#Argumentos do FFMPEG
-diretorioVideo = "C:\\pythonscript\\imagem\\SpeedrunMapping\\video"
-origemVideo = "-i C:\pythonscript\\imagem\\SpeedrunMapping\\level.mp4"#"-i C:\\pythonscript\\videos\\videos\\video0002.mp4"
-destinoTemp = diretorioVideo + "\\frame%04d.png"
-extraArguments = "-r {0:02d}/1"
-processoArgs = ["ffmpeg",origemVideo,extraArguments,destinoTemp]
 
-fps = 30
 
-processoArgs[2] = extraArguments.format(fps)
-#subprocess.call (" ".join(processoArgs))
+def main() -> None:
+    PY = 20 #PASSOSY             menor mais lento e melhor
+    PX = 60 #PASSOSX             menor mais lento e melhor
+    DDP = 15 #DISTANCIADEPROCURA maior mais lento e melhor
+    DT = DDP*2+1 #DISTANCIATOTAL
 
-diretorioFrames = diretorioVideo+"\\frame{0:04d}.png"
+    #Argumentos do FFMPEG
+    diretorioVideo = "C:\\pythonscript\\imagem\\SpeedrunMapping\\video"
+    origemVideo = "-i C:\pythonscript\\imagem\\SpeedrunMapping\\level.mp4"#"-i C:\\pythonscript\\videos\\videos\\video0002.mp4"
+    destinoTemp = diretorioVideo + "\\frame%04d.png"
+    extraArguments = "-r {0:02d}/1"
+    processoArgs = ["ffmpeg",origemVideo,extraArguments,destinoTemp]
 
-ultimoFrame = openFrame(diretorioFrames.format(1))
-mapa = openFrame(diretorioFrames.format(1))
-posicao = [0,0]
-framesTotais = len(listdir(diretorioVideo))
-inicio = time()
-inicioTotal = time()
-for n in range(150,framesTotais):
-    frameAtual = openFrame(diretorioFrames.format(n))
-    adds = comparaFrames(ultimoFrame,frameAtual)
-    mapa,posicao = ampliaMapa(mapa,frameAtual,posicao,adds)
-    ultimoFrame,_ = ampliaMapa(ultimoFrame,frameAtual,[0,0],adds)
-    ultimoFrame.save(f"results\\frame{n:04d}.png")
-    ultimoFrame.close()
-    ultimoFrame = frameAtual
-    fim = time()
-    duracao = fim-inicio
+    fps = 30
+
+    processoArgs[2] = extraArguments.format(fps)
+    #subprocess.call (" ".join(processoArgs))
+
+    diretorioFrames = diretorioVideo+"\\frame{0:04d}.png"
+
+    ultimoFrame = openFrame(diretorioFrames.format(1))
+    mapa = openFrame(diretorioFrames.format(1))
+    posicao = [0,0]
+    framesTotais = len(listdir(diretorioVideo))
     inicio = time()
-    print()
-    print(f"{n} : ")
-    print_elapsed_time(duracao)
-    print_elapsed_time(duracao*(framesTotais-n))
+    inicioTotal = time()
+    for n in range(150,framesTotais):
+        frameAtual = openFrame(diretorioFrames.format(n))
+        adds = comparaFrames(ultimoFrame,frameAtual)
+        mapa,posicao = ampliaMapa(mapa,frameAtual,posicao,adds)
+        ultimoFrame,_ = ampliaMapa(ultimoFrame,frameAtual,[0,0],adds)
+        ultimoFrame.save(f"results\\frame{n:04d}.png")
+        ultimoFrame.close()
+        ultimoFrame = frameAtual
+        fim = time()
+        duracao = fim-inicio
+        inicio = time()
+        print()
+        print(f"{n} : ")
+        print_elapsed_time(duracao)
+        print_elapsed_time(duracao*(framesTotais-n))
+        mapa.save("mapa.png")
     mapa.save("mapa.png")
-mapa.save("mapa.png")
-frameAtual.close()
-ultimoFrame.close()
-mapa.save("mapa.png")
-fimTotal = time()
-duracao = fimTotal-inicioTotal
-print_elapsed_time(duracao)
+    frameAtual.close()
+    ultimoFrame.close()
+    mapa.save("mapa.png")
+    fimTotal = time()
+    duracao = fimTotal-inicioTotal
+    print_elapsed_time(duracao)
+
+
+if __name__ == "__main__":
+    main()

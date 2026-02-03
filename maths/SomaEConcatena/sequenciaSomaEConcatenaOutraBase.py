@@ -123,33 +123,39 @@ def desconverte(lista,base):
         resultado+=a*base**n
     return(resultado)
 
-limite=100
-base=10
-while True:
-    quantia=0
-    modo=choose_from_options("qual será o modo?",["Tudo","Apenas Estouros","Sem Estouros","Apenas Passos","Final Esperado","Troca Base","Troca Limites","Finalização"],mode="text")
-    if(modo=="5"):
-        base=pegaInteiro("digite a nova base")
-        continue
-    if(modo=="6"):
-        limite=pegaInteiro("digite o novo limite")
-        continue
-    if(modo=="7"):
-        break
-    if(modo=="3"):
-        passos=pegaInteiro("quantos passos?")
-    else:
-        passos=0
-    if(modo=="1"):
-        passos=choose_from_options("termos?",["sem","com"],mode="text")
-    final=pegaInteiro("procurar até quanto?")
-    for numeroTeste in range(final+1):
-        try:
-            termo=converte(numeroTeste,base)
-            sucesso,termos=chegaAFim(termo,limite,base)
-            imprime(termos,numeroTeste,modo,sucesso,passos)
-            numeroTeste+=1
-        except:
-            print("deu ruim")
-            print(numeroTeste)
-    print("quantidade total "+str(quantia))
+
+def main() -> None:
+    limite=100
+    base=10
+    while True:
+        quantia=0
+        modo=choose_from_options("qual será o modo?",["Tudo","Apenas Estouros","Sem Estouros","Apenas Passos","Final Esperado","Troca Base","Troca Limites","Finalização"],mode="text")
+        if(modo=="5"):
+            base=pegaInteiro("digite a nova base")
+            continue
+        if(modo=="6"):
+            limite=pegaInteiro("digite o novo limite")
+            continue
+        if(modo=="7"):
+            break
+        if(modo=="3"):
+            passos=pegaInteiro("quantos passos?")
+        else:
+            passos=0
+        if(modo=="1"):
+            passos=choose_from_options("termos?",["sem","com"],mode="text")
+        final=pegaInteiro("procurar até quanto?")
+        for numeroTeste in range(final+1):
+            try:
+                termo=converte(numeroTeste,base)
+                sucesso,termos=chegaAFim(termo,limite,base)
+                imprime(termos,numeroTeste,modo,sucesso,passos)
+                numeroTeste+=1
+            except:
+                print("deu ruim")
+                print(numeroTeste)
+        print("quantidade total "+str(quantia))
+
+
+if __name__ == "__main__":
+    main()

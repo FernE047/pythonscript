@@ -64,12 +64,17 @@ def quantoTempo(tecla):
             return velhoi
 
 
-try:
-    tecla = "l"
-    tempofinal = quantoTempo(tecla)
-    print("tempo final foi " + str(tempofinal))
-    print("adicione \npressFor( + tecla + );")
-    pyautogui.click(900, 600)
-except KeyboardInterrupt:
-    print("\nDone.")
-# o emulador não possui fps statico então sempre será aleatorio o caminho, logo não podemos descrever ações se não estabilizarmos o fps
+def main() -> None:
+    try:
+        tecla = "l"
+        tempofinal = quantoTempo(tecla)
+        print("tempo final foi " + str(tempofinal))
+        print("adicione \npressFor( + tecla + );")
+        pyautogui.click(900, 600)
+    except KeyboardInterrupt:
+        print("\nDone.")
+    # o emulador não possui fps statico então sempre será aleatorio o caminho, logo não podemos descrever ações se não estabilizarmos o fps
+
+
+if __name__ == "__main__":
+    main()

@@ -44,20 +44,26 @@ def collatz(termo, grau):
     return passos
 
 
-limite = 0
-while limite == 0:
-    print("digite inicial e o limite separado por enter")
-    inicial = int(input())
-    if inicial <= 0:
-        continue
-    limite = int(input()) + 1
-if inicial > limite - 1:  # inverte valores
-    limite += inicial
-    print(str(limite))
-    inicial = limite - inicial - 1
-    print(str(inicial))
-    limite -= inicial
-    print(str(limite))
-for fruto in range(inicial, limite):
-    passos = [collatz(fruto, i) for i in range(3)]
-    print(f"{fruto:5d}:{passos[0]:4d},{passos[1]:4d},{passos[2]:4d}")
+
+def main() -> None:
+    limite = 0
+    while limite == 0:
+        print("digite inicial e o limite separado por enter")
+        inicial = int(input())
+        if inicial <= 0:
+            continue
+        limite = int(input()) + 1
+    if inicial > limite - 1:  # inverte valores
+        limite += inicial
+        print(str(limite))
+        inicial = limite - inicial - 1
+        print(str(inicial))
+        limite -= inicial
+        print(str(limite))
+    for fruto in range(inicial, limite):
+        passos = [collatz(fruto, i) for i in range(3)]
+        print(f"{fruto:5d}:{passos[0]:4d},{passos[1]:4d},{passos[2]:4d}")
+
+
+if __name__ == "__main__":
+    main()

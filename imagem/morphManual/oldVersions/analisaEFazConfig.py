@@ -376,70 +376,76 @@ SECÇÃO MAIN:
 
 """
 
-nomeInicial = "partesIniciais\\parte{0:02d}inicial.png"
-nomeConfig = "partesConfig\\parte{0:02d}Config.txt"
-nomeFinal = "partesFinais\\parte{0:02d}final.png"
-partes = os.listdir("partesIniciais")
-quantiaPartes = len(partes)
-with open("config.txt","w") as file:
-    if("fundo.png" in partes):
-        quantiaPartes -=1
-        fazFundo(file)
-    partes = None
-    for nParte in range(quantiaPartes):
-        print(nParte)
-        parteInicial = Image.open(nomeInicial.format(nParte))
-        parteFinal = Image.open(nomeFinal.format(nParte))
-        with open(nomeConfig.format(nParte),"w", encoding="utf-8") as fileConfig:
-            hasRGB = hasColor(parteInicial)
-            print(hasRGB)
-            if(hasRGB[0]):
-                coordVermelhosInicial = procuraCor(parteInicial,0)
-                coordVermelhosFinal = procuraCor(parteFinal,0)
-            if(hasRGB[2]):
-                if(hasRGB[3]):
-                    linhaAzulInicial = procuraLinhaAzulIterativo(parteInicial)
-                    linhaAzulFinal = procuraLinhaAzulIterativo(parteFinal)
-                else:
-                    linhaAzulInicial = procuraLinhaAzul(parteInicial)
-                    linhaAzulFinal = procuraLinhaAzul(parteFinal)
-            if(hasRGB[1]):
-                if(hasRGB[2]):
-                    blobsInicial = procuraBlobs(parteInicial,linhaAtual = linhaAzulInicial)
-                    blobsFinal = procuraBlobs(parteFinal,linhaAtual = linhaAzulFinal)
-                elif(hasRGB[0]):
-                    blobsInicial = procuraBlobs(parteInicial,linhaAtual = [a[0] for a in coordVermelhosInicial])
-                    blobsFinal = procuraBlobs(parteFinal,linhaAtual = [a[0] for a in coordVermelhosFinal])
-                else:
-                    blobsInicial = procuraBlobs(parteInicial)
-                    blobsFinal = procuraBlobs(parteFinal)
-                escreveBlobs(blobsInicial,blobsFinal,fileConfig)
-            fileConfig.write("azul\n")
-            if(hasRGB[2]):
-                escreveLinhas(linhaAzulInicial,linhaAzulFinal,fileConfig)
-            fileConfig.write("vermelho\n")
-            if(hasRGB[0]):
-                for coordInicial, coordFinal in zip(coordVermelhosInicial, coordVermelhosFinal):
-                    for coord_i, coord_f in zip(coordInicial, coordFinal):
-                        fileConfig.write(str(coord_i[0]) + "," + str(coord_i[1]))
-                        fileConfig.write(" " + str(coord_f[0]) + "," + str(coord_f[1]) + "\n")
-            print()
-        parteInicial.close()
-        parteFinal.close()
-    for colorIndex in range(3):
+
+def main() -> None:
+    nomeInicial = "partesIniciais\\parte{0:02d}inicial.png"
+    nomeConfig = "partesConfig\\parte{0:02d}Config.txt"
+    nomeFinal = "partesFinais\\parte{0:02d}final.png"
+    partes = os.listdir("partesIniciais")
+    quantiaPartes = len(partes)
+    with open("config.txt","w") as file:
+        if("fundo.png" in partes):
+            quantiaPartes -=1
+            fazFundo(file)
+        partes = None
         for nParte in range(quantiaPartes):
-            with open(nomeConfig.format(nParte),"r", encoding="utf-8") as fileConfig:
-                linha = fileConfig.readline()
-                if(colorIndex==1):
-                    while(linha != "azul\n"):
+            print(nParte)
+            parteInicial = Image.open(nomeInicial.format(nParte))
+            parteFinal = Image.open(nomeFinal.format(nParte))
+            with open(nomeConfig.format(nParte),"w", encoding="utf-8") as fileConfig:
+                hasRGB = hasColor(parteInicial)
+                print(hasRGB)
+                if(hasRGB[0]):
+                    coordVermelhosInicial = procuraCor(parteInicial,0)
+                    coordVermelhosFinal = procuraCor(parteFinal,0)
+                if(hasRGB[2]):
+                    if(hasRGB[3]):
+                        linhaAzulInicial = procuraLinhaAzulIterativo(parteInicial)
+                        linhaAzulFinal = procuraLinhaAzulIterativo(parteFinal)
+                    else:
+                        linhaAzulInicial = procuraLinhaAzul(parteInicial)
+                        linhaAzulFinal = procuraLinhaAzul(parteFinal)
+                if(hasRGB[1]):
+                    if(hasRGB[2]):
+                        blobsInicial = procuraBlobs(parteInicial,linhaAtual = linhaAzulInicial)
+                        blobsFinal = procuraBlobs(parteFinal,linhaAtual = linhaAzulFinal)
+                    elif(hasRGB[0]):
+                        blobsInicial = procuraBlobs(parteInicial,linhaAtual = [a[0] for a in coordVermelhosInicial])
+                        blobsFinal = procuraBlobs(parteFinal,linhaAtual = [a[0] for a in coordVermelhosFinal])
+                    else:
+                        blobsInicial = procuraBlobs(parteInicial)
+                        blobsFinal = procuraBlobs(parteFinal)
+                    escreveBlobs(blobsInicial,blobsFinal,fileConfig)
+                fileConfig.write("azul\n")
+                if(hasRGB[2]):
+                    escreveLinhas(linhaAzulInicial,linhaAzulFinal,fileConfig)
+                fileConfig.write("vermelho\n")
+                if(hasRGB[0]):
+                    for coordInicial, coordFinal in zip(coordVermelhosInicial, coordVermelhosFinal):
+                        for coord_i, coord_f in zip(coordInicial, coordFinal):
+                            fileConfig.write(str(coord_i[0]) + "," + str(coord_i[1]))
+                            fileConfig.write(" " + str(coord_f[0]) + "," + str(coord_f[1]) + "\n")
+                print()
+            parteInicial.close()
+            parteFinal.close()
+        for colorIndex in range(3):
+            for nParte in range(quantiaPartes):
+                with open(nomeConfig.format(nParte),"r", encoding="utf-8") as fileConfig:
+                    linha = fileConfig.readline()
+                    if(colorIndex==1):
+                        while(linha != "azul\n"):
+                            linha = fileConfig.readline()
                         linha = fileConfig.readline()
-                    linha = fileConfig.readline()
-                if(colorIndex==2):
-                    while(linha != "vermelho\n"):
+                    if(colorIndex==2):
+                        while(linha != "vermelho\n"):
+                            linha = fileConfig.readline()
                         linha = fileConfig.readline()
-                    linha = fileConfig.readline()
-                while(linha):
-                    if(linha[0] in ["a","v"]):
-                        break
-                    file.write(linha)
-                    linha = fileConfig.readline()
+                    while(linha):
+                        if(linha[0] in ["a","v"]):
+                            break
+                        file.write(linha)
+                        linha = fileConfig.readline()
+
+
+if __name__ == "__main__":
+    main()

@@ -21,10 +21,16 @@ def barra(x):
         x=(x-17)/32
     return(int(x))
 
-x=int(input())
-passos=0
-while(x!=1):
-    x=barra(x)
-    print(str(x)+"")
-    passos+=1
-print("passos:"+str(passos))
+
+def main() -> None:
+    x=int(input())
+    passos=0
+    while(x!=1):
+        x=barra(x)
+        print(str(x)+"")
+        passos+=1
+    print("passos:"+str(passos))
+
+
+if __name__ == "__main__":
+    main()

@@ -115,50 +115,56 @@ def fazLinha(pontoInicial, pontoFinal, imagem, cor):
     return imagem
 
 
-quantiaPregos = 400
-imagemPasta = os.path.join("C:\\", "pythonscript", "lineImage", "imagens")
-imagens = [os.path.join(imagemPasta, imagem) for imagem in os.listdir(imagemPasta)]
-imagem = Image.open(imagens[5])
-pregos = coordenadasPregos(quantiaPregos, imagem)
-largura, altura = imagem.size
-larguraFinal, alturaFinal = dimensoesPorPregos(pregos)
-imagemFinal = Image.new("RGBA", (larguraFinal, alturaFinal), (255, 255, 255, 255))
-imagemPregos = imagemFinal.copy()
-offset = ((larguraFinal - largura) // 2, (alturaFinal - altura) // 2)
-imagemPregos.paste(imagem, offset)
-pregoAtual = pregos[0]
-imagemExemplo = imagemPregos.copy()
-for prego in pregos:
-    imagemExemplo.putpixel(prego, (255, 0, 0, 255))
-imagemExemplo.save(os.path.join(imagemPasta, "valCroche400Exemplo.png"))
-while True:
-    menorPrego = pregos[0]
-    menorValor = 1
+
+def main() -> None:
+    quantiaPregos = 400
+    imagemPasta = os.path.join("C:\\", "pythonscript", "lineImage", "imagens")
+    imagens = [os.path.join(imagemPasta, imagem) for imagem in os.listdir(imagemPasta)]
+    imagem = Image.open(imagens[5])
+    pregos = coordenadasPregos(quantiaPregos, imagem)
+    largura, altura = imagem.size
+    larguraFinal, alturaFinal = dimensoesPorPregos(pregos)
+    imagemFinal = Image.new("RGBA", (larguraFinal, alturaFinal), (255, 255, 255, 255))
+    imagemPregos = imagemFinal.copy()
+    offset = ((larguraFinal - largura) // 2, (alturaFinal - altura) // 2)
+    imagemPregos.paste(imagem, offset)
+    pregoAtual = pregos[0]
+    imagemExemplo = imagemPregos.copy()
     for prego in pregos:
-        menorValor, alterou = ehMaior(prego, pregoAtual, menorValor, imagemPregos)
-        if alterou:
-            menorPrego = prego
-    if menorValor != 1:
-        print(
-            "do prego "
-            + str(pregos.index(pregoAtual))
-            + " para o prego "
-            + str(pregos.index(menorPrego))
-        )
-        imagemPregos = fazLinha(
-            pregoAtual, menorPrego, imagemPregos, (255, 255, 255, 255)
-        )
-        imagemFinal = fazLinha(pregoAtual, menorPrego, imagemFinal, (0, 0, 0, 255))
-        """
-        if(indice==quantiaPregos-1):
-            indice=0
+        imagemExemplo.putpixel(prego, (255, 0, 0, 255))
+    imagemExemplo.save(os.path.join(imagemPasta, "valCroche400Exemplo.png"))
+    while True:
+        menorPrego = pregos[0]
+        menorValor = 1
+        for prego in pregos:
+            menorValor, alterou = ehMaior(prego, pregoAtual, menorValor, imagemPregos)
+            if alterou:
+                menorPrego = prego
+        if menorValor != 1:
+            print(
+                "do prego "
+                + str(pregos.index(pregoAtual))
+                + " para o prego "
+                + str(pregos.index(menorPrego))
+            )
+            imagemPregos = fazLinha(
+                pregoAtual, menorPrego, imagemPregos, (255, 255, 255, 255)
+            )
+            imagemFinal = fazLinha(pregoAtual, menorPrego, imagemFinal, (0, 0, 0, 255))
+            """
+            if(indice==quantiaPregos-1):
+                indice=0
+            else:
+                indice+=1"""
+            pregoAtual = menorPrego
         else:
-            indice+=1"""
-        pregoAtual = menorPrego
-    else:
-        break
-    try:
-        imagemFinal.save(os.path.join(imagemPasta, "valCroche400Pregos.png"))
-    except:
-        imagemFinal.save(os.path.join(imagemPasta, "valCroche400PregosToSee.png"))
-imagemFinal.save(os.path.join(imagemPasta, "valCroche400Pregos.png"))
+            break
+        try:
+            imagemFinal.save(os.path.join(imagemPasta, "valCroche400Pregos.png"))
+        except:
+            imagemFinal.save(os.path.join(imagemPasta, "valCroche400PregosToSee.png"))
+    imagemFinal.save(os.path.join(imagemPasta, "valCroche400Pregos.png"))
+
+
+if __name__ == "__main__":
+    main()

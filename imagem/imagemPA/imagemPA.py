@@ -48,17 +48,23 @@ def processaPixelPorPixel(imagemInicial, imagemFinal, frames):
     pass
 
 
-imagemInicial = pImg(texto="\ndigite o assunto da primeira imagem", infoAdicional=1)
-imagemFinal = pImg(texto="\ndigite o assunto da última imagem", infoAdicional=1)
-frames = pegaInteiro("\ndigite a quantidade de frames do meio")
-larg1, alt1 = imagemInicial.size
-larg2, alt2 = imagemFinal.size
-tamanho1 = larg1 * alt1
-tamanho2 = larg2 * alt2
-if tamanho1 > tamanho2:
-    imagemInicial = imagemInicial.resize((larg2, alt2))
-else:
-    imagemFinal = imagemFinal.resize((larg1, alt1))
-imagemInicial.save(f"output{0:02d}.png")
-imagemFinal.save(f"output{frames + 1:02d}.png")
-processaImagemPorImagem(imagemInicial, imagemFinal, frames)
+
+def main() -> None:
+    imagemInicial = pImg(texto="\ndigite o assunto da primeira imagem", infoAdicional=1)
+    imagemFinal = pImg(texto="\ndigite o assunto da última imagem", infoAdicional=1)
+    frames = pegaInteiro("\ndigite a quantidade de frames do meio")
+    larg1, alt1 = imagemInicial.size
+    larg2, alt2 = imagemFinal.size
+    tamanho1 = larg1 * alt1
+    tamanho2 = larg2 * alt2
+    if tamanho1 > tamanho2:
+        imagemInicial = imagemInicial.resize((larg2, alt2))
+    else:
+        imagemFinal = imagemFinal.resize((larg1, alt1))
+    imagemInicial.save(f"output{0:02d}.png")
+    imagemFinal.save(f"output{frames + 1:02d}.png")
+    processaImagemPorImagem(imagemInicial, imagemFinal, frames)
+
+
+if __name__ == "__main__":
+    main()

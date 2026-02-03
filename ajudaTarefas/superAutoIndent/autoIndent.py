@@ -34,22 +34,27 @@ def make_tabulation(name: str, ident: str, tabs: bool = False) -> None:
                 output_file.write(line)
 
 
-user_choice = "1"
-while user_choice != "0":
-    print("\n1 - no lines and no indentation")
-    print("2 - no indentation")
-    print("0 - exit")
-    user_choice = input()
-    if user_choice == "0":
-        break
-    print('file name (without extension)')
-    name = input()
-    print("character for indentation")
-    print("0 - tab")
-    print("1 - space")
-    ident = input()
-    if user_choice == "1":
-        write_lines(name)
-        make_tabulation(name, ident)
-    elif user_choice == "2":
-        make_tabulation(name, ident)
+def main() -> None:
+    user_choice = "1"
+    while user_choice != "0":
+        print("\n1 - no lines and no indentation")
+        print("2 - no indentation")
+        print("0 - exit")
+        user_choice = input()
+        if user_choice == "0":
+            return
+        print("file name (without extension)")
+        name = input()
+        print("character for indentation")
+        print("0 - tab")
+        print("1 - space")
+        ident = input()
+        if user_choice == "1":
+            write_lines(name)
+            make_tabulation(name, ident)
+        elif user_choice == "2":
+            make_tabulation(name, ident)
+
+
+if __name__ == "__main__":
+    main()

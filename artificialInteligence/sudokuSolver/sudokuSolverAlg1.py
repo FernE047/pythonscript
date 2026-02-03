@@ -393,18 +393,25 @@ def solve_single_board(sudoku_board: SudokuBoard) -> None:
     print("\n\n")
 
 
-tries = 0
-while True:
-    mode = main_menu()
-    if mode == 0:
-        break
-    if mode != 3:
-        board = create_sudoku_board(mode)
-        solve_single_board(board)
-        continue
-    files = os.listdir("sudokus")
-    for file_name in files:
-        print(f"{file_name}\n\n")
-        with open(f"sudokus//{file_name}", "r", encoding="utf-8") as sudoku_board_raw:
-            board = SudokuBoard(sudoku_board_raw.read())
-        solve_single_board(board)
+def main() -> None:
+    tries = 0
+    while True:
+        mode = main_menu()
+        if mode == 0:
+            break
+        if mode != 3:
+            board = create_sudoku_board(mode)
+            solve_single_board(board)
+            continue
+        files = os.listdir("sudokus")
+        for file_name in files:
+            print(f"{file_name}\n\n")
+            with open(
+                f"sudokus//{file_name}", "r", encoding="utf-8"
+            ) as sudoku_board_raw:
+                board = SudokuBoard(sudoku_board_raw.read())
+            solve_single_board(board)
+
+
+if __name__ == "__main__":
+    main()

@@ -410,39 +410,45 @@ def lerInfo(slot):
     
     return(slot)
 
-vermelhoFala=(224,8,8)
-cinzaMenu=(96,96,96)
-cores=[vermelhoFala,cinzaMenu]
-ataqueGlobal=[]
-cima="i"
-baixo="k"
-esquerda="j"
-direita="l"
-enter="w"
-botaoA="x"
-botaoB="z"
-teclas=[enter,botaoA,botaoB,cima,baixo,esquerda,direita]
-BD = shelve.open("C:/pythonscript/jogos/perfectGameplay/bd")
-limpaBD()
-try:
-    comeco=time.time()
-    abrir()
-    inicio()
-    #load()
-    setaVermelha(1,vermelho=(248,0,0))
-    esperePor((400,440),(72,64,80))
-    inimigo=Inimigo()
-    print("batalhando com "+inimigo.nome)
-    print("level "+str(inimigo.level))
-    print("vida: "+str(inimigo.vida)+"%")
-    atualizaEmBatalha(0)
-    fim=time.time()
-    tempo=fim-comeco
-    print("completo em:")
-    print_elapsed_time(tempo)
-except KeyboardInterrupt:
-    fim=time.time()
-    tempo=fim-comeco
-    print("completo em:")
-    print_elapsed_time(tempo)
-    print("\nDone.")
+
+def main() -> None:
+    vermelhoFala=(224,8,8)
+    cinzaMenu=(96,96,96)
+    cores=[vermelhoFala,cinzaMenu]
+    ataqueGlobal=[]
+    cima="i"
+    baixo="k"
+    esquerda="j"
+    direita="l"
+    enter="w"
+    botaoA="x"
+    botaoB="z"
+    teclas=[enter,botaoA,botaoB,cima,baixo,esquerda,direita]
+    BD = shelve.open("C:/pythonscript/jogos/perfectGameplay/bd")
+    limpaBD()
+    try:
+        comeco=time.time()
+        abrir()
+        inicio()
+        #load()
+        setaVermelha(1,vermelho=(248,0,0))
+        esperePor((400,440),(72,64,80))
+        inimigo=Inimigo()
+        print("batalhando com "+inimigo.nome)
+        print("level "+str(inimigo.level))
+        print("vida: "+str(inimigo.vida)+"%")
+        atualizaEmBatalha(0)
+        fim=time.time()
+        tempo=fim-comeco
+        print("completo em:")
+        print_elapsed_time(tempo)
+    except KeyboardInterrupt:
+        fim=time.time()
+        tempo=fim-comeco
+        print("completo em:")
+        print_elapsed_time(tempo)
+        print("\nDone.")
+
+
+if __name__ == "__main__":
+    main()

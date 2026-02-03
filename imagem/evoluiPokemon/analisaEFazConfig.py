@@ -395,7 +395,8 @@ def distancia(pontoA, pontoB):
     return soma ** (1 / 2)
 
 
-if __name__ == "__main__":
+
+def main() -> None:
     print("Fazendo Analise : " + str(0))
     parteInicial = Image.open("C:\\pythonscript\\imagem\\evoluiPokemon\\inicial.png")
     areaInicial = Area(parteInicial)
@@ -406,3 +407,7 @@ if __name__ == "__main__":
     with open("C:\\pythonscript\\imagem\\evoluiPokemon\\config.txt", "w", encoding="utf-8") as fileConfig:
         areaInicial.escreve(areaFinal, fileConfig)
         print("\Analise Terminada : " + str(0))
+
+
+if __name__ == "__main__":
+    main()

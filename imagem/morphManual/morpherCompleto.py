@@ -40,16 +40,23 @@ def fazProcesso(processo,nome):
     fim = time()
     duracao = fim-inicio
     print_elapsed_time(duracao)
-    
-inicioDef = time()
-#fazProcesso("python C:\\pythonscript\\imagem\\morphManual\\preparaMorph.py ","limpar directory")
-#fazProcesso("python C:\\pythonscript\\imagem\\morphManual\\analisaEFazConfig.py ","fazer configurações")
-#fazProcesso("python C:\\pythonscript\\imagem\\morphManual\\recolor.py ","recolor")
-#fazProcesso("python C:\\pythonscript\\imagem\\morphManual\\morpher.py ","fazer animações")
-fazProcesso("python C:\\pythonscript\\imagem\\morphManual\\corrigeFrames.py ","correção de frames")
-fazProcesso("python C:\\pythonscript\\imagem\\morphManual\\addBackground.py ","fazer backgrounds")
-fazProcesso("python C:\\pythonscript\\imagem\\morphManual\\fazGif.py ","fazer Gif")
-fimDef = time()
-print("\nfinalizado")
-print_elapsed_time(fimDef-inicioDef)
-gc.collect()
+
+
+
+def main() -> None:
+    inicioDef = time()
+    #fazProcesso("python C:\\pythonscript\\imagem\\morphManual\\preparaMorph.py ","limpar directory")
+    #fazProcesso("python C:\\pythonscript\\imagem\\morphManual\\analisaEFazConfig.py ","fazer configurações")
+    #fazProcesso("python C:\\pythonscript\\imagem\\morphManual\\recolor.py ","recolor")
+    #fazProcesso("python C:\\pythonscript\\imagem\\morphManual\\morpher.py ","fazer animações")
+    fazProcesso("python C:\\pythonscript\\imagem\\morphManual\\corrigeFrames.py ","correção de frames")
+    fazProcesso("python C:\\pythonscript\\imagem\\morphManual\\addBackground.py ","fazer backgrounds")
+    fazProcesso("python C:\\pythonscript\\imagem\\morphManual\\fazGif.py ","fazer Gif")
+    fimDef = time()
+    print("\nfinalizado")
+    print_elapsed_time(fimDef-inicioDef)
+    gc.collect()
+
+
+if __name__ == "__main__":
+    main()

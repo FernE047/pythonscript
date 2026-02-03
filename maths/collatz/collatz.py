@@ -10,16 +10,22 @@ def collatz(numero):
     collatz(numero)
 
 
-while True:
-    print("digite um numero:")
-    try:
-        valor = int(input())
-        if valor <= 0:
-            print("somente numeros positivos")
+
+def main() -> None:
+    while True:
+        print("digite um numero:")
+        try:
+            valor = int(input())
+            if valor <= 0:
+                print("somente numeros positivos")
+                continue
+            else:
+                collatz(valor)
+                break
+        except ValueError:
+            print("Somente numeros são permitidos")
             continue
-        else:
-            collatz(valor)
-            break
-    except ValueError:
-        print("Somente numeros são permitidos")
-        continue
+
+
+if __name__ == "__main__":
+    main()

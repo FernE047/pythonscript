@@ -38,56 +38,62 @@ def minimoEMaximo(lista, horizontal):
     return (menor, maior)
 
 
-preto = (0, 0, 0, 255)
-branco = (255, 255, 255, 255)
-vermelho = (255, 0, 0, 255)
-minimo = 2
-while True:
-    try:
-        print("digite o passo maximo da imagem")
-        maximo = int(input())
-        break
-    except:
-        print("digite um numero")
 
-diretorio = "C:\\pythonscript\\randomBranch\\"
-BD = shelve.open(diretorio + "numero")
-imagemNome = BD["imagemNome"]
-bracos = [a for a in range(minimo, maximo + 1)]
-shuffle(bracos)
-print(bracos)
-largura = minimoEMaximo(bracos, True)
-altura = minimoEMaximo(bracos, False)
-inicial = (-largura[0], -altura[0])
-largura = largura[1] - largura[0] + 1
-altura = altura[1] - altura[0] + 1
-print(altura)
-print(largura)
-imagemNova = Image.new("RGBA", (largura, altura), branco)
-print("altura :  " + str(altura))
-print("largura : " + str(largura))
-print("inicial : " + str(inicial))
-imagemNova.putpixel(inicial, vermelho)
-posicao = list(inicial)
-for n, elemento in enumerate(bracos):
-    direcao = n % 4
-    if direcao == 0:
-        for a in range(elemento):
-            posicao[0] += 1
-            imagemNova.putpixel(tuple(posicao), preto)
-    elif direcao == 1:
-        for a in range(elemento):
-            posicao[1] += 1
-            imagemNova.putpixel(tuple(posicao), preto)
-    elif direcao == 2:
-        for a in range(elemento):
-            posicao[0] -= 1
-            imagemNova.putpixel(tuple(posicao), preto)
-    else:
-        for a in range(elemento):
-            posicao[1] -= 1
-            imagemNova.putpixel(tuple(posicao), preto)
-imagemNova.save(diretorio + "imagem" + str(imagemNome) + ".png")
-imagemNome += 1
-BD["imagemNome"] = imagemNome
-BD.close()
+def main() -> None:
+    preto = (0, 0, 0, 255)
+    branco = (255, 255, 255, 255)
+    vermelho = (255, 0, 0, 255)
+    minimo = 2
+    while True:
+        try:
+            print("digite o passo maximo da imagem")
+            maximo = int(input())
+            break
+        except:
+            print("digite um numero")
+
+    diretorio = "C:\\pythonscript\\randomBranch\\"
+    BD = shelve.open(diretorio + "numero")
+    imagemNome = BD["imagemNome"]
+    bracos = [a for a in range(minimo, maximo + 1)]
+    shuffle(bracos)
+    print(bracos)
+    largura = minimoEMaximo(bracos, True)
+    altura = minimoEMaximo(bracos, False)
+    inicial = (-largura[0], -altura[0])
+    largura = largura[1] - largura[0] + 1
+    altura = altura[1] - altura[0] + 1
+    print(altura)
+    print(largura)
+    imagemNova = Image.new("RGBA", (largura, altura), branco)
+    print("altura :  " + str(altura))
+    print("largura : " + str(largura))
+    print("inicial : " + str(inicial))
+    imagemNova.putpixel(inicial, vermelho)
+    posicao = list(inicial)
+    for n, elemento in enumerate(bracos):
+        direcao = n % 4
+        if direcao == 0:
+            for a in range(elemento):
+                posicao[0] += 1
+                imagemNova.putpixel(tuple(posicao), preto)
+        elif direcao == 1:
+            for a in range(elemento):
+                posicao[1] += 1
+                imagemNova.putpixel(tuple(posicao), preto)
+        elif direcao == 2:
+            for a in range(elemento):
+                posicao[0] -= 1
+                imagemNova.putpixel(tuple(posicao), preto)
+        else:
+            for a in range(elemento):
+                posicao[1] -= 1
+                imagemNova.putpixel(tuple(posicao), preto)
+    imagemNova.save(diretorio + "imagem" + str(imagemNome) + ".png")
+    imagemNome += 1
+    BD["imagemNome"] = imagemNome
+    BD.close()
+
+
+if __name__ == "__main__":
+    main()

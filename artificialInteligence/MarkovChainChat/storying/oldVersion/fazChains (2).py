@@ -97,23 +97,29 @@ def generate_markov_chain(text: str, chain_size: int, is_title: bool = False) ->
     update_chain_file(pair_list, chain_size, is_title)
 
 
-chain_size = 2
-total = len(os.listdir("stories"))
-for chain_size in range(2, 3):
-    processed_file_count = 0
-    for name in os.listdir("stories"):
-        processed_file_count += 1
-        start_time = time()
-        print(name)
-        with open(f"stories//{name}", "r", encoding="utf-8") as file:
-            title_and_story_parts = file.readline().split(" : ")
-            if title_and_story_parts[:-1]:
-                title = " : ".join(title_and_story_parts[:-1])
-                generate_markov_chain(title, chain_size, is_title=True)
-            if title_and_story_parts[-1:][0]:
-                story = title_and_story_parts[-1:][0]
-                generate_markov_chain(story, chain_size)
-        execution_end_time = time()
-        duration = execution_end_time - start_time
-        print(f"falta : {format_elapsed_time(duration * (total - processed_file_count))}")
-        print()
+
+def main() -> None:
+    chain_size = 2
+    total = len(os.listdir("stories"))
+    for chain_size in range(2, 3):
+        processed_file_count = 0
+        for name in os.listdir("stories"):
+            processed_file_count += 1
+            start_time = time()
+            print(name)
+            with open(f"stories//{name}", "r", encoding="utf-8") as file:
+                title_and_story_parts = file.readline().split(" : ")
+                if title_and_story_parts[:-1]:
+                    title = " : ".join(title_and_story_parts[:-1])
+                    generate_markov_chain(title, chain_size, is_title=True)
+                if title_and_story_parts[-1:][0]:
+                    story = title_and_story_parts[-1:][0]
+                    generate_markov_chain(story, chain_size)
+            execution_end_time = time()
+            duration = execution_end_time - start_time
+            print(f"falta : {format_elapsed_time(duration * (total - processed_file_count))}")
+            print()
+
+
+if __name__ == "__main__":
+    main()

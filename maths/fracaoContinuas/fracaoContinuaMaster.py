@@ -125,25 +125,31 @@ def fracaoToFraction(numerador,denominador):
         if(iteracao==1000):
             fraction.append(numerador/denominador)
             return(fraction)
-        
-while True:
-    modo=choose_from_options("modo de conversão:",["fração continua para numero","numero para fração continua"],mode="number")
-    if(modo):
-        modo=choose_from_options("tipo do numero",["decimal","fração","raizes quadradas"],mode="number")
-        if(modo==0):
-            valor=pegaFloat("digite um valor decimal")
-            resultado=decimalToFraction(valor)
-        elif(modo==1):
-            numerador=pegaInteiro("digite o numerador")
-            denominador=pegaInteiro("digite o denominador")
-            resultado=fracaoToFraction(numerador,denominador)
-        elif(modo==2):
-            modo=choose_from_options("modo de raiz:",["simples","complexo"],mode="number") + 2
-            raizes=pegaFloat("digite o numero dentro da raiz")
-            if(modo==3):
-                numerador=pegaInteiro("digite o numero que somará a raiz")
+
+
+def main() -> None:
+    while True:
+        modo=choose_from_options("modo de conversão:",["fração continua para numero","numero para fração continua"],mode="number")
+        if(modo):
+            modo=choose_from_options("tipo do numero",["decimal","fração","raizes quadradas"],mode="number")
+            if(modo==0):
+                valor=pegaFloat("digite um valor decimal")
+                resultado=decimalToFraction(valor)
+            elif(modo==1):
+                numerador=pegaInteiro("digite o numerador")
                 denominador=pegaInteiro("digite o denominador")
-    else:
-        fraction=listaDeInteiros()
-        resultado=fractionToNumber(fraction)
-    print(resultado)
+                resultado=fracaoToFraction(numerador,denominador)
+            elif(modo==2):
+                modo=choose_from_options("modo de raiz:",["simples","complexo"],mode="number") + 2
+                raizes=pegaFloat("digite o numero dentro da raiz")
+                if(modo==3):
+                    numerador=pegaInteiro("digite o numero que somará a raiz")
+                    denominador=pegaInteiro("digite o denominador")
+        else:
+            fraction=listaDeInteiros()
+            resultado=fractionToNumber(fraction)
+        print(resultado)
+
+
+if __name__ == "__main__":
+    main()

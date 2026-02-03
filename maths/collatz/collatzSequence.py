@@ -51,11 +51,15 @@ def collatz(termo,grau):
     return(int(passos))
     
 
-fruto=1
-passos=[0 for i in range(2)]
-while(fruto!=0):
-    passos=[collatz(fruto,i) for i in range(3)]
-    print(f"passos:{passos[0]:4d},{passos[1]:4d},{passos[2]:4d}\n")
-    fruto=int(input())
+
+def main() -> None:
+    fruto=1
+    passos=[0 for i in range(2)]
+    while(fruto!=0):
+        passos=[collatz(fruto,i) for i in range(3)]
+        print(f"passos:{passos[0]:4d},{passos[1]:4d},{passos[2]:4d}\n")
+        fruto=int(input())
 
 
+if __name__ == "__main__":
+    main()

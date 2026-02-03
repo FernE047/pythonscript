@@ -23,5 +23,11 @@ def comparaFaces(nome1,nome2):
     soma = sum([distancia(coord_1,coord_2)/maiorDistancia*100 for coord_1,coord_2 in zip(face1,face2)])
     return soma/68
 
-nome = "C:\\pythonscript\\imagem\\projetoFaces\\faces\\alinhadas\\output{0:04d}.png"
-print(comparaFaces(nome.format(0),nome.format(1)))
+
+def main() -> None:
+    nome = "C:\\pythonscript\\imagem\\projetoFaces\\faces\\alinhadas\\output{0:04d}.png"
+    print(comparaFaces(nome.format(0),nome.format(1)))
+
+
+if __name__ == "__main__":
+    main()

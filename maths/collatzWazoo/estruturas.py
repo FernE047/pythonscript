@@ -533,7 +533,13 @@ def mdc(lista:list[int]) -> int:
     return (2**n2) * (3**n3)
 
 
-if __name__ == "__main__":
+
+
+def main() -> None:
     for a in range(7):
         print(f"\n\ncollatz {a}\n\n")
         print(Collatz(a))
+
+
+if __name__ == "__main__":
+    main()

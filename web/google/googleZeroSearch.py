@@ -124,10 +124,16 @@ def encontrarZero(termo):
     return encontrarZero(termo)
 
 
-print("digite o termo de pesquisa")
-termoInicial = input()
-startTime = time.time()
-encontrarZero(termoInicial)
-endTime = time.time()
-realTime = endTime - startTime
-print("levou " + str(realTime) + " segundos")
+
+def main() -> None:
+    print("digite o termo de pesquisa")
+    termoInicial = input()
+    startTime = time.time()
+    encontrarZero(termoInicial)
+    endTime = time.time()
+    realTime = endTime - startTime
+    print("levou " + str(realTime) + " segundos")
+
+
+if __name__ == "__main__":
+    main()

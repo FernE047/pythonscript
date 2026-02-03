@@ -103,58 +103,63 @@ def get_file_name() -> str:
     return file_name
 
 
-file_name = get_file_name()
-start_time = time()
-with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
-    line = file.readline()[:-1]
-    word_frequency: list[int] = []
-    word_length = 0
-    count = 0
-    update_chain_values: list[ChainData] = []
-    while line:
-        words = line.split()
-        while len(words) > len(word_frequency):
-            word_frequency.append(0)
-        word_frequency[len(words) - 1] += 1
-        for word in words:
-            word_length = len(word)
-            previous_character = ""
-            for index in range(word_length):
-                current_character = word[index]
-                if index == 0:
-                    update_chain_values.append(("¨", "¨", current_character))
-                    if word_length == 1:
-                        update_chain_values.append(("¨", current_character, "¨"))
-                        break
-                    else:
-                        next_character = word[index + 1]
-                        update_chain_values.append(
-                            ("¨", current_character, next_character)
-                        )
-                        previous_character = current_character
-                    continue
-                if word_length > 1:
-                    if index >= word_length - 1:
-                        next_character = "¨"
-                    else:
-                        next_character = word[index + 1]
-                    update_chain_values.append(
-                        (previous_character, current_character, next_character)
-                    )
-                    if next_character == "¨":
-                        break
-                previous_character = current_character
-        if count == 100:
-            update_chain_file(file_name, update_chain_values)
-            update_chain_values = []
-            count = 0
-        else:
-            count += 1
+def main() -> None:
+    file_name = get_file_name()
+    start_time = time()
+    with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
         line = file.readline()[:-1]
-    update_chain_file(file_name, update_chain_values)
-    with open(f"{file_name}/length.txt", "w", encoding="UTF-8") as arqInput:
-        for index, quantity in enumerate(word_frequency):
-            arqInput.write(f"{index} {quantity}\n")
-    print(word_length)
-    end_time = time()
-    print(format_elapsed_time(end_time - start_time))
+        word_frequency: list[int] = []
+        word_length = 0
+        count = 0
+        update_chain_values: list[ChainData] = []
+        while line:
+            words = line.split()
+            while len(words) > len(word_frequency):
+                word_frequency.append(0)
+            word_frequency[len(words) - 1] += 1
+            for word in words:
+                word_length = len(word)
+                previous_character = ""
+                for index in range(word_length):
+                    current_character = word[index]
+                    if index == 0:
+                        update_chain_values.append(("¨", "¨", current_character))
+                        if word_length == 1:
+                            update_chain_values.append(("¨", current_character, "¨"))
+                            break
+                        else:
+                            next_character = word[index + 1]
+                            update_chain_values.append(
+                                ("¨", current_character, next_character)
+                            )
+                            previous_character = current_character
+                        continue
+                    if word_length > 1:
+                        if index >= word_length - 1:
+                            next_character = "¨"
+                        else:
+                            next_character = word[index + 1]
+                        update_chain_values.append(
+                            (previous_character, current_character, next_character)
+                        )
+                        if next_character == "¨":
+                            break
+                    previous_character = current_character
+            if count == 100:
+                update_chain_file(file_name, update_chain_values)
+                update_chain_values = []
+                count = 0
+            else:
+                count += 1
+            line = file.readline()[:-1]
+        update_chain_file(file_name, update_chain_values)
+        with open(f"{file_name}/length.txt", "w", encoding="UTF-8") as arqInput:
+            for index, quantity in enumerate(word_frequency):
+                arqInput.write(f"{index} {quantity}\n")
+        print(word_length)
+        end_time = time()
+        print(format_elapsed_time(end_time - start_time))
+
+
+if __name__ == "__main__":
+    main()

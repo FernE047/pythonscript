@@ -19,18 +19,23 @@ def get_pixel_color(x: int, y: int) -> tuple[int, int, int] | None:
     return (color_captured[0], color_captured[1], color_captured[2])
 
 
-print("Press Ctrl-C to quit.")
-try:
-    while True:
-        if msvcrt.kbhit():
-            key = msvcrt.getch()
-            print(key)
-        x, y = pyautogui.position()
-        pixel_color = get_pixel_color(x, y)
-        if pixel_color is None:
-            continue
-        text = f"X: {str(x).rjust(4)} Y: {str(y).rjust(4)} {turn_color_to_string(pixel_color)}"
-        print(text, end="")
-        print("\b" * len(text), end="", flush=True)
-except KeyboardInterrupt:
-    print("\nDone.")
+def main() -> None:
+    print("Press Ctrl-C to quit.")
+    try:
+        while True:
+            if msvcrt.kbhit():
+                key = msvcrt.getch()
+                print(key)
+            x, y = pyautogui.position()
+            pixel_color = get_pixel_color(x, y)
+            if pixel_color is None:
+                continue
+            text = f"X: {str(x).rjust(4)} Y: {str(y).rjust(4)} {turn_color_to_string(pixel_color)}"
+            print(text, end="")
+            print("\b" * len(text), end="", flush=True)
+    except KeyboardInterrupt:
+        print("\nDone.")
+
+
+if __name__ == "__main__":
+    main()

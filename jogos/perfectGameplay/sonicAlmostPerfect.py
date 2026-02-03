@@ -43,16 +43,21 @@ def waitFor(coordenadas,cor):
         if(tela.getpixel(coordenadas)==cor):
             return()
         
-try:
-    pyautogui.click(350,750)
-    pyautogui.keyDown("ctrl")
-    pyautogui.keyDown("tab")
-    time.sleep(1/15)
-    pyautogui.keyUp("tab")
-    pyautogui.keyUp("ctrl")
-    waitFor((316,289),(99,97,232))
-    pyautogui.click(350,750)
-    pyautogui.click(900,600)
-except KeyboardInterrupt:
-    print("\nDone.")
-#o emulador não possui fps statico então sempre será aleatorio o caminho, logo não podemos descrever ações se não estabilizarmos o fps
+def main() -> None:
+    try:
+        pyautogui.click(350,750)
+        pyautogui.keyDown("ctrl")
+        pyautogui.keyDown("tab")
+        time.sleep(1/15)
+        pyautogui.keyUp("tab")
+        pyautogui.keyUp("ctrl")
+        waitFor((316,289),(99,97,232))
+        pyautogui.click(350,750)
+        pyautogui.click(900,600)
+    except KeyboardInterrupt:
+        print("\nDone.")
+    # o emulador não possui fps statico então sempre será aleatorio o caminho, logo não podemos descrever ações se não estabilizarmos o fps
+
+
+if __name__ == "__main__":
+    main()

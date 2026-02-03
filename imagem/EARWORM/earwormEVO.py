@@ -157,44 +157,50 @@ def novoSite(site):
     return informacao[0].get("href")
 
 
-album = False
-artist = False
-while True:
-    print("\ndigite o titulo da música")
-    titulo = input()
-    if titulo == "0":
-        break
-    tituloList = list(titulo)
-    if tituloList[:5] == ["a", "l", "b", "u", "m"]:
-        tituloList = tituloList[6:]
-        album = True
-    if tituloList[:6] == ["a", "r", "t", "i", "s", "t"]:
-        tituloList = tituloList[7:]
-        artist = True
-    tituloFormatada = ""
-    for index, letra in enumerate(tituloList):
-        if letra == " ":
-            tituloList[index] = "%20"
-        tituloFormatada += tituloList[index]
-    if album:
-        informacao = pesquisaGoogle(
-            tituloFormatada, adicao="%20albums+site%3Ahttps%3A%2F%2Fgenius.com%2F"
-        )
-        site = achaGenius(informacao, tem="album")
-        nome = titulo[6:]
-        albumImagens(site, nome)
-    elif artist:
-        informacao = pesquisaGoogle(
-            tituloFormatada, adicao="%20artist+site%3Ahttps%3A%2F%2Fgenius.com%2F"
-        )
-        site = achaGenius(informacao, tem="artist")
-        if procuraComplemento(site) != "artist":
-            site = novoSite(site)
-        nome = titulo[7:]
-        artistImagens(site, nome)
-    else:
-        informacao = pesquisaGoogle(
-            tituloFormatada, adicao="+site%3Ahttps%3A%2F%2Fgenius.com%2F"
-        )
-        site = achaGenius(informacao)
-        fazImagem(site)
+
+def main() -> None:
+    album = False
+    artist = False
+    while True:
+        print("\ndigite o titulo da música")
+        titulo = input()
+        if titulo == "0":
+            break
+        tituloList = list(titulo)
+        if tituloList[:5] == ["a", "l", "b", "u", "m"]:
+            tituloList = tituloList[6:]
+            album = True
+        if tituloList[:6] == ["a", "r", "t", "i", "s", "t"]:
+            tituloList = tituloList[7:]
+            artist = True
+        tituloFormatada = ""
+        for index, letra in enumerate(tituloList):
+            if letra == " ":
+                tituloList[index] = "%20"
+            tituloFormatada += tituloList[index]
+        if album:
+            informacao = pesquisaGoogle(
+                tituloFormatada, adicao="%20albums+site%3Ahttps%3A%2F%2Fgenius.com%2F"
+            )
+            site = achaGenius(informacao, tem="album")
+            nome = titulo[6:]
+            albumImagens(site, nome)
+        elif artist:
+            informacao = pesquisaGoogle(
+                tituloFormatada, adicao="%20artist+site%3Ahttps%3A%2F%2Fgenius.com%2F"
+            )
+            site = achaGenius(informacao, tem="artist")
+            if procuraComplemento(site) != "artist":
+                site = novoSite(site)
+            nome = titulo[7:]
+            artistImagens(site, nome)
+        else:
+            informacao = pesquisaGoogle(
+                tituloFormatada, adicao="+site%3Ahttps%3A%2F%2Fgenius.com%2F"
+            )
+            site = achaGenius(informacao)
+            fazImagem(site)
+
+
+if __name__ == "__main__":
+    main()

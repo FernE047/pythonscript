@@ -162,7 +162,12 @@ def corrigeFrame(indice):
     print("\tFrame corrigido : " + str(indice))
 
 
-if __name__ == "__main__":
+
+def main() -> None:
     quantiaFrames = len(os.listdir("C:\\pythonscript\\imagem\\evoluiPokemon\\frames"))
     p = multiprocessing.Pool(os.cpu_count())
     p.map(corrigeFrame, range(1, quantiaFrames - 1))
+
+
+if __name__ == "__main__":
+    main()

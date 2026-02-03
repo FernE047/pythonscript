@@ -16,5 +16,10 @@ def ackerman(m: int, n: int) -> int:
     return n - 1
 
 
-level = 0
-print(ackerman(3, 10))
+def main() -> None:
+    level = 0
+    print(ackerman(3, 10))
+
+
+if __name__ == "__main__":
+    main()

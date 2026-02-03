@@ -34,13 +34,19 @@ def run_command(command: str) -> None:
     subprocess.Popen(command, shell=True)
 
 
-folders = os.listdir(DIRECTORY)
-folder_list = [f"{DIRECTORY}/{folder}" for folder in folders]
-for folder in folder_list:
-    if contains_java_file(folder):
-        run_command(f"javac {folder}/*.java")
-        create_batch_file(folder)
-        continue
-    run_command(f"dir /s /B {folder}/*.java > {folder}/sources.txt")
-    run_command(f"javac @{folder}/sources.txt")
-    create_batch_project(folder)
+
+def main() -> None:
+    folders = os.listdir(DIRECTORY)
+    folder_list = [f"{DIRECTORY}/{folder}" for folder in folders]
+    for folder in folder_list:
+        if contains_java_file(folder):
+            run_command(f"javac {folder}/*.java")
+            create_batch_file(folder)
+            continue
+        run_command(f"dir /s /B {folder}/*.java > {folder}/sources.txt")
+        run_command(f"javac @{folder}/sources.txt")
+        create_batch_project(folder)
+
+
+if __name__ == "__main__":
+    main()

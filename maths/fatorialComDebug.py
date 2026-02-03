@@ -20,5 +20,11 @@ def factorial(n):
     return total
 
 
-print(factorial(int(input())))
-logging.debug("End of program")
+
+def main() -> None:
+    print(factorial(int(input())))
+    logging.debug("End of program")
+
+
+if __name__ == "__main__":
+    main()

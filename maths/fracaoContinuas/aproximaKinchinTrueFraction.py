@@ -24,15 +24,21 @@ def khinchinPerto(fraction,menor):
             return True
     return False
 
-lista=[]
-for b in range(10):
-    a=0
-    while True:
-        a+=1
-        lista.append(a)
-        if khinchinPerto(lista,b%2):
-            lista.pop()
-            break
-        else:
-            lista.pop()
-    print(lista)
+
+def main() -> None:
+    lista=[]
+    for b in range(10):
+        a=0
+        while True:
+            a+=1
+            lista.append(a)
+            if khinchinPerto(lista,b%2):
+                lista.pop()
+                break
+            else:
+                lista.pop()
+        print(lista)
+
+
+if __name__ == "__main__":
+    main()

@@ -121,5 +121,11 @@ def generate_index(file_name: str, folder_limit: int | None = None) -> None:
         explore_directory(file, folder_limit=folder_limit)
 
 
-generate_index("hyper_index.txt")
-generate_index("index.txt", folder_limit=1)
+
+def main() -> None:
+    generate_index("hyper_index.txt")
+    generate_index("index.txt", folder_limit=1)
+
+
+if __name__ == "__main__":
+    main()

@@ -86,13 +86,19 @@ def esconde(imgE, imgO):
     return imgS
 
 
-nomeApaga = ""
-diretorio = os.path.join("C:\\", "pythonscript", "Imagens")
-imagemOriginal = abreImagem("digite o nome da imagem original")
-nome = nomeApaga
-imagemEscondida = abreImagem("digite o nome da imagem para esconder")
-while not (possivelEsconder(imagemEscondida, imagemOriginal)):
+
+def main() -> None:
+    nomeApaga = ""
+    diretorio = os.path.join("C:\\", "pythonscript", "Imagens")
+    imagemOriginal = abreImagem("digite o nome da imagem original")
+    nome = nomeApaga
     imagemEscondida = abreImagem("digite o nome da imagem para esconder")
-imagemSteg = esconde(imagemEscondida, imagemOriginal)
-print(os.path.join(diretorio, "steganografada", nome[:-4] + "Steg.jpg"))
-imagemSteg.save(os.path.join(diretorio, "steganografada", nome[:-4] + "Steg.jpg"))
+    while not (possivelEsconder(imagemEscondida, imagemOriginal)):
+        imagemEscondida = abreImagem("digite o nome da imagem para esconder")
+    imagemSteg = esconde(imagemEscondida, imagemOriginal)
+    print(os.path.join(diretorio, "steganografada", nome[:-4] + "Steg.jpg"))
+    imagemSteg.save(os.path.join(diretorio, "steganografada", nome[:-4] + "Steg.jpg"))
+
+
+if __name__ == "__main__":
+    main()

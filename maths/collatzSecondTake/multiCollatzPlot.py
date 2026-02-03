@@ -75,8 +75,14 @@ def wazooItera(n, x):
     return x
 
 
-mostraP([wazPassos(a) for a in range(100)])
-mostraP([collPassos(a) for a in range(100)])
-# for n in range(1,100):
-#    mostraP([wazooItera(n,a) for a in range(100)])
-#    mostraP([collatzItera(n,a) for a in range(100)])
+
+def main() -> None:
+    mostraP([wazPassos(a) for a in range(100)])
+    mostraP([collPassos(a) for a in range(100)])
+    # for n in range(1,100):
+    #    mostraP([wazooItera(n,a) for a in range(100)])
+    #    mostraP([collatzItera(n,a) for a in range(100)])
+
+
+if __name__ == "__main__":
+    main()

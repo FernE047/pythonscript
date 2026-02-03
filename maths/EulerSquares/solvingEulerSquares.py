@@ -60,16 +60,22 @@ def solve(x,y,matriz,possibilidades):
         matriz[y][x] = (0,0)
         possibilidades[indice] = elemento
 
-tries = 0
-iterations = 0
-tamanho = 5
-largura = tamanho
-altura  = tamanho
-possibilidades = []
-for x in range(largura):
-    for y in range(altura):
-        if x != y:
-            possibilidades.append((x,y))
-matriz = [[(a,a) for a in range(largura)]]+[[(0,0) for x in range(largura)] for y in range(1,altura)]
-matriz = solve(0,1,matriz,possibilidades)
-imprime(matriz)
+
+def main() -> None:
+    tries = 0
+    iterations = 0
+    tamanho = 5
+    largura = tamanho
+    altura  = tamanho
+    possibilidades = []
+    for x in range(largura):
+        for y in range(altura):
+            if x != y:
+                possibilidades.append((x,y))
+    matriz = [[(a,a) for a in range(largura)]]+[[(0,0) for x in range(largura)] for y in range(1,altura)]
+    matriz = solve(0,1,matriz,possibilidades)
+    imprime(matriz)
+
+
+if __name__ == "__main__":
+    main()

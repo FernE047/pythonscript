@@ -27,16 +27,22 @@ def proximoTermo(termo):
     termo="".join(resultado)
     return(termo)
 
-while True:
-    print("limite")
-    limite=int(input())
-    #limite=165
-    print("primeiro termo")
-    termo=input()
-    sucesso,termos=chegaAFim(termo,limite)
-    if(sucesso):
-        print("termo "+termo+" chega a fim em "+str(len(termos)-1))
-        print(",".join(termos))
-    else:
-        print(termo+" estorou o limite:")
-        print("\n".join(termos))
+
+def main() -> None:
+    while True:
+        print("limite")
+        limite=int(input())
+        #limite=165
+        print("primeiro termo")
+        termo=input()
+        sucesso,termos=chegaAFim(termo,limite)
+        if(sucesso):
+            print("termo "+termo+" chega a fim em "+str(len(termos)-1))
+            print(",".join(termos))
+        else:
+            print(termo+" estorou o limite:")
+            print("\n".join(termos))
+
+
+if __name__ == "__main__":
+    main()

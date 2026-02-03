@@ -59,9 +59,15 @@ def tempoDemoraProduto(quantidadeProdutora,quantidadeProduzida,precoProducao,pro
         quantidadePorSegundo=quantidadeProduzida*quantidadeProdutora/60
     return tempo    
 
-quantidadeProdutora=1
-quantidadeProduzida=1
-precoProducao=1000
-tempo=tempoDemoraProducao(1,0.001,1000,1000)
-print(f"\nquantidadeProdutora : {quantidadeProdutora}\n")
-print_elapsed_time(tempo)
+
+def main() -> None:
+    quantidadeProdutora=1
+    quantidadeProduzida=1
+    precoProducao=1000
+    tempo=tempoDemoraProducao(1,0.001,1000,1000)
+    print(f"\nquantidadeProdutora : {quantidadeProdutora}\n")
+    print_elapsed_time(tempo)
+
+
+if __name__ == "__main__":
+    main()

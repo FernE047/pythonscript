@@ -33,18 +33,23 @@ def reverse_word(original_text: str) -> str:
     return reversed_word
 
 
-while True:
-    file_name = input("enter the file name to save audio or press enter to skip:")
-    original_text = input("enter the text to be inverted or press enter to exit:")
-    if not original_text:
-        break
-    print("simple :\n")
-    reversed_text = reverse_word(original_text)
-    if file_name:
-        fazAudio(f"{file_name}_reversed", reversed_text)
-    print(reversed_text)
-    print("\nword by word:\n")
-    reversed_by_word = reverse_word_by_word(original_text)
-    if file_name:
-        fazAudio(f"{file_name}_reversed_by_word", reversed_by_word)
-    print(reversed_by_word)
+def main() -> None:
+    while True:
+        file_name = input("enter the file name to save audio or press enter to skip:")
+        original_text = input("enter the text to be inverted or press enter to exit:")
+        if not original_text:
+            break
+        print("simple :\n")
+        reversed_text = reverse_word(original_text)
+        if file_name:
+            fazAudio(f"{file_name}_reversed", reversed_text)
+        print(reversed_text)
+        print("\nword by word:\n")
+        reversed_by_word = reverse_word_by_word(original_text)
+        if file_name:
+            fazAudio(f"{file_name}_reversed_by_word", reversed_by_word)
+        print(reversed_by_word)
+
+
+if __name__ == "__main__":
+    main()

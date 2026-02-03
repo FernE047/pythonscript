@@ -49,11 +49,16 @@ def encontrar(termo):
         termoFinal=encontrarzero(termo,level,0)
     return(termoFinal)
 
-print("digite o termo de pesquisa")
-termoInicial=input()
-#print("digite o modo de operação:\n1:primeiro\n2:porcentagem\n3:menor numero")
-#modo=int(input())
-resultados=encontrar(termoInicial)
-print("\n\nresultado:\n"+resultados)
 
 
+def main() -> None:
+    print("digite o termo de pesquisa")
+    termoInicial=input()
+    #print("digite o modo de operação:\n1:primeiro\n2:porcentagem\n3:menor numero")
+    #modo=int(input())
+    resultados=encontrar(termoInicial)
+    print("\n\nresultado:\n"+resultados)
+
+
+if __name__ == "__main__":
+    main()

@@ -94,22 +94,28 @@ def descobre(equacao,parada,intervalo):
         elif(sinal(b)==sinal(meio)):
             valor.pop(str(b))
             b=meio
-            
-coeficientes=entradaDeCoeficientes()
-equacao=umaEquacao(coeficientes)
-inicio=pegaFloat("digite o ponto inicial de refinamento",".")
-if(inicio=="."):
-    inicio=-100
-fim=pegaFloat("digite o ponto final de refinamento",".")
-if(fim=="."):
-    fim=100
-quantidade=pegaInteiro("digite quantos pontos pegar entre "+str(inicio)+" e "+str(fim)+" para o refinamento",".")
-if(quantidade=="."):
-    quantidade=201
-busca=[inicio,fim,quantidade]
-refinamento=refina(equacao,busca)
-print(refinamento)
-parada=pegaFloat("digite o criterio de parada",".")
-for intervalo in refinamento:
-    resultado=descobre(equacao,parada,intervalo)
-    print("resultado : "+str(resultado),end="\n\n")
+
+
+def main() -> None:
+    coeficientes=entradaDeCoeficientes()
+    equacao=umaEquacao(coeficientes)
+    inicio=pegaFloat("digite o ponto inicial de refinamento",".")
+    if(inicio=="."):
+        inicio=-100
+    fim=pegaFloat("digite o ponto final de refinamento",".")
+    if(fim=="."):
+        fim=100
+    quantidade=pegaInteiro("digite quantos pontos pegar entre "+str(inicio)+" e "+str(fim)+" para o refinamento",".")
+    if(quantidade=="."):
+        quantidade=201
+    busca=[inicio,fim,quantidade]
+    refinamento=refina(equacao,busca)
+    print(refinamento)
+    parada=pegaFloat("digite o criterio de parada",".")
+    for intervalo in refinamento:
+        resultado=descobre(equacao,parada,intervalo)
+        print("resultado : "+str(resultado),end="\n\n")
+
+
+if __name__ == "__main__":
+    main()

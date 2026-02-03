@@ -100,72 +100,79 @@ def get_file_name() -> str:
     return file_name
 
 
-file_name = get_file_name()
-start_time = time()
-with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
-    line = file.readline()[1:-1]
-    count = 0
-    alterations: dict[int, list[list[str]]] = {}
-    word_frequency_map: list[int] = []
-    while line:
-        words = line.split()
-        while len(words) > len(word_frequency_map):
-            word_frequency_map.append(0)
-        word_frequency_map[len(words) - 1] += 1
-        for word in words:
-            word_length = len(word)
-            previous_char = ""
-            for char_index in range(word_length):
-                current_char = word[char_index]
-                if char_index == 0:
-                    if char_index not in alterations:
-                        alterations[char_index] = [[current_char]]
-                    else:
-                        alterations[char_index].append([current_char])
-                    if word_length == 1:
-                        if char_index + 1 not in alterations:
-                            alterations[char_index + 1] = [[current_char, "¨"]]
+def main() -> None:
+    file_name = get_file_name()
+    start_time = time()
+    with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
+        line = file.readline()[1:-1]
+        count = 0
+        alterations: dict[int, list[list[str]]] = {}
+        word_frequency_map: list[int] = []
+        while line:
+            words = line.split()
+            while len(words) > len(word_frequency_map):
+                word_frequency_map.append(0)
+            word_frequency_map[len(words) - 1] += 1
+            for word in words:
+                word_length = len(word)
+                previous_char = ""
+                for char_index in range(word_length):
+                    current_char = word[char_index]
+                    if char_index == 0:
+                        if char_index not in alterations:
+                            alterations[char_index] = [[current_char]]
                         else:
-                            alterations[char_index + 1].append([current_char, "¨"])
-                        break
-                    else:
-                        next_char = word[char_index + 1]
+                            alterations[char_index].append([current_char])
+                        if word_length == 1:
+                            if char_index + 1 not in alterations:
+                                alterations[char_index + 1] = [[current_char, "¨"]]
+                            else:
+                                alterations[char_index + 1].append([current_char, "¨"])
+                            break
+                        else:
+                            next_char = word[char_index + 1]
+                            if char_index + 1 not in alterations:
+                                alterations[char_index + 1] = [
+                                    [current_char, next_char]
+                                ]
+                            else:
+                                alterations[char_index + 1].append(
+                                    [current_char, next_char]
+                                )
+                            previous_char = current_char
+                        continue
+                    if word_length > 1:
+                        try:
+                            next_char = word[char_index + 1]
+                        except IndexError:
+                            next_char = "¨"
                         if char_index + 1 not in alterations:
-                            alterations[char_index + 1] = [[current_char, next_char]]
+                            alterations[char_index + 1] = [
+                                [previous_char, current_char, next_char]
+                            ]
                         else:
                             alterations[char_index + 1].append(
-                                [current_char, next_char]
+                                [previous_char, current_char, next_char]
                             )
-                        previous_char = current_char
-                    continue
-                if word_length > 1:
-                    try:
-                        next_char = word[char_index + 1]
-                    except IndexError:
-                        next_char = "¨"
-                    if char_index + 1 not in alterations:
-                        alterations[char_index + 1] = [
-                            [previous_char, current_char, next_char]
-                        ]
-                    else:
-                        alterations[char_index + 1].append(
-                            [previous_char, current_char, next_char]
-                        )
-                    if next_char == "¨":
-                        break
-                previous_char = current_char
-                print(word_length)
-        if count == 100:
-            update_chain_files(file_name, alterations)
-            alterations = {}
-            count = 0
-        else:
-            count += 1
-        line = file.readline()[:-1]
-    update_chain_files(file_name, alterations)
-    with open(file_name + "/c.txt", "w", encoding="UTF-8") as word_count_file:
-        for index, quantity in enumerate(word_frequency_map):
-            word_count_file.write(f"{index} ")
-            word_count_file.write(f"{quantity}\n")
-    end_time = time()
-    print_elapsed_time(end_time - start_time)
+                        if next_char == "¨":
+                            break
+                    previous_char = current_char
+                    print(word_length)
+            if count == 100:
+                update_chain_files(file_name, alterations)
+                alterations = {}
+                count = 0
+            else:
+                count += 1
+            line = file.readline()[:-1]
+        update_chain_files(file_name, alterations)
+        with open(file_name + "/c.txt", "w", encoding="UTF-8") as word_count_file:
+            for index, quantity in enumerate(word_frequency_map):
+                word_count_file.write(f"{index} ")
+                word_count_file.write(f"{quantity}\n")
+        end_time = time()
+        print_elapsed_time(end_time - start_time)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,7 +1,7 @@
 from random import randint
 
 
-def generate_word(index:int, is_title:bool, previous_word:str="") -> str:
+def generate_word(index: int, is_title: bool, previous_word: str = "") -> str:
     if is_title:
         chain_directory = "chainTitle/0"
     else:
@@ -9,7 +9,7 @@ def generate_word(index:int, is_title:bool, previous_word:str="") -> str:
     name = f"{chain_directory}/{index:03d}.txt"
     with open(name, "r", encoding="utf-8") as file:
         line = file.readline()
-        word_frequency_map:dict[str,int] = {}
+        word_frequency_map: dict[str, int] = {}
         while line:
             words = line.split()
             if index == 0:
@@ -34,8 +34,8 @@ def generate_word(index:int, is_title:bool, previous_word:str="") -> str:
     return "¨"
 
 
-def generate_text(is_title:bool)-> str:
-    texto :list[str]= []
+def generate_text(is_title: bool) -> str:
+    texto: list[str] = []
     word = generate_word(0, is_title)
     while word != "¨":
         texto.append(word)
@@ -43,5 +43,10 @@ def generate_text(is_title:bool)-> str:
     return " ".join(texto)
 
 
-for _ in range(10):
-    print(generate_text(True) + " : " + generate_text(False), end="\n\n")
+def main() -> None:
+    for _ in range(10):
+        print(generate_text(True) + " : " + generate_text(False), end="\n\n")
+
+
+if __name__ == "__main__":
+    main()

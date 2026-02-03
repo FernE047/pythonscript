@@ -99,9 +99,14 @@ def generate_text(is_title: bool, chain_manager: ChainManager) -> str:
     return " ".join(generated_words)
 
 
-chain_manager = ChainManager(chain_size=2)
-for a in range(10):
-    generate_text(True, chain_manager)
-    print(" : ", end="")
-    generate_text(False, chain_manager)
-    print("\n")
+def main() -> None:
+    chain_manager = ChainManager(chain_size=2)
+    for _ in range(10):
+        generate_text(True, chain_manager)
+        print(" : ", end="")
+        generate_text(False, chain_manager)
+        print("\n")
+
+
+if __name__ == "__main__":
+    main()

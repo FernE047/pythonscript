@@ -218,15 +218,21 @@ def fazMatriz(tamanho,indice):
             coloca((0,x,i),x)
     return matriz
 
-taxaDeImpressao = 1000000
-tabulacao = 20
+
+def main() -> None:
+    taxaDeImpressao = 1000000
+    tabulacao = 20
 
 
-iterations = 0
-tamanho = 8
-indice = 2
-matriz = []
-fazMatriz(tamanho,indice)
-usados = [[a,a] for a in range(tamanho)]
-matriz = solve()
-imprime()
+    iterations = 0
+    tamanho = 8
+    indice = 2
+    matriz = []
+    fazMatriz(tamanho,indice)
+    usados = [[a,a] for a in range(tamanho)]
+    matriz = solve()
+    imprime()
+
+
+if __name__ == "__main__":
+    main()

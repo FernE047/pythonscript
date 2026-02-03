@@ -210,11 +210,17 @@ SECÇÃO MAIN:
 
 """
 
-parteInicial = Image.open("C:\\pythonscript\\imagem\\morphOnlyShape\\inicial.png")
-with open("C:\\pythonscript\\imagem\\morphOnlyShape\\config.txt","w", encoding = "utf-8") as fileConfig:
-    blobInicial = procuraBlobs(parteInicial)
-    parteFinal = fazForma(parteInicial)
-    blobFinal = procuraBlobs(parteFinal)
-    parteInicial.close()
-    parteFinal.close()
-    escreveBlobs(blobInicial,blobFinal,fileConfig)
+
+def main() -> None:
+    parteInicial = Image.open("C:\\pythonscript\\imagem\\morphOnlyShape\\inicial.png")
+    with open("C:\\pythonscript\\imagem\\morphOnlyShape\\config.txt","w", encoding = "utf-8") as fileConfig:
+        blobInicial = procuraBlobs(parteInicial)
+        parteFinal = fazForma(parteInicial)
+        blobFinal = procuraBlobs(parteFinal)
+        parteInicial.close()
+        parteFinal.close()
+        escreveBlobs(blobInicial,blobFinal,fileConfig)
+
+
+if __name__ == "__main__":
+    main()

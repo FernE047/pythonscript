@@ -19,7 +19,13 @@ def makeBranch(z):
     return lambda x: branching(x, z)
 
 
-for a in range(5):
-    c = makeBranch(a)
-    print(f"collatz {a}:\n")
-    print(c(1), end="\n\n")
+
+def main() -> None:
+    for a in range(5):
+        c = makeBranch(a)
+        print(f"collatz {a}:\n")
+        print(c(1), end="\n\n")
+
+
+if __name__ == "__main__":
+    main()

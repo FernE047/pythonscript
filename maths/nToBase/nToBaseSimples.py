@@ -29,7 +29,13 @@ def impressao(n, base, tamanhoBase=0, tamanhoN=3):
     print("".join(mensagem))
 
 
-LIMITE = -100
-base = 11
-for n in range(1, 101):
-    impressao(n, base)
+
+def main() -> None:
+    LIMITE = -100
+    base = 11
+    for n in range(1, 101):
+        impressao(n, base)
+
+
+if __name__ == "__main__":
+    main()

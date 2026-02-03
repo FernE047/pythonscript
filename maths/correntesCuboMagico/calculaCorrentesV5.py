@@ -84,12 +84,18 @@ def achaCategoria(lista):
             categoria += [str(indice+1) for a in range(tamanhos[indice])]
     return " ".join(categoria)
 
-inicio = time()
-try:
-    dic = analisaAsListas(12)
-    for cat in dic:
-        print(f"{cat:8s} : {dic[cat]}")
-    print("execucao Total  : ")
-    print_elapsed_time(time()-inicio)
-except:
-    print(gc.collect())
+
+def main() -> None:
+    inicio = time()
+    try:
+        dic = analisaAsListas(12)
+        for cat in dic:
+            print(f"{cat:8s} : {dic[cat]}")
+        print("execucao Total  : ")
+        print_elapsed_time(time()-inicio)
+    except:
+        print(gc.collect())
+
+
+if __name__ == "__main__":
+    main()

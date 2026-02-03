@@ -2,7 +2,7 @@ from random import randint
 from numpy.random import choice
 
 
-def generate_char(file_name:str, previous_char:str="¨") -> str:
+def generate_char(file_name: str, previous_char: str = "¨") -> str:
     with open(file_name, "r", encoding="UTF-8") as file:
         line = file.readline()
         character_weights: dict[str, int] = {}
@@ -65,19 +65,26 @@ def get_file_name() -> str:
     return file_name
 
 
-file_name = get_file_name()
-word_occurrence_map: list[int] = []
-with open(file_name + "/c.txt", "r", encoding="UTF-8") as markov_chain_file:
-    linha = markov_chain_file.readline()[:-1].split()
-    while linha:
-        word_occurrence_map.append(int(linha[-1]))
+def main() -> None:
+    file_name = get_file_name()
+    word_occurrence_map: list[int] = []
+    with open(file_name + "/c.txt", "r", encoding="UTF-8") as markov_chain_file:
         linha = markov_chain_file.readline()[:-1].split()
-word_frequencies_map = normalize_statistics(word_occurrence_map)
-for a in range(1000):
-    generated_words: list[str] = []
-    word_quantities = choice(
-        [b for b in range(1, len(word_frequencies_map) + 1)], 1, p=word_frequencies_map
-    )[0]
-    for b in range(word_quantities):
-        generated_words.append(generate_word(f"{file_name}/{b:03d}.txt"))
-    print(" ".join(generated_words))
+        while linha:
+            word_occurrence_map.append(int(linha[-1]))
+            linha = markov_chain_file.readline()[:-1].split()
+    word_frequencies_map = normalize_statistics(word_occurrence_map)
+    for _ in range(1000):
+        generated_words: list[str] = []
+        word_quantities = choice(
+            [b for b in range(1, len(word_frequencies_map) + 1)],
+            1,
+            p=word_frequencies_map,
+        )[0]
+        for b in range(word_quantities):
+            generated_words.append(generate_word(f"{file_name}/{b:03d}.txt"))
+        print(" ".join(generated_words))
+
+
+if __name__ == "__main__":
+    main()

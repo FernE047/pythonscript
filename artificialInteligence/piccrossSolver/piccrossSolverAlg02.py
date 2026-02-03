@@ -50,7 +50,9 @@ def save_board_image(board: BoardData, file_name: str) -> None:
     image.close()
 
 
-def compare_states(states: list[int], hint: list[int], previous_cell: bool, limit: int, size: int) -> bool:
+def compare_states(
+    states: list[int], hint: list[int], previous_cell: bool, limit: int, size: int
+) -> bool:
     if hint[0] == 0:
         if states:
             return False
@@ -98,12 +100,14 @@ def compare_states(states: list[int], hint: list[int], previous_cell: bool, limi
     return True
 
 
-def verificaColunasParcial(game:GameData, limit_y:int, minimum_x:int, limit_x:int) -> bool:
+def verificaColunasParcial(
+    game: GameData, limit_y: int, minimum_x: int, limit_x: int
+) -> bool:
     if minimum_x != 0:
         minimum_x -= 1
     for x in range(minimum_x, limit_x):
         hint = game[1][0][x]
-        state:list[int] = []
+        state: list[int] = []
         previous_cell = False
         count = 0
         for y in range(limit_y + 1):
@@ -125,7 +129,7 @@ def verificaColunasParcial(game:GameData, limit_y:int, minimum_x:int, limit_x:in
 
 
 def solve_board(game: GameData) -> BoardData | None:
-    #TODO fix game, it should be mutable
+    # TODO fix game, it should be mutable
     board = game[0]
     hints = game[1]
     vertical_hints = hints[1]
@@ -155,7 +159,9 @@ def solve_board(game: GameData) -> BoardData | None:
             if hint[0] != y:
                 break
             current_y_hints.append(hint)
-        additional_hints_size = len(current_y_hints) + sum([hint[1] for hint in current_y_hints])
+        additional_hints_size = len(current_y_hints) + sum(
+            [hint[1] for hint in current_y_hints]
+        )
     else:
         additional_hints_size = 0
     total_free_space = len(horizontal_hints) - first_free_space - additional_hints_size
@@ -227,27 +233,32 @@ def solve_piccross_board(game: GameData) -> tuple[int, BoardData | None]:
     return (cuts_amount, solution_board)
 
 
-elapsed_time = 0.0
-tries = 0
-triesA = 0
-for index in range(8):
-    with open(f"piccross/A{index:03d}.txt") as piccross_file:
-        config = piccross_file.read()
-    horizontal_hints_lines, vertical_hints_text = config.split("#")
-    horizontal_hints: HintHorizontalData = [
-        [int(n) for n in hint.split()]
-        for hint in horizontal_hints_lines[:-1].split("\n")
-    ]
-    vertical_hints_lines = vertical_hints_text[1:].split("\n")
-    vertical_hints: HintVerticalData = []
-    for y, dica in enumerate(vertical_hints_lines):
-        for numero in dica.split():
-            vertical_hints.append((y, int(numero)))
-    tabuleiro: BoardData = []
-    for _ in vertical_hints_lines:
-        tabuleiro.append([False for _ in horizontal_hints])
-    dicas: HintsData = (horizontal_hints, vertical_hints)
-    game: GameData = (tabuleiro, dicas)
-    solve_piccross_board(game)
-    print_elapsed_time(elapsed_time)
-    save_board_image(tabuleiro, f"piccross/A{index:03d}")
+def main() -> None:
+    elapsed_time = 0.0
+    tries = 0
+    triesA = 0
+    for index in range(8):
+        with open(f"piccross/A{index:03d}.txt") as piccross_file:
+            config = piccross_file.read()
+        horizontal_hints_lines, vertical_hints_text = config.split("#")
+        horizontal_hints: HintHorizontalData = [
+            [int(n) for n in hint.split()]
+            for hint in horizontal_hints_lines[:-1].split("\n")
+        ]
+        vertical_hints_lines = vertical_hints_text[1:].split("\n")
+        vertical_hints: HintVerticalData = []
+        for y, dica in enumerate(vertical_hints_lines):
+            for numero in dica.split():
+                vertical_hints.append((y, int(numero)))
+        tabuleiro: BoardData = []
+        for _ in vertical_hints_lines:
+            tabuleiro.append([False for _ in horizontal_hints])
+        dicas: HintsData = (horizontal_hints, vertical_hints)
+        game: GameData = (tabuleiro, dicas)
+        solve_piccross_board(game)
+        print_elapsed_time(elapsed_time)
+        save_board_image(tabuleiro, f"piccross/A{index:03d}")
+
+
+if __name__ == "__main__":
+    main()

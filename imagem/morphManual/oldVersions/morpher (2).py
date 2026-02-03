@@ -61,7 +61,9 @@ def makeFrame(n):""
 ""
 ""
 ""
-if __name__ == "__main__":
+
+
+def main() -> None:
     nomeFrame = "C:\\pythonscript\\imagem\\morphManual\\frames\\frame{0:03d}.png"
     quanti"Frames = 30 "# pegaInteiro("quantos frames"")"
     imagemInicial = Image.open("C:\\pythonscript\\imagem\\morphManual\\inicial.png")
@@ -71,3 +73,6 @@ if __name__ == "__main__":
     print("\n tamanho: " + str(imagemInicial.size), end="\n\n")
     p = multiprocessing.Pool(cpu_count())
     p.map(makeFrame, range(quantiaFrames))
+
+if __name__ == "__main__":
+    main()

@@ -57,48 +57,55 @@ def get_file_name() -> str:
     return file_name
 
 
-file_name = get_file_name()
-with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
-    line = file.readline()[:-1]
-    word_frequency: list[int] = []
-    length = 0
-    while line:
-        words = line.split()
-        while len(words) > len(word_frequency):
-            word_frequency.append(0)
-        word_frequency[len(words) - 1] += 1
-        for word_index, word in enumerate(words):
-            length = len(word)
-            previous_character = ""
-            for index, character in enumerate(word):
-                if index == 0:
-                    update_chain_file(file_name, ("¨", "¨", character), word_index)
-                    if length == 1:
-                        update_chain_file(file_name, ("¨", character, "¨"), word_index)
-                        break
-                    next_character = word[index + 1]
-                    update_chain_file(
-                        file_name, ("¨", character, next_character), word_index
-                    )
-                    previous_character = character
-                    continue
-                if length <= 1:
-                    previous_character = character
-                    continue
-                if index >= length - 1:
-                    next_character = "¨"
-                else:
-                    next_character = word[index + 1]
-                update_chain_file(
-                    file_name,
-                    (previous_character, character, next_character),
-                    word_index,
-                )
-                if next_character == "¨":
-                    break
-                previous_character = character
+def main() -> None:
+    file_name = get_file_name()
+    with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
         line = file.readline()[:-1]
-    with open(f"{file_name}/c.txt", "w", encoding="UTF-8") as frequency_output_file:
-        for index, quantity in enumerate(word_frequency):
-            frequency_output_file.write(f"{index} {quantity}\n")
-    print(length)
+        word_frequency: list[int] = []
+        length = 0
+        while line:
+            words = line.split()
+            while len(words) > len(word_frequency):
+                word_frequency.append(0)
+            word_frequency[len(words) - 1] += 1
+            for word_index, word in enumerate(words):
+                length = len(word)
+                previous_character = ""
+                for index, character in enumerate(word):
+                    if index == 0:
+                        update_chain_file(file_name, ("¨", "¨", character), word_index)
+                        if length == 1:
+                            update_chain_file(
+                                file_name, ("¨", character, "¨"), word_index
+                            )
+                            break
+                        next_character = word[index + 1]
+                        update_chain_file(
+                            file_name, ("¨", character, next_character), word_index
+                        )
+                        previous_character = character
+                        continue
+                    if length <= 1:
+                        previous_character = character
+                        continue
+                    if index >= length - 1:
+                        next_character = "¨"
+                    else:
+                        next_character = word[index + 1]
+                    update_chain_file(
+                        file_name,
+                        (previous_character, character, next_character),
+                        word_index,
+                    )
+                    if next_character == "¨":
+                        break
+                    previous_character = character
+            line = file.readline()[:-1]
+        with open(f"{file_name}/c.txt", "w", encoding="UTF-8") as frequency_output_file:
+            for index, quantity in enumerate(word_frequency):
+                frequency_output_file.write(f"{index} {quantity}\n")
+        print(length)
+
+
+if __name__ == "__main__":
+    main()

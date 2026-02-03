@@ -64,11 +64,17 @@ def solve(x,y,matriz,usados):
         usados.pop()
         matriz[y][x] = (0,0)
 
-iterations = 0
-tamanho = 5
-largura = tamanho
-altura  = tamanho
-usados = [(a,a) for a in range(largura)]
-matriz = [usados.copy()]+[[(0,0) for x in range(largura)] for y in range(1,altura)]
-matriz = solve(0,1,matriz,usados)
-imprime(matriz)
+
+def main() -> None:
+    iterations = 0
+    tamanho = 5
+    largura = tamanho
+    altura  = tamanho
+    usados = [(a,a) for a in range(largura)]
+    matriz = [usados.copy()]+[[(0,0) for x in range(largura)] for y in range(1,altura)]
+    matriz = solve(0,1,matriz,usados)
+    imprime(matriz)
+
+
+if __name__ == "__main__":
+    main()

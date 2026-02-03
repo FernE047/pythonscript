@@ -26,7 +26,8 @@ class User:
         return cls.objects
 
 
-if __name__ == "__main__":
+
+def main() -> None:
     user_1 = User("Regis", 35)
     user_1.save()
     print(user_1)
@@ -34,3 +35,7 @@ if __name__ == "__main__":
     user_2.save()
     print(user_2)
     print(User.all())
+
+
+if __name__ == "__main__":
+    main()

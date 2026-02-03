@@ -56,23 +56,29 @@ def tiraEspaçoBranco(texto: str) -> str:
     return texto
 
 
-start = time.time()
-print("digite um assunto")
-assunto = input()
-print("quantas imagens ler?")
-leitura = input()
-try:
-    leitura = int(leitura)
-    imagens = pI.pegaAssunto(assunto, leitura)
-except:
-    imagens = pI.pegaAssunto(assunto)
-for imagem in imagens:
-    print("\n" + imagem)
-    imagem = melhora(imagem)
-    phrase = ocr.image_to_string(imagem, lang="eng")
-    phraseBonita = tiraEspaçoBranco(phrase)
-    print(str(len(phraseBonita)) + "\n")
-    print(phraseBonita)
-final = time.time()
-print("demorou ")
-print_elapsed_time(final - start)
+
+def main() -> None:
+    start = time.time()
+    print("digite um assunto")
+    assunto = input()
+    print("quantas imagens ler?")
+    leitura = input()
+    try:
+        leitura = int(leitura)
+        imagens = pI.pegaAssunto(assunto, leitura)
+    except:
+        imagens = pI.pegaAssunto(assunto)
+    for imagem in imagens:
+        print("\n" + imagem)
+        imagem = melhora(imagem)
+        phrase = ocr.image_to_string(imagem, lang="eng")
+        phraseBonita = tiraEspaçoBranco(phrase)
+        print(str(len(phraseBonita)) + "\n")
+        print(phraseBonita)
+    final = time.time()
+    print("demorou ")
+    print_elapsed_time(final - start)
+
+
+if __name__ == "__main__":
+    main()

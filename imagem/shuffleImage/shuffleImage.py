@@ -118,22 +118,28 @@ def meioAMeio(imagem, porcentagemRandom):
     return shuffledImage
 
 
-imagem = pI(infoAdicional=1)
-tempos = []
-for porc in range(100, -1, -1):
-    BD = shelve.open("BDRandom")
-    inicio = time()
-    shuffledImage = meioAMeio(imagem, porc)
-    fim = time()
-    tempo = fim - inicio
-    print(f"porcentagem de aleatoridade:{porc}%\n")
-    print_elapsed_time(tempo)
-    print()
-    shuffledImage.save(f"output{porc:03d}.png")
-    tempos.append(tempo)
-    BD[f"tempos{porc:03d}"] = tempos
-    BD.close()
-temposOrdenados = sorted(tempos)
-print("Resultados : ")
-for tempo in temposOrdenados:
-    print(f"{tempos.index(tempo)}% : {tempo}")
+
+def main() -> None:
+    imagem = pI(infoAdicional=1)
+    tempos = []
+    for porc in range(100, -1, -1):
+        BD = shelve.open("BDRandom")
+        inicio = time()
+        shuffledImage = meioAMeio(imagem, porc)
+        fim = time()
+        tempo = fim - inicio
+        print(f"porcentagem de aleatoridade:{porc}%\n")
+        print_elapsed_time(tempo)
+        print()
+        shuffledImage.save(f"output{porc:03d}.png")
+        tempos.append(tempo)
+        BD[f"tempos{porc:03d}"] = tempos
+        BD.close()
+    temposOrdenados = sorted(tempos)
+    print("Resultados : ")
+    for tempo in temposOrdenados:
+        print(f"{tempos.index(tempo)}% : {tempo}")
+
+
+if __name__ == "__main__":
+    main()

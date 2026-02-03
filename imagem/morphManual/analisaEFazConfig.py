@@ -624,8 +624,13 @@ def configPart(indice):
     with open(f"C:\\pythonscript\\imagem\\morphManual\\partes\\config\\{indice:03d}.txt","w", encoding="utf-8") as fileConfig:
         parteInicial.escreveArea(parteFinal,fileConfig)
         print("\tParte Terminada : " + str(indice))
-        
-if __name__ == "__main__":
+
+
+def main() -> None:
     quantiaPartes = len(os.listdir("C:\\pythonscript\\imagem\\morphManual\\partes\\finais"))
     p = multiprocessing.Pool(os.cpu_count())
     p.map(configPart,range(quantiaPartes))
+
+
+if __name__ == "__main__":
+    main()

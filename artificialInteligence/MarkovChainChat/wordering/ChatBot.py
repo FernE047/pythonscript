@@ -39,5 +39,10 @@ def generate_message() -> str:
     return message
 
 
-for index in range(1000):
-    print(f"{index} : {generate_message()}")
+def main() -> None:
+    for index in range(1000):
+        print(f"{index} : {generate_message()}")
+
+
+if __name__ == "__main__":
+    main()

@@ -24,20 +24,25 @@ def leLinha(arq):
         letra=leLetra(arq)
     return(palavra)
 
-titulos=open("mimimidias - Youtube.html","r",encoding="utf8")
-newTitulos=open("mimimidiasLINK.txt","w",encoding="utf8")
-while True:
-    try:
-        proximaOcorrencia(titulos,"title=")
-        proximaOcorrencia(titulos,"href=")
-        titulo=""
-        letra=leLetra(titulos)
-        while((letra)and(letra!=""")):
-            titulo+=letra
+
+def main() -> None:
+    titulos=open("mimimidias - Youtube.html","r",encoding="utf8")
+    newTitulos=open("mimimidiasLINK.txt","w",encoding="utf8")
+    while True:
+        try:
+            proximaOcorrencia(titulos,"title=")
+            proximaOcorrencia(titulos,"href=")
+            titulo=""
             letra=leLetra(titulos)
-        print(titulo)
-        newTitulos.write(titulo+"\n")
-    except:
-        break
-newTitulos.close()
-titulos.close()
+            while((letra)and(letra!=""")):
+                titulo+=letra
+                letra=leLetra(titulos)
+            print(titulo)
+            newTitulos.write(titulo+"\n")
+        except:
+            break
+    newTitulos.close()
+    titulos.close()
+
+if __name__ == "__main__":
+    main()

@@ -98,14 +98,20 @@ def selectionSort(
     counters.increment_comparison()
 
 
-counters = Counters()
-tamanhoLista = 1000
-imprimeListas = True
-lista = [a for a in range(tamanhoLista)]
-shuffle(lista)
-if imprimeListas:
-    print(lista, end="\n\n")
-insertion_sort(lista, counters, enable_logging=False)
-if imprimeListas:
-    print(f"\n{lista}")
-counters.display()
+
+def main() -> None:
+    counters = Counters()
+    tamanhoLista = 1000
+    imprimeListas = True
+    lista = [a for a in range(tamanhoLista)]
+    shuffle(lista)
+    if imprimeListas:
+        print(lista, end="\n\n")
+    insertion_sort(lista, counters, enable_logging=False)
+    if imprimeListas:
+        print(f"\n{lista}")
+    counters.display()
+
+
+if __name__ == "__main__":
+    main()

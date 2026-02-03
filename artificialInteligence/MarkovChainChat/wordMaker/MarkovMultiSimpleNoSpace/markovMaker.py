@@ -52,6 +52,11 @@ def get_file_name() -> str:
     return file_name
 
 
-file_name = get_file_name()
-for index in range(1000):
-    print(f"{index} : {generate_word(file_name)}")
+def main() -> None:
+    file_name = get_file_name()
+    for index in range(1000):
+        print(f"{index} : {generate_word(file_name)}")
+
+
+if __name__ == "__main__":
+    main()

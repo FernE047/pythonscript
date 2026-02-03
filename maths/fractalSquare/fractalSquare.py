@@ -83,5 +83,10 @@ def leVetores():
             fazNFractais(vetor,entrada)
             vetor=[[]]
             indice=0
-    
-leVetores()
+
+
+def main() -> None:
+    leVetores()
+
+if __name__ == "__main__":
+    main()

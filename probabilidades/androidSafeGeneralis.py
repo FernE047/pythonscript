@@ -32,6 +32,12 @@ def todasAsPossibilidade(boardOriginal):
             print(",".join([n,m]))
     
 
-total=0
-matriz=[[0,0,0],[0,0,0],[0,0,0]]
-print(str(todasAsPossibilidade(matriz)))
+
+def main() -> None:
+    total=0
+    matriz=[[0,0,0],[0,0,0],[0,0,0]]
+    print(str(todasAsPossibilidade(matriz)))
+
+
+if __name__ == "__main__":
+    main()

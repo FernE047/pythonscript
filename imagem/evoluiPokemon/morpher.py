@@ -71,7 +71,8 @@ def makeFrame(args):
     frame.close()
 
 
-if __name__ == "__main__":
+
+def main() -> None:
     quantiaFrames = 30  # pegaInteiro("quantos frames?")
     nomeFrame = "C:\\pythonscript\\imagem\\evoluiPokemon\\frames\\frame{0:03d}.png"
 
@@ -85,3 +86,7 @@ if __name__ == "__main__":
     print("\n tamanho: " + str(imagemInicial.size), end="\n\n")
     p = multiprocessing.Pool(os.cpu_count())
     p.map(makeFrame, [[a, quantiaFrames] for a in range(quantiaFrames)])
+
+
+if __name__ == "__main__":
+    main()

@@ -117,57 +117,64 @@ def ampliaMapa(mapa,ampliacao,posicao,adds):
         novoMapa = Image.alpha_composite(ampliacaoTransparent, novoMapa)
     return novoMapa,novaPosicao
 
-inicioTotal = time()            
-DDP = 27 #DISTANCIADEPROCURA  maior = mais lento e melhor
-DT = DDP*2+1 #DISTANCIATOTAL
-PY = DT #PASSOSY             menor = mais lento e melhor, tem que ser maior que DT
-PX = DT #PASSOSX             menor = mais lento e melhor, tem que ser maior que DT
 
-#Argumentos do FFMPEG
-diretorioVideo = "C:\\pythonscript\\imagem\\SpeedrunMapping\\video"
-origemVideo = "-i C:\pythonscript\\imagem\\SpeedrunMapping\\level.mp4"#"-i C:\\pythonscript\\videos\\videos\\video0002.mp4"
-destinoTemp = diretorioVideo + "\\frame%04d.png"
-extraArguments = "-r {0:02d}/1"
-processoArgs = ["ffmpeg",origemVideo,extraArguments,destinoTemp]
 
-fps = 30
+def main() -> None:
+    inicioTotal = time()            
+    DDP = 27 #DISTANCIADEPROCURA  maior = mais lento e melhor
+    DT = DDP*2+1 #DISTANCIATOTAL
+    PY = DT #PASSOSY             menor = mais lento e melhor, tem que ser maior que DT
+    PX = DT #PASSOSX             menor = mais lento e melhor, tem que ser maior que DT
 
-processoArgs[2] = extraArguments.format(fps)
-#subprocess.call (" ".join(processoArgs))
+    #Argumentos do FFMPEG
+    diretorioVideo = "C:\\pythonscript\\imagem\\SpeedrunMapping\\video"
+    origemVideo = "-i C:\pythonscript\\imagem\\SpeedrunMapping\\level.mp4"#"-i C:\\pythonscript\\videos\\videos\\video0002.mp4"
+    destinoTemp = diretorioVideo + "\\frame%04d.png"
+    extraArguments = "-r {0:02d}/1"
+    processoArgs = ["ffmpeg",origemVideo,extraArguments,destinoTemp]
 
-diretorioFrames = diretorioVideo+"\\frame{0:04d}.png"
+    fps = 30
 
-mapa = openFrame(diretorioFrames.format(1))
-tamanho = mapa.size
-posicao = [0,0]
-framesTotais = len(listdir(diretorioVideo))
-inicio = time()
-try:
-    for n in range(90,framesTotais):
-        frameAtual = openFrame(diretorioFrames.format(n))
-        adds = comparaFrames(mapa,frameAtual,posicao)
-        while max([abs(a) for a in adds]) == DDP:
-            DDP = max([abs(a) for a in adds]) + 1
-            DT = DDP*2+1
-            PY = DT
-            PX = DT
+    processoArgs[2] = extraArguments.format(fps)
+    #subprocess.call (" ".join(processoArgs))
+
+    diretorioFrames = diretorioVideo+"\\frame{0:04d}.png"
+
+    mapa = openFrame(diretorioFrames.format(1))
+    tamanho = mapa.size
+    posicao = [0,0]
+    framesTotais = len(listdir(diretorioVideo))
+    inicio = time()
+    try:
+        for n in range(90,framesTotais):
+            frameAtual = openFrame(diretorioFrames.format(n))
             adds = comparaFrames(mapa,frameAtual,posicao)
-        mapa,posicao = ampliaMapa(mapa,frameAtual,posicao,adds)
-        fim = time()
-        duracao = fim-inicio
-        inicio = time()
-        print()
-        print(f"{n} : ")
-        print_elapsed_time(duracao)
-        print_elapsed_time(duracao*(framesTotais-n))
-        print(adds)
-except:
-    print(n)
-    print("deu erro")
-    pass
-frameAtual.close()
-fimTotal = time()
-duracao = fimTotal-inicioTotal
-print_elapsed_time(duracao)
-mapa.save("mapa.png")
-mapa.close()
+            while max([abs(a) for a in adds]) == DDP:
+                DDP = max([abs(a) for a in adds]) + 1
+                DT = DDP*2+1
+                PY = DT
+                PX = DT
+                adds = comparaFrames(mapa,frameAtual,posicao)
+            mapa,posicao = ampliaMapa(mapa,frameAtual,posicao,adds)
+            fim = time()
+            duracao = fim-inicio
+            inicio = time()
+            print()
+            print(f"{n} : ")
+            print_elapsed_time(duracao)
+            print_elapsed_time(duracao*(framesTotais-n))
+            print(adds)
+    except:
+        print(n)
+        print("deu erro")
+        pass
+    frameAtual.close()
+    fimTotal = time()
+    duracao = fimTotal-inicioTotal
+    print_elapsed_time(duracao)
+    mapa.save("mapa.png")
+    mapa.close()
+
+
+if __name__ == "__main__":
+    main()

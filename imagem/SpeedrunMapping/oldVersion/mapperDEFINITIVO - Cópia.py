@@ -127,85 +127,91 @@ def ampliaMapa(mapa, ampliacao, posicao, adds):
     return novoMapa, novaPosicao
 
 
-# Constantes e Variaveis Importantes
 
-inicioTotal = time()
-DDP = 20  # DISTANCIADEPROCURA  maior = mais lento e melhor
-DT = DDP * 2 + 1  # DISTANCIATOTAL
-PY = DT  # PASSOSY             menor = mais lento e melhor, tem que ser maior que DT
-PX = DT  # PASSOSX             menor = mais lento e melhor, tem que ser maior que DT
+def main() -> None:
+    # Constantes e Variaveis Importantes
 
-# Argumentos do FFMPEG
+    inicioTotal = time()
+    DDP = 20  # DISTANCIADEPROCURA  maior = mais lento e melhor
+    DT = DDP * 2 + 1  # DISTANCIATOTAL
+    PY = DT  # PASSOSY             menor = mais lento e melhor, tem que ser maior que DT
+    PX = DT  # PASSOSX             menor = mais lento e melhor, tem que ser maior que DT
 
-diretorioVideo = "C:\\pythonscript\\imagem\\SpeedrunMapping\\video"
-origemVideo = "-i C:\pythonscript\\imagem\\SpeedrunMapping\\level.mp4"  # "-i C:\\pythonscript\\videos\\videos\\video0002.mp4"
-destinoTemp = diretorioVideo + "\\frame%02d.png"
-extraArguments = "-r {0:02d}/1 -ss {1:02d}:{2:02d}:{3:02d}.0 -t 1.03"
-processoArgs = ["ffmpeg", origemVideo, extraArguments, destinoTemp]
-fps = 10
+    # Argumentos do FFMPEG
 
-# duracao arredondada em minutos do video
-segundos = 27
-minutos = 1
-horas = 0
+    diretorioVideo = "C:\\pythonscript\\imagem\\SpeedrunMapping\\video"
+    origemVideo = "-i C:\pythonscript\\imagem\\SpeedrunMapping\\level.mp4"  # "-i C:\\pythonscript\\videos\\videos\\video0002.mp4"
+    destinoTemp = diretorioVideo + "\\frame%02d.png"
+    extraArguments = "-r {0:02d}/1 -ss {1:02d}:{2:02d}:{3:02d}.0 -t 1.03"
+    processoArgs = ["ffmpeg", origemVideo, extraArguments, destinoTemp]
+    fps = 10
 
-# iniciadores
-processoArgs[2] = extraArguments.format(fps, 0, 0, 0)
-subprocess.call(" ".join(processoArgs))
-diretorioFrames = diretorioVideo + "\\"
-mapa = openFrame(diretorioFrames + listdir(diretorioVideo)[0])
-tamanho = mapa.size
-posicao = [0, 0]
-inicio = time()
-try:
-    for hora in range(horas + 1):
-        if hora == horas:
-            limiteMinutos = minutos + 1
-        else:
-            limiteMinutos = 60
-        for minuto in range(limiteMinutos):
-            if minuto == minutos:
-                limiteSegundos = segundos + 1
+    # duracao arredondada em minutos do video
+    segundos = 27
+    minutos = 1
+    horas = 0
+
+    # iniciadores
+    processoArgs[2] = extraArguments.format(fps, 0, 0, 0)
+    subprocess.call(" ".join(processoArgs))
+    diretorioFrames = diretorioVideo + "\\"
+    mapa = openFrame(diretorioFrames + listdir(diretorioVideo)[0])
+    tamanho = mapa.size
+    posicao = [0, 0]
+    inicio = time()
+    try:
+        for hora in range(horas + 1):
+            if hora == horas:
+                limiteMinutos = minutos + 1
             else:
-                limiteSegundos = 60
-            for segundo in range(limiteSegundos):
-                processoArgs[2] = extraArguments.format(fps, hora, minuto, segundo)
-                subprocess.call(" ".join(processoArgs))
-                for n, frame in enumerate(listdir(diretorioVideo)):
-                    frameAtual = openFrame(diretorioFrames + frame)
-                    adds = comparaFrames(mapa, frameAtual, posicao)
-                    while max([abs(a) for a in adds]) == DDP:
-                        DDP = max([abs(a) for a in adds]) + 1
-                        DT = DDP * 2 + 1
-                        PY = DT
-                        PX = DT
-                        print("novo DDP : " + str(DDP))
+                limiteMinutos = 60
+            for minuto in range(limiteMinutos):
+                if minuto == minutos:
+                    limiteSegundos = segundos + 1
+                else:
+                    limiteSegundos = 60
+                for segundo in range(limiteSegundos):
+                    processoArgs[2] = extraArguments.format(fps, hora, minuto, segundo)
+                    subprocess.call(" ".join(processoArgs))
+                    for n, frame in enumerate(listdir(diretorioVideo)):
+                        frameAtual = openFrame(diretorioFrames + frame)
                         adds = comparaFrames(mapa, frameAtual, posicao)
-                    mapa, posicao = ampliaMapa(mapa, frameAtual, posicao, adds)
-                    remove(diretorioFrames + frame)
-                    # send2trash(diretorioFrames + frame)
-                    print(f"{hora:02d}:{minuto:02d}:{segundo:02d}.{n:02d}")
-                fim = time()
-                duracao = fim - inicio
-                inicio = time()
-                mapa.save("mapa.png")
-                print_elapsed_time(
-                        duracao
-                        * (
-                            horas * 3600
-                            + minutos * 60
-                            + segundos
-                            - hora * 3600
-                            - minuto * 60
-                            - segundo
+                        while max([abs(a) for a in adds]) == DDP:
+                            DDP = max([abs(a) for a in adds]) + 1
+                            DT = DDP * 2 + 1
+                            PY = DT
+                            PX = DT
+                            print("novo DDP : " + str(DDP))
+                            adds = comparaFrames(mapa, frameAtual, posicao)
+                        mapa, posicao = ampliaMapa(mapa, frameAtual, posicao, adds)
+                        remove(diretorioFrames + frame)
+                        # send2trash(diretorioFrames + frame)
+                        print(f"{hora:02d}:{minuto:02d}:{segundo:02d}.{n:02d}")
+                    fim = time()
+                    duracao = fim - inicio
+                    inicio = time()
+                    mapa.save("mapa.png")
+                    print_elapsed_time(
+                            duracao
+                            * (
+                                horas * 3600
+                                + minutos * 60
+                                + segundos
+                                - hora * 3600
+                                - minuto * 60
+                                - segundo
+                            )
                         )
-                    )
-except:
-    print(posicao)
-    print(f"{hora:02d}:{minuto:02d}:{segundo:02d}.{n:02d}")
-frameAtual.close()
-fimTotal = time()
-duracao = fimTotal - inicioTotal
-print_elapsed_time(duracao)
-mapa.save("mapa.png")
-mapa.close()
+    except:
+        print(posicao)
+        print(f"{hora:02d}:{minuto:02d}:{segundo:02d}.{n:02d}")
+    frameAtual.close()
+    fimTotal = time()
+    duracao = fimTotal - inicioTotal
+    print_elapsed_time(duracao)
+    mapa.save("mapa.png")
+    mapa.close()
+
+
+if __name__ == "__main__":
+    main()

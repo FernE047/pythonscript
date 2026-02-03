@@ -253,13 +253,18 @@ class Game:
         return self.players[(self.turn + indice) % self.num_players]
 
 
-game = Game(6)
-game.jogaPartida()
-print(5 * "\n")
-round_counter = 1
-while 12 not in game.points:
-    game.jogaPartida(game_mode="highest")
+def main() -> None:
+    game = Game(6)
+    game.jogaPartida()
     print(5 * "\n")
-    round_counter += 1
-print(game.points)
-print(round_counter)
+    round_counter = 1
+    while 12 not in game.points:
+        game.jogaPartida(game_mode="highest")
+        print(5 * "\n")
+        round_counter += 1
+    print(game.points)
+    print(round_counter)
+
+
+if __name__ == "__main__":
+    main()

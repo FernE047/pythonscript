@@ -86,6 +86,11 @@ def resolve_one_board(board: Board) -> None:
     print("\n" + format_elapsed_time(duration) + "\n\n\n")
 
 
-board = create_square_board(3, 5)
-print(board)
-resolve_one_board(board)
+def main() -> None:
+    board = create_square_board(3, 5)
+    print(board)
+    resolve_one_board(board)
+
+
+if __name__ == "__main__":
+    main()

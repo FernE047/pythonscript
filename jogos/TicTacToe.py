@@ -270,42 +270,48 @@ def fazJogada(tabuleiro,estrategia):
     else:
         return jogadaHumana(tabuleiro)
 
-IMPRESSAO=("sim"==choose_from_options("impressao na tela?",["sim","não"]))
-ESTRATEGIAS=["random","mirrorx","mirrory","mirrordiag","mirrordiagx","spin180clock"]
-if(IMPRESSAO):
-    ESTRATEGIAS+=["humano"]
-while True:
-    ESTRATEGIAS=["aleatorios"]+list(ESTRATEGIAS)
-    partidasTotal=pegaInteiro("digite quantas partidas serão jogadas")
-    tamanho=pegaInteiro("digite o tamanho do tabuleiro", maximo = 10)
-    seed=0
-    estrategia1=choose_from_options("digite a estrategia do player 1",ESTRATEGIAS)
-    ESTRATEGIAS.pop(0)
-    if(estrategia1=="aleatorios"):
-        ESTRATEGIAS.pop()
-        estrategia1=ESTRATEGIAS[randint(len(ESTRATEGIAS))-1]
-        estrategia2=ESTRATEGIAS[randint(len(ESTRATEGIAS))-1]
+
+def main() -> None:
+    IMPRESSAO=("sim"==choose_from_options("impressao na tela?",["sim","não"]))
+    ESTRATEGIAS=["random","mirrorx","mirrory","mirrordiag","mirrordiagx","spin180clock"]
+    if(IMPRESSAO):
         ESTRATEGIAS+=["humano"]
-    else:
-        estrategia2=choose_from_options("digite a estrategia do player 2",ESTRATEGIAS)
-    jogador=[{"simbolo":"X","estrategia":estrategia1,"vitorias":0},{"simbolo":"O","estrategia":estrategia2,"vitorias":0}]
-    for partida in range(partidasTotal):
-        seed=randomNumber(seed)
-        tabuleiro=[[0 for b in range(tamanho)] for a in range(tamanho)]
-        vitoria=lambda jog,number:jogadaNormal(tabuleiro,jog,number)
-        imprime(tabuleiro)
-        for vez in range(tamanho**2):
-            resultado=vitoria(jogador[vez%2],seed)
-            if(resultado):
-                if(resultado=="win"):
-                    jogador[vez%2]["vitorias"]+=1
-                break
-    print("tamanho do tabuleiro : "+str(tamanho))
-    print("partidas no total : "+str(partidasTotal))
-    vitoria1=jogador[0]["vitorias"]
-    vitoria2=jogador[1]["vitorias"]
-    print("jogador "+jogador[0]["simbolo"]+" ganhou "+str(vitoria1)+" vezes, "+str(vitoria1*100/partidasTotal)+"%, com a estrategia "+jogador[0]["estrategia"])
-    print("jogador "+jogador[1]["simbolo"]+" ganhou "+str(vitoria2)+" vezes, "+str(vitoria2*100/partidasTotal)+"%, com a estrategia "+jogador[1]["estrategia"])
-    print("Empatou "+str(partidasTotal-vitoria1-vitoria2)+" vezes, "+str(100-(vitoria1+vitoria2)*100/partidasTotal)+"%")
-    if("não"==choose_from_options("continuar?",("sim","não"))):
-        break
+    while True:
+        ESTRATEGIAS=["aleatorios"]+list(ESTRATEGIAS)
+        partidasTotal=pegaInteiro("digite quantas partidas serão jogadas")
+        tamanho=pegaInteiro("digite o tamanho do tabuleiro", maximo = 10)
+        seed=0
+        estrategia1=choose_from_options("digite a estrategia do player 1",ESTRATEGIAS)
+        ESTRATEGIAS.pop(0)
+        if(estrategia1=="aleatorios"):
+            ESTRATEGIAS.pop()
+            estrategia1=ESTRATEGIAS[randint(len(ESTRATEGIAS))-1]
+            estrategia2=ESTRATEGIAS[randint(len(ESTRATEGIAS))-1]
+            ESTRATEGIAS+=["humano"]
+        else:
+            estrategia2=choose_from_options("digite a estrategia do player 2",ESTRATEGIAS)
+        jogador=[{"simbolo":"X","estrategia":estrategia1,"vitorias":0},{"simbolo":"O","estrategia":estrategia2,"vitorias":0}]
+        for partida in range(partidasTotal):
+            seed=randomNumber(seed)
+            tabuleiro=[[0 for b in range(tamanho)] for a in range(tamanho)]
+            vitoria=lambda jog,number:jogadaNormal(tabuleiro,jog,number)
+            imprime(tabuleiro)
+            for vez in range(tamanho**2):
+                resultado=vitoria(jogador[vez%2],seed)
+                if(resultado):
+                    if(resultado=="win"):
+                        jogador[vez%2]["vitorias"]+=1
+                    break
+        print("tamanho do tabuleiro : "+str(tamanho))
+        print("partidas no total : "+str(partidasTotal))
+        vitoria1=jogador[0]["vitorias"]
+        vitoria2=jogador[1]["vitorias"]
+        print("jogador "+jogador[0]["simbolo"]+" ganhou "+str(vitoria1)+" vezes, "+str(vitoria1*100/partidasTotal)+"%, com a estrategia "+jogador[0]["estrategia"])
+        print("jogador "+jogador[1]["simbolo"]+" ganhou "+str(vitoria2)+" vezes, "+str(vitoria2*100/partidasTotal)+"%, com a estrategia "+jogador[1]["estrategia"])
+        print("Empatou "+str(partidasTotal-vitoria1-vitoria2)+" vezes, "+str(100-(vitoria1+vitoria2)*100/partidasTotal)+"%")
+        if("não"==choose_from_options("continuar?",("sim","não"))):
+            break
+
+
+if __name__ == "__main__":
+    main()

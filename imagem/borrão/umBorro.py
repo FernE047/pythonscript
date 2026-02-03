@@ -44,11 +44,17 @@ def quaisTemVizinhos(img):
     return temVizinhos
 
 
-borro = Image.new("RGBA", (11, 11), (255, 255, 255, 255))
-borro.putpixel((5, 5), (254, 254, 254, 255))
-while borro.getpixel((0, 0))[1] == 255:
-    informacoes = quaisTemVizinhos(borro)
-    for infoImportante in informacoes:
-        posicao, cor = infoImportante
-        borro.putpixel(posicao, (cor, cor, cor, 255))
-borro.save("borro.png")
+
+def main() -> None:
+    borro = Image.new("RGBA", (11, 11), (255, 255, 255, 255))
+    borro.putpixel((5, 5), (254, 254, 254, 255))
+    while borro.getpixel((0, 0))[1] == 255:
+        informacoes = quaisTemVizinhos(borro)
+        for infoImportante in informacoes:
+            posicao, cor = infoImportante
+            borro.putpixel(posicao, (cor, cor, cor, 255))
+    borro.save("borro.png")
+
+
+if __name__ == "__main__":
+    main()

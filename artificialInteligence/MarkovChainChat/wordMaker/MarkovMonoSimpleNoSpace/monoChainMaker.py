@@ -94,31 +94,36 @@ def get_file_name() -> str:
     return file_name
 
 
-file_name = get_file_name()
-start_time = time()
-with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
-    line = file.readline()[1:-1]
-    line_length = len(line)
-    while line:
+def main() -> None:
+    file_name = get_file_name()
+    start_time = time()
+    with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
+        line = file.readline()[1:-1]
         line_length = len(line)
-        update_chain_values: list[ChainData] = []
-        for n in range(line_length):
-            current_character = line[n]
-            if n == 0:
-                update_chain_values.append(("¨", current_character))
-                if line_length == 1:
-                    update_chain_values.append((current_character, "¨"))
-                    break
-            if line_length > 1:
-                if n >= line_length - 1:
-                    next_character = "¨"
-                else:
-                    next_character = line[n + 1]
-                update_chain_values.append((current_character, next_character))
-                if next_character == "¨":
-                    break
-        update_chain_file(file_name, update_chain_values)
-        line = file.readline()[:-1]
-    print(line_length)
-    end_time = time()
-    print_elapsed_time(end_time - start_time)
+        while line:
+            line_length = len(line)
+            update_chain_values: list[ChainData] = []
+            for n in range(line_length):
+                current_character = line[n]
+                if n == 0:
+                    update_chain_values.append(("¨", current_character))
+                    if line_length == 1:
+                        update_chain_values.append((current_character, "¨"))
+                        break
+                if line_length > 1:
+                    if n >= line_length - 1:
+                        next_character = "¨"
+                    else:
+                        next_character = line[n + 1]
+                    update_chain_values.append((current_character, next_character))
+                    if next_character == "¨":
+                        break
+            update_chain_file(file_name, update_chain_values)
+            line = file.readline()[:-1]
+        print(line_length)
+        end_time = time()
+        print_elapsed_time(end_time - start_time)
+
+
+if __name__ == "__main__":
+    main()

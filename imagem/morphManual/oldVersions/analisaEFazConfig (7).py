@@ -434,7 +434,8 @@ def configPart(data):
     parteInicial.close()
     parteFinal.close()
 
-if __name__ == "__main__":
+
+def main() -> None:
     limpaPasta("C:\\pythonscript\\imagem\\morphManual\\partesConfig")
     limpaPasta("C:\\pythonscript\\imagem\\morphManual\\frames")
     limpaPasta("C:\\pythonscript\\imagem\\morphManual\\frames\\resized")
@@ -445,3 +446,6 @@ if __name__ == "__main__":
     quantiaPartes = len(imagemInicial.layers)
     p = multiprocessing.Pool(os.cpu_count())
     p.map(configPart,[[a,imagemInicial.layers[a].image,imagemFinal.layers[a].image] for a in range(1,quantiaPartes)])
+
+if __name__ == "__main__":
+    main()

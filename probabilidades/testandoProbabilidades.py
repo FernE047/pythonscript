@@ -34,25 +34,30 @@ def chance(casos):
                 retorno=True
     return(retorno)
 
-POT=5
-tamanhoSeed=4
-seed=randint(10**(tamanhoSeed-1),10**tamanhoSeed-1)
-indice=0
-imprime(seed)
-num=proximo(seed)
-indice+=1
-imprime(num)
-repeticao=[seed,num]
-while True:
-    indice+=1
-    num=proximo(num)
-    imprime(num)
-    if(num in repeticao):
-        break
-    else:
-        repeticao.append(num)
-for a in range(1,len(repeticao)):
-    if(chance(a)):
-        break
-    
 
+def main() -> None:
+    POT=5
+    tamanhoSeed=4
+    seed=randint(10**(tamanhoSeed-1),10**tamanhoSeed-1)
+    indice=0
+    imprime(seed)
+    num=proximo(seed)
+    indice+=1
+    imprime(num)
+    repeticao=[seed,num]
+    while True:
+        indice+=1
+        num=proximo(num)
+        imprime(num)
+        if(num in repeticao):
+            break
+        else:
+            repeticao.append(num)
+    for a in range(1,len(repeticao)):
+        if(chance(a)):
+            break
+        
+
+
+if __name__ == "__main__":
+    main()

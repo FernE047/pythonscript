@@ -92,8 +92,13 @@ def generate_text(is_title: bool) -> str:
     return " ".join(words)
 
 
-for a in range(1000):
-    generate_text(True)
-    print(" : ", end="")
-    generate_text(False)
-    print("\n")
+def main() -> None:
+    for _ in range(1000):
+        generate_text(True)
+        print(" : ", end="")
+        generate_text(False)
+        print("\n")
+
+
+if __name__ == "__main__":
+    main()

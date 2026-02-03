@@ -103,38 +103,43 @@ def get_file_name() -> str:
     return file_name
 
 
-file_name = get_file_name()
-start_time = time()
-with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
-    line = file.readline()[1:-1]
-    count = 0
-    alterations: AlterationsData = {}
-    while line:
-        count += 1
-        line_length = len(line)
-        for char_index, current_char in enumerate(line):
-            if char_index == 0:
-                if char_index not in alterations:
-                    alterations[char_index] = [[current_char]]
-                else:
-                    alterations[char_index].append([current_char])
-            if line_length > 1:
-                try:
-                    next_char = line[char_index + 1]
-                except IndexError:
-                    next_char = "¨"
-                if char_index + 1 not in alterations:
-                    alterations[char_index + 1] = [[current_char, next_char]]
-                else:
-                    alterations[char_index + 1].append([current_char, next_char])
-                if next_char == "¨":
-                    break
-        if count == 100:
-            update_chain_files(file_name, alterations)
-            alterations = {}
-            count = 0
-        print(line_length)
-        line = file.readline()[:-1]
-    update_chain_files(file_name, alterations)
-    end_time = time()
-    print_elapsed_time(end_time - start_time)
+def main() -> None:
+    file_name = get_file_name()
+    start_time = time()
+    with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
+        line = file.readline()[1:-1]
+        count = 0
+        alterations: AlterationsData = {}
+        while line:
+            count += 1
+            line_length = len(line)
+            for char_index, current_char in enumerate(line):
+                if char_index == 0:
+                    if char_index not in alterations:
+                        alterations[char_index] = [[current_char]]
+                    else:
+                        alterations[char_index].append([current_char])
+                if line_length > 1:
+                    try:
+                        next_char = line[char_index + 1]
+                    except IndexError:
+                        next_char = "¨"
+                    if char_index + 1 not in alterations:
+                        alterations[char_index + 1] = [[current_char, next_char]]
+                    else:
+                        alterations[char_index + 1].append([current_char, next_char])
+                    if next_char == "¨":
+                        break
+            if count == 100:
+                update_chain_files(file_name, alterations)
+                alterations = {}
+                count = 0
+            print(line_length)
+            line = file.readline()[:-1]
+        update_chain_files(file_name, alterations)
+        end_time = time()
+        print_elapsed_time(end_time - start_time)
+
+
+if __name__ == "__main__":
+    main()

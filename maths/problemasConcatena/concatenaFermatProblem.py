@@ -70,4 +70,10 @@ def faz(limit, pot):
             print_elapsed_time(duracao * resto)
 
 
-faz(10000, 2)
+
+def main() -> None:
+    faz(10000, 2)
+
+
+if __name__ == "__main__":
+    main()

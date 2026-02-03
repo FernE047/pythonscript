@@ -372,8 +372,9 @@ def configPart(indice):
         print("c")
         parteInicial.escreveArea(parteFinal,fileConfig)
         print("\tParte Terminada : " + str(indice))
-        
-if __name__ == "__main__":
+
+
+def main() -> None:
     limpaPasta("C:\\pythonscript\\imagem\\morphManual\\partesConfig")
     limpaPasta("C:\\pythonscript\\imagem\\morphManual\\frames")
     limpaPasta("C:\\pythonscript\\imagem\\morphManual\\frames\\resized")
@@ -387,5 +388,9 @@ if __name__ == "__main__":
     imagemFinal = None
     for a in range(2,quantiaPartes):
         configPart(a)
-    #p = multiprocessing.Pool(os.cpu_count())
-    #p.map(configPart,range(2,quantiaPartes))
+    # p = multiprocessing.Pool(os.cpu_count())
+    # p.map(configPart,range(2,quantiaPartes))
+
+
+if __name__ == "__main__":
+    main()

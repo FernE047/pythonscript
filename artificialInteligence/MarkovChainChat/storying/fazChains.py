@@ -50,9 +50,7 @@ def update_chain_file(keywords: list[str], is_title: bool) -> None:
     rename_file(f"{directory}/c.txt", f"{directory}/chain.txt")
 
 
-def update_keyword_counts(
-    keywords: list[str], directory: str
-) -> None:
+def update_keyword_counts(keywords: list[str], directory: str) -> None:
     with open(f"{directory}/c.txt", "w", encoding="utf-8") as file_write:
         if "chain.txt" not in os.listdir(directory):
             for keyword in keywords:
@@ -102,42 +100,49 @@ def generate_word_chain(text: str) -> list[str]:
 
 OVERFLOWLIMIT = 50000
 CHAINSIZE = 1
-title_keywords: list[str] = []
-story_keywords: list[str] = []
-file_names = os.listdir("./FanficAnime/stories")
-total = len(file_names)
-quantity = 0
-start_time = time()
-for name in file_names:
-    quantity += 1
-    with open(f"./FanficAnime/stories/{name}", "r", encoding="utf-8") as file:
-        story_components = file.readline().split(" : ")
-        if story_components[:-1]:
-            titulo = " : ".join(story_components[:-1])
-            title_keywords += generate_word_chain(titulo)
-        if story_components[-1:][0]:
-            historia = story_components[-1:][0]
-            story_keywords += generate_word_chain(historia)
-    if len(story_keywords) > OVERFLOWLIMIT:
+
+
+def main() -> None:
+    title_keywords: list[str] = []
+    story_keywords: list[str] = []
+    file_names = os.listdir("./FanficAnime/stories")
+    total = len(file_names)
+    quantity = 0
+    start_time = time()
+    for name in file_names:
+        quantity += 1
+        with open(f"./FanficAnime/stories/{name}", "r", encoding="utf-8") as file:
+            story_components = file.readline().split(" : ")
+            if story_components[:-1]:
+                titulo = " : ".join(story_components[:-1])
+                title_keywords += generate_word_chain(titulo)
+            if story_components[-1:][0]:
+                historia = story_components[-1:][0]
+                story_keywords += generate_word_chain(historia)
+        if len(story_keywords) > OVERFLOWLIMIT:
+            update_chain_file(title_keywords, True)
+            title_keywords = []
+            update_chain_file(story_keywords, False)
+            story_keywords = []
+            finish_time = time()
+            elapsed_time = (finish_time - start_time) / quantity
+            print(name)
+            print("duração média : " + format_elapsed_time(elapsed_time))
+            print("tempo Passado : " + format_elapsed_time(finish_time - start_time))
+            print("falta : " + format_elapsed_time(elapsed_time * (total - quantity)))
+            print()
+    print("concluindo...")
+    if len(title_keywords) > OVERFLOWLIMIT:
         update_chain_file(title_keywords, True)
         title_keywords = []
+    if len(story_keywords) > OVERFLOWLIMIT:
         update_chain_file(story_keywords, False)
         story_keywords = []
         finish_time = time()
-        elapsed_time = (finish_time - start_time) / quantity
-        print(name)
-        print("duração média : " + format_elapsed_time(elapsed_time))
-        print("tempo Passado : " + format_elapsed_time(finish_time - start_time))
+        elapsed_time = (finish_time - start_time) / total
         print("falta : " + format_elapsed_time(elapsed_time * (total - quantity)))
-        print()
-print("concluindo...")
-if len(title_keywords) > OVERFLOWLIMIT:
-    update_chain_file(title_keywords, True)
-    title_keywords = []
-if len(story_keywords) > OVERFLOWLIMIT:
-    update_chain_file(story_keywords, False)
-    story_keywords = []
-    finish_time = time()
-    elapsed_time = (finish_time - start_time) / total
-    print("falta : " + format_elapsed_time(elapsed_time * (total - quantity)))
-print()
+    print()
+
+
+if __name__ == "__main__":
+    main()

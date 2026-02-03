@@ -59,35 +59,41 @@ def aplicaPaleta(paleta,img):
             imagemFiltrada.putpixel((x,y),novaCor)
     return(imagemFiltrada)
 
-saida="1"
-while(saida!="0"):
-    nome=""
-    print("digite o assunto da imagem que será paleta")
-    assunto=input()
-    if(assunto[:7]=="paleta "):
-        paletaSample=pegaPaleta(os.path.join("paleta","paleta"+assunto[7:]+".png"))
-        nome+=assunto[7:].proper()
-    elif(assunto[:6]=="pasta "):
+
+def main() -> None:
+    saida="1"
+    while(saida!="0"):
+        nome=""
+        print("digite o assunto da imagem que será paleta")
+        assunto=input()
+        if(assunto[:7]=="paleta "):
+            paletaSample=pegaPaleta(os.path.join("paleta","paleta"+assunto[7:]+".png"))
+            nome+=assunto[7:].proper()
+        elif(assunto[:6]=="pasta "):
+            imagens=pI.pegaAssunto(assunto)
+            paletaSample=pegaPaletas(imagens)
+            nome+=assunto[6:].proper()+str(numImagem)
+        else:
+            imagem=pI.umaImagem(assunto)
+            paletaSample=pegaPaleta(imagem)
+            nome+=assunto.proper()+str(numImagem)
+        print("tamanho da paleta:"+str(len(paletaSample)))
+        print("\ndigite o assunto da imagem para adaptar")
+        assunto=input()
         imagens=pI.pegaAssunto(assunto)
-        paletaSample=pegaPaletas(imagens)
-        nome+=assunto[6:].proper()+str(numImagem)
-    else:
-        imagem=pI.umaImagem(assunto)
-        paletaSample=pegaPaleta(imagem)
-        nome+=assunto.proper()+str(numImagem)
-    print("tamanho da paleta:"+str(len(paletaSample)))
-    print("\ndigite o assunto da imagem para adaptar")
-    assunto=input()
-    imagens=pI.pegaAssunto(assunto)
-    for indice,imagem_a in enumerate(imagens):
-        print(f"{indice}  -  {imagem_a}")
-    print("\nqual imagem? 0 a "+str(len(imagens)))
-    numImagem=int(input())
-    imagem=imagens[numImagem]
-    nome=assunto.proper()+nome+str(numImagem)+".png"
-    nome=os.path.join("imagens",nome)
-    print(imagem)
-    imagemPaletada=aplicaPaleta(paletaSample,imagem)
-    imagemPaletada.save(nome)
-    print("digite 0 para sair")
-    saida=input()
+        for indice,imagem_a in enumerate(imagens):
+            print(f"{indice}  -  {imagem_a}")
+        print("\nqual imagem? 0 a "+str(len(imagens)))
+        numImagem=int(input())
+        imagem=imagens[numImagem]
+        nome=assunto.proper()+nome+str(numImagem)+".png"
+        nome=os.path.join("imagens",nome)
+        print(imagem)
+        imagemPaletada=aplicaPaleta(paletaSample,imagem)
+        imagemPaletada.save(nome)
+        print("digite 0 para sair")
+        saida=input()
+
+
+if __name__ == "__main__":
+    main()

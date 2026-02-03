@@ -39,11 +39,17 @@ def fazProcesso(processo,nome):
     fim = time()
     duracao = fim-inicio
     print_elapsed_time(duracao)
-    
-inicioDef = time()
-fazProcesso("python C:\\pythonscript\\imagem\\morphOnlyShape\\analisaEFazConfig.py ","fazer configurações")
-fazProcesso("python C:\\pythonscript\\imagem\\morphOnlyShape\\morpher.py ","fazer animações")
-fimDef = time()
-print("\nfinalizado")
-print_elapsed_time(fimDef-inicioDef)
-a = input()
+
+
+def main() -> None:
+    inicioDef = time()
+    fazProcesso("python C:\\pythonscript\\imagem\\morphOnlyShape\\analisaEFazConfig.py ","fazer configurações")
+    fazProcesso("python C:\\pythonscript\\imagem\\morphOnlyShape\\morpher.py ","fazer animações")
+    fimDef = time()
+    print("\nfinalizado")
+    print_elapsed_time(fimDef-inicioDef)
+    a = input()
+
+
+if __name__ == "__main__":
+    main()

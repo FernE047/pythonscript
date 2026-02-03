@@ -26,13 +26,19 @@ def imagemToText(imagem):
             linha+=niveis[int(pixel/32)]
         texto+=linha + "\n"
     return(texto)
-    
-showAltura=0
-niveis=[" ","▫","□","O","░","▒","▓","█"]
-showLargura= 60
-imagens=[os.path.join(diretorio,imagem)for imagem in os.listdir(diretorio)]
-for imagem in imagens:
-    texto=imagemToText(imagem)
-    apaga=len(texto)
-    os.system("cls" if os.name == "nt" else "clear")
-    print(texto+(apaga*"\b"),end="",flush=True)
+
+
+def main() -> None:
+    showAltura=0
+    niveis=[" ","▫","□","O","░","▒","▓","█"]
+    showLargura= 60
+    imagens=[os.path.join(diretorio,imagem)for imagem in os.listdir(diretorio)]
+    for imagem in imagens:
+        texto=imagemToText(imagem)
+        apaga=len(texto)
+        os.system("cls" if os.name == "nt" else "clear")
+        print(texto+(apaga*"\b"),end="",flush=True)
+
+
+if __name__ == "__main__":
+    main()

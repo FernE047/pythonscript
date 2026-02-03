@@ -42,15 +42,19 @@ def sequenciaChance(m,sequencia,potencia=10**6):
     print(str(sequencia)+" : "+str(total*100/potencia))
     
 
-print("desvantagem:\n")
-#chances(dd,20)
-print("\nvantagem:\n")
-#chances(vd,20)
-print("\nnormal:\n")
-#chances(dd,20,1)
-print("\nsequencia:\n")
-sequenciaChance(20,[20,20])
-sequenciaChance(20,[20,20,20])
-sequenciaChance(20,[20,20,20,20])
-    
 
+def main() -> None:
+    print("desvantagem:\n")
+    #chances(dd,20)
+    print("\nvantagem:\n")
+    #chances(vd,20)
+    print("\nnormal:\n")
+    #chances(dd,20,1)
+    print("\nsequencia:\n")
+    sequenciaChance(20,[20,20])
+    sequenciaChance(20,[20,20,20])
+    sequenciaChance(20,[20,20,20,20])
+
+
+if __name__ == "__main__":
+    main()

@@ -30,5 +30,11 @@ def print_all_ciphers(input_text: str) -> None:
         print(f"{encrypted_text}\n")
 
 
-text = input("type something and we will cypher!!!: \n")
-print_all_ciphers(text)
+
+def main() -> None:
+    text = input("type something and we will cypher!!!: \n")
+    print_all_ciphers(text)
+
+
+if __name__ == "__main__":
+    main()

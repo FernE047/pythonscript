@@ -282,33 +282,39 @@ def find_possible_moves(board: BoardData, player_pieces: list[PiecePositionData]
     #TODO: stopped coding here
     return None
 
-board_dimensions = 2
-board_size = 8
-game_board = create_board(board_dimensions, board_size)
-behaviors: dict[PieceOptions, PieceBehaviorData] = {
-    "P": (3, False, (1), [(1, 1), (1, -1)], 1),  # pawn
-    "R": (0, True, (1), 5),  # rook
-    "N": (1, True, (1, 2), 3),  # knight
-    "B": (0, True, (1, 1), 3),  # bishop
-    "Q": (2, True, (1, 3), 9),  # queen
-    "K": (5, True, 1, 2),  # king
-}
-victory: VictoryConditionData = (0, "K")
-places_piece(game_board, "R", 1, [0, 0])
-places_piece(game_board, "N", 1, [0, 1])
-places_piece(game_board, "B", 1, [0, 2])
-places_piece(game_board, "P", 1, [1])
-apply_horizontal_symmetry(game_board)
-places_piece(game_board, "Q", 1, [0, 3])
-places_piece(game_board, "K", 1, [0, 4])
-apply_vertical_symmetry(game_board)
-pieces_list: tuple[list[PiecePositionData], list[PiecePositionData]] = ([], [])
-find_the_pieces(game_board, pieces_list[0], pieces_list[1])
-game_board = cast(BoardData, rotate_board(game_board))
-show_board(game_board)
-current_player_turn = 0
-round_number = 0
-while True:
-    jogadasPossiveis = find_possible_moves(
-        game_board, pieces_list[current_player_turn], current_player_turn + 1
-    )
+
+def main() -> None:
+    board_dimensions = 2
+    board_size = 8
+    game_board = create_board(board_dimensions, board_size)
+    behaviors: dict[PieceOptions, PieceBehaviorData] = {
+        "P": (3, False, (1), [(1, 1), (1, -1)], 1),  # pawn
+        "R": (0, True, (1), 5),  # rook
+        "N": (1, True, (1, 2), 3),  # knight
+        "B": (0, True, (1, 1), 3),  # bishop
+        "Q": (2, True, (1, 3), 9),  # queen
+        "K": (5, True, 1, 2),  # king
+    }
+    victory: VictoryConditionData = (0, "K")
+    places_piece(game_board, "R", 1, [0, 0])
+    places_piece(game_board, "N", 1, [0, 1])
+    places_piece(game_board, "B", 1, [0, 2])
+    places_piece(game_board, "P", 1, [1])
+    apply_horizontal_symmetry(game_board)
+    places_piece(game_board, "Q", 1, [0, 3])
+    places_piece(game_board, "K", 1, [0, 4])
+    apply_vertical_symmetry(game_board)
+    pieces_list: tuple[list[PiecePositionData], list[PiecePositionData]] = ([], [])
+    find_the_pieces(game_board, pieces_list[0], pieces_list[1])
+    game_board = cast(BoardData, rotate_board(game_board))
+    show_board(game_board)
+    current_player_turn = 0
+    round_number = 0
+    while True:
+        jogadasPossiveis = find_possible_moves(
+            game_board, pieces_list[current_player_turn], current_player_turn + 1
+        )
+
+
+if __name__ == "__main__":
+    main()

@@ -126,43 +126,49 @@ def ampliaMapa(mapa, ampliacao, posicao, adds):
     return novoMapa, novaPosicao
 
 
-# Constantes e Variaveis Importantes
 
-inicioTotal = time()
-DDP = 20  # DISTANCIADEPROCURA  maior = mais lento e melhor
-DT = DDP * 2 + 1  # DISTANCIATOTAL
-PY = DT  # PASSOSY             menor = mais lento e melhor, tem que ser maior que DT
-PX = DT  # PASSOSX             menor = mais lento e melhor, tem que ser maior que DT
+def main() -> None:
+    # Constantes e Variaveis Importantes
+
+    inicioTotal = time()
+    DDP = 20  # DISTANCIADEPROCURA  maior = mais lento e melhor
+    DT = DDP * 2 + 1  # DISTANCIATOTAL
+    PY = DT  # PASSOSY             menor = mais lento e melhor, tem que ser maior que DT
+    PX = DT  # PASSOSX             menor = mais lento e melhor, tem que ser maior que DT
 
 
-# iniciadores
-diretorioVideo = "C:\\pythonscript\\imagem\\SpeedrunMapping\\video"
-diretorioFrames = diretorioVideo + "\\"
-mapa = openFrame(diretorioFrames + listdir(diretorioVideo)[0])
-tamanho = mapa.size
-posicao = [0, 0]
-inicio = time()
-totalFiles = len(listdir(diretorioVideo))
-for n, frame in enumerate(listdir(diretorioVideo)):
-    frameAtual = openFrame(diretorioFrames + frame)
-    adds = comparaFrames(mapa, frameAtual, posicao)
-    while max([abs(a) for a in adds]) == DDP:
-        DDP = max([abs(a) for a in adds]) + 1
-        DT = DDP * 2 + 1
-        PY = DT
-        PX = DT
-        print("novo DDP : " + str(DDP))
-        adds = comparaFrames(mapa, frameAtual, posicao)
-    mapa, posicao = ampliaMapa(mapa, frameAtual, posicao, adds)
-    fim = time()
-    duracao = fim - inicio
+    # iniciadores
+    diretorioVideo = "C:\\pythonscript\\imagem\\SpeedrunMapping\\video"
+    diretorioFrames = diretorioVideo + "\\"
+    mapa = openFrame(diretorioFrames + listdir(diretorioVideo)[0])
+    tamanho = mapa.size
+    posicao = [0, 0]
     inicio = time()
-    print(f"{n} : ")
-    print_elapsed_time(duracao * (totalFiles - n))
+    totalFiles = len(listdir(diretorioVideo))
+    for n, frame in enumerate(listdir(diretorioVideo)):
+        frameAtual = openFrame(diretorioFrames + frame)
+        adds = comparaFrames(mapa, frameAtual, posicao)
+        while max([abs(a) for a in adds]) == DDP:
+            DDP = max([abs(a) for a in adds]) + 1
+            DT = DDP * 2 + 1
+            PY = DT
+            PX = DT
+            print("novo DDP : " + str(DDP))
+            adds = comparaFrames(mapa, frameAtual, posicao)
+        mapa, posicao = ampliaMapa(mapa, frameAtual, posicao, adds)
+        fim = time()
+        duracao = fim - inicio
+        inicio = time()
+        print(f"{n} : ")
+        print_elapsed_time(duracao * (totalFiles - n))
+        mapa.save("mapa.png")
+    frameAtual.close()
+    fimTotal = time()
+    duracao = fimTotal - inicioTotal
+    print_elapsed_time(duracao)
     mapa.save("mapa.png")
-frameAtual.close()
-fimTotal = time()
-duracao = fimTotal - inicioTotal
-print_elapsed_time(duracao)
-mapa.save("mapa.png")
-mapa.close()
+    mapa.close()
+
+
+if __name__ == "__main__":
+    main()

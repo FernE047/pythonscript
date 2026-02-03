@@ -68,21 +68,26 @@ def get_file_name() -> str:
     return file_name
 
 
-file_name = get_file_name()
-word_occurrence_map: list[int] = []
-with open(file_name + "/c.txt", "r", encoding="UTF-8") as markov_chain_file:
-    linha = markov_chain_file.readline()[:-1].split()
-    while linha:
-        word_occurrence_map.append(int(linha[-1]))
+def main() -> None:
+    file_name = get_file_name()
+    word_occurrence_map: list[int] = []
+    with open(file_name + "/c.txt", "r", encoding="UTF-8") as markov_chain_file:
         linha = markov_chain_file.readline()[:-1].split()
-word_frequencies_map = normalize_statistics(word_occurrence_map)
-for _ in range(1000):
-    generated_words: list[str] = []
-    word_quantity = choice(
-        [word_index for word_index in range(1, len(word_frequencies_map) + 1)],
-        1,
-        p=word_frequencies_map,
-    )[0]
-    for index in range(word_quantity):
-        generated_words.append(generate_word(f"{file_name}/{index:03d}.txt"))
-    print(" ".join(generated_words))
+        while linha:
+            word_occurrence_map.append(int(linha[-1]))
+            linha = markov_chain_file.readline()[:-1].split()
+    word_frequencies_map = normalize_statistics(word_occurrence_map)
+    for _ in range(1000):
+        generated_words: list[str] = []
+        word_quantity = choice(
+            [word_index for word_index in range(1, len(word_frequencies_map) + 1)],
+            1,
+            p=word_frequencies_map,
+        )[0]
+        for index in range(word_quantity):
+            generated_words.append(generate_word(f"{file_name}/{index:03d}.txt"))
+        print(" ".join(generated_words))
+
+
+if __name__ == "__main__":
+    main()

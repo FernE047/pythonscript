@@ -61,31 +61,36 @@ def imprime(termos,numeroTeste,modo,sucesso,passos):
                 print(str(numeroTeste))
                 quantia+=1
 
-limite=100
-quantia=0
-while True:
-    print("qual será o modo?")
-    print("0 - tudo\n1 - apenas estouros\n2 - sem estouros\n3 - apenas passos\n4 - final esperado\n5 - finalização")
-    modo=input()
-    if(modo=="5"):
-        break
-    if(modo=="3"):
-        print("quantos passos?")
-        passos=int(input())
-    else:
-        passos=0
-    if(modo=="1"):
-        print("com termos ou sem? [1/0]")
-        passos=input()
-    print("procurar até quanto?")
-    final=int(input())
-    for numeroTeste in range(final+1):
-        try:
-            termo=str(numeroTeste)
-            sucesso,termos=chegaAFim(termo,limite)
-            imprime(termos,numeroTeste,modo,sucesso,passos)
-            numeroTeste+=1
-        except:
-            print(numeroTeste)
-    print("quantidade total "+str(quantia))
-    
+
+def main() -> None:
+    limite=100
+    quantia=0
+    while True:
+        print("qual será o modo?")
+        print("0 - tudo\n1 - apenas estouros\n2 - sem estouros\n3 - apenas passos\n4 - final esperado\n5 - finalização")
+        modo=input()
+        if(modo=="5"):
+            break
+        if(modo=="3"):
+            print("quantos passos?")
+            passos=int(input())
+        else:
+            passos=0
+        if(modo=="1"):
+            print("com termos ou sem? [1/0]")
+            passos=input()
+        print("procurar até quanto?")
+        final=int(input())
+        for numeroTeste in range(final+1):
+            try:
+                termo=str(numeroTeste)
+                sucesso,termos=chegaAFim(termo,limite)
+                imprime(termos,numeroTeste,modo,sucesso,passos)
+                numeroTeste+=1
+            except:
+                print(numeroTeste)
+        print("quantidade total "+str(quantia))
+
+
+if __name__ == "__main__":
+    main()

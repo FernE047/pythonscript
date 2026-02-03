@@ -4,16 +4,22 @@
 #f:jpg, gif, png, bmp, svg, webp, ico
 #l:limit of photos download
 import os
-while True:
-    print("me dê um input e retornarei 100 imagens / 0 para sair")
-    nome=input()
-    print("algum argumento adicional?")
-    argumento=input()
-    if(nome):
-        os.system("google_images_download.py -o "C:\pythonscript\Imagens\" -k ""+nome+"" "+argumento)
-    else:
-        break
-    print("baixado")
-nomeOriginal=os.path.join("C:\\","pythonscript","Imagens",nome)
-nomeNovo=os.path.join("C:\\","pythonscript","Imagens",nome.proper())
-os.rename(nomeOriginal,nomeNovo)
+
+
+def main() -> None:
+    while True:
+        print("me dê um input e retornarei 100 imagens / 0 para sair")
+        nome=input()
+        print("algum argumento adicional?")
+        argumento=input()
+        if(nome):
+            os.system("google_images_download.py -o "C:\pythonscript\Imagens\" -k ""+nome+"" "+argumento)
+        else:
+            break
+        print("baixado")
+    nomeOriginal=os.path.join("C:\\","pythonscript","Imagens",nome)
+    nomeNovo=os.path.join("C:\\","pythonscript","Imagens",nome.proper())
+    os.rename(nomeOriginal,nomeNovo)
+
+if __name__ == "__main__":
+    main()

@@ -126,59 +126,65 @@ def ampliaMapa(mapa, ampliacao, posicao, adds):
     return novoMapa, novaPosicao
 
 
-DDP = 20  # DISTANCIADEPROCURA  maior = mais lento e melhor
-DT = DDP * 2 + 1  # DISTANCIATOTAL
-PY = DT  # PASSOSY             menor = mais lento e melhor, tem que ser maior que DT
-PX = DT  # PASSOSX             menor = mais lento e melhor, tem que ser maior que DT
 
-# Argumentos do FFMPEG
-diretorioVideo = "C:\\pythonscript\\imagem\\SpeedrunMapping\\video"
-origemVideo = "-i C:\pythonscript\\imagem\\SpeedrunMapping\\level.mp4"  # "-i C:\\pythonscript\\videos\\videos\\video0002.mp4"
-destinoTemp = diretorioVideo + "\\frame%04d.png"
-extraArguments = "-r {0:02d}/1"
-processoArgs = ["ffmpeg", origemVideo, extraArguments, destinoTemp]
+def main() -> None:
+    DDP = 20  # DISTANCIADEPROCURA  maior = mais lento e melhor
+    DT = DDP * 2 + 1  # DISTANCIATOTAL
+    PY = DT  # PASSOSY             menor = mais lento e melhor, tem que ser maior que DT
+    PX = DT  # PASSOSX             menor = mais lento e melhor, tem que ser maior que DT
 
-fps = 30
+    # Argumentos do FFMPEG
+    diretorioVideo = "C:\\pythonscript\\imagem\\SpeedrunMapping\\video"
+    origemVideo = "-i C:\pythonscript\\imagem\\SpeedrunMapping\\level.mp4"  # "-i C:\\pythonscript\\videos\\videos\\video0002.mp4"
+    destinoTemp = diretorioVideo + "\\frame%04d.png"
+    extraArguments = "-r {0:02d}/1"
+    processoArgs = ["ffmpeg", origemVideo, extraArguments, destinoTemp]
 
-processoArgs[2] = extraArguments.format(fps)
-# subprocess.call (" ".join(processoArgs))
+    fps = 30
 
-diretorioFrames = diretorioVideo + "\\frame{0:04d}.png"
+    processoArgs[2] = extraArguments.format(fps)
+    # subprocess.call (" ".join(processoArgs))
 
-mapa = openFrame(diretorioFrames.format(1))
-tamanho = mapa.size
-posicao = [0, 0]
-framesTotais = len(listdir(diretorioVideo))
-inicioTotal = time()
-inicio = time()
-try:
-    for n in range(90, framesTotais):
-        frameAtual = openFrame(diretorioFrames.format(n))
-        adds = comparaFrames(mapa, frameAtual, posicao)
-        while max([abs(a) for a in adds]) == DDP:
-            print("a")
-            DDP = max([abs(a) for a in adds]) + 1
-            DT = DDP * 2 + 1
-            PY = DT
-            PX = DT
+    diretorioFrames = diretorioVideo + "\\frame{0:04d}.png"
+
+    mapa = openFrame(diretorioFrames.format(1))
+    tamanho = mapa.size
+    posicao = [0, 0]
+    framesTotais = len(listdir(diretorioVideo))
+    inicioTotal = time()
+    inicio = time()
+    try:
+        for n in range(90, framesTotais):
+            frameAtual = openFrame(diretorioFrames.format(n))
             adds = comparaFrames(mapa, frameAtual, posicao)
-        mapa, posicao = ampliaMapa(mapa, frameAtual, posicao, adds)
-        fim = time()
-        duracao = fim - inicio
-        inicio = time()
-        mapa.save("mapa.png")
-        print()
-        print(f"{n} : ")
-        print_elapsed_time(duracao)
-        print_elapsed_time(duracao * (framesTotais - n))
-        print(adds)
-except:
-    print(n)
-    print("deu erro")
-    pass
-frameAtual.close()
-fimTotal = time()
-duracao = fimTotal - inicioTotal
-print_elapsed_time(duracao)
-mapa.save("mapa.png")
-mapa.close()
+            while max([abs(a) for a in adds]) == DDP:
+                print("a")
+                DDP = max([abs(a) for a in adds]) + 1
+                DT = DDP * 2 + 1
+                PY = DT
+                PX = DT
+                adds = comparaFrames(mapa, frameAtual, posicao)
+            mapa, posicao = ampliaMapa(mapa, frameAtual, posicao, adds)
+            fim = time()
+            duracao = fim - inicio
+            inicio = time()
+            mapa.save("mapa.png")
+            print()
+            print(f"{n} : ")
+            print_elapsed_time(duracao)
+            print_elapsed_time(duracao * (framesTotais - n))
+            print(adds)
+    except:
+        print(n)
+        print("deu erro")
+        pass
+    frameAtual.close()
+    fimTotal = time()
+    duracao = fimTotal - inicioTotal
+    print_elapsed_time(duracao)
+    mapa.save("mapa.png")
+    mapa.close()
+
+
+if __name__ == "__main__":
+    main()

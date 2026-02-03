@@ -134,37 +134,42 @@ def fazDiretorio(diretorio):
 def novoSite(site):
     informacao=siteProcura(site,".header_with_cover_art-primary_info-primary_artist")
     return(informacao[0].get("href"))
-    
-while True:
-    print("\ndigite o titulo da música")
-    titulo = input()
-    if(titulo=="teste"):
-        titulo="have faith saint pepsi"
-    if(titulo=="0"):
-        break
-    elif(titulo[:5]=="texto"):
-        lyricsSuja = titulo[6:]
-        musica = limpa(lyricsSuja)
-        print(musica+"\n")
-        lyrics = musica.split(" ")
-        titulo = titulo[-10:]
-    elif(titulo[:4]=="cola"):
-        lyricsSuja = pyperclip.paste()
-        musica = limpa(lyricsSuja)
-        print(musica+"\n")
-        lyrics = musica.split(" ")
-        titulo = titulo[5:]
-    else:
-        tituloList = list(titulo)
-        tituloFormatada = ""
-        for letra in range(len(tituloList)):
-            if(tituloList[letra] == " "):
-                tituloList[letra] = "%20"
-            tituloFormatada += tituloList[letra]
-        print()
-        informacao = pesquisaGoogle(tituloFormatada,adicao="%20full%20lyrics")
-        site = achaGenius(informacao)
-        print(site)
-        lyrics = achaLetra(site)
-    baixaImagens(lyrics,titulo)
 
+
+def main() -> None:
+    while True:
+        print("\ndigite o titulo da música")
+        titulo = input()
+        if(titulo=="teste"):
+            titulo="have faith saint pepsi"
+        if(titulo=="0"):
+            break
+        elif(titulo[:5]=="texto"):
+            lyricsSuja = titulo[6:]
+            musica = limpa(lyricsSuja)
+            print(musica+"\n")
+            lyrics = musica.split(" ")
+            titulo = titulo[-10:]
+        elif(titulo[:4]=="cola"):
+            lyricsSuja = pyperclip.paste()
+            musica = limpa(lyricsSuja)
+            print(musica+"\n")
+            lyrics = musica.split(" ")
+            titulo = titulo[5:]
+        else:
+            tituloList = list(titulo)
+            tituloFormatada = ""
+            for letra in range(len(tituloList)):
+                if(tituloList[letra] == " "):
+                    tituloList[letra] = "%20"
+                tituloFormatada += tituloList[letra]
+            print()
+            informacao = pesquisaGoogle(tituloFormatada,adicao="%20full%20lyrics")
+            site = achaGenius(informacao)
+            print(site)
+            lyrics = achaLetra(site)
+        baixaImagens(lyrics,titulo)
+
+
+if __name__ == "__main__":
+    main()

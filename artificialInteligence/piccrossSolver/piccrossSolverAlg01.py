@@ -271,24 +271,31 @@ def solve_piccross_board(
     return (cuts_amount, solution_board)
 
 
-elapsed_time = 0.0
-tries = 0
-for index in range(8):
-    with open(f"piccross/A{index:03d}.txt") as piccross_file:
-        config = piccross_file.read()
-    horizontal_hints_lines, vertical_hints_lines = config.split("#")
-    horizontal_hints: HintAxysData = [
-        [int(n) for n in hint.split()]
-        for hint in horizontal_hints_lines[:-1].split("\n")
-    ]
-    vertical_hints: HintAxysData = [
-        [int(n) for n in hint.split()] for hint in vertical_hints_lines[1:].split("\n")
-    ]
-    board: BoardData = []
-    for _ in vertical_hints:
-        board.append([0 for _ in horizontal_hints])
-    all_hints: HintsData = (horizontal_hints, vertical_hints)
-    cuts_amount, solution_board = solve_piccross_board(board, all_hints)
+def main() -> None:
+    elapsed_time = 0.0
+    tries = 0
+    for index in range(8):
+        with open(f"piccross/A{index:03d}.txt") as piccross_file:
+            config = piccross_file.read()
+        horizontal_hints_lines, vertical_hints_lines = config.split("#")
+        horizontal_hints: HintAxysData = [
+            [int(n) for n in hint.split()]
+            for hint in horizontal_hints_lines[:-1].split("\n")
+        ]
+        vertical_hints: HintAxysData = [
+            [int(n) for n in hint.split()]
+            for hint in vertical_hints_lines[1:].split("\n")
+        ]
+        board: BoardData = []
+        for _ in vertical_hints:
+            board.append([0 for _ in horizontal_hints])
+        all_hints: HintsData = (horizontal_hints, vertical_hints)
+        cuts_amount, solution_board = solve_piccross_board(board, all_hints)
+        print_elapsed_time(elapsed_time)
+        if solution_board is not None:
+            save_board_image(solution_board, f"piccross/A{index:03d}")
     print_elapsed_time(elapsed_time)
-    save_board_image(board, f"piccross/A{index:03d}")
-print_elapsed_time(elapsed_time)
+
+
+if __name__ == "__main__":
+    main()

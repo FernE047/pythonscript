@@ -138,49 +138,55 @@ if(QUANTIA_JOGANDO>QUANTIA_JOGADORES):
     QUANTIA_JOGANDO=QUANTIA_JOGADORES
 JOGADORES_CORES=["vermelho","amarelo","azul","verde","roxo","rosa","laranja","marrom","cinza","ciano","lima","agua","verde-claro","preto"]
 ALFABETO=list(ascii_uppercase)
-tamanhoTabuleiro=2*QUANTIA_JOGADORES*(CAMINHADA_FINAL+2)
-tabuleiro=(tamanhoTabuleiro+CAMINHADA_FINAL+1)*[[]]
 
-#Inicialização das variaveis dos jogadores
 
-jogador=[]
-corUsada={}
-jogadoresOrdem={}
-playerPecas={}
-pecaLocalizacao={}
-estrategia={}
-ordemSorteio=npr.choice([a for a in range(QUANTIA_JOGADORES)],QUANTIA_JOGANDO,replace=False)
-ordemSorteio=sorted(ordemSorteio)
-for a in range(QUANTIA_JOGANDO):
-    nome=fazNome(a)
-    jogador.append(nome)
-    jogadoresOrdem[ordemSorteio[a]]=nome
-    if(QUANTIA_JOGANDO<=14):
-        corUsada[nome]=JOGADORES_CORES[a]
-    playerPecas[nome]=fazNomePecas(a)
-    for umaPeca in playerPecas[nome]:
-        pecaLocalizacao[umaPeca]="sleep"
-    estrategia[nome]="random"
-    
-#deletar variaveis não reutilizaveis
+def main() -> None:
+    tamanhoTabuleiro=2*QUANTIA_JOGADORES*(CAMINHADA_FINAL+2)
+    tabuleiro=(tamanhoTabuleiro+CAMINHADA_FINAL+1)*[[]]
 
-del ordemSorteio
+    #Inicialização das variaveis dos jogadores
 
-#DEBUG
+    jogador=[]
+    corUsada={}
+    jogadoresOrdem={}
+    playerPecas={}
+    pecaLocalizacao={}
+    estrategia={}
+    ordemSorteio=npr.choice([a for a in range(QUANTIA_JOGADORES)],QUANTIA_JOGANDO,replace=False)
+    ordemSorteio=sorted(ordemSorteio)
+    for a in range(QUANTIA_JOGANDO):
+        nome=fazNome(a)
+        jogador.append(nome)
+        jogadoresOrdem[ordemSorteio[a]]=nome
+        if(QUANTIA_JOGANDO<=14):
+            corUsada[nome]=JOGADORES_CORES[a]
+        playerPecas[nome]=fazNomePecas(a)
+        for umaPeca in playerPecas[nome]:
+            pecaLocalizacao[umaPeca]="sleep"
+        estrategia[nome]="random"
+        
+    #deletar variaveis não reutilizaveis
 
-print("tamanho : "+str(tamanhoTabuleiro))
-imprimirLista(tabuleiro,"tabuleiro : ")
-imprimirLista(jogador,"jogadores : ")
-imprimirLista(estrategia,"estrategias : ")
-imprimirDict(playerPecas,"peças : ")
-imprimirDict(pecaLocalizacao,"peças Localização : ")
-imprimirDict(corUsada,"cores : ")
-imprimirDict(jogadoresOrdem,"ordem : ")
+    del ordemSorteio
 
-#Jogo
+    #DEBUG
 
-while(not(todosGanharam(pecaLocalizacao))):
-    for n in range(QUANTIA_JOGADORES):
-        if(n in jogadoresOrdem.keys()):
-            tabuleiro=jogadorPlay(tabuleiro,n)
-            pecaLocalizacao=atualizaLocalizacoes(tabuleiro,pecaLocalizacao)
+    print("tamanho : "+str(tamanhoTabuleiro))
+    imprimirLista(tabuleiro,"tabuleiro : ")
+    imprimirLista(jogador,"jogadores : ")
+    imprimirLista(estrategia,"estrategias : ")
+    imprimirDict(playerPecas,"peças : ")
+    imprimirDict(pecaLocalizacao,"peças Localização : ")
+    imprimirDict(corUsada,"cores : ")
+    imprimirDict(jogadoresOrdem,"ordem : ")
+
+    #Jogo
+
+    while(not(todosGanharam(pecaLocalizacao))):
+        for n in range(QUANTIA_JOGADORES):
+            if(n in jogadoresOrdem.keys()):
+                tabuleiro=jogadorPlay(tabuleiro,n)
+                pecaLocalizacao=atualizaLocalizacoes(tabuleiro,pecaLocalizacao)
+
+if __name__ == "__main__":
+    main()

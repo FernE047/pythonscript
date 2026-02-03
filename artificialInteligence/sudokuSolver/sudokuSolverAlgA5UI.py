@@ -254,29 +254,35 @@ def solve_single_board(board: BoardData) -> BoardData | None:
     return solution_board
 
 
-tries = 0
-elapsed_time = 0.0
-while True:
-    elapsed_time = 0
-    mode = main_menu()
-    if mode == 0:
-        break
-    if mode == 3:
-        file_names = os.listdir("sudokus")
-        for file_name in file_names:
-            print(f"{file_name}\n")
-            with open(
-                f"sudokus//{file_name}", "r", encoding="utf-8"
-            ) as sudoku_board_raw:
+
+def main() -> None:
+    tries = 0
+    elapsed_time = 0.0
+    while True:
+        elapsed_time = 0
+        mode = main_menu()
+        if mode == 0:
+            break
+        if mode == 3:
+            file_names = os.listdir("sudokus")
+            for file_name in file_names:
+                print(f"{file_name}\n")
+                with open(
+                    f"sudokus//{file_name}", "r", encoding="utf-8"
+                ) as sudoku_board_raw:
+                    board = create_sudoku_board(sudoku_board_raw.read())
+                solution_board = solve_single_board(board)
+                print_elapsed_time(elapsed_time)
+        elif mode == 2:
+            file_name = input("what is the anme of the file? (without .txt)")
+            with open(f"{file_name}.txt", "r", encoding="utf-8") as sudoku_board_raw:
                 board = create_sudoku_board(sudoku_board_raw.read())
-            solution_board = solve_single_board(board)
-            print_elapsed_time(elapsed_time)
-    elif mode == 2:
-        file_name = input("what is the anme of the file? (without .txt)")
-        with open(f"{file_name}.txt", "r", encoding="utf-8") as sudoku_board_raw:
-            board = create_sudoku_board(sudoku_board_raw.read())
-        solve_single_board(board)
-    else:
-        board = create_sudoku_board_from_input()
-        solve_single_board(board)
-        print_board(board)
+            solve_single_board(board)
+        else:
+            board = create_sudoku_board_from_input()
+            solve_single_board(board)
+            print_board(board)
+
+
+if __name__ == "__main__":
+    main()

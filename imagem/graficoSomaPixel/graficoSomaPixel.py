@@ -38,21 +38,26 @@ def quaoBranco(img, tenta=1):
     return grafico
 
 
-assunto = "ds rom"
-pastaImagens = os.path.join("C:\\", "pythonscript", "Imagens", assunto)
-print(pastaImagens)
-imagens = os.listdir(pastaImagens)
-try:
-    pastaSalva = os.path.join(os.getcwd(), assunto + "Grafico")
-    os.makedirs(pastaSalva)
-except:
-    True
-for imagem in imagens:
-    grafico = quaoBranco(
-        os.path.join("C:\\", "pythonscript", "Imagens", assunto, imagem)
-    )
-    grafico.save(os.path.join(pastaSalva, imagem[:-4] + "Graf" + imagem[-4:]))
-print(gc.collect())
+
+def main() -> None:
+    assunto = "ds rom"
+    pastaImagens = os.path.join("C:\\", "pythonscript", "Imagens", assunto)
+    print(pastaImagens)
+    imagens = os.listdir(pastaImagens)
+    try:
+        pastaSalva = os.path.join(os.getcwd(), assunto + "Grafico")
+        os.makedirs(pastaSalva)
+    except:
+        True
+    for imagem in imagens:
+        grafico = quaoBranco(
+            os.path.join("C:\\", "pythonscript", "Imagens", assunto, imagem)
+        )
+        grafico.save(os.path.join(pastaSalva, imagem[:-4] + "Graf" + imagem[-4:]))
+    print(gc.collect())
+
+    # implementar rotação, corte, e resize
 
 
-# implementar rotação, corte, e resize
+if __name__ == "__main__":
+    main()

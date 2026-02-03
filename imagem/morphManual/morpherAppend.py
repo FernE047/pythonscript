@@ -32,7 +32,9 @@ def makeFrame(n,total,initial,final):
     imagemFinal.close()
     frame.close()
 
-if __name__ == "__main__":
+
+
+def main() -> None:
     ultimaCamadaFeita = len(os.listdir("C:\\pythonscript\\imagem\\morphManual\\partesConfig"))
     imagemInicial = pypdn.read("inicial.pdn")
     imagemFinal = pypdn.read("final.pdn")
@@ -44,3 +46,7 @@ if __name__ == "__main__":
     quantiaFrames = len(os.listdir("C:\\pythonscript\\imagem\\morphManual\\frames"))-2
     for a in range(quantiaFrames):
         makeFrame(a,quantiaFrames,ultimaCamadaFeita+1,quantiaPartes)
+
+
+if __name__ == "__main__":
+    main()

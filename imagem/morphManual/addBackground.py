@@ -29,7 +29,8 @@ def makeBackground(nome):
     print("back terminado")
     return imagem
 
-if __name__ == "__main__":
+
+def main() -> None:
     backInicial = makeBackground("inicial")#Image.open("C:\\pythonscript\\imagem\\morphManual\\backgroundinicial.png")#
     backFinal = makeBackground("final")#Image.open("C:\\pythonscript\\imagem\\morphManual\\backgroundfinal.png")#
     frames = ["C:\\pythonscript\\imagem\\morphManual\\frames\\"+a for a in os.listdir("C:\\pythonscript\\imagem\\morphManual\\frames")]
@@ -49,3 +50,7 @@ if __name__ == "__main__":
         print(n)
         frame.save(frameName)
         frame.close()
+
+
+if __name__ == "__main__":
+    main()

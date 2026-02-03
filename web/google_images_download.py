@@ -389,17 +389,23 @@ def bulk_download(search_keyword,suffix_keywords,limit,main_directory,delay_time
     return errorCount
 
 #------------- Main Program -------------#
-if args.single_image:       #Download Single Image using a URL
-    single_image()
-else:                       # or download multiple images based on keywords/keyphrase search
-    t0 = time.time()  # start the timer
-    errorCount = bulk_download(search_keyword,suffix_keywords,limit,main_directory,delay_time)
 
-    print("\nEverything downloaded!")
-    print("Total Errors: " + str(errorCount) + "\n")
-    t1 = time.time()  # stop the timer
-    total_time = t1 - t0  # Calculating the total time required to crawl, find and download all the links of 60,000 images
-    print("Total time taken: " + str(total_time) + " Seconds")
-#--------End of the main program --------#
 
-# In[ ]:
+def main() -> None:
+    if args.single_image:       #Download Single Image using a URL
+        single_image()
+    else:                       # or download multiple images based on keywords/keyphrase search
+        t0 = time.time()  # start the timer
+        errorCount = bulk_download(search_keyword,suffix_keywords,limit,main_directory,delay_time)
+
+        print("\nEverything downloaded!")
+        print("Total Errors: " + str(errorCount) + "\n")
+        t1 = time.time()  # stop the timer
+        total_time = t1 - t0  # Calculating the total time required to crawl, find and download all the links of 60,000 images
+        print("Total time taken: " + str(total_time) + " Seconds")
+    #--------End of the main program --------#
+
+    # In[ ]:
+
+if __name__ == "__main__":
+    main()

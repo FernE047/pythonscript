@@ -44,14 +44,20 @@ def labirintSolver(labirint,coord,path):
                 break
             path.pop()
 
-BRANCO = (255,255,255,255)
-PRETO = (0,0,0,255)
-VERMELHO = (255,0,0,255)
-imagem = Image.open(f"pureLabirint//labirint{234:04d}.png")
-largura,altura = imagem.size
-FINAL = (largura-2,altura-2)
-INICIAL = (1,1)
-path = [8]
-labirintSolver(imagem,INICIAL,path)
-imagem.save(f"labirintSolved{len(listdir("pureLabirint")):03d}.png")
-imagem.close()
+
+def main() -> None:
+    BRANCO = (255,255,255,255)
+    PRETO = (0,0,0,255)
+    VERMELHO = (255,0,0,255)
+    imagem = Image.open(f"pureLabirint//labirint{234:04d}.png")
+    largura,altura = imagem.size
+    FINAL = (largura-2,altura-2)
+    INICIAL = (1,1)
+    path = [8]
+    labirintSolver(imagem,INICIAL,path)
+    imagem.save(f"labirintSolved{len(listdir("pureLabirint")):03d}.png")
+    imagem.close()
+
+
+if __name__ == "__main__":
+    main()

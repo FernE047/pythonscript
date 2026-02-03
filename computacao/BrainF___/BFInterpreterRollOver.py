@@ -66,7 +66,13 @@ def decrement_and_wrap(current_value: int) -> int:
     return current_value - 1
 
 
-def execute_script(program_script:str, memory_tape:list[int], config: Config, read_index:int=0, cursor:int=0) -> tuple[int,int]|list[int]:
+def execute_script(
+    program_script: str,
+    memory_tape: list[int],
+    config: Config,
+    read_index: int = 0,
+    cursor: int = 0,
+) -> tuple[int, int] | list[int]:
     while True:
         char = program_script[read_index]
         if config.debug_final:
@@ -122,25 +128,30 @@ def execute_script(program_script:str, memory_tape:list[int], config: Config, re
     return memory_tape
 
 
-config = Config()
-while True:
-    print("enter the brainfuck program")
-    programa = input()
-    if programa == "0":
-        break
-    if programa.find("DEBUG") != -1:
-        config.update_debug(programa)
-        continue
-    open_bracket_count = count_open_bracket(programa)
-    if open_bracket_count == 0:
-        memory_tape = execute_script(programa, [0], config)
-        if config.debug_final:
-            print("")
-            print(programa)
-            print(memory_tape)
-            print(f"steps: {config.steps}")
-        continue
-    if open_bracket_count < 0:
-        print(f"missing {-open_bracket_count} bracket: [")
-        continue
-    print(f"missing {open_bracket_count} bracket: ]")
+def main() -> None:
+    config = Config()
+    while True:
+        print("enter the brainfuck program")
+        programa = input()
+        if programa == "0":
+            break
+        if programa.find("DEBUG") != -1:
+            config.update_debug(programa)
+            continue
+        open_bracket_count = count_open_bracket(programa)
+        if open_bracket_count == 0:
+            memory_tape = execute_script(programa, [0], config)
+            if config.debug_final:
+                print("")
+                print(programa)
+                print(memory_tape)
+                print(f"steps: {config.steps}")
+            continue
+        if open_bracket_count < 0:
+            print(f"missing {-open_bracket_count} bracket: [")
+            continue
+        print(f"missing {open_bracket_count} bracket: ]")
+
+
+if __name__ == "__main__":
+    main()
