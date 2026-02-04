@@ -33,6 +33,7 @@ SudokuGridData = list[list[CellData]]
 BLOCK_SIZE = 3
 BOARD_LENGTH = 3 * BLOCK_SIZE
 BOARD_SIZE = BOARD_LENGTH * BOARD_LENGTH
+BLANK_SPACES = (" ", "\n", "\t")
 
 
 
@@ -113,9 +114,9 @@ def main_menu() -> menuModeOptions:
 
 
 def convert_raw_sudoku(raw_sudoku: str) -> list[CellData]:
-    for espaco in [" ", "\n", "\t"]:
-        if espaco in raw_sudoku:
-            raw_sudoku = raw_sudoku.replace(espaco, "")
+    for space in BLANK_SPACES:
+        if space in raw_sudoku:
+            raw_sudoku = raw_sudoku.replace(space, "")
     return cast(list[CellData], list(raw_sudoku))
 
 

@@ -12,6 +12,12 @@ class BoardData(TypedDict):
     empty_cells: list[CoordData]
 
 
+BLOCK_SIZE = 3
+BOARD_LENGTH = 3 * BLOCK_SIZE
+BOARD_SIZE = BOARD_LENGTH * BOARD_LENGTH
+BLANK_SPACES = (" ", "\n", "\t")
+
+
 class TimeManager:
     def __init__(self) -> None:
         self.start_time = 0.0
@@ -73,9 +79,9 @@ class CounterManager:
 
 
 def convert_raw_sudoku(raw_sudoku: str) -> list[CellData]:
-    for espaco in [" ", "\n", "\t"]:
-        if espaco in raw_sudoku:
-            raw_sudoku = raw_sudoku.replace(espaco, "")
+    for space in BLANK_SPACES:
+        if space in raw_sudoku:
+            raw_sudoku = raw_sudoku.replace(space, "")
     parsed_sudoku: list[int] = []
     for char in raw_sudoku:
         if char in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]:
@@ -87,14 +93,14 @@ def create_sudoku_board(sudoku_board_raw: str) -> BoardData:
     grid: SudokuGridData = []
     empty_cells: list[CoordData] = []
     board: BoardData = {"grid": grid, "empty_cells": empty_cells}
-    for _ in range(9):
-        board["grid"].append([0, 0, 0, 0, 0, 0, 0, 0, 0])
+    for _ in range(BOARD_LENGTH):
+        board["grid"].append([0 for _ in range(BOARD_LENGTH)])
     parsed_sudoku_input = convert_raw_sudoku(sudoku_board_raw)
     for xy, value in enumerate(parsed_sudoku_input):
-        if xy > 80:
+        if xy > BOARD_SIZE - 1:
             break
-        y = xy // 9
-        x = xy % 9
+        y = xy // BOARD_LENGTH
+        x = xy % BOARD_LENGTH
         board["grid"][y][x] = value
         if value == 0:
             board["empty_cells"] = [(y, x)] + board["empty_cells"]
@@ -102,43 +108,43 @@ def create_sudoku_board(sudoku_board_raw: str) -> BoardData:
 
 
 def is_value_valid(board: BoardData, y: int, x: int, cell_value: CellData) -> bool:
-    block_y = y // 3
-    block_x = x // 3
-    for y_offset in range(3):
-        for x_offset in range(3):
+    block_y = y // BLOCK_SIZE
+    block_x = x // BLOCK_SIZE
+    for y_offset in range(BLOCK_SIZE):
+        for x_offset in range(BLOCK_SIZE):
             if (
-                board["grid"][3 * block_y + y_offset][3 * block_x + x_offset]
+                board["grid"][BLOCK_SIZE * block_y + y_offset][BLOCK_SIZE * block_x + x_offset]
                 == cell_value
             ):
                 return False
     if block_y == 0:
-        for y_offset in range(3, 9):
+        for y_offset in range(BLOCK_SIZE, BOARD_LENGTH):
             if board["grid"][y_offset][x] == cell_value:
                 return False
-    elif block_y == 2:
-        for y_offset in range(0, 6):
+    elif block_y == BLOCK_SIZE - 1:
+        for y_offset in range(0, 2 * BLOCK_SIZE):
             if board["grid"][y_offset][x] == cell_value:
                 return False
     else:
-        for y_offset in range(3):
+        for y_offset in range(BLOCK_SIZE):
             if board["grid"][y_offset][x] == cell_value:
                 return False
-        for y_offset in range(6, 9):
+        for y_offset in range(2 * BLOCK_SIZE, BOARD_LENGTH):
             if board["grid"][y_offset][x] == cell_value:
                 return False
     if block_x == 0:
-        for x_offset in range(3, 9):
+        for x_offset in range(BLOCK_SIZE, BOARD_LENGTH):
             if board["grid"][y][x_offset] == cell_value:
                 return False
-    elif block_x == 2:
-        for x_offset in range(0, 6):
+    elif block_x == BLOCK_SIZE - 1:
+        for x_offset in range(0, 2 * BLOCK_SIZE):
             if board["grid"][y][x_offset] == cell_value:
                 return False
     else:
-        for x_offset in range(3):
+        for x_offset in range(BLOCK_SIZE):
             if board["grid"][y][x_offset] == cell_value:
                 return False
-        for x_offset in range(6, 9):
+        for x_offset in range(2 * BLOCK_SIZE, BOARD_LENGTH):
             if board["grid"][y][x_offset] == cell_value:
                 return False
     return True
@@ -157,9 +163,9 @@ def set_cell(board: BoardData, y: int, x: int, cell_value: CellData) -> bool:
 
 
 def show(board: BoardData) -> None:
-    for y in range(9):
+    for y in range(BOARD_LENGTH):
         row = ""
-        for x in range(9):
+        for x in range(BOARD_LENGTH):
             row += str(board["grid"][y][x])
         print()
 
@@ -172,7 +178,7 @@ def solve_sudoku_board(
     empty_cell = board["empty_cells"].pop()
     if not empty_cell:
         return None
-    for value in range(1, 10):
+    for value in range(1, BOARD_LENGTH + 1):
         cell_value = cast(CellData, value)
         if not set_cell(board, empty_cell[0], empty_cell[1], cell_value):
             continue

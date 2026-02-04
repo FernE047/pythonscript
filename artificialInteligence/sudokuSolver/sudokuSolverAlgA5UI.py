@@ -30,6 +30,11 @@ SudokuGridData = list[list[CellData]]
 CoordData = tuple[int, int]
 BoardData = tuple[SudokuGridData, list[CoordData]]
 
+BLOCK_SIZE = 3
+BOARD_LENGTH = 3 * BLOCK_SIZE
+BOARD_SIZE = BOARD_LENGTH * BOARD_LENGTH
+BLANK_SPACES = (" ", "\n", "\t")
+
 
 class TimeManager:
     def __init__(self) -> None:
@@ -108,9 +113,9 @@ def main_menu() -> menuModeOptions:
 
 
 def create_sudoku_board_from_input() -> BoardData:
-    sudoku: list[CellData] = [0 for _ in range(81)]
+    sudoku: list[CellData] = [0 for _ in range(BOARD_SIZE)]
     filled_cells_count = 0
-    while filled_cells_count < 81:
+    while filled_cells_count < BOARD_SIZE:
         user_input = input("")
         for char in user_input:
             if char == "p":
@@ -132,17 +137,17 @@ def create_sudoku_board_from_input() -> BoardData:
                 pass  # apagar um quadrante
             elif char == "o":
                 print("entrada completamente apagada")
-                sudoku = [0 for _ in range(81)]
+                sudoku = [0 for _ in range(BOARD_SIZE)]
                 filled_cells_count = 0
             elif char == "s":
                 row = ""
-                for a in range(81):
+                for a in range(BOARD_SIZE):
                     row += str(sudoku[a])
-                    if a % 9 == 8:
+                    if a % BOARD_LENGTH == BOARD_LENGTH - 1:
                         print(row)
                         row = ""
             elif char == "e":
-                filled_cells_count = 81
+                filled_cells_count = BOARD_SIZE
             elif char in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]:
                 sudoku[filled_cells_count] = cast(CellData, int(char))
                 print(f"element {char} added")
@@ -158,25 +163,25 @@ def create_sudoku_board_from_input() -> BoardData:
 
 
 def print_board(board: BoardData) -> None:
-    for y in range(9):
-        if (y != 0) and (y % 3 == 0):
+    for y in range(BOARD_LENGTH):
+        if (y != 0) and (y % BLOCK_SIZE == 0):
             print("---+---+---")
         row = ""
-        for x in range(0, 3):
+        for x in range(0, BLOCK_SIZE):
             row += str(board[y][x])
         row += "|"
-        for x in range(3, 6):
+        for x in range(BLOCK_SIZE, 2 * BLOCK_SIZE):
             row += str(board[y][x])
         row += "|"
-        for x in range(6, 9):
+        for x in range(2 * BLOCK_SIZE, BOARD_LENGTH):
             row += str(board[y][x])
         print(row)
 
 
 def convert_raw_sudoku(raw_sudoku: str) -> list[CellData]:
-    for espaco in [" ", "\n", "\t"]:
-        if espaco in raw_sudoku:
-            raw_sudoku = raw_sudoku.replace(espaco, "")
+    for space in BLANK_SPACES:
+        if space in raw_sudoku:
+            raw_sudoku = raw_sudoku.replace(space, "")
     parsed_sudoku: list[int] = []
     for char in raw_sudoku:
         if char in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]:
@@ -188,14 +193,14 @@ def create_sudoku_board(sudoku_board_raw: str) -> BoardData:
     grid: SudokuGridData = []
     empty_cells: list[CoordData] = []
     board: BoardData = (grid, empty_cells)
-    for _ in range(9):
-        board[0].append([0, 0, 0, 0, 0, 0, 0, 0, 0])
+    for _ in range(BOARD_LENGTH):
+        board[0].append([0 for _ in range(BOARD_LENGTH)])
     parsed_sudoku_input = convert_raw_sudoku(sudoku_board_raw)
     for xy, value in enumerate(parsed_sudoku_input):
-        if xy > 80:
+        if xy > BOARD_SIZE - 1:
             break
-        y = xy // 9
-        x = xy % 9
+        y = xy // BOARD_LENGTH
+        x = xy % BOARD_LENGTH
         board[0][y][x] = value
         if value == 0:
             board[1].append((y, x))
@@ -203,49 +208,49 @@ def create_sudoku_board(sudoku_board_raw: str) -> BoardData:
 
 
 def find_valid_candidates(board: BoardData, y: int, x: int) -> list[CellData]:
-    block_y = y // 3
-    block_x = x // 3
+    block_y = y // BLOCK_SIZE
+    block_x = x // BLOCK_SIZE
     possible_values: list[CellData] = [1, 2, 3, 4, 5, 6, 7, 8, 9]
     board[0][y][x] = 0
-    for y_offset in range(3):
-        for x_offset in range(3):
+    for y_offset in range(BLOCK_SIZE):
+        for x_offset in range(BLOCK_SIZE):
             if (
-                board[0][3 * block_y + y_offset][3 * block_x + x_offset]
+                board[0][BLOCK_SIZE * block_y + y_offset][BLOCK_SIZE * block_x + x_offset]
                 in possible_values
             ):
                 possible_values.remove(
-                    board[0][3 * block_y + y_offset][3 * block_x + x_offset]
+                    board[0][BLOCK_SIZE * block_y + y_offset][BLOCK_SIZE * block_x + x_offset]
                 )
     if block_y == 0:
-        for y_offset in range(3, 9):
+        for y_offset in range(BLOCK_SIZE, BOARD_LENGTH):
             if board[0][y_offset][x] in possible_values:
                 possible_values.remove(board[0][y_offset][x])
-    elif block_y == 2:
-        for y_offset in range(0, 6):
+    elif block_y == BLOCK_SIZE - 1:
+        for y_offset in range(0, 2 * BLOCK_SIZE):
             if board[0][y_offset][x] in possible_values:
                 possible_values.remove(board[0][y_offset][x])
     else:
-        for y_offset in range(3):
+        for y_offset in range(BLOCK_SIZE):
             if board[0][y_offset][x] in possible_values:
                 possible_values.remove(board[0][y_offset][x])
-        for y_offset in range(6, 9):
+        for y_offset in range(2 * BLOCK_SIZE, BOARD_LENGTH):
             if board[0][y_offset][x] in possible_values:
                 possible_values.remove(board[0][y_offset][x])
     if not (possible_values):
         return possible_values
     if block_x == 0:
-        for x_offset in range(3, 9):
+        for x_offset in range(BLOCK_SIZE, BOARD_LENGTH):
             if board[0][y][x_offset] in possible_values:
                 possible_values.remove(board[0][y][x_offset])
-    elif block_x == 2:
-        for x_offset in range(0, 6):
+    elif block_x == BLOCK_SIZE - 1:
+        for x_offset in range(0, 2 * BLOCK_SIZE):
             if board[0][y][x_offset] in possible_values:
                 possible_values.remove(board[0][y][x_offset])
     else:
-        for x_offset in range(3):
+        for x_offset in range(BLOCK_SIZE):
             if board[0][y][x_offset] in possible_values:
                 possible_values.remove(board[0][y][x_offset])
-        for x_offset in range(6, 9):
+        for x_offset in range(2 * BLOCK_SIZE, BOARD_LENGTH):
             if board[0][y][x_offset] in possible_values:
                 possible_values.remove(board[0][y][x_offset])
     return possible_values

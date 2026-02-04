@@ -29,6 +29,11 @@ CellData = Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 SudokuGridData = list[list[CellData]]
 CoordData = tuple[int, int]
 
+BLOCK_SIZE = 3
+BOARD_LENGTH = 3 * BLOCK_SIZE
+BOARD_SIZE = BOARD_LENGTH * BOARD_LENGTH
+BLANK_SPACES = (" ", "\n", "\t")
+
 
 class TimeManager:
     def __init__(self) -> None:
@@ -91,9 +96,9 @@ class CounterManager:
 
 
 def convert_raw_sudoku(raw_sudoku: str) -> list[CellData]:
-    for espaco in [" ", "\n", "\t"]:
-        if espaco in raw_sudoku:
-            raw_sudoku = raw_sudoku.replace(espaco, "")
+    for space in BLANK_SPACES:
+        if space in raw_sudoku:
+            raw_sudoku = raw_sudoku.replace(space, "")
     parsed_sudoku: list[int] = []
     for char in raw_sudoku:
         if char in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]:
@@ -121,38 +126,38 @@ class SudokuBoard:
     def __init__(self, sudoku_board_raw: str | None = None) -> None:
         self.grid: SudokuGridData = []
         self.empty_cells: list[CoordData] = []
-        for y in range(9):
-            self.grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
+        for y in range(BOARD_LENGTH):
+            self.grid.append([0 for _ in range(BOARD_LENGTH)])
         if sudoku_board_raw is None:
-            self.empty_cells = [(0, x) for x in range(9, 0, -1)] + self.empty_cells
+            self.empty_cells = [(0, x) for x in range(BOARD_LENGTH, 0, -1)] + self.empty_cells
             return
         parsed_sudoku_input = convert_raw_sudoku(sudoku_board_raw)
         for xy, value in enumerate(parsed_sudoku_input):
-            if xy > 80:
+            if xy > BOARD_SIZE - 1:
                 break
-            y = xy // 9
-            x = xy % 9
+            y = xy // BOARD_LENGTH
+            x = xy % BOARD_LENGTH
             self.set_cell(y, x, value)
             if value == 0:
                 self.empty_cells = [(y, x)] + self.empty_cells
 
     def is_value_valid_in_block(self, y: int, x: int, cell_value: CellData) -> bool:
-        block_y = y // 3
-        block_x = x // 3
-        for y in range(3):
-            for x in range(3):
-                if self.grid[3 * block_y + y][3 * block_x + x] == cell_value:
+        block_y = y // BLOCK_SIZE
+        block_x = x // BLOCK_SIZE
+        for y in range(BLOCK_SIZE):
+            for x in range(BLOCK_SIZE):
+                if self.grid[BLOCK_SIZE * block_y + y][BLOCK_SIZE * block_x + x] == cell_value:
                     return False
         return True
 
     def is_value_valid_in_row(self, y: int, cell_value: CellData) -> bool:
-        for x in range(9):
+        for x in range(BOARD_LENGTH):
             if self.grid[y][x] == cell_value:
                 return False
         return True
 
     def is_value_valid_in_column(self, x: int, cell_value: CellData) -> bool:
-        for y in range(9):
+        for y in range(BOARD_LENGTH):
             if self.grid[y][x] == cell_value:
                 return False
         return True
@@ -181,9 +186,9 @@ class SudokuBoard:
         self.empty_cells.append(empty_coord)
 
     def show(self) -> None:
-        for y in range(9):
+        for y in range(BOARD_LENGTH):
             row = ""
-            for x in range(9):
+            for x in range(BOARD_LENGTH):
                 row += str(self.grid[y][x])
             print(row)
 
@@ -196,19 +201,19 @@ def create_sudoku_board(mode: Literal[1, 2]) -> SudokuBoard:
         return sudoku_board
     sudoku_board = SudokuBoard()
     filled_cells_count = 0
-    while filled_cells_count < 81:
+    while filled_cells_count < BOARD_SIZE:
         user_input = input("")
         row_input: list[userInputOptions] = cast(
             list[userInputOptions], user_input.strip().split("")
         )
         for char in row_input:
-            y = filled_cells_count // 9
-            x = filled_cells_count % 9
+            y = filled_cells_count // BOARD_LENGTH
+            x = filled_cells_count % BOARD_LENGTH
             if char == "p":
                 if filled_cells_count > 0:
                     filled_cells_count -= 1
-                    y = filled_cells_count // 9
-                    x = filled_cells_count % 9
+                    y = filled_cells_count // BOARD_LENGTH
+                    x = filled_cells_count % BOARD_LENGTH
                     board_cell = sudoku_board.grid[y][x]
                     print(f"number {board_cell} deleted")
                     sudoku_board.grid[y][x] = 0
@@ -255,7 +260,7 @@ def solve_sudoku_board(
     sudoku_board.empty_cells = sudoku_board.empty_cells[0:-1]
     if not empty_cell:
         return None
-    for value in range(1, 10):
+    for value in range(1, BOARD_LENGTH + 1):
         cell_value = cast(CellData, value)
         if not sudoku_board.set_cell(empty_cell[0], empty_cell[1], cell_value):
             continue
