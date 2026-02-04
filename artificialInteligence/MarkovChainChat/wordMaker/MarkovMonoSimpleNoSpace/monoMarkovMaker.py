@@ -1,11 +1,13 @@
 from random import randint
 
+WORDS_GENERATED = 1000
+EMPTY_CHAR = "¨"
 
 def generate_char(filename: str, previous_chars: list[str] | None = None) -> str:
     if previous_chars is None:
         previous_chars = []
     while len(previous_chars) != 2:
-        previous_chars = ["¨"] + previous_chars
+        previous_chars = [EMPTY_CHAR] + previous_chars
     with open(filename, "r", encoding="UTF-8") as file:
         line = file.readline()
         character_weights: dict[str, int] = {}
@@ -29,7 +31,7 @@ def generate_char(filename: str, previous_chars: list[str] | None = None) -> str
 def generate_word(filename: str) -> str:
     generated_chars: list[str] = []
     char = generate_char(filename)
-    while char != "¨":
+    while char != EMPTY_CHAR:
         generated_chars.append(char)
         char = generate_char(filename, generated_chars[-2:])
     return "".join(generated_chars)
@@ -52,7 +54,7 @@ def get_filename() -> str:
 
 def main() -> None:
     filename = get_filename()
-    for _ in range(1000):
+    for _ in range(WORDS_GENERATED):
         print(generate_word(f"{filename}/chain.txt"))
 
 

@@ -1,5 +1,6 @@
 import os
 
+EMPTY_CHAR = "¨"
 
 def rename_file(source_filename: str, destination_filename: str) -> None:
     with (
@@ -48,15 +49,15 @@ def faz_chain(text: str, is_title: bool = False) -> None:
         if n == 0:
             update_chain_file(n, [word], is_title)
             if length == 1:
-                update_chain_file(n + 1, [word, "¨"], is_title)
+                update_chain_file(n + 1, [word, EMPTY_CHAR], is_title)
                 return
         if length > 1:
             if n >= length - 1:
-                next_word = "¨"
+                next_word = EMPTY_CHAR
             else:
                 next_word = words[n + 1]
             update_chain_file(n + 1, [word, next_word], is_title)
-            if next_word == "¨":
+            if next_word == EMPTY_CHAR:
                 return
 
 

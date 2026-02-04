@@ -3,6 +3,9 @@ from typing import Any
 from numpy.random import choice
 
 IS_DEBUG = False
+WORDS_GENERATED = 1000
+EMPTY_CHAR = "¨"
+
 
 
 def print_debug(*args: Any) -> None:
@@ -22,13 +25,12 @@ def generate_char(
                 if index == 0:
                     char = line[2]
                     frequency = int(line[4:-1])
+                elif previous_char == line[2]:
+                    char = line[4]
+                    frequency = int(line[6:-1])
                 else:
-                    if previous_char == line[2]:
-                        char = line[4]
-                        frequency = int(line[6:-1])
-                    else:
-                        line = file.readline()
-                        continue
+                    line = file.readline()
+                    continue
                 character_weights[char] = frequency
             line = file.readline()
         print_debug(previous_char, character_weights, index, space_index)
@@ -45,7 +47,7 @@ def generate_char(
 def generate_word(filename: str, space_index: int) -> str:
     generated_word = ""
     char = generate_char(filename, 0, space_index)
-    while char != "¨":
+    while char != EMPTY_CHAR:
         generated_word += char
         char = generate_char(filename, len(generated_word), space_index, char)
     return generated_word
@@ -92,7 +94,7 @@ def main() -> None:
             word_occurrence_map.append(int(linha[-1]))
             linha = markov_chain_file.readline()[:-1].split()
     word_frequencies_map = normalize_statistics(word_occurrence_map)
-    for _ in range(1000):
+    for _ in range(WORDS_GENERATED):
         generated_words: list[str] = []
         word_quantity = choice(
             [word_index for word_index in range(1, len(word_frequencies_map) + 1)],

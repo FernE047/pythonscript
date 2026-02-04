@@ -1,5 +1,6 @@
 import os
 
+EMPTY_CHAR = "¨"
 
 def rename_file(source_filename: str, destination_filename: str) -> None:
     with (
@@ -47,7 +48,7 @@ def main() -> None:
                 character = message[index]
                 if index == 0:
                     if character == "\n":
-                        character = "¨"
+                        character = EMPTY_CHAR
                     if character == "<":
                         character = "~"
                         update_chain_file(index, character)
@@ -58,11 +59,11 @@ def main() -> None:
                     try:
                         next_character = message[index + 1]
                     except IndexError:
-                        next_character = "¨"
+                        next_character = EMPTY_CHAR
                     if next_character == "\n":
-                        next_character = "¨"
+                        next_character = EMPTY_CHAR
                     update_chain_file(index + 1, character + " " + next_character)
-                    if next_character == "¨":
+                    if next_character == EMPTY_CHAR:
                         break
 
 

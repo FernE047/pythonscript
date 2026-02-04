@@ -1,5 +1,6 @@
 from random import randint
 
+EMPTY_CHAR = "¨"
 
 def fetch_character_from_chain(index: int, previous_character: str = "") -> str:
     with open(f"chain/{index:03d}.txt", "r", encoding="utf-8") as file:
@@ -31,7 +32,7 @@ def fetch_character_from_chain(index: int, previous_character: str = "") -> str:
 def generate_message() -> str:
     message = ""
     letter = fetch_character_from_chain(0)
-    while letter != "¨":
+    while letter != EMPTY_CHAR:
         message += letter
         letter = fetch_character_from_chain(len(message), letter)
     return message

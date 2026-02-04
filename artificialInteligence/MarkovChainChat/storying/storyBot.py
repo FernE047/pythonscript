@@ -3,7 +3,7 @@ from random import randint
 
 DIRECTORY = "./FanficAnime/"
 TAMANHO = 1
-
+EMPTY_CHAR = "¨"
 
 def generate_initial_words(is_title: bool) -> list[str]:
     initial_word = generate_word(is_title)
@@ -36,12 +36,12 @@ def generate_initial_words(is_title: bool) -> list[str]:
             cumulative_sum += value
             if cumulative_sum >= chosen:
                 return [initial_word] + list(word_frequency_map.keys())[index].split()
-    return [initial_word, "¨"]
+    return [initial_word, EMPTY_CHAR]
 
 
 def generate_word(is_title: bool, previous_words: list[str] | None = None) -> str:
     if previous_words is None:
-        previous_words = ["¨" for _ in range(TAMANHO)]
+        previous_words = [EMPTY_CHAR for _ in range(TAMANHO)]
     if is_title:
         directory = f"{DIRECTORY}chainTitle/{TAMANHO}"
     else:
@@ -71,20 +71,20 @@ def generate_word(is_title: bool, previous_words: list[str] | None = None) -> st
             cumulative_sum += value
             if cumulative_sum >= chosen:
                 return list(word_frequency_map.keys())[index]
-    return "¨"
+    return EMPTY_CHAR
 
 
 def generate_text(is_title: bool) -> str:
     words: list[str] = []
     initial_words = generate_initial_words(is_title)
     for word in initial_words[:-1]:
-        if word == "¨":
+        if word == EMPTY_CHAR:
             return " ".join(words)
         words.append(word)
         print(word, end=" ")
     word = initial_words[-1]
     index = 1
-    while word != "¨":
+    while word != EMPTY_CHAR:
         words.append(word)
         print(word, end=" ")
         word = generate_word(is_title, words[index : index + TAMANHO])

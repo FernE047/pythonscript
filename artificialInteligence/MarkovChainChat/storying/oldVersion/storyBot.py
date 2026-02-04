@@ -1,5 +1,6 @@
 from random import randint
 
+EMPTY_CHAR = "¨"
 
 def generate_word(index: int, is_title: bool, previous_word: str = "") -> str:
     if is_title:
@@ -31,13 +32,13 @@ def generate_word(index: int, is_title: bool, previous_word: str = "") -> str:
             sum_values += value
             if sum_values >= chosen:
                 return list(word_frequency_map.keys())[index]
-    return "¨"
+    return EMPTY_CHAR
 
 
 def generate_text(is_title: bool) -> str:
     texto: list[str] = []
     word = generate_word(0, is_title)
-    while word != "¨":
+    while word != EMPTY_CHAR:
         texto.append(word)
         word = generate_word(len(texto), is_title, word)
     return " ".join(texto)

@@ -6,6 +6,9 @@ from typing import cast
 ChainData = tuple[str, str, str]
 
 
+EMPTY_CHAR = "¨"
+
+
 def format_elapsed_time(seconds: float) -> str:
     if seconds < 0:
         seconds = -seconds
@@ -123,26 +126,26 @@ def main() -> None:
                 for index in range(word_length):
                     current_character = word[index]
                     if index == 0:
-                        update_chain_values.append(("¨", "¨", current_character))
+                        update_chain_values.append((EMPTY_CHAR, EMPTY_CHAR, current_character))
                         if word_length == 1:
-                            update_chain_values.append(("¨", current_character, "¨"))
+                            update_chain_values.append((EMPTY_CHAR, current_character, EMPTY_CHAR))
                             break
                         else:
                             next_character = word[index + 1]
                             update_chain_values.append(
-                                ("¨", current_character, next_character)
+                                (EMPTY_CHAR, current_character, next_character)
                             )
                             previous_character = current_character
                         continue
                     if word_length > 1:
                         if index >= word_length - 1:
-                            next_character = "¨"
+                            next_character = EMPTY_CHAR
                         else:
                             next_character = word[index + 1]
                         update_chain_values.append(
                             (previous_character, current_character, next_character)
                         )
-                        if next_character == "¨":
+                        if next_character == EMPTY_CHAR:
                             break
                     previous_character = current_character
             if count == 100:

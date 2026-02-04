@@ -1,5 +1,7 @@
 import os
 
+EMPTY_CHAR = "¨"
+
 
 def rename_file(source_filename: str, destination_filename: str) -> None:
     with (
@@ -46,15 +48,15 @@ def main() -> None:
                 if index == 0:
                     update_chain_file(index, [word])
                     if word_count == 1:
-                        update_chain_file(index + 1, [word, "¨"])
+                        update_chain_file(index + 1, [word, EMPTY_CHAR])
                         break
                 if word_count > 1:
                     if index >= word_count - 1:
-                        next_word = "¨"
+                        next_word = EMPTY_CHAR
                     else:
                         next_word = words[index + 1]
                     update_chain_file(index + 1, [word, next_word])
-                    if next_word == "¨":
+                    if next_word == EMPTY_CHAR:
                         break
             message = file.readline()
 

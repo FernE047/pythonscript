@@ -4,6 +4,9 @@ from typing import cast
 ChainData = tuple[str, str]
 
 
+EMPTY_CHAR = "¨"
+
+
 def rename_file(source_filename: str, destination_filename: str) -> None:
     with (
         open(source_filename, "r", encoding="utf-8") as source_file,
@@ -71,17 +74,17 @@ def main() -> None:
                 for char_index in range(word_length):
                     char = word[char_index]
                     if char_index == 0:
-                        update_chain(filename, ("¨", char), word_index)
+                        update_chain(filename, (EMPTY_CHAR, char), word_index)
                         if word_length == 1:
-                            update_chain(filename, (char, "¨"), word_index)
+                            update_chain(filename, (char, EMPTY_CHAR), word_index)
                             break
                     if word_length > 1:
                         if char_index >= word_length - 1:
-                            next_char = "¨"
+                            next_char = EMPTY_CHAR
                         else:
                             next_char = word[char_index + 1]
                         update_chain(filename, (char, next_char), word_index)
-                        if next_char == "¨":
+                        if next_char == EMPTY_CHAR:
                             break
                 print(word_length)
             line = file.readline()[:-1]

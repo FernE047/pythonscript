@@ -4,6 +4,9 @@ from typing import cast
 ChainData = tuple[str, str, str]
 
 
+EMPTY_CHAR = "¨"
+
+
 def rename_file(source_filename: str, destination_filename: str) -> None:
     with (
         open(source_filename, "r", encoding="utf-8") as source_file,
@@ -73,15 +76,21 @@ def main() -> None:
                 previous_character = ""
                 for index, character in enumerate(word):
                     if index == 0:
-                        update_chain_file(filename, ("¨", "¨", character), word_index)
+                        update_chain_file(
+                            filename, (EMPTY_CHAR, EMPTY_CHAR, character), word_index
+                        )
                         if length == 1:
                             update_chain_file(
-                                filename, ("¨", character, "¨"), word_index
+                                filename,
+                                (EMPTY_CHAR, character, EMPTY_CHAR),
+                                word_index,
                             )
                             break
                         next_character = word[index + 1]
                         update_chain_file(
-                            filename, ("¨", character, next_character), word_index
+                            filename,
+                            (EMPTY_CHAR, character, next_character),
+                            word_index,
                         )
                         previous_character = character
                         continue
@@ -89,7 +98,7 @@ def main() -> None:
                         previous_character = character
                         continue
                     if index >= length - 1:
-                        next_character = "¨"
+                        next_character = EMPTY_CHAR
                     else:
                         next_character = word[index + 1]
                     update_chain_file(
@@ -97,7 +106,7 @@ def main() -> None:
                         (previous_character, character, next_character),
                         word_index,
                     )
-                    if next_character == "¨":
+                    if next_character == EMPTY_CHAR:
                         break
                     previous_character = character
             line = file.readline()[:-1]

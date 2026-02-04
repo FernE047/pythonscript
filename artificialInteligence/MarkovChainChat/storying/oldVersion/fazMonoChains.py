@@ -1,5 +1,6 @@
 import os
 
+EMPTY_CHAR = "¨"
 
 def rename_file(source_filename: str, destination_filename: str) -> None:
     with (
@@ -46,17 +47,17 @@ def generate_markov_chain(text: str, is_title: bool = False) -> None:
     for index in range(length):
         word = words[index]
         if index == 0:
-            update_mono_chain_file(["¨", word], is_title)
+            update_mono_chain_file([EMPTY_CHAR, word], is_title)
             if length == 1:
-                update_mono_chain_file([word, "¨"], is_title)
+                update_mono_chain_file([word, EMPTY_CHAR], is_title)
                 return
         if length > 1:
             if index >= length - 1:
-                next_word = "¨"
+                next_word = EMPTY_CHAR
             else:
                 next_word = words[index + 1]
             update_mono_chain_file([word, next_word], is_title)
-            if next_word == "¨":
+            if next_word == EMPTY_CHAR:
                 return
 
 

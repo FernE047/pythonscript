@@ -1,6 +1,7 @@
 from time import time
 import os
 
+EMPTY_CHAR = "¨"
 
 def format_elapsed_time(seconds: float) -> str:
     if seconds < 0:
@@ -81,13 +82,13 @@ def generate_markov_chain(text: str, chain_size: int, is_title: bool = False) ->
     words = text.split()
     text_length = len(words)
     pair_list: list[str] = []
-    word_combination = " ".join(["¨" for _ in range(chain_size)] + [words[0]])
+    word_combination = " ".join([EMPTY_CHAR for _ in range(chain_size)] + [words[0]])
     pair_list.append(word_combination)
     for index in range(text_length):
         terms = words[index : index + chain_size + 1]
         if len(terms) <= chain_size:
             while len(terms) <= chain_size:
-                terms.append("¨")
+                terms.append(EMPTY_CHAR)
             word_combination = " ".join(terms)
             pair_list.append(word_combination)
             break

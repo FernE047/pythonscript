@@ -4,6 +4,7 @@ from typing import cast
 
 ChainData = tuple[str, str]
 
+EMPTY_CHAR = "¨"
 
 def print_elapsed_time(seconds: float) -> None:
     if seconds < 0:
@@ -106,17 +107,17 @@ def main() -> None:
             for n in range(line_length):
                 current_character = line[n]
                 if n == 0:
-                    update_chain_values.append(("¨", current_character))
+                    update_chain_values.append((EMPTY_CHAR, current_character))
                     if line_length == 1:
-                        update_chain_values.append((current_character, "¨"))
+                        update_chain_values.append((current_character, EMPTY_CHAR))
                         break
                 if line_length > 1:
                     if n >= line_length - 1:
-                        next_character = "¨"
+                        next_character = EMPTY_CHAR
                     else:
                         next_character = line[n + 1]
                     update_chain_values.append((current_character, next_character))
-                    if next_character == "¨":
+                    if next_character == EMPTY_CHAR:
                         break
             update_chain_file(filename, update_chain_values)
             line = file.readline()[:-1]

@@ -1,6 +1,8 @@
 import os
 from time import time
 
+EMPTY_CHAR = "¨"
+
 
 def format_elapsed_time(seconds: float) -> str:
     if seconds < 0:
@@ -83,13 +85,13 @@ def generate_word_chain(text: str) -> list[str]:
     words = text.split()
     text_word_count = len(words)
     word_combinations: list[str] = []
-    phrase_chunk = " ".join(["¨" for _ in range(CHAINSIZE)] + [words[0]])
+    phrase_chunk = " ".join([EMPTY_CHAR for _ in range(CHAINSIZE)] + [words[0]])
     word_combinations.append(phrase_chunk)
     for n in range(text_word_count):
         phrase_segment = words[n : n + CHAINSIZE + 1]
         if len(phrase_segment) <= CHAINSIZE:
             while len(phrase_segment) <= CHAINSIZE:
-                phrase_segment.append("¨")
+                phrase_segment.append(EMPTY_CHAR)
             phrase_chunk = " ".join(phrase_segment)
             word_combinations.append(phrase_chunk)
             break

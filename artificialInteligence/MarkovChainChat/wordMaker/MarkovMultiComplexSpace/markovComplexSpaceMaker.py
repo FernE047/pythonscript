@@ -1,6 +1,9 @@
 from random import randint
 from numpy.random import choice
 
+WORDS_GENERATED = 1000
+EMPTY_CHAR = "¨"
+
 
 def generate_char(
     filename: str,
@@ -11,7 +14,7 @@ def generate_char(
     if previous_chars is None:
         previous_chars = []
     while len(previous_chars) != 2:
-        previous_chars = ["¨"] + previous_chars
+        previous_chars = [EMPTY_CHAR] + previous_chars
     with open(f"{filename}/{index:03d}.txt", encoding="utf-8") as file:
         line = file.readline()
         character_weights: dict[str, int] = {}
@@ -37,7 +40,7 @@ def generate_word(filename: str, space_index: int) -> str:
     word = ""
     previous_chars: list[str] = []
     char = generate_char(filename, 0, space_index, previous_chars)
-    while char != "¨":
+    while char != EMPTY_CHAR:
         word += char
         if len(previous_chars) == 2:
             previous_chars.pop(0)
@@ -87,7 +90,7 @@ def main() -> None:
             word_occurrence_map.append(int(linha[-1]))
             linha = markov_chain_file.readline()[:-1].split()
     word_frequencies_map = normalize_statistics(word_occurrence_map)
-    for _ in range(1000):
+    for _ in range(WORDS_GENERATED):
         generated_words: list[str] = []
         word_quantity = choice(
             [word_index for word_index in range(1, len(word_frequencies_map) + 1)],

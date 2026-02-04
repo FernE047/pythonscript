@@ -1,5 +1,7 @@
 import os
 
+EMPTY_CHAR = "¨"
+
 
 def rename_file(source_filename: str, destination_filename: str) -> None:
     with (
@@ -67,7 +69,7 @@ def main() -> None:
                     current_char = word[chair_index]
                     if chair_index == 0:
                         """if current_char == "\n":
-                            current_char = "¨" """
+                            current_char = EMPTY_CHAR """
                         update_chain(
                             filename,
                             chair_index,
@@ -77,21 +79,21 @@ def main() -> None:
                             update_chain(
                                 filename,
                                 chair_index + 1,
-                                " ".join([str(word_index), current_char, "¨"]),
+                                " ".join([str(word_index), current_char, EMPTY_CHAR]),
                             )
                     if word_length > 1:
                         try:
                             next_char = word[chair_index + 1]
                         except IndexError:
-                            next_char = "¨"
+                            next_char = EMPTY_CHAR
                         if next_char == "\n":
-                            next_char = "¨"
+                            next_char = EMPTY_CHAR
                         update_chain(
                             filename,
                             chair_index + 1,
                             " ".join([str(word_index), current_char, next_char]),
                         )
-                        if next_char == "¨":
+                        if next_char == EMPTY_CHAR:
                             break
                 print(word_length)
             line = file.readline()[:-1]

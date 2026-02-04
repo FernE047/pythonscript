@@ -4,6 +4,7 @@ from time import time
 
 AlterationsData = dict[int, list[list[str]]]
 
+EMPTY_CHAR = "¨"
 
 def print_elapsed_time(seconds: float) -> None:
     if seconds < 0:
@@ -123,12 +124,12 @@ def main() -> None:
                     try:
                         next_char = line[char_index + 1]
                     except IndexError:
-                        next_char = "¨"
+                        next_char = EMPTY_CHAR
                     if char_index + 1 not in alterations:
                         alterations[char_index + 1] = [[current_char, next_char]]
                     else:
                         alterations[char_index + 1].append([current_char, next_char])
-                    if next_char == "¨":
+                    if next_char == EMPTY_CHAR:
                         break
             if count == 100:
                 update_chain_files(filename, alterations)

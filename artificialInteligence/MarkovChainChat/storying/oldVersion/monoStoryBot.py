@@ -1,7 +1,8 @@
 from random import randint
 
+EMPTY_CHAR = "¨"
 
-def generate_word(is_title: bool, previous_word: str = "¨") -> str:
+def generate_word(is_title: bool, previous_word: str = EMPTY_CHAR) -> str:
     if is_title:
         directory = "monoChainTitle"
     else:
@@ -27,13 +28,13 @@ def generate_word(is_title: bool, previous_word: str = "¨") -> str:
             cumulative_sum += value
             if cumulative_sum >= chosen:
                 return list(word_frequency_map.keys())[index]
-    return "¨"
+    return EMPTY_CHAR
 
 
 def generate_text(is_title: bool) -> str:
     word_list: list[str] = []
     word = generate_word(is_title)
-    while word != "¨":
+    while word != EMPTY_CHAR:
         word_list.append(word)
         word = generate_word(is_title, word)
     return " ".join(word_list)

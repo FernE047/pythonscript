@@ -2,6 +2,7 @@ import os
 from collections import Counter
 from time import time
 
+EMPTY_CHAR = "¨"
 
 def print_elapsed_time(seconds: float) -> None:
     if seconds < 0:
@@ -125,9 +126,9 @@ def main() -> None:
                             alterations[char_index].append([current_char])
                         if word_length == 1:
                             if char_index + 1 not in alterations:
-                                alterations[char_index + 1] = [[current_char, "¨"]]
+                                alterations[char_index + 1] = [[current_char, EMPTY_CHAR]]
                             else:
-                                alterations[char_index + 1].append([current_char, "¨"])
+                                alterations[char_index + 1].append([current_char, EMPTY_CHAR])
                             break
                         else:
                             next_char = word[char_index + 1]
@@ -145,7 +146,7 @@ def main() -> None:
                         try:
                             next_char = word[char_index + 1]
                         except IndexError:
-                            next_char = "¨"
+                            next_char = EMPTY_CHAR
                         if char_index + 1 not in alterations:
                             alterations[char_index + 1] = [
                                 [previous_char, current_char, next_char]
@@ -154,7 +155,7 @@ def main() -> None:
                             alterations[char_index + 1].append(
                                 [previous_char, current_char, next_char]
                             )
-                        if next_char == "¨":
+                        if next_char == EMPTY_CHAR:
                             break
                     previous_char = current_char
                     print(word_length)

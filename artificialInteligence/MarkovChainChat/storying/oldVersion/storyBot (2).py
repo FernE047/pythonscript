@@ -1,5 +1,6 @@
 from random import randint
 
+EMPTY_CHAR = "¨"
 
 class ChainManager:
     def __init__(self, chain_size: int) -> None:
@@ -39,14 +40,14 @@ def generate_start_text(is_title: bool, chain_manager: ChainManager) -> list[str
             cumulative += value
             if cumulative >= chosen:
                 return [first_word] + list(word_frequency_map.keys())[index].split()
-    return ["¨" for _ in range(chain_manager.chain_size + 1)]
+    return [EMPTY_CHAR for _ in range(chain_manager.chain_size + 1)]
 
 
 def generate_word(
     is_title: bool, chain_manager: ChainManager, previous_words: list[str] | None = None
 ) -> str:
     if previous_words is None:
-        previous_words = ["¨" for _ in range(chain_manager.chain_size)]
+        previous_words = [EMPTY_CHAR for _ in range(chain_manager.chain_size)]
     chain_filename = chain_manager.get_chain_path(is_title)
     previous_phrase = " ".join(previous_words)
     with open(chain_filename, "r", encoding="utf-8") as file:
@@ -74,20 +75,20 @@ def generate_word(
             cumulative_frequency += value
             if cumulative_frequency >= chosen:
                 return list(word_frequency_map.keys())[index]
-    return "¨"
+    return EMPTY_CHAR
 
 
 def generate_text(is_title: bool, chain_manager: ChainManager) -> str:
     generated_words: list[str] = []
     initial_words = generate_start_text(is_title, chain_manager)
     for word in initial_words[:-1]:
-        if word == "¨":
+        if word == EMPTY_CHAR:
             return " ".join(generated_words)
         generated_words.append(word)
         print(word, end=" ")
     word = initial_words[-1]
     index = 1
-    while word != "¨":
+    while word != EMPTY_CHAR:
         generated_words.append(word)
         print(word, end=" ")
         word = generate_word(

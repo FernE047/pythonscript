@@ -1,5 +1,8 @@
 from random import randint
 
+WORDS_GENERATED = 1000
+EMPTY_CHAR = "¨"
+
 
 def generate_char(filename: str, index: int, previous_char: str = "") -> str:
     with open(f"{filename}/{index:03d}.txt", encoding="utf-8") as file:
@@ -31,7 +34,7 @@ def generate_char(filename: str, index: int, previous_char: str = "") -> str:
 def generate_word(filename: str) -> str:
     generated_word = ""
     char = generate_char(filename, 0)
-    while char != "¨":
+    while char != EMPTY_CHAR:
         generated_word += char
         char = generate_char(filename, len(generated_word), char)
     return generated_word
@@ -54,7 +57,7 @@ def get_filename() -> str:
 
 def main() -> None:
     filename = get_filename()
-    for index in range(1000):
+    for index in range(WORDS_GENERATED):
         print(f"{index} : {generate_word(filename)}")
 
 
