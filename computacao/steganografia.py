@@ -1,103 +1,117 @@
 import os
+from typing import List, LiteralString, cast
 from PIL import Image
 import copy
+from PIL.ImageFile import ImageFile
 
 
-def tamanhoUsavel(img):
-    largura, altura = img.size
-    if largura % 2 == 1:
-        largura -= 1
-    if altura % 2 == 1:
-        altura -= 1
-    return (largura, altura)
+def calculate_usable_dimensions(img: ImageFile) -> tuple[int, int]:
+    width, height = img.size
+    if width % 2 == 1:
+        width -= 1
+    if height % 2 == 1:
+        height -= 1
+    return (width, height)
 
 
-def possivelEsconder(imgEsconde, imgOriginal):
-    larguraO, alturaO = tamanhoUsavel(imgOriginal)
-    larguraE, alturaE = imgEsconde.size
-    if (alturaE <= alturaO / 2) and (larguraE <= larguraO / 2):
+def is_image_hidable(img_to_hide: ImageFile, img_source: ImageFile) -> bool:
+    width_src, height_src = calculate_usable_dimensions(img_source)
+    width_hide, height_hide = img_to_hide.size
+    if (height_hide <= height_src / 2) and (width_hide <= width_src / 2):
         return True
-    else:
-        print("imagem muito grande")
-        return False
+    print("image to hide is too big for the source image")
+    return False
 
 
-def abreImagem(mensagem):
-    global nomeApaga
-    imagem = False
-    while not (imagem):
+def open_image_by_name(directory: LiteralString, message: str) -> ImageFile:
+    while True:
         try:
-            print(mensagem)
-            nomeApaga = input()
-            if nomeApaga.find("\\") == -1:
-                imagem = Image.open(os.path.join(diretorio, nomeApaga))
-            else:
-                imagem = Image.open(nomeApaga)
-        except:
-            imagem = False
-            print("nome invalido")
-    return imagem
+            print(message)
+            user_input = input()
+            if user_input.find("/") == -1:
+                return Image.open(os.path.join(directory, user_input))
+            return Image.open(user_input)
+        except Exception as _:
+            print("invalid name")
 
 
-def viraDec(binario):
-    if binario == "00":
+def viraDec(binary_input: str) -> int:
+    if binary_input == "00":
         return 0
-    elif binario == "01":
+    elif binary_input == "01":
         return 1
-    elif binario == "10":
+    elif binary_input == "10":
         return 2
     else:
         return 3
 
 
-def esconde(imgE, imgO):
-    imgS = copy.deepcopy(imgO)
-    largO, altO = tamanhoUsavel(imgO)
-    largE, altE = imgE.size
-    for y in range(altE):
-        for x in range(largE):
-            pixel = imgE.getpixel((x, y))
-            pixelE = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
-            for a in range(3):
-                for b in range(4):
-                    c = bin(pixel[a])
-                    d = c[2:]
-                    e = str(d)
-                    f = int(e)
-                    g = f"{f:08d}"
-                    h = g[2 * b : 2 * b + 2]
-                    pixelE[a][b] = h
+def hide_image(img_to_hide: ImageFile, img_source: ImageFile) -> ImageFile:
+    img_stego = copy.deepcopy(img_source)
+    width_hide, height_hide = img_to_hide.size
+    for y in range(height_hide):
+        for x in range(width_hide):
+            pixel = img_to_hide.getpixel((x, y))
+            assert isinstance(pixel, tuple) and len(pixel) == 3, (
+                "Pixel must be an RGB tuple"
+            )
+            pixel_to_hide = convert_pixel_to_binary(pixel)
             posicoes = (
                 (2 * x, 2 * y),
                 (2 * x + 1, 2 * y),
                 (2 * x, 2 * y + 1),
                 (2 * x + 1, 2 * y + 1),
             )
-            pixelO = [imgO.getpixel(coord) for coord in posicoes]
-            pixelS = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
-            for a in range(3):
-                for b in range(4):
-                    pixelS[b][a] = (
-                        pixelO[b][a] - (pixelO[b][a] % 4) + viraDec(pixelE[a][b])
+            pixel_source = cast(
+                List[tuple[int, int, int]],
+                [img_source.getpixel(coord) for coord in posicoes],
+            )
+            assert all(isinstance(p, tuple) and len(p) == 3 for p in pixel_source), (
+                "All pixels must be RGB tuples"
+            )
+            pixel_stego = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
+            for color_channel_index in range(3):
+                for bit_index in range(4):
+                    pixel_stego[bit_index][color_channel_index] = (
+                        pixel_source[bit_index][color_channel_index]
+                        - (pixel_source[bit_index][color_channel_index] % 4)
+                        + viraDec(pixel_to_hide[color_channel_index][bit_index])
                     )
             for indice in range(4):
-                imgS.putpixel(posicoes[indice], tuple(pixelS[indice]))
+                img_stego.putpixel(posicoes[indice], tuple(pixel_stego[indice]))
         print(y)
-    return imgS
+    return img_stego
 
+
+def convert_pixel_to_binary(pixel: tuple[int, int, int]) -> list[list[str]]:
+    pixel_to_hide = [["0", "0", "0", "0"], ["0", "0", "0", "0"], ["0", "0", "0", "0"]]
+    for color_index in range(3):
+        for bit_pair_index in range(4):
+            binary_representation = bin(pixel[color_index])
+            binary_string = binary_representation[2:]
+            binary_string_value = str(binary_string)
+            pixel_integer = int(binary_string_value)
+            binary_padded_value = f"{pixel_integer:08d}"
+            bit_segment = binary_padded_value[
+                2 * bit_pair_index : 2 * bit_pair_index + 2
+            ]
+            pixel_to_hide[color_index][bit_pair_index] = bit_segment
+    return pixel_to_hide
 
 
 def main() -> None:
-    nomeApaga = ""
-    diretorio = os.path.join("C:\\", "pythonscript", "Imagens")
-    imagemOriginal = abreImagem("digite o nome da imagem original")
-    nome = nomeApaga
-    imagemEscondida = abreImagem("digite o nome da imagem para esconder")
-    while not (possivelEsconder(imagemEscondida, imagemOriginal)):
-        imagemEscondida = abreImagem("digite o nome da imagem para esconder")
-    imagemSteg = esconde(imagemEscondida, imagemOriginal)
-    print(os.path.join(diretorio, "steganografada", nome[:-4] + "Steg.jpg"))
-    imagemSteg.save(os.path.join(diretorio, "steganografada", nome[:-4] + "Steg.jpg"))
+    diretorio = os.path.join("C:/", "pythonscript", "Imagens")
+    imagemOriginal = open_image_by_name(diretorio, "digite o nome da imagem original")
+    imagemEscondida = open_image_by_name(
+        diretorio, "digite o nome da imagem para esconder"
+    )
+    while not (is_image_hidable(imagemEscondida, imagemOriginal)):
+        imagemEscondida = open_image_by_name(
+            diretorio, "digite o nome da imagem para esconder"
+        )
+    imagemSteg = hide_image(imagemEscondida, imagemOriginal)
+    print(os.path.join(diretorio, "output_steg.jpg"))
+    imagemSteg.save(os.path.join(diretorio, "output_steg.jpg"))
 
 
 if __name__ == "__main__":
