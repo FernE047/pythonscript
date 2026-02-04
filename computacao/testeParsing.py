@@ -18,7 +18,7 @@ def main() -> None:
 
     args = parser.parse_args()
     answer = args.square**2
-    for a in range(args.repeat + 1):
+    for _ in range(args.repeat + 1):
         if args.hi:
             print("hi")
         if args.verbosity == 2:
