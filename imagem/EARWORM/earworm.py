@@ -85,7 +85,7 @@ def generate_lyrics_image(url: str, output_path: str = "imagens/") -> None:
     lyrics_soup = bs4.BeautifulSoup(lyrics_site.text, features="html.parser")
     title_tag = lyrics_soup.select(".header_with_cover_art-primary_info-title")
     track_title = clean_soup(title_tag)
-    print(track_title + "\n")
+    print(f"{track_title}\n")
     lyrics_tags = lyrics_soup.select(".lyrics")
     if len(lyrics_tags) == 0:
         print("No lyrics found\n")
