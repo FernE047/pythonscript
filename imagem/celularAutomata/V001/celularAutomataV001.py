@@ -3,6 +3,13 @@ from enum import Enum
 
 CoordData = tuple[int, int]
 
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+BLACK_4 = (0, 0, 0, 255)
+BLACK_2 = (0, 255)
+BLACK_1 = 0
+MAX_SIZE = 200
+
 
 class Direction(Enum):
     DOWN_RIGHT = 0
@@ -55,9 +62,9 @@ def is_pixel_black(pixel: float | tuple[int, ...] | None) -> bool:
     if isinstance(pixel, float):
         return int(pixel) == 0
     if len(pixel) >= 3:
-        return pixel in [(0, 0, 0), (0, 0, 0, 255)]
+        return pixel in [BLACK, BLACK_4]
     if len(pixel) >= 1:
-        return pixel in [(0), (0, 255)]
+        return pixel in [BLACK_1, BLACK_2]
     return False
 
 
@@ -67,9 +74,9 @@ def main() -> None:
     frame_index = 0
     while has_black_pixels:
         has_black_pixels = False
-        next_frame = Image.new("RGBA", (200, 200), (255, 255, 255))
-        for x in range(200):
-            for y in range(200):
+        next_frame = Image.new("RGBA", (MAX_SIZE, MAX_SIZE), WHITE)
+        for x in range(MAX_SIZE):
+            for y in range(MAX_SIZE):
                 coord = (x, y)
                 pixel = current_frame.getpixel(coord)
                 if not is_pixel_black(pixel):
@@ -77,8 +84,8 @@ def main() -> None:
                 has_black_pixels = True
                 neighbor_count = count_neighbors(coord, current_frame) % 8
                 current_coord = apply_direction(coord, Direction(neighbor_count))
-                if (max(current_coord) < 200) and (min(current_coord) > -1):
-                    next_frame.putpixel(current_coord, (0, 0, 0))
+                if (max(current_coord) < MAX_SIZE) and (min(current_coord) >= 0):
+                    next_frame.putpixel(current_coord, BLACK)
         filename = f"frame_{frame_index:03d}.png"
         print(filename)
         next_frame.save(filename)

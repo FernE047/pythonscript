@@ -5,6 +5,9 @@ import requests
 import bs4
 import os
 
+RED = (255, 0, 0, 255)
+BLACK = (0, 0, 0, 255)
+
 
 def filter_site_name(url: str) -> str:
     parsed = urlparse(url if "://" in url else "https://" + url)
@@ -99,11 +102,11 @@ def generate_lyrics_image(url:str, output_path:str="imagens/") -> None:
         print("No lyrics found\n")
         return
     print(f"Word count: {word_count}\n")
-    image = Image.new("RGBA", (word_count, word_count), (0, 0, 0, 255))
+    image = Image.new("RGBA", (word_count, word_count), BLACK)
     for x in range(word_count):
         for y in range(word_count):
             if words[x] == words[y]:
-                image.putpixel((x, y), (255, 0, 0, 255))
+                image.putpixel((x, y), RED)
     filename = f"./{output_path}{track_title}.png"
     image.save(filename)
     print(f"Successfully created {filename}\n\n")
