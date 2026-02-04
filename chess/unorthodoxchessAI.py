@@ -1,3 +1,16 @@
+#type: ignore
+
+"""
+This code is a work in progress for an unorthodox chess game AI.
+it's still a big mess.
+
+#TODO:
+ - transform type_datas into classes
+ - finish coding possible moves logic
+ - implement game loop
+ - implement victory conditions checking
+"""
+
 from itertools import permutations as perm
 from typing import Any, Literal, TypeAlias, TypedDict, cast
 
