@@ -3,6 +3,16 @@ from grafos import get_graph_from_file
 from estados import State
 
 
+GRAPH_EXAMPLE = [
+    [0.0, 10.0, 10.0, 1.0, 10.0],
+    [10.0, 0.0, 1.0, 10.0, 10.0],
+    [1.0, 10.0, 0.0, 10.0, 10.0],
+    [10.0, 10.0, 10.0, 0.0, 1.0],
+    [10.0, 1.0, 10.0, 10.0, 0.0],
+]
+MAX_NODES = 22
+
+
 class Counter:
     def __init__(self, name: str) -> None:
         self.name = name
@@ -90,13 +100,7 @@ def main() -> None:
     counter_manager = CounterManager()
     counter_manager.create_counter("iterations")
     counter_manager.create_counter("heuristic cuts")
-    graph_raw: list[list[float]] = [
-        [0, 10, 10, 1, 10],
-        [10, 0, 1, 10, 10],
-        [1, 10, 0, 10, 10],
-        [10, 10, 10, 0, 1],
-        [10, 1, 10, 10, 0],
-    ]
+    graph_raw = GRAPH_EXAMPLE
     graph = Graph(base_graph=graph_raw)
     initial_state = State(graph)
     solution_state = breadth_first_search(initial_state, counter_manager)
@@ -113,7 +117,7 @@ def main() -> None:
     counter_manager.display_all()
     counter_manager.reset_all()
     solution_state.show_path()
-    for max_nodes in range(1, 23):
+    for max_nodes in range(1, MAX_NODES + 1):
         graph = get_graph_from_file("grafo0004.txt", limit=max_nodes)
         initial_state = State(graph)
         solution_state = depth_first_search(initial_state, counter_manager)

@@ -1,3 +1,5 @@
+ROLLOVER_VALUE = 256
+
 class Config:
     def __init__(self, debug: bool = False, debug_final: bool = False) -> None:
         self.debug = debug
@@ -55,14 +57,14 @@ def find_end_of_loop(program_script: str, read_index: int) -> int:
 
 
 def increment_and_wrap(current_value: int) -> int:
-    if current_value == 255:
+    if current_value == ROLLOVER_VALUE - 1:
         return 0
     return current_value + 1
 
 
 def decrement_and_wrap(current_value: int) -> int:
     if current_value == 0:
-        return 255
+        return ROLLOVER_VALUE - 1
     return current_value - 1
 
 

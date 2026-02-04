@@ -1,5 +1,7 @@
 from numpy.random import shuffle
 
+MAX_SIZE = 1000
+DEBUG_PRINTING = False
 
 class Counters:
     def __init__(self) -> None:
@@ -101,14 +103,12 @@ def selectionSort(
 
 def main() -> None:
     counters = Counters()
-    tamanhoLista = 1000
-    imprimeListas = True
-    lista = [a for a in range(tamanhoLista)]
+    lista = [index for index in range(MAX_SIZE)]
     shuffle(lista)
-    if imprimeListas:
+    if DEBUG_PRINTING:
         print(lista, end="\n\n")
     insertion_sort(lista, counters, enable_logging=False)
-    if imprimeListas:
+    if DEBUG_PRINTING:
         print(f"\n{lista}")
     counters.display()
 

@@ -5,6 +5,17 @@ GraphData = list[list[float]]
 VertexData = tuple[float, float]
 
 
+GRAPH_EXAMPLE_1: GraphData = [
+    [0, 10, 10, 1, 10],
+    [10, 0, 1, 10, 10],
+    [1, 10, 0, 10, 10],
+    [10, 10, 10, 0, 1],
+    [10, 1, 10, 10, 0],
+]
+GRAPH_EXAMPLE_2: GraphData = [[0, 1, 2, 4], [1, 0, 2, 3], [2, 2, 0, 5], [4, 3, 5, 0]]
+MAX_NODES = 22
+
+
 class State:
     def __init__(
         self, graph: GraphData, path: list[int] | None = None, path_cost: float = 0.0
@@ -245,17 +256,11 @@ def solve(graph: GraphData, mode: Literal[0, 1] = 1) -> None:
 
 
 def main() -> None:
-    graph: GraphData = [
-        [0, 10, 10, 1, 10],
-        [10, 0, 1, 10, 10],
-        [1, 10, 0, 10, 10],
-        [10, 10, 10, 0, 1],
-        [10, 1, 10, 10, 0],
-    ]
+    graph = GRAPH_EXAMPLE_1
     solve(graph, 0)
-    graph = [[0, 1, 2, 4], [1, 0, 2, 3], [2, 2, 0, 5], [4, 3, 5, 0]]
+    graph = GRAPH_EXAMPLE_2
     solve(graph, 1)
-    for node_limit in range(1, 23):
+    for node_limit in range(1, MAX_NODES + 1):
         graph = get_graph_from_file("grafo0004.txt", nodes_limit=node_limit)
         solve(graph, 1)
 

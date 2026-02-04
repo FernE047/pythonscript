@@ -5,6 +5,12 @@ from random import randint
 
 GameModeOptions = Literal["random", "highest"]
 
+DEFAULT_SHUFFLE_SEED = "xyzSTUVWXYZ345678abcdefghijklmnopqrstuvw"
+MIN_SHUFFLE_CUT = 10
+MAX_SHUFFLE_CUT = 100
+WIN_SCORE = 12
+SPACE_BETWEEN_GAMES = 5
+
 
 class CardsHand:
     def __init__(self) -> None:
@@ -41,11 +47,12 @@ class Player:
         self.player_hand = CardsHand()
         self.is_human = is_human
         self.play_order = play_order
-        shuffling_seed = "xyzSTUVWXYZ345678abcdefghijklmnopqrstuvw"
+        shuffling_seed = DEFAULT_SHUFFLE_SEED
         self.unique_shuffling_seed = ""
-        for _ in range(randint(10, 100)):
-            self.unique_shuffling_seed += shuffling_seed[randint(0, 39)]
-        self.cut_position = randint(0, 39)
+        seed_size = len(shuffling_seed)
+        for _ in range(randint(MIN_SHUFFLE_CUT, MAX_SHUFFLE_CUT)):
+            self.unique_shuffling_seed += shuffling_seed[randint(0, seed_size - 1)]
+        self.cut_position = randint(0, seed_size - 1)
 
     def shuffle(self, deck: Deck) -> None:
         deck.shuffle(self.unique_shuffling_seed)
@@ -256,11 +263,11 @@ class Game:
 def main() -> None:
     game = Game(6)
     game.jogaPartida()
-    print(5 * "\n")
+    print(SPACE_BETWEEN_GAMES * "\n")
     round_counter = 1
-    while 12 not in game.points:
+    while all(point < WIN_SCORE for point in game.points):
         game.jogaPartida(game_mode="highest")
-        print(5 * "\n")
+        print(SPACE_BETWEEN_GAMES * "\n")
         round_counter += 1
     print(game.points)
     print(round_counter)

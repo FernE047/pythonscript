@@ -3,6 +3,7 @@ from typing import cast
 
 class Config:
     # this code used to have a lot of global variables, now they are encapsulated in this class
+    # but they are mutable so they would'nt work as constants
     def __init__(self) -> None:
         self.debug = False
         self.debug_final = False

@@ -34,7 +34,7 @@ class Card:
     def __str__(self) -> str:
         text = ""
         ranks = ["4", "5", "6", "7", "Q", "J", "K", "A", "2", "3"]
-        suits = ["Ouro", "Espadilha", "Copas", "Paus"]
+        suits = ["♣", "♦", "♥", "♠"]
         text += ranks[self.rank]
         text += " "
         text += suits[self.suit]

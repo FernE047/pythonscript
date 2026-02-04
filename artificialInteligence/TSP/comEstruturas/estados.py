@@ -1,6 +1,8 @@
 from typing import Any
 from artificialInteligence.TSP.comEstruturas.grafos import Graph
 
+SPACE_BETWEEN_STATES = 6
+
 
 class State:
     def __init__(
@@ -38,11 +40,11 @@ class State:
         state = State(self.graph)
         self.graph.show()
         print()
-        print(str(state), end="\n\n")
+        print(f"{str(state)}\n")
         for move in self.path[1:]:
             state = state.apply_move(move)
-            print(str(state), end="\n\n")
-        print("\n\n\n\n\n\n")
+            print(f"{str(state)}\n")
+        print("\n" * SPACE_BETWEEN_STATES)
         return state
 
     def __str__(self) -> str:
