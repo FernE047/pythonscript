@@ -8,7 +8,7 @@ markovify doesn't have a stub for combine, so we need to ignore the type checkin
 
 def main() -> None:
     combined_model = None
-    for dirpath, _, filenames in os.walk("path/to/my/huge/corpus"):
+    for dirpath, _, filenames in os.walk(""):
         for filename in filenames:
             with open(os.path.join(dirpath, filename)) as f:
                 model = markovify.Text(f, retain_original=False)
