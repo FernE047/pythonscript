@@ -1,62 +1,91 @@
 from PIL import Image
+from enum import Enum
 
-def coordDirecao(coord,n):
-    if(n>7):
-        n = n%8
-    x,y = coord
-    if n == 0:
-        return(x+1,y+1)
-    if n == 1:
-        return(x,y+1)
-    if n == 2:
-        return(x-1,y+1)
-    if n == 3:
-        return(x+1,y)
-    if n == 4:
-        return(x-1,y)
-    if n == 5:
-        return(x+1,y-1)
-    if n == 6:
-        return(x,y-1)
-    if n == 7:
-        return(x-1,y-1)
-    return (x,y)
+CoordData = tuple[int, int]
 
-def quantiaVizinhos(coord,imagem):
-    viz = 0
-    for direcao in range(8):
-        coordAtual = coordDirecao(coord,direcao)
-        if (max(coordAtual)<200) and (min(coordAtual)>-1) :
-            if imagem.getpixel(coordAtual) == (0,0,0):
-                viz += 1
-            if imagem.getpixel(coordAtual) == (0,0,0,255):
-                viz += 1
-    return viz
+
+class Direction(Enum):
+    DOWN_RIGHT = 0
+    DOWN = 1
+    DOWN_LEFT = 2
+    RIGHT = 3
+    LEFT = 4
+    UP_RIGHT = 5
+    UP = 6
+    UP_LEFT = 7
+
+
+def apply_direction(coord: CoordData, direction: Direction) -> CoordData:
+    x, y = coord
+    if direction == Direction.DOWN_RIGHT:
+        return (x + 1, y + 1)
+    if direction == Direction.DOWN:
+        return (x, y + 1)
+    if direction == Direction.DOWN_LEFT:
+        return (x - 1, y + 1)
+    if direction == Direction.RIGHT:
+        return (x + 1, y)
+    if direction == Direction.LEFT:
+        return (x - 1, y)
+    if direction == Direction.UP_RIGHT:
+        return (x + 1, y - 1)
+    if direction == Direction.UP:
+        return (x, y - 1)
+    if direction == Direction.UP_LEFT:
+        return (x - 1, y - 1)
+
+
+def count_neighbors(coord: CoordData, imagem: Image.Image) -> int:
+    neighbors = 0
+    for direction in Direction:
+        current_coord = apply_direction(coord, direction)
+        if (max(current_coord) >= 200) or (min(current_coord) <= -1):
+            continue
+        if not is_pixel_black(imagem.getpixel(current_coord)):
+            continue
+        neighbors += 1
+    return neighbors
+
+def is_pixel_black(pixel: float | tuple[int, ...] | None) -> bool:
+    if pixel is None:
+        return False
+    if isinstance(pixel, int):
+        return pixel == 0
+    if isinstance(pixel, float):
+        return int(pixel) == 0
+    if len(pixel) >= 3:
+        return pixel in [(0, 0, 0), (0, 0, 0, 255)]
+    if len(pixel) >= 1:
+        return pixel in [(0), (0, 255)]
+    return False
 
 
 def main() -> None:
-    imagemOrigem = Image.open("imagemInput.png")
-    temPreto = True
-    a = 0
-    while temPreto:
-        temPreto = False
-        proximoFrame = Image.new("RGBA",(200,200),(255,255,255))
+    current_frame = Image.open("frame_000.png")
+    has_black_pixels = True
+    frame_index = 0
+    while has_black_pixels:
+        has_black_pixels = False
+        next_frame = Image.new("RGBA", (200, 200), (255, 255, 255))
         for x in range(200):
             for y in range(200):
-                coord = (x,y)
-                if imagemOrigem.getpixel(coord) in [(0,0,0),(0,0,0,255)]:
-                    temPreto = True
-                    viz = quantiaVizinhos(coord,imagemOrigem)
-                    coordAtual = coordDirecao(coord,viz)
-                    if (max(coordAtual)<200) and (min(coordAtual)>-1) :
-                        proximoFrame.putpixel(coordAtual,(0,0,0))
-        print(f"imagemOutput{a:03d}.png")
-        proximoFrame.save(f"imagemOutput{a:03d}.png")
-        proximoFrame.close()
-        imagemOrigem.close()
-        imagemOrigem = Image.open(f"imagemOutput{a:03d}.png")
-        a += 1
-    imagemOrigem.close()
+                coord = (x, y)
+                pixel = current_frame.getpixel(coord)
+                if not is_pixel_black(pixel):
+                    continue
+                has_black_pixels = True
+                neighbor_count = count_neighbors(coord, current_frame) % 8
+                current_coord = apply_direction(coord, Direction(neighbor_count))
+                if (max(current_coord) < 200) and (min(current_coord) > -1):
+                    next_frame.putpixel(current_coord, (0, 0, 0))
+        file_name = f"frame_{frame_index:03d}.png"
+        print(file_name)
+        next_frame.save(file_name)
+        next_frame.close()
+        current_frame.close()
+        current_frame = Image.open(file_name)
+        frame_index += 1
+    current_frame.close()
 
 
 if __name__ == "__main__":
