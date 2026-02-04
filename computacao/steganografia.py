@@ -101,17 +101,16 @@ def convert_pixel_to_binary(pixel: tuple[int, int, int]) -> list[list[str]]:
 
 def main() -> None:
     diretorio = os.path.join("C:/", "pythonscript", "Imagens")
-    imagemOriginal = open_image_by_name(diretorio, "digite o nome da imagem original")
-    imagemEscondida = open_image_by_name(
-        diretorio, "digite o nome da imagem para esconder"
-    )
-    while not (is_image_hidable(imagemEscondida, imagemOriginal)):
-        imagemEscondida = open_image_by_name(
-            diretorio, "digite o nome da imagem para esconder"
+    source_image = open_image_by_name(diretorio, "enter the name of the original image")
+    image_to_hide = open_image_by_name(diretorio, "enter the name of the image to hide")
+    while not (is_image_hidable(image_to_hide, source_image)):
+        image_to_hide = open_image_by_name(
+            diretorio, "enter the name of the image to hide"
         )
-    imagemSteg = hide_image(imagemEscondida, imagemOriginal)
-    print(os.path.join(diretorio, "output_steg.jpg"))
-    imagemSteg.save(os.path.join(diretorio, "output_steg.jpg"))
+    stego_image = hide_image(image_to_hide, source_image)
+    filename = os.path.join(diretorio, "output_steg.jpg")
+    print(f"saving stego image as {filename}")
+    stego_image.save(filename)
 
 
 if __name__ == "__main__":
