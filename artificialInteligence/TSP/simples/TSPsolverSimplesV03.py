@@ -141,8 +141,8 @@ def print_elapsed_time(seconds: float) -> None:
     print(sign + ", ".join(parts))
 
 
-def get_graph_from_file(file_name: str, nodes_limit: int | None = None) -> GraphData:
-    with open(file_name, "r", encoding="utf-8") as file:
+def get_graph_from_file(filename: str, nodes_limit: int | None = None) -> GraphData:
+    with open(filename, "r", encoding="utf-8") as file:
         lines = file.read().splitlines()
         vertexes: list[VertexData] = []
         index = 0

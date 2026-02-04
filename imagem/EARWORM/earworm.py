@@ -103,9 +103,9 @@ def generate_lyrics_image(url: str, output_path: str = "imagens/") -> None:
         for y in range(word_count):
             if words[x] == words[y]:
                 image.putpixel((x, y), (255, 0, 0, 255))
-    file_name = f"./{output_path}{track_title}.png"
-    image.save(file_name)
-    print(f"Successfully created {file_name}\n\n")
+    filename = f"./{output_path}{track_title}.png"
+    image.save(filename)
+    print(f"Successfully created {filename}\n\n")
 
 
 def generate_album_images(url: str, album: str) -> None:

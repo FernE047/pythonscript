@@ -4,27 +4,27 @@ from typing import cast
 ChainData = tuple[str, str, str]
 
 
-def rename_file(source_file_name: str, destination_file_name: str) -> None:
+def rename_file(source_filename: str, destination_filename: str) -> None:
     with (
-        open(source_file_name, "r", encoding="utf-8") as source_file,
-        open(destination_file_name, "w", encoding="utf-8") as destination_file,
+        open(source_filename, "r", encoding="utf-8") as source_file,
+        open(destination_filename, "w", encoding="utf-8") as destination_file,
     ):
         content = source_file.read()
         destination_file.write(content)
 
 
-def update_chain_file(file_name: str, keywords: ChainData, index: int) -> None:
-    update_keyword_count(file_name, keywords, index)
-    rename_file(f"{file_name}/c.txt", f"{file_name}/{index:03d}.txt")
+def update_chain_file(filename: str, keywords: ChainData, index: int) -> None:
+    update_keyword_count(filename, keywords, index)
+    rename_file(f"{filename}/c.txt", f"{filename}/{index:03d}.txt")
 
 
-def update_keyword_count(file_name: str, keywords: ChainData, index: int) -> None:
-    with open(f"{file_name}/c.txt", "w", encoding="UTF-8") as fileWrite:
+def update_keyword_count(filename: str, keywords: ChainData, index: int) -> None:
+    with open(f"{filename}/c.txt", "w", encoding="UTF-8") as fileWrite:
         keywords_flat = " ".join(keywords)
-        if f"{index:03d}.txt" not in os.listdir(file_name):
+        if f"{index:03d}.txt" not in os.listdir(filename):
             fileWrite.write(f"{keywords_flat} 1\n")
             return
-        with open(f"{file_name}/{index:03d}.txt", "r", encoding="UTF-8") as file_read:
+        with open(f"{filename}/{index:03d}.txt", "r", encoding="UTF-8") as file_read:
             line = file_read.readline()
             keyword_found = False
             while line:
@@ -42,24 +42,24 @@ def update_keyword_count(file_name: str, keywords: ChainData, index: int) -> Non
                 fileWrite.write(f"{keywords_flat} 1\n")
 
 
-def get_file_name() -> str:
-    is_file_name_valid = True
-    file_name = "default"
-    while is_file_name_valid:
+def get_filename() -> str:
+    is_filename_valid = True
+    filename = "default"
+    while is_filename_valid:
         print("type the file name (without .txt): ")
-        file_name = input()
+        filename = input()
         try:
-            with open(f"{file_name}.txt", "r", encoding="UTF-8") as _:
+            with open(f"{filename}.txt", "r", encoding="UTF-8") as _:
                 pass
         except Exception as _:
             print("invalid name")
-        is_file_name_valid = False
-    return file_name
+        is_filename_valid = False
+    return filename
 
 
 def main() -> None:
-    file_name = get_file_name()
-    with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
+    filename = get_filename()
+    with open(f"{filename}.txt", "r", encoding="UTF-8") as file:
         line = file.readline()[:-1]
         word_frequency: list[int] = []
         length = 0
@@ -73,15 +73,15 @@ def main() -> None:
                 previous_character = ""
                 for index, character in enumerate(word):
                     if index == 0:
-                        update_chain_file(file_name, ("¨", "¨", character), word_index)
+                        update_chain_file(filename, ("¨", "¨", character), word_index)
                         if length == 1:
                             update_chain_file(
-                                file_name, ("¨", character, "¨"), word_index
+                                filename, ("¨", character, "¨"), word_index
                             )
                             break
                         next_character = word[index + 1]
                         update_chain_file(
-                            file_name, ("¨", character, next_character), word_index
+                            filename, ("¨", character, next_character), word_index
                         )
                         previous_character = character
                         continue
@@ -93,7 +93,7 @@ def main() -> None:
                     else:
                         next_character = word[index + 1]
                     update_chain_file(
-                        file_name,
+                        filename,
                         (previous_character, character, next_character),
                         word_index,
                     )
@@ -101,7 +101,7 @@ def main() -> None:
                         break
                     previous_character = character
             line = file.readline()[:-1]
-        with open(f"{file_name}/c.txt", "w", encoding="UTF-8") as frequency_output_file:
+        with open(f"{filename}/c.txt", "w", encoding="UTF-8") as frequency_output_file:
             for index, quantity in enumerate(word_frequency):
                 frequency_output_file.write(f"{index} {quantity}\n")
         print(length)

@@ -47,9 +47,9 @@ def generate_word(
 ) -> str:
     if previous_words is None:
         previous_words = ["¨" for _ in range(chain_manager.chain_size)]
-    chain_file_name = chain_manager.get_chain_path(is_title)
+    chain_filename = chain_manager.get_chain_path(is_title)
     previous_phrase = " ".join(previous_words)
-    with open(chain_file_name, "r", encoding="utf-8") as file:
+    with open(chain_filename, "r", encoding="utf-8") as file:
         line = file.readline().lower()
         word_frequency_map: dict[str, int] = {}
         while line:

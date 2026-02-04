@@ -14,9 +14,9 @@ def get_image_from_folder() -> list[str]:
     folder = f"images/{image_folder}"
     images: list[str] = []
     if os.path.exists(folder):
-        for file_name in os.listdir(folder):
-            if file_name.lower().endswith((".png", ".jpg", ".jpeg", ".bmp", ".gif")):
-                images.append(os.path.join(folder, file_name))
+        for filename in os.listdir(folder):
+            if filename.lower().endswith((".png", ".jpg", ".jpeg", ".bmp", ".gif")):
+                images.append(os.path.join(folder, filename))
                 if quantity is not None and len(images) >= quantity:
                     break
     return images
@@ -68,7 +68,7 @@ def main() -> None:
             row = ""
             for x in range(width):
                 pixel = image_output.getpixel((x, y))
-                assert isinstance(pixel, int) # since the image is in 'L' mode
+                assert isinstance(pixel, int)  # since the image is in 'L' mode
                 row += brightness_levels[int(pixel / 32) - 1]
             print(row)
 

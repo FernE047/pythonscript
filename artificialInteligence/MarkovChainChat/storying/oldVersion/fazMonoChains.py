@@ -1,10 +1,10 @@
 import os
 
 
-def rename_file(source_file_name: str, destination_file_name: str) -> None:
+def rename_file(source_filename: str, destination_filename: str) -> None:
     with (
-        open(source_file_name, "r", encoding="utf-8") as source_file,
-        open(destination_file_name, "w", encoding="utf-8") as destination_file,
+        open(source_filename, "r", encoding="utf-8") as source_file,
+        open(destination_filename, "w", encoding="utf-8") as destination_file,
     ):
         content = source_file.read()
         destination_file.write(content)

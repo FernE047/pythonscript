@@ -2,7 +2,6 @@ from time import time
 import os
 
 
-
 def format_elapsed_time(seconds: float) -> str:
     if seconds < 0:
         seconds = -seconds
@@ -33,10 +32,10 @@ def format_elapsed_time(seconds: float) -> str:
     return sign + ", ".join(parts)
 
 
-def rename_file(source_file_name: str, destination_file_name: str) -> None:
+def rename_file(source_filename: str, destination_filename: str) -> None:
     with (
-        open(source_file_name, "r", encoding="utf-8") as source_file,
-        open(destination_file_name, "w", encoding="utf-8") as destination_file,
+        open(source_filename, "r", encoding="utf-8") as source_file,
+        open(destination_filename, "w", encoding="utf-8") as destination_file,
     ):
         content = source_file.read()
         destination_file.write(content)
@@ -97,7 +96,6 @@ def generate_markov_chain(text: str, chain_size: int, is_title: bool = False) ->
     update_chain_file(pair_list, chain_size, is_title)
 
 
-
 def main() -> None:
     chain_size = 2
     total = len(os.listdir("stories"))
@@ -117,7 +115,9 @@ def main() -> None:
                     generate_markov_chain(story, chain_size)
             execution_end_time = time()
             duration = execution_end_time - start_time
-            print(f"falta : {format_elapsed_time(duration * (total - processed_file_count))}")
+            print(
+                f"falta : {format_elapsed_time(duration * (total - processed_file_count))}"
+            )
             print()
 
 

@@ -46,6 +46,7 @@ def count_neighbors(coord: CoordData, imagem: Image.Image) -> int:
         neighbors += 1
     return neighbors
 
+
 def is_pixel_black(pixel: float | tuple[int, ...] | None) -> bool:
     if pixel is None:
         return False
@@ -78,12 +79,12 @@ def main() -> None:
                 current_coord = apply_direction(coord, Direction(neighbor_count))
                 if (max(current_coord) < 200) and (min(current_coord) > -1):
                     next_frame.putpixel(current_coord, (0, 0, 0))
-        file_name = f"frame_{frame_index:03d}.png"
-        print(file_name)
-        next_frame.save(file_name)
+        filename = f"frame_{frame_index:03d}.png"
+        print(filename)
+        next_frame.save(filename)
         next_frame.close()
         current_frame.close()
-        current_frame = Image.open(file_name)
+        current_frame = Image.open(filename)
         frame_index += 1
     current_frame.close()
 

@@ -1,10 +1,10 @@
 import os
 
 
-def rename_file(source_file_name: str, destination_file_name: str) -> None:
+def rename_file(source_filename: str, destination_filename: str) -> None:
     with (
-        open(source_file_name, "r", encoding="utf-8") as source_file,
-        open(destination_file_name, "w", encoding="utf-8") as destination_file,
+        open(source_filename, "r", encoding="utf-8") as source_file,
+        open(destination_filename, "w", encoding="utf-8") as destination_file,
     ):
         content = source_file.read()
         destination_file.write(content)
@@ -61,9 +61,9 @@ def faz_chain(text: str, is_title: bool = False) -> None:
 
 
 def main() -> None:
-    for file_name in os.listdir("stories"):
-        print(file_name)
-        with open(f"stories/{file_name}", "r", encoding="utf-8") as file:
+    for filename in os.listdir("stories"):
+        print(filename)
+        with open(f"stories/{filename}", "r", encoding="utf-8") as file:
             title_and_story_parts = file.readline().split(" : ")
             story = title_and_story_parts[-1:][0]
             title = ": ".join(title_and_story_parts[:-1])

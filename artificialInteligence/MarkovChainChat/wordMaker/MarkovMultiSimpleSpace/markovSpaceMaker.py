@@ -12,9 +12,9 @@ def print_debug(*args: Any) -> None:
 
 
 def generate_char(
-    file_name: str, index: int, space_index: int, previous_char: str = ""
+    filename: str, index: int, space_index: int, previous_char: str = ""
 ) -> str:
-    with open(f"{file_name}/{index:03d}.txt", encoding="utf-8") as file:
+    with open(f"{filename}/{index:03d}.txt", encoding="utf-8") as file:
         line = file.readline()
         character_weights: dict[str, int] = {}
         while line:
@@ -42,12 +42,12 @@ def generate_char(
         return ""
 
 
-def generate_word(file_name: str, space_index: int) -> str:
+def generate_word(filename: str, space_index: int) -> str:
     generated_word = ""
-    char = generate_char(file_name, 0, space_index)
+    char = generate_char(filename, 0, space_index)
     while char != "¨":
         generated_word += char
-        char = generate_char(file_name, len(generated_word), space_index, char)
+        char = generate_char(filename, len(generated_word), space_index, char)
     return generated_word
 
 
@@ -68,25 +68,25 @@ def normalize_statistics(frequency_map: list[int]) -> list[float]:
     return frequency_normalized
 
 
-def get_file_name() -> str:
-    is_file_name_valid = True
-    file_name = "default"
-    while is_file_name_valid:
+def get_filename() -> str:
+    is_filename_valid = True
+    filename = "default"
+    while is_filename_valid:
         print("type the file name (without .txt): ")
-        file_name = input()
+        filename = input()
         try:
-            with open(f"{file_name}.txt", "r", encoding="UTF-8") as _:
+            with open(f"{filename}.txt", "r", encoding="UTF-8") as _:
                 pass
         except Exception as _:
             print("invalid name")
-        is_file_name_valid = False
-    return file_name
+        is_filename_valid = False
+    return filename
 
 
 def main() -> None:
-    file_name = get_file_name()
+    filename = get_filename()
     word_occurrence_map: list[int] = []
-    with open(file_name + "/c.txt", "r", encoding="UTF-8") as markov_chain_file:
+    with open(filename + "/c.txt", "r", encoding="UTF-8") as markov_chain_file:
         linha = markov_chain_file.readline()[:-1].split()
         while linha:
             word_occurrence_map.append(int(linha[-1]))
@@ -101,7 +101,7 @@ def main() -> None:
         )[0]
         for index in range(word_quantity):
             print_debug(index)
-            generated_words.append(generate_word(file_name, index))
+            generated_words.append(generate_word(filename, index))
         print(" ".join(generated_words), end="\n")
 
 

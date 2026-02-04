@@ -35,33 +35,33 @@ def print_elapsed_time(seconds: float) -> None:
     print(sign + ", ".join(parts))
 
 
-def rename_file(source_file_name: str, destination_file_name: str) -> None:
+def rename_file(source_filename: str, destination_filename: str) -> None:
     with (
-        open(source_file_name, "r", encoding="utf-8") as source_file,
-        open(destination_file_name, "w", encoding="utf-8") as destination_file,
+        open(source_filename, "r", encoding="utf-8") as source_file,
+        open(destination_filename, "w", encoding="utf-8") as destination_file,
     ):
         content = source_file.read()
         destination_file.write(content)
 
 
-def update_chain(file_name: str, index: int, chain_element: list[list[str]]) -> None:
-    update_chain_file(file_name, index, chain_element)
-    rename_file(file_name, f"/{index:03d}.txt")
+def update_chain(filename: str, index: int, chain_element: list[list[str]]) -> None:
+    update_chain_file(filename, index, chain_element)
+    rename_file(filename, f"/{index:03d}.txt")
 
 
 def update_chain_file(
-    file_name: str, index: int, chain_element: list[list[str]]
+    filename: str, index: int, chain_element: list[list[str]]
 ) -> None:
-    with open(f"{file_name}/c.txt", "w", encoding="UTF-8") as file_write:
+    with open(f"{filename}/c.txt", "w", encoding="UTF-8") as file_write:
         counter = Counter([str(a) for a in chain_element])
-        if f"{index:03d}.txt" not in os.listdir(file_name):
+        if f"{index:03d}.txt" not in os.listdir(filename):
             unique_terms: list[list[str]] = []
             for term in chain_element:
                 if term not in unique_terms:
                     file_write.write(" ".join(term + [str(counter[str(term)])]) + "\n")
                     unique_terms.append(term)
                     return
-        with open(f"{file_name}/{index:03d}.txt", "r", encoding="UTF-8") as file_read:
+        with open(f"{filename}/{index:03d}.txt", "r", encoding="UTF-8") as file_read:
             line = file_read.readline()[:-1]
             while line:
                 words = line.split()
@@ -83,30 +83,30 @@ def update_chain_file(
                     unique_terms.append(term)
 
 
-def update_chain_files(file_name: str, alterations: AlterationsData) -> None:
+def update_chain_files(filename: str, alterations: AlterationsData) -> None:
     for index in alterations:
-        update_chain(file_name, index, alterations[index])
+        update_chain(filename, index, alterations[index])
 
 
-def get_file_name() -> str:
-    is_file_name_valid = True
-    file_name = "default"
-    while is_file_name_valid:
+def get_filename() -> str:
+    is_filename_valid = True
+    filename = "default"
+    while is_filename_valid:
         print("type the file name (without .txt): ")
-        file_name = input()
+        filename = input()
         try:
-            with open(f"{file_name}.txt", "r", encoding="UTF-8") as _:
+            with open(f"{filename}.txt", "r", encoding="UTF-8") as _:
                 pass
         except Exception as _:
             print("invalid name")
-        is_file_name_valid = False
-    return file_name
+        is_filename_valid = False
+    return filename
 
 
 def main() -> None:
-    file_name = get_file_name()
+    filename = get_filename()
     start_time = time()
-    with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
+    with open(f"{filename}.txt", "r", encoding="UTF-8") as file:
         line = file.readline()[1:-1]
         count = 0
         alterations: AlterationsData = {}
@@ -131,12 +131,12 @@ def main() -> None:
                     if next_char == "¨":
                         break
             if count == 100:
-                update_chain_files(file_name, alterations)
+                update_chain_files(filename, alterations)
                 alterations = {}
                 count = 0
             print(line_length)
             line = file.readline()[:-1]
-        update_chain_files(file_name, alterations)
+        update_chain_files(filename, alterations)
         end_time = time()
         print_elapsed_time(end_time - start_time)
 

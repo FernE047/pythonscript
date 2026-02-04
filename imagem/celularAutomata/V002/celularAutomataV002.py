@@ -69,12 +69,12 @@ def main() -> None:
                         continue
                     if not is_pixel_black(current_frame.getpixel(current_coord)):
                         next_frame.putpixel(current_coord, (0, 0, 0))
-        file_name = f"frame_{frame_index:03d}.png"
-        print(file_name)
-        next_frame.save(file_name)
+        filename = f"frame_{frame_index:03d}.png"
+        print(filename)
+        next_frame.save(filename)
         next_frame.close()
         current_frame.close()
-        current_frame = Image.open(file_name)
+        current_frame = Image.open(filename)
         frame_index += 1
     current_frame.close()
 

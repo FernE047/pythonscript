@@ -1,9 +1,9 @@
 from gtts import gTTS  # type: ignore
 
 
-def fazAudio(file_name: str, text: str) -> None:
+def fazAudio(filename: str, text: str) -> None:
     tts = gTTS(text=text, lang="pt")  # type: ignore
-    tts.save(f"{file_name}.mp3")  # type: ignore
+    tts.save(f"{filename}.mp3")  # type: ignore
 
 
 def reverse_word_by_word(original_text: str) -> str:
@@ -35,19 +35,19 @@ def reverse_word(original_text: str) -> str:
 
 def main() -> None:
     while True:
-        file_name = input("enter the file name to save audio or press enter to skip:")
+        filename = input("enter the file name to save audio or press enter to skip:")
         original_text = input("enter the text to be inverted or press enter to exit:")
         if not original_text:
             break
         print("simple :\n")
         reversed_text = reverse_word(original_text)
-        if file_name:
-            fazAudio(f"{file_name}_reversed", reversed_text)
+        if filename:
+            fazAudio(f"{filename}_reversed", reversed_text)
         print(reversed_text)
         print("\nword by word:\n")
         reversed_by_word = reverse_word_by_word(original_text)
-        if file_name:
-            fazAudio(f"{file_name}_reversed_by_word", reversed_by_word)
+        if filename:
+            fazAudio(f"{filename}_reversed_by_word", reversed_by_word)
         print(reversed_by_word)
 
 

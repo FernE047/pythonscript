@@ -11,10 +11,10 @@ def write_lines(name: str) -> None:
 
 def make_tabulation(name: str, ident: str, tabs: bool = False) -> None:
     if tabs:
-        file_name = f"{name}.txt"
+        filename = f"{name}.txt"
     else:
-        file_name = f"{name}NoTabs.txt"
-    with open(file_name, "r") as file:
+        filename = f"{name}NoTabs.txt"
+    with open(filename, "r") as file:
         lines = file.readlines()
     with open(f"{name}Final.txt", "w") as output_file:
         level = -1

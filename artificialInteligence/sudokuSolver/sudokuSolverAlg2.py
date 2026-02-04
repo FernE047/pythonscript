@@ -248,10 +248,8 @@ class SudokuBoard:
 
 def create_sudoku_board(mode: Literal[1, 2]) -> SudokuBoard:
     if mode == 2:
-        file_name = input("what is the sudoku file name (without .txt)? ")
-        with open(
-            f"sudokus//{file_name}.txt", "r", encoding="utf-8"
-        ) as sudoku_raw_file:
+        filename = input("what is the sudoku file name (without .txt)? ")
+        with open(f"sudokus//{filename}.txt", "r", encoding="utf-8") as sudoku_raw_file:
             sudoku_board = SudokuBoard(sudoku_raw_file.read())
         return sudoku_board
     sudoku_board = SudokuBoard()
@@ -306,7 +304,9 @@ def create_sudoku_board(mode: Literal[1, 2]) -> SudokuBoard:
     return sudoku_board
 
 
-def solve_sudoku_board(sudoku_board: SudokuBoard, counter_manager: CounterManager) -> SudokuBoard | None:
+def solve_sudoku_board(
+    sudoku_board: SudokuBoard, counter_manager: CounterManager
+) -> SudokuBoard | None:
     if sudoku_board.is_board_valid():
         return sudoku_board
     empty_cell = sudoku_board.find_empty_cell()
@@ -348,10 +348,10 @@ def main() -> None:
             solve_single_board(board)
             continue
         time_manager.start()
-        file_names = os.listdir("sudokus")
-        for file_name in file_names:
-            print(f"{file_name}\n")
-            with open(f"sudokus//{file_name}") as sudoku_board_raw:
+        filenames = os.listdir("sudokus")
+        for filename in filenames:
+            print(f"{filename}\n")
+            with open(f"sudokus//{filename}") as sudoku_board_raw:
                 board = SudokuBoard(sudoku_board_raw.read())
                 solve_single_board(board)
         time_manager.stop()

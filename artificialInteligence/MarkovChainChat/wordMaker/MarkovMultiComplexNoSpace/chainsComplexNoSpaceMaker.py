@@ -33,24 +33,24 @@ def print_elapsed_time(seconds: float) -> None:
     print(sign + ", ".join(parts))
 
 
-def rename_file(source_file_name: str, destination_file_name: str) -> None:
+def rename_file(source_filename: str, destination_filename: str) -> None:
     with (
-        open(source_file_name, "r", encoding="utf-8") as source_file,
-        open(destination_file_name, "w", encoding="utf-8") as destination_file,
+        open(source_filename, "r", encoding="utf-8") as source_file,
+        open(destination_filename, "w", encoding="utf-8") as destination_file,
     ):
         content = source_file.read()
         destination_file.write(content)
 
 
-def update_chain(file_name: str, file_index: int, terms: list[list[str]]) -> None:
-    update_chain_file(file_name, file_index, terms)
-    rename_file(f"{file_name}/c.txt", f"{file_name}/{file_index:03d}.txt")
+def update_chain(filename: str, file_index: int, terms: list[list[str]]) -> None:
+    update_chain_file(filename, file_index, terms)
+    rename_file(f"{filename}/c.txt", f"{filename}/{file_index:03d}.txt")
 
 
-def update_chain_file(file_name: str, file_index: int, terms: list[list[str]]) -> None:
-    with open(f"{file_name}/c.txt", "w", encoding="UTF-8") as file_write:
+def update_chain_file(filename: str, file_index: int, terms: list[list[str]]) -> None:
+    with open(f"{filename}/c.txt", "w", encoding="UTF-8") as file_write:
         counter = Counter([str(a) for a in terms])
-        if f"{file_index:03d}.txt" not in os.listdir(file_name):
+        if f"{file_index:03d}.txt" not in os.listdir(filename):
             unique_terms: list[list[str]] = []
             for term in terms:
                 if term not in unique_terms:
@@ -58,7 +58,7 @@ def update_chain_file(file_name: str, file_index: int, terms: list[list[str]]) -
                     unique_terms.append(term)
             return
         with open(
-            f"{file_name}/{file_index:03d}.txt", "r", encoding="UTF-8"
+            f"{filename}/{file_index:03d}.txt", "r", encoding="UTF-8"
         ) as file_read:
             line = file_read.readline()[:-1]
             while line:
@@ -80,30 +80,30 @@ def update_chain_file(file_name: str, file_index: int, terms: list[list[str]]) -
                     unique_terms.append(term)
 
 
-def update_chain_files(file_name: str, alterations: dict[int, list[list[str]]]) -> None:
+def update_chain_files(filename: str, alterations: dict[int, list[list[str]]]) -> None:
     for file_index in alterations:
-        update_chain(file_name, file_index, alterations[file_index])
+        update_chain(filename, file_index, alterations[file_index])
 
 
-def get_file_name() -> str:
-    is_file_name_valid = True
-    file_name = "default"
-    while is_file_name_valid:
+def get_filename() -> str:
+    is_filename_valid = True
+    filename = "default"
+    while is_filename_valid:
         print("type the file name (without .txt): ")
-        file_name = input()
+        filename = input()
         try:
-            with open(f"{file_name}.txt", "r", encoding="UTF-8") as _:
+            with open(f"{filename}.txt", "r", encoding="UTF-8") as _:
                 pass
         except Exception as _:
             print("invalid name")
-        is_file_name_valid = False
-    return file_name
+        is_filename_valid = False
+    return filename
 
 
 def main() -> None:
-    file_name = get_file_name()
+    filename = get_filename()
     start_time = time()
-    with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
+    with open(f"{filename}.txt", "r", encoding="UTF-8") as file:
         line = file.readline()[1:-1]
         count = 0
         alterations: dict[int, list[list[str]]] = {}
@@ -159,14 +159,14 @@ def main() -> None:
                     previous_char = current_char
                     print(word_length)
             if count == 100:
-                update_chain_files(file_name, alterations)
+                update_chain_files(filename, alterations)
                 alterations = {}
                 count = 0
             else:
                 count += 1
             line = file.readline()[:-1]
-        update_chain_files(file_name, alterations)
-        with open(file_name + "/c.txt", "w", encoding="UTF-8") as word_count_file:
+        update_chain_files(filename, alterations)
+        with open(filename + "/c.txt", "w", encoding="UTF-8") as word_count_file:
             for index, quantity in enumerate(word_frequency_map):
                 word_count_file.write(f"{index} ")
                 word_count_file.write(f"{quantity}\n")

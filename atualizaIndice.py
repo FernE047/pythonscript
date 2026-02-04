@@ -5,17 +5,17 @@ from typing import Literal
 # I used to have a batch file for each python script to run it directly from terminal.
 
 
-def read_python(file_name: str, imported_modules: list[str]) -> None:
+def read_python(filename: str, imported_modules: list[str]) -> None:
     def add_imported_modules(line: str) -> None:
         if line in imported_modules:
             return
-        print(file_name)
+        print(filename)
         print(line, end="")
         print()
         imported_modules.append(line)
 
     try:
-        with open(file_name, "r", encoding="utf-8") as file:
+        with open(filename, "r", encoding="utf-8") as file:
             line = file.readline()
             while line:
                 import_index = line.find("import")
@@ -36,9 +36,9 @@ def read_python(file_name: str, imported_modules: list[str]) -> None:
         pass
 
 
-def get_python_version(file_name: str) -> str | Literal[False]:
+def get_python_version(filename: str) -> str | Literal[False]:
     try:
-        with open(file_name, "r", encoding="utf-8") as file:
+        with open(filename, "r", encoding="utf-8") as file:
             line = file.readline()
             if line.find("#v") != -1:
                 return f"C:/Users/Programador/AppData/Local/Programs/Python/Python{line[2:-1]}/python"
@@ -47,9 +47,9 @@ def get_python_version(file_name: str) -> str | Literal[False]:
     return "python"
 
 
-def check_no_batch_flag(file_name: str) -> bool:
+def check_no_batch_flag(filename: str) -> bool:
     try:
-        with open(file_name, "r", encoding="utf-8") as file:
+        with open(filename, "r", encoding="utf-8") as file:
             line = file.readline()
             if line.find("#NoBatch") != -1:
                 return True
@@ -61,11 +61,11 @@ def check_no_batch_flag(file_name: str) -> bool:
 def create_batch_file(folders: list[str]) -> None:
     batch_name = f"C:/pythonscript/{folders[-1][:-3]}.bat"
     print(batch_name)
-    python_file_name = "/".join(folders)
-    if not check_no_batch_flag(python_file_name):
-        python_exe = get_python_version(python_file_name)
+    python_filename = "/".join(folders)
+    if not check_no_batch_flag(python_filename):
+        python_exe = get_python_version(python_filename)
         with open(batch_name, "w", encoding="utf-8") as file:
-            file.write(f"@echo off\n{python_exe} {python_file_name} %*")
+            file.write(f"@echo off\n{python_exe} {python_filename} %*")
 
 
 def filter_batch_files(file_list: list[str]) -> list[str]:
@@ -115,11 +115,10 @@ def explore_directory(
                 folder_list.pop()
 
 
-def generate_index(file_name: str, folder_limit: int | None = None) -> None:
-    print(file_name)
-    with open(file_name, "w", encoding="utf-8") as file:
+def generate_index(filename: str, folder_limit: int | None = None) -> None:
+    print(filename)
+    with open(filename, "w", encoding="utf-8") as file:
         explore_directory(file, folder_limit=folder_limit)
-
 
 
 def main() -> None:

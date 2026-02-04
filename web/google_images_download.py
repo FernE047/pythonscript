@@ -244,10 +244,10 @@ def single_image():
         image_name = image_name[:image_name.find("?")]
     path_name = main_directory + "/" + image_name
     if ".jpg" in image_name or ".gif" in image_name or ".png" in image_name or ".bmp" in image_name or ".svg" in image_name or ".webp" in image_name or ".ico" in image_name:
-        output_file_name = path_name
+        output_filename = path_name
     else:
-        output_file_name = path_name + ".jpg"
-    with open(output_file_name, "wb") as output_file:
+        output_filename = path_name + ".jpg"
+    with open(output_filename, "wb") as output_file:
         data = response.read()
         output_file.write(data)
         response.close()
@@ -337,15 +337,15 @@ def bulk_download(search_keyword,suffix_keywords,limit,main_directory,delay_time
                             image_name = image_name[:image_name.find("?")]
                         base_name = f"{main_directory}/{dir_name}/{success_count + 1:03d}. {image_name}"
                         if ".jpg" in image_name or ".JPG" in image_name or ".gif" in image_name or ".png" in image_name or ".bmp" in image_name or ".svg" in image_name or ".webp" in image_name or ".ico" in image_name:
-                            output_file_name = f"{base_name}"
+                            output_filename = f"{base_name}"
                         else:
                             if args.format:
-                                output_file_name = f"{base_name}.{args.format}"
+                                output_filename = f"{base_name}.{args.format}"
                                 image_name = image_name + "." + args.format
                             else:
-                                output_file_name = f"{base_name}.jpg"
+                                output_filename = f"{base_name}.jpg"
                                 image_name = image_name + ".jpg"
-                        with open(output_file_name, "wb") as output_file:
+                        with open(output_filename, "wb") as output_file:
                             data = response.read()
                             output_file.write(data)
                             response.close()

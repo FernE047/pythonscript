@@ -36,25 +36,25 @@ def format_elapsed_time(seconds: float) -> str:
     return sign + ", ".join(parts)
 
 
-def rename_file(source_file_name: str, destination_file_name: str) -> None:
+def rename_file(source_filename: str, destination_filename: str) -> None:
     with (
-        open(source_file_name, "r", encoding="utf-8") as source_file,
-        open(destination_file_name, "w", encoding="utf-8") as destination_file,
+        open(source_filename, "r", encoding="utf-8") as source_file,
+        open(destination_filename, "w", encoding="utf-8") as destination_file,
     ):
         content = source_file.read()
         destination_file.write(content)
 
 
-def update_chain_file(file_name: str, keywords: list[ChainData]) -> None:
-    update_keywords_in_chain(file_name, keywords)
-    rename_file(f"{file_name}/c.txt", f"{file_name}/chain.txt")
+def update_chain_file(filename: str, keywords: list[ChainData]) -> None:
+    update_keywords_in_chain(filename, keywords)
+    rename_file(f"{filename}/c.txt", f"{filename}/chain.txt")
 
 
-def update_keywords_in_chain(file_name: str, keyword_tuples: list[ChainData]) -> None:
-    with open(f"{file_name}/c.txt", "w", encoding="UTF-8") as file_write:
+def update_keywords_in_chain(filename: str, keyword_tuples: list[ChainData]) -> None:
+    with open(f"{filename}/c.txt", "w", encoding="UTF-8") as file_write:
         counter = Counter([" ".join(keyword_tuple) for keyword_tuple in keyword_tuples])
         unique_keywords: set[ChainData] = set()
-        if "chain.txt" not in os.listdir(file_name):
+        if "chain.txt" not in os.listdir(filename):
             for keyword_tuple in keyword_tuples:
                 if keyword_tuple not in unique_keywords:
                     keyword_tuple_flat = " ".join(keyword_tuple)
@@ -64,7 +64,7 @@ def update_keywords_in_chain(file_name: str, keyword_tuples: list[ChainData]) ->
                     )
                     unique_keywords.add(keyword_tuple)
             return
-        with open(f"{file_name}/chain.txt", "r", encoding="UTF-8") as file_read:
+        with open(f"{filename}/chain.txt", "r", encoding="UTF-8") as file_read:
             line = file_read.readline()
             while line:
                 keywords_read = cast(tuple[str, str, str, str], tuple(line.split()))
@@ -88,25 +88,25 @@ def update_keywords_in_chain(file_name: str, keyword_tuples: list[ChainData]) ->
                     unique_keywords.add(keyword_tuple)
 
 
-def get_file_name() -> str:
-    is_file_name_valid = True
-    file_name = "default"
-    while is_file_name_valid:
+def get_filename() -> str:
+    is_filename_valid = True
+    filename = "default"
+    while is_filename_valid:
         print("type the file name (without .txt): ")
-        file_name = input()
+        filename = input()
         try:
-            with open(f"{file_name}.txt", "r", encoding="UTF-8") as _:
+            with open(f"{filename}.txt", "r", encoding="UTF-8") as _:
                 pass
         except Exception as _:
             print("invalid name")
-        is_file_name_valid = False
-    return file_name
+        is_filename_valid = False
+    return filename
 
 
 def main() -> None:
-    file_name = get_file_name()
+    filename = get_filename()
     start_time = time()
-    with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
+    with open(f"{filename}.txt", "r", encoding="UTF-8") as file:
         line = file.readline()[:-1]
         word_frequency: list[int] = []
         word_length = 0
@@ -146,14 +146,14 @@ def main() -> None:
                             break
                     previous_character = current_character
             if count == 100:
-                update_chain_file(file_name, update_chain_values)
+                update_chain_file(filename, update_chain_values)
                 update_chain_values = []
                 count = 0
             else:
                 count += 1
             line = file.readline()[:-1]
-        update_chain_file(file_name, update_chain_values)
-        with open(f"{file_name}/length.txt", "w", encoding="UTF-8") as arqInput:
+        update_chain_file(filename, update_chain_values)
+        with open(f"{filename}/length.txt", "w", encoding="UTF-8") as arqInput:
             for index, quantity in enumerate(word_frequency):
                 arqInput.write(f"{index} {quantity}\n")
         print(word_length)

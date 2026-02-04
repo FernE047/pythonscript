@@ -76,13 +76,13 @@ class AttemptCounter:
         return f"Attempts: {self.attempts}"
 
 
-def save_board_image(board: BoardData, file_name: str) -> None:
+def save_board_image(board: BoardData, filename: str) -> None:
     image = Image.new("RGBA", (len(board[0]), len(board)), (255, 255, 255, 255))
     for y, column in enumerate(board):
         for x, cell in enumerate(column):
             if cell == 1:
                 image.putpixel((x, y), (0, 0, 0, 255))
-    image.save(f"{file_name}.png")
+    image.save(f"{filename}.png")
     image.close()
 
 

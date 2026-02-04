@@ -115,19 +115,19 @@ def normalize_statistics(frequency_map: list[int]) -> list[float]:
     return frequency_normalized
 
 
-def get_file_name() -> str:
-    is_file_name_valid = True
-    file_name = "default"
-    while is_file_name_valid:
+def get_filename() -> str:
+    is_filename_valid = True
+    filename = "default"
+    while is_filename_valid:
         print("type the file name (without .txt): ")
-        file_name = input()
+        filename = input()
         try:
-            with open(f"{file_name}.txt", "r", encoding="UTF-8") as _:
+            with open(f"{filename}.txt", "r", encoding="UTF-8") as _:
                 pass
         except Exception as _:
             print("invalid name")
-        is_file_name_valid = False
-    return file_name
+        is_filename_valid = False
+    return filename
 
 
 def clean_line(line: str) -> str:
@@ -140,7 +140,7 @@ def clean_line(line: str) -> str:
 
 
 def main() -> None:
-    nome = get_file_name()
+    nome = get_filename()
     frequencies_manager = FrequencyManager()
     letras = list("aeiouqwrtypsdfghjklzxcvbnm0123456789")
     with open(f"{nome}.txt", "r", encoding="UTF-8") as markov_chain_file:

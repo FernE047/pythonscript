@@ -145,13 +145,13 @@ def solve_board(game: GameData) -> BoardData:
     return game[0]
 
 
-def save_board_image(board: BoardData, file_name: str) -> None:
+def save_board_image(board: BoardData, filename: str) -> None:
     image = Image.new("RGBA", (len(board[0]), len(board)), (255, 255, 255, 255))
     for y, row in enumerate(board):
         for x, cell in enumerate(row):
             if cell == 1:
                 image.putpixel((x, y), (0, 0, 0, 255))
-    image.save(f"{file_name}.png")
+    image.save(f"{filename}.png")
     image.close()
 
 

@@ -41,8 +41,8 @@ class Graph:
         return self.size
 
 
-def get_graph_from_file(file_name: str, limit: None | int = None) -> Graph:
-    with open(file_name, "r", encoding="utf-8") as file:
+def get_graph_from_file(filename: str, limit: None | int = None) -> Graph:
+    with open(filename, "r", encoding="utf-8") as file:
         line = file.readline()
         vertexes: list[tuple[float, float]] = []
         index = 0

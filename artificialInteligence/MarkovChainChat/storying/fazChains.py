@@ -32,10 +32,10 @@ def format_elapsed_time(seconds: float) -> str:
     return sign + ", ".join(parts)
 
 
-def rename_file(source_file_name: str, destination_file_name: str) -> None:
+def rename_file(source_filename: str, destination_filename: str) -> None:
     with (
-        open(source_file_name, "r", encoding="utf-8") as source_file,
-        open(destination_file_name, "w", encoding="utf-8") as destination_file,
+        open(source_filename, "r", encoding="utf-8") as source_file,
+        open(destination_filename, "w", encoding="utf-8") as destination_file,
     ):
         content = source_file.read()
         destination_file.write(content)
@@ -105,11 +105,11 @@ CHAINSIZE = 1
 def main() -> None:
     title_keywords: list[str] = []
     story_keywords: list[str] = []
-    file_names = os.listdir("./FanficAnime/stories")
-    total = len(file_names)
+    filenames = os.listdir("./FanficAnime/stories")
+    total = len(filenames)
     quantity = 0
     start_time = time()
-    for name in file_names:
+    for name in filenames:
         quantity += 1
         with open(f"./FanficAnime/stories/{name}", "r", encoding="utf-8") as file:
             story_components = file.readline().split(" : ")

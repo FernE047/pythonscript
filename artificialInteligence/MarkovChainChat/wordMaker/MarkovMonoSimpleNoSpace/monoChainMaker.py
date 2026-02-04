@@ -35,32 +35,32 @@ def print_elapsed_time(seconds: float) -> None:
     print(sign + ", ".join(parts))
 
 
-def rename_file(source_file_name: str, destination_file_name: str) -> None:
+def rename_file(source_filename: str, destination_filename: str) -> None:
     with (
-        open(source_file_name, "r", encoding="utf-8") as source_file,
-        open(destination_file_name, "w", encoding="utf-8") as destination_file,
+        open(source_filename, "r", encoding="utf-8") as source_file,
+        open(destination_filename, "w", encoding="utf-8") as destination_file,
     ):
         content = source_file.read()
         destination_file.write(content)
 
 
-def update_chain_file(file_name: str, chain_terms: list[ChainData]) -> None:
-    update_chain_file_contents(file_name, chain_terms)
-    rename_file(f"{file_name}/c.txt", f"{file_name}/chain.txt")
+def update_chain_file(filename: str, chain_terms: list[ChainData]) -> None:
+    update_chain_file_contents(filename, chain_terms)
+    rename_file(f"{filename}/c.txt", f"{filename}/chain.txt")
 
 
-def update_chain_file_contents(file_name: str, chain_terms: list[ChainData]) -> None:
-    with open(f"{file_name}/c.txt", "w", encoding="UTF-8") as file_write:
+def update_chain_file_contents(filename: str, chain_terms: list[ChainData]) -> None:
+    with open(f"{filename}/c.txt", "w", encoding="UTF-8") as file_write:
 
         def write_terms(terms: ChainData, frequency: int) -> None:
             terms_flat = " ".join(terms)
             file_write.write(f"{terms_flat} {frequency}\n")
 
-        if "chain.txt" not in os.listdir(file_name):
+        if "chain.txt" not in os.listdir(filename):
             for terms in chain_terms:
                 write_terms(terms, 1)
             return
-        with open(f"{file_name}/chain.txt", "r", encoding="UTF-8") as file_read:
+        with open(f"{filename}/chain.txt", "r", encoding="UTF-8") as file_read:
             line = file_read.readline()
             while line:
                 term_list = cast(tuple[str, str, str], line.split())
@@ -79,25 +79,25 @@ def update_chain_file_contents(file_name: str, chain_terms: list[ChainData]) -> 
                 write_terms(terms, 1)
 
 
-def get_file_name() -> str:
-    is_file_name_valid = True
-    file_name = "default"
-    while is_file_name_valid:
+def get_filename() -> str:
+    is_filename_valid = True
+    filename = "default"
+    while is_filename_valid:
         print("type the file name (without .txt): ")
-        file_name = input()
+        filename = input()
         try:
-            with open(f"{file_name}.txt", "r", encoding="UTF-8") as _:
+            with open(f"{filename}.txt", "r", encoding="UTF-8") as _:
                 pass
         except Exception as _:
             print("invalid name")
-        is_file_name_valid = False
-    return file_name
+        is_filename_valid = False
+    return filename
 
 
 def main() -> None:
-    file_name = get_file_name()
+    filename = get_filename()
     start_time = time()
-    with open(f"{file_name}.txt", "r", encoding="UTF-8") as file:
+    with open(f"{filename}.txt", "r", encoding="UTF-8") as file:
         line = file.readline()[1:-1]
         line_length = len(line)
         while line:
@@ -118,7 +118,7 @@ def main() -> None:
                     update_chain_values.append((current_character, next_character))
                     if next_character == "¨":
                         break
-            update_chain_file(file_name, update_chain_values)
+            update_chain_file(filename, update_chain_values)
             line = file.readline()[:-1]
         print(line_length)
         end_time = time()

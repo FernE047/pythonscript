@@ -1,12 +1,12 @@
 from random import randint
 
 
-def generate_char(file_name: str, previous_chars: list[str] | None = None) -> str:
+def generate_char(filename: str, previous_chars: list[str] | None = None) -> str:
     if previous_chars is None:
         previous_chars = []
     while len(previous_chars) != 2:
         previous_chars = ["¨"] + previous_chars
-    with open(file_name, "r", encoding="UTF-8") as file:
+    with open(filename, "r", encoding="UTF-8") as file:
         line = file.readline()
         character_weights: dict[str, int] = {}
         while line:
@@ -26,34 +26,34 @@ def generate_char(file_name: str, previous_chars: list[str] | None = None) -> st
         return ""
 
 
-def generate_word(file_name: str) -> str:
+def generate_word(filename: str) -> str:
     generated_chars: list[str] = []
-    char = generate_char(file_name)
+    char = generate_char(filename)
     while char != "¨":
         generated_chars.append(char)
-        char = generate_char(file_name, generated_chars[-2:])
+        char = generate_char(filename, generated_chars[-2:])
     return "".join(generated_chars)
 
 
-def get_file_name() -> str:
-    is_file_name_valid = True
-    file_name = "default"
-    while is_file_name_valid:
+def get_filename() -> str:
+    is_filename_valid = True
+    filename = "default"
+    while is_filename_valid:
         print("type the file name (without .txt): ")
-        file_name = input()
+        filename = input()
         try:
-            with open(f"{file_name}.txt", "r", encoding="UTF-8") as _:
+            with open(f"{filename}.txt", "r", encoding="UTF-8") as _:
                 pass
         except Exception as _:
             print("invalid name")
-        is_file_name_valid = False
-    return file_name
+        is_filename_valid = False
+    return filename
 
 
 def main() -> None:
-    file_name = get_file_name()
+    filename = get_filename()
     for _ in range(1000):
-        print(generate_word(f"{file_name}/chain.txt"))
+        print(generate_word(f"{filename}/chain.txt"))
 
 
 if __name__ == "__main__":

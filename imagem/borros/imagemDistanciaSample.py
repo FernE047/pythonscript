@@ -11,7 +11,7 @@ def get_distance(point_a: CoordData, point_b: CoordData) -> float:
     return distance
 
 
-def fazImagem(focus_point: CoordData, file_name: str) -> None:
+def fazImagem(focus_point: CoordData, filename: str) -> None:
     image = Image.new("RGBA", (256, 256), (0, 0, 100))
     distance_from_focus = get_distance((0, 0), focus_point)
     for x in range(256):
@@ -21,7 +21,7 @@ def fazImagem(focus_point: CoordData, file_name: str) -> None:
             rgb_values = hsv_to_rgb(0, 0, brightness)
             pixel_rgb = tuple([int(color_component) for color_component in rgb_values])
             image.putpixel((x, y), pixel_rgb)
-    image.save(file_name)
+    image.save(filename)
 
 
 def main() -> None:

@@ -8,8 +8,8 @@ def count_images_on_folder(image_category: str) -> int:
     folder = f"imagens/{image_category}"
     quantity = 0
     if os.path.exists(folder):
-        for file_name in os.listdir(folder):
-            if file_name.lower().endswith((".png", ".jpg", ".jpeg", ".bmp", ".gif")):
+        for filename in os.listdir(folder):
+            if filename.lower().endswith((".png", ".jpg", ".jpeg", ".bmp", ".gif")):
                 quantity += 1
     return quantity
 
@@ -18,11 +18,11 @@ def get_image(image_category: str, index_chosen: int = 1) -> str:
     folder = f"imagens/{image_category}"
     if os.path.exists(folder):
         index = 0
-        for file_name in os.listdir(folder):
-            if file_name.lower().endswith((".png", ".jpg", ".jpeg", ".bmp", ".gif")):
+        for filename in os.listdir(folder):
+            if filename.lower().endswith((".png", ".jpg", ".jpeg", ".bmp", ".gif")):
                 index += 1
                 if index == index_chosen:
-                    return os.path.join(folder, file_name)
+                    return os.path.join(folder, filename)
     return ""
 
 

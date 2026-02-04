@@ -164,7 +164,9 @@ def show(board: BoardData) -> None:
         print()
 
 
-def solve_sudoku_board(board: BoardData, counter_manager: CounterManager) -> BoardData | None:
+def solve_sudoku_board(
+    board: BoardData, counter_manager: CounterManager
+) -> BoardData | None:
     if len(board["empty_cells"]) == 0:
         return board
     empty_cell = board["empty_cells"].pop()
@@ -198,11 +200,11 @@ def solve_single_board(board: BoardData, time_manager: TimeManager) -> None:
 def main() -> None:
     time_manager = TimeManager()
     while True:
-        file_names = os.listdir("sudokus")
-        for file_name in file_names:
-            print(f"{file_name}\n")
+        filenames = os.listdir("sudokus")
+        for filename in filenames:
+            print(f"{filename}\n")
             with open(
-                f"sudokus//{file_name}", "r", encoding="utf-8"
+                f"sudokus//{filename}", "r", encoding="utf-8"
             ) as sudoku_board_raw:
                 board = create_sudoku_board(sudoku_board_raw.read())
             solve_single_board(board, time_manager)

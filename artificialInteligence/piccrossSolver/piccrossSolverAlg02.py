@@ -82,13 +82,13 @@ class CounterManager:
         return f"\nAttempts : {self.attempts}\nCuts : {self.heuristic_cuts}"
 
 
-def save_board_image(board: BoardData, file_name: str) -> None:
+def save_board_image(board: BoardData, filename: str) -> None:
     image = Image.new("RGBA", (len(board[0]), len(board)), (255, 255, 255, 255))
     for y, column in enumerate(board):
         for x, cell in enumerate(column):
             if cell:
                 image.putpixel((x, y), (0, 0, 0, 255))
-    image.save(f"{file_name}.png")
+    image.save(f"{filename}.png")
     image.close()
 
 
@@ -170,9 +170,7 @@ def verificaColunasParcial(
     return True
 
 
-def solve_board(
-    game: GameData, counter_manager: CounterManager
-) -> BoardData | None:
+def solve_board(game: GameData, counter_manager: CounterManager) -> BoardData | None:
     # TODO fix game, it should be mutable
     board = game[0]
     hints = game[1]

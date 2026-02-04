@@ -10,9 +10,9 @@ def get_image_from_folder(image_category: str) -> list[str]:
     folder = f"imagens/{image_category}"
     images: list[str] = []
     if os.path.exists(folder):
-        for file_name in os.listdir(folder):
-            if file_name.lower().endswith((".png", ".jpg", ".jpeg", ".bmp", ".gif")):
-                images.append(os.path.join(folder, file_name))
+        for filename in os.listdir(folder):
+            if filename.lower().endswith((".png", ".jpg", ".jpeg", ".bmp", ".gif")):
+                images.append(os.path.join(folder, filename))
     return images
 
 
@@ -103,7 +103,6 @@ def mergeTwoImages(img1, img2):
             #    print_elapsed_time(final-ultimo)
             #    ultimo=final
     return novaImagem
-
 
 
 def main() -> None:

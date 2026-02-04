@@ -1,8 +1,8 @@
 from random import randint
 
 
-def generate_char(file_name: str, index: int, previous_char: str = "") -> str:
-    with open(f"{file_name}/{index:03d}.txt", encoding="utf-8") as file:
+def generate_char(filename: str, index: int, previous_char: str = "") -> str:
+    with open(f"{filename}/{index:03d}.txt", encoding="utf-8") as file:
         line = file.readline()
         character_weights: dict[str, int] = {}
         while line:
@@ -28,34 +28,34 @@ def generate_char(file_name: str, index: int, previous_char: str = "") -> str:
         return ""
 
 
-def generate_word(file_name: str) -> str:
+def generate_word(filename: str) -> str:
     generated_word = ""
-    char = generate_char(file_name, 0)
+    char = generate_char(filename, 0)
     while char != "¨":
         generated_word += char
-        char = generate_char(file_name, len(generated_word), char)
+        char = generate_char(filename, len(generated_word), char)
     return generated_word
 
 
-def get_file_name() -> str:
-    is_file_name_valid = True
-    file_name = "default"
-    while is_file_name_valid:
+def get_filename() -> str:
+    is_filename_valid = True
+    filename = "default"
+    while is_filename_valid:
         print("type the file name (without .txt): ")
-        file_name = input()
+        filename = input()
         try:
-            with open(f"{file_name}.txt", "r", encoding="UTF-8") as _:
+            with open(f"{filename}.txt", "r", encoding="UTF-8") as _:
                 pass
         except Exception as _:
             print("invalid name")
-        is_file_name_valid = False
-    return file_name
+        is_filename_valid = False
+    return filename
 
 
 def main() -> None:
-    file_name = get_file_name()
+    filename = get_filename()
     for index in range(1000):
-        print(f"{index} : {generate_word(file_name)}")
+        print(f"{index} : {generate_word(filename)}")
 
 
 if __name__ == "__main__":
