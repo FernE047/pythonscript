@@ -30,6 +30,11 @@ BoardData = tuple[QuadranteRowData, QuadranteRowData, QuadranteRowData]
 CellData = Literal["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 SudokuGridData = list[list[CellData]]
 
+BLOCK_SIZE = 3
+BOARD_LENGTH = 3 * BLOCK_SIZE
+BOARD_SIZE = BOARD_LENGTH * BOARD_LENGTH
+
+
 
 class TimeManager:
     def __init__(self) -> None:
@@ -117,12 +122,12 @@ def convert_raw_sudoku(raw_sudoku: str) -> list[CellData]:
 class SudokuBlock:
     def __init__(self, config_str: str | None = None) -> None:
         self.sudoku_grid: SudokuGridData = []
-        for _ in range(3):
-            self.sudoku_grid.append(["0", "0", "0"])
+        for _ in range(BLOCK_SIZE):
+            self.sudoku_grid.append(["0" for _ in range(BLOCK_SIZE)])
         if config_str is not None:
             for char_index, cell_value in enumerate(list(config_str)):
                 cell_value = cast(CellData, cell_value)
-                self.sudoku_grid[char_index // 3][char_index % 3] = cell_value
+                self.sudoku_grid[char_index // BLOCK_SIZE][char_index % BLOCK_SIZE] = cell_value
 
     def delete_cell(self, y: int, x: int) -> None:
         self.sudoku_grid[y][x] = "0"
@@ -131,8 +136,8 @@ class SudokuBlock:
         return self.sudoku_grid[y][x]
 
     def is_value_valid(self, v: CellData) -> bool:
-        for a in range(3):
-            for b in range(3):
+        for a in range(BLOCK_SIZE):
+            for b in range(BLOCK_SIZE):
                 if self.sudoku_grid[a][b] == v:
                     return False
         return True
@@ -150,8 +155,8 @@ class SudokuBlock:
 
     def generate_config_str(self):
         chave = ""
-        for a in range(3):
-            for b in range(3):
+        for a in range(BLOCK_SIZE):
+            for b in range(BLOCK_SIZE):
                 chave += self.get_cell(a, b)
         return chave
 
@@ -160,8 +165,8 @@ class SudokuBlock:
 
     def is_block_valid(self) -> bool:
         quadrante = self.copy()
-        for y in range(3):
-            for x in range(3):
+        for y in range(BLOCK_SIZE):
+            for x in range(BLOCK_SIZE):
                 cell_value = quadrante.get_cell(y, x)
                 quadrante.set_element(y, x, "0")
                 if not (quadrante.set_element(y, x, cell_value)):
@@ -179,19 +184,19 @@ class SudokuBoard:
         if sudoku_board_raw is not None:
             parsed_sudoku_input = convert_raw_sudoku(sudoku_board_raw)
             for xy, cell_value in enumerate(parsed_sudoku_input):
-                if xy > 80:
+                if xy >= BOARD_SIZE:
                     break
-                y = xy // 9
-                x = xy % 9
+                y = xy // BOARD_LENGTH
+                x = xy % BOARD_LENGTH
                 self.set_cell(y, x, cell_value)
 
     def calculate_grid_position(
         self, y: int = 0, x: int = 0
     ) -> tuple[int, int, int, int]:
-        row_block_index = y // 3
-        col_block_index = x // 3
-        row_in_block = y % 3
-        col_in_block = x % 3
+        row_block_index = y // BLOCK_SIZE
+        col_block_index = x // BLOCK_SIZE
+        row_in_block = y % BLOCK_SIZE
+        col_in_block = x % BLOCK_SIZE
         return (row_block_index, col_block_index, row_in_block, col_in_block)
 
     def get_sudoku_block(self, block_y: int, block_x: int) -> SudokuBlock:
@@ -221,18 +226,18 @@ class SudokuBoard:
 
     def is_value_valid_in_row(self, y: int, cell_value: CellData) -> bool:
         row_block_index, _, row_in_block, _ = self.calculate_grid_position(y=y)
-        for block_x in range(3):
+        for block_x in range(BLOCK_SIZE):
             quadrante = self.get_sudoku_block(row_block_index, block_x)
-            for x in range(3):
+            for x in range(BLOCK_SIZE):
                 if quadrante.sudoku_grid[row_in_block][x] == cell_value:
                     return False
         return True
 
     def is_value_valid_in_column(self, x: int, cell_value: CellData) -> bool:
         _, col_block_index, _, col_in_block = self.calculate_grid_position(x=x)
-        for block_y in range(3):
+        for block_y in range(BLOCK_SIZE):
             quadrante = self.get_sudoku_block(block_y, col_block_index)
-            for y in range(3):
+            for y in range(BLOCK_SIZE):
                 if quadrante.sudoku_grid[y][col_in_block] == cell_value:
                     return False
         return True
@@ -243,8 +248,8 @@ class SudokuBoard:
 
     def generate_config_str(self) -> str:
         config_str = ""
-        for y in range(9):
-            for x in range(9):
+        for y in range(BOARD_LENGTH):
+            for x in range(BOARD_LENGTH):
                 config_str += self.get_cell(y, x)
         return config_str
 
@@ -253,7 +258,7 @@ class SudokuBoard:
 
     def is_column_valid(self, x: int) -> bool:
         board = self.copy()
-        for y in range(9):
+        for y in range(BOARD_LENGTH):
             cell_value = board.get_cell(y, x)
             board.set_cell(y, x, "0")
             if not (board.set_cell(y, x, cell_value)):
@@ -262,7 +267,7 @@ class SudokuBoard:
 
     def is_row_valid(self, y: int) -> bool:
         board = self.copy()
-        for x in range(9):
+        for x in range(BOARD_LENGTH):
             cell_value = board.get_cell(y, x)
             board.set_cell(y, x, "0")
             if not (board.set_cell(y, x, cell_value)):
@@ -271,8 +276,8 @@ class SudokuBoard:
 
     def is_board_valid(self) -> bool:
         board = self.copy()
-        for y in range(9):
-            for x in range(9):
+        for y in range(BOARD_LENGTH):
+            for x in range(BOARD_LENGTH):
                 cell_value = board.get_cell(y, x)
                 if cell_value == "0":
                     return False
@@ -281,12 +286,12 @@ class SudokuBoard:
                     return False
         return True
 
-    def is_value_valid(self, y: int, x: int, v: CellData) -> bool:
-        if not (self.is_value_valid_in_block(y, x, v)):
+    def is_value_valid(self, y: int, x: int, cell_value: CellData) -> bool:
+        if not (self.is_value_valid_in_block(y, x, cell_value)):
             return False
-        if not (self.is_value_valid_in_column(x, v)):
+        if not (self.is_value_valid_in_column(x, cell_value)):
             return False
-        if not (self.is_value_valid_in_row(y, v)):
+        if not (self.is_value_valid_in_row(y, cell_value)):
             return False
         return True
 
@@ -306,24 +311,24 @@ class SudokuBoard:
         return False
 
     def find_next_empty_cell(self) -> tuple[int, int] | None:
-        for y in range(9):
-            for x in range(9):
+        for y in range(BOARD_LENGTH):
+            for x in range(BOARD_LENGTH):
                 if self.get_cell(y, x) == "0":
                     return (y, x)
         return None
 
     def get_possible_values(self, pos: tuple[int, int]) -> list[CellData]:
         possibilidades: list[CellData] = []
-        for value in range(1, 10):
+        for value in range(1, BOARD_LENGTH + 1):
             cell_value = cast(CellData, str(value))
             if self.is_value_valid(pos[0], pos[1], cell_value):
                 possibilidades.append(cell_value)
         return possibilidades
 
     def print_grid(self) -> None:
-        for y in range(9):
+        for y in range(BOARD_LENGTH):
             row = ""
-            for x in range(9):
+            for x in range(BOARD_LENGTH):
                 row += self.get_cell(y, x)
             print(row)
 
@@ -336,19 +341,19 @@ def create_sudoku_board(mode: Literal[1, 2]) -> SudokuBoard:
         return sudoku_board
     sudoku_board = SudokuBoard()
     filled_cells_count = 0
-    while filled_cells_count < 81:
+    while filled_cells_count < BOARD_SIZE:
         user_input = input("")
         row_input: list[userInputOptions] = cast(
             list[userInputOptions], user_input.strip().split("")
         )
         for char in row_input:
-            position_y = filled_cells_count // 9
-            position_x = filled_cells_count % 9
+            position_y = filled_cells_count // BOARD_LENGTH
+            position_x = filled_cells_count % BOARD_LENGTH
             if char == "p":
                 if filled_cells_count > 0:
                     filled_cells_count -= 1
-                    position_y = filled_cells_count // 9
-                    position_x = filled_cells_count % 9
+                    position_y = filled_cells_count // BOARD_LENGTH
+                    position_x = filled_cells_count % BOARD_LENGTH
                     board_cell = sudoku_board.get_cell(position_y, position_x)
                     print(f"number {board_cell} deleted")
                     sudoku_board.delete_cell(position_y, position_x)
@@ -434,7 +439,7 @@ def main() -> None:
         for filename in files:
             print(f"{filename}\n\n")
             with open(
-                f"sudokus//{filename}", "r", encoding="utf-8"
+                f"sudokus/{filename}", "r", encoding="utf-8"
             ) as sudoku_board_raw:
                 board = SudokuBoard(sudoku_board_raw.read())
             solve_single_board(board)
