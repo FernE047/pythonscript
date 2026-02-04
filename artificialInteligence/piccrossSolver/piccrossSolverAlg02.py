@@ -9,6 +9,9 @@ HintVerticalData = list[VerticalHintData]
 HintsData = tuple[HintHorizontalData, HintVerticalData]
 GameData = tuple[BoardData, HintsData]
 
+FILLED_CELL_COLOR = (0, 0, 0, 255)
+EMPTY_CELL_COLOR = (255, 255, 255, 255)
+
 
 class TimeManager:
     def __init__(self) -> None:
@@ -83,11 +86,11 @@ class CounterManager:
 
 
 def save_board_image(board: BoardData, filename: str) -> None:
-    image = Image.new("RGBA", (len(board[0]), len(board)), (255, 255, 255, 255))
+    image = Image.new("RGBA", (len(board[0]), len(board)), EMPTY_CELL_COLOR)
     for y, column in enumerate(board):
         for x, cell in enumerate(column):
             if cell:
-                image.putpixel((x, y), (0, 0, 0, 255))
+                image.putpixel((x, y), FILLED_CELL_COLOR)
     image.save(f"{filename}.png")
     image.close()
 
