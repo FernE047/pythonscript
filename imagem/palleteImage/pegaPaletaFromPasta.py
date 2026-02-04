@@ -1,10 +1,19 @@
 from PIL import Image
 import os
-from pastaImagens import pegaAssunto as pA
+
+
+def get_image_from_folder(image_category: str) -> list[str]:
+    folder = f"imagens/{image_category}"
+    images: list[str] = []
+    if os.path.exists(folder):
+        for file_name in os.listdir(folder):
+            if file_name.lower().endswith((".png", ".jpg", ".jpeg", ".bmp", ".gif")):
+                images.append(os.path.join(folder, file_name))
+    return images
 
 
 def main() -> None:
-    imagens=pA("pokedex sem fundo")
+    imagens=get_image_from_folder("pokedex sem fundo")
     paleta=[]
     for img in imagens:
         imagem=Image.open(img)

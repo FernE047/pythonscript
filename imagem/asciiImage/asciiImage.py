@@ -1,5 +1,17 @@
 from PIL import Image
-from pastaImagens import pegaAssunto as pA
+import os
+
+
+def get_image_from_folder(image_category: str, quantity: int = 1) -> list[str]:
+    folder = f"imagens/{image_category}"
+    images: list[str] = []
+    if os.path.exists(folder):
+        for file_name in os.listdir(folder):
+            if file_name.lower().endswith((".png", ".jpg", ".jpeg", ".bmp", ".gif")):
+                images.append(os.path.join(folder, file_name))
+                if len(images) >= quantity:
+                    break
+    return images
 
 
 def main() -> None:
@@ -8,10 +20,10 @@ def main() -> None:
     print("quantia")
     quantia = input()
     if quantia == "":
-        imagens = pA(assunto)
+        imagens = get_image_from_folder(assunto)
     else:
         quantia = int(quantia)
-        imagens = pA(assunto, quantia)
+        imagens = get_image_from_folder(assunto, quantia)
     niveis = [" ", "`", ".", ",", "+", "%", "@", "#"]
     print("tamanho")
     print("165 - max")

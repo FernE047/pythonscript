@@ -3,9 +3,18 @@ import numpy as np
 import cv2
 import time
 import os
-import pastaImagens as pI
 
 from PIL import Image
+
+
+def get_image_from_folder(image_category: str) -> list[str]:
+    folder = f"imagens/{image_category}"
+    images: list[str] = []
+    if os.path.exists(folder):
+        for file_name in os.listdir(folder):
+            if file_name.lower().endswith((".png", ".jpg", ".jpeg", ".bmp", ".gif")):
+                images.append(os.path.join(folder, file_name))
+    return images
 
 
 def print_elapsed_time(seconds: float) -> None:
@@ -62,12 +71,12 @@ def main() -> None:
     print("digite um assunto")
     assunto = input()
     print("quantas imagens ler?")
-    leitura = input()
+    user_input = input()
     try:
-        leitura = int(leitura)
-        imagens = pI.pegaAssunto(assunto, leitura)
-    except:
-        imagens = pI.pegaAssunto(assunto)
+        quantity = int(user_input)
+        imagens = get_image_from_folder(assunto)[:quantity]
+    except ValueError:
+        imagens = get_image_from_folder(assunto)
     for imagem in imagens:
         print("\n" + imagem)
         imagem = melhora(imagem)

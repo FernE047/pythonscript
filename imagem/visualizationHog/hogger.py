@@ -1,7 +1,29 @@
 from colorsys import rgb_to_hsv
 from colorsys import hsv_to_rgb
+import os
 from PIL import Image
-import pastaImagens as pI
+
+
+def count_images_on_folder(image_category: str) -> int:
+    folder = f"imagens/{image_category}"
+    quantity = 0
+    if os.path.exists(folder):
+        for file_name in os.listdir(folder):
+            if file_name.lower().endswith((".png", ".jpg", ".jpeg", ".bmp", ".gif")):
+                quantity += 1
+    return quantity
+
+
+def get_image(image_category: str, index_chosen: int = 1) -> str:
+    folder = f"imagens/{image_category}"
+    if os.path.exists(folder):
+        index = 0
+        for file_name in os.listdir(folder):
+            if file_name.lower().endswith((".png", ".jpg", ".jpeg", ".bmp", ".gif")):
+                index += 1
+                if index == index_chosen:
+                    return os.path.join(folder, file_name)
+    return ""
 
 
 def coordDirecao(coord, n):
@@ -86,9 +108,9 @@ def hogify(inicial, final):
             final.putpixel(coord, cor)
 
 
-totalDeImagens = pI.quantiaDeImagens("PokedexSemFundo")
+totalDeImagens = count_images_on_folder("PokedexSemFundo")
 nome = "output//pokemon{0:03d}.png"
-imagem = Image.open(pI.pegaImagem("PokedexSemFundo", 0))
+imagem = Image.open(get_image("PokedexSemFundo", 1))
 imagemHog = Image.new("RGBA", imagem.size, tuple(4 * [0]))
 makeBlackAndWhite(imagem)
 hogify(imagem, imagemHog)

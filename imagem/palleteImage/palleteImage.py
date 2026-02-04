@@ -1,6 +1,24 @@
 from PIL import Image
 import os
-import pastaImagens as pI
+
+
+def get_image_from_folder(image_category: str) -> list[str]:
+    folder = f"imagens/{image_category}"
+    images: list[str] = []
+    if os.path.exists(folder):
+        for file_name in os.listdir(folder):
+            if file_name.lower().endswith((".png", ".jpg", ".jpeg", ".bmp", ".gif")):
+                images.append(os.path.join(folder, file_name))
+    return images
+
+
+def get_image(image_category: str) -> str:
+    folder = f"imagens/{image_category}"
+    if os.path.exists(folder):
+        for file_name in os.listdir(folder):
+            if file_name.lower().endswith((".png", ".jpg", ".jpeg", ".bmp", ".gif")):
+                return os.path.join(folder, file_name)
+    return ""
 
 def pegaPaleta(img):
     print("pegando paleta, por favor aguarde")
@@ -68,25 +86,25 @@ def main() -> None:
         assunto=input()
         if(assunto[:7]=="paleta "):
             paletaSample=pegaPaleta(os.path.join("paleta","paleta"+assunto[7:]+".png"))
-            nome+=assunto[7:].proper()
+            nome+=assunto[7:].title()
         elif(assunto[:6]=="pasta "):
-            imagens=pI.pegaAssunto(assunto)
+            imagens=get_image_from_folder(assunto[6:])
             paletaSample=pegaPaletas(imagens)
-            nome+=assunto[6:].proper()+str(numImagem)
+            nome+=assunto[6:].title()+str(numImagem)
         else:
-            imagem=pI.umaImagem(assunto)
+            imagem=get_image(assunto)
             paletaSample=pegaPaleta(imagem)
-            nome+=assunto.proper()+str(numImagem)
+            nome+=assunto.title()+str(numImagem)
         print("tamanho da paleta:"+str(len(paletaSample)))
         print("\ndigite o assunto da imagem para adaptar")
         assunto=input()
-        imagens=pI.pegaAssunto(assunto)
+        imagens=get_image_from_folder(assunto)
         for indice,imagem_a in enumerate(imagens):
             print(f"{indice}  -  {imagem_a}")
         print("\nqual imagem? 0 a "+str(len(imagens)))
         numImagem=int(input())
         imagem=imagens[numImagem]
-        nome=assunto.proper()+nome+str(numImagem)+".png"
+        nome=assunto.title()+nome+str(numImagem)+".png"
         nome=os.path.join("imagens",nome)
         print(imagem)
         imagemPaletada=aplicaPaleta(paletaSample,imagem)

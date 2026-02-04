@@ -1,11 +1,22 @@
 from PIL import Image, ImageDraw
 import os
-import pastaImagens
+
+
+def get_image(image_category: str, index_chosen: int = 1) -> str:
+    folder = f"imagens/{image_category}"
+    if os.path.exists(folder):
+        index = 0
+        for file_name in os.listdir(folder):
+            if file_name.lower().endswith((".png", ".jpg", ".jpeg", ".bmp", ".gif")):
+                index += 1
+                if index == index_chosen:
+                    return os.path.join(folder, file_name)
+    return ""
 
 
 def main() -> None:
-    imagem = pastaImagens.pegaAssunto("claudia raia", 1)
-    imagemOriginal = Image.open(imagem[0])
+    imagem = get_image("claudia raia")
+    imagemOriginal = Image.open(imagem)
     largura, altura = imagemOriginal.size
     larguraNova = largura + 2
     alturaNova = altura + 2
@@ -50,7 +61,7 @@ def main() -> None:
             pregoAtual = maiorPrego
         else:
             break
-    imagemFinal.save(os.getcwd() + "lines.png")
+    imagemFinal.save(os.getcwd() + "/lines.png")
 
 
 if __name__ == "__main__":

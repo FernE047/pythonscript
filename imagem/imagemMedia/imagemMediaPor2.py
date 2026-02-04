@@ -1,8 +1,19 @@
+import os
 import pastaImagens as pI
 import random
 
 from time import time
 from PIL import Image
+
+
+def get_image_from_folder(image_category: str) -> list[str]:
+    folder = f"imagens/{image_category}"
+    images: list[str] = []
+    if os.path.exists(folder):
+        for file_name in os.listdir(folder):
+            if file_name.lower().endswith((".png", ".jpg", ".jpeg", ".bmp", ".gif")):
+                images.append(os.path.join(folder, file_name))
+    return images
 
 
 def print_elapsed_time(seconds: float) -> None:
@@ -98,7 +109,7 @@ def mergeTwoImages(img1, img2):
 def main() -> None:
     print("diga um assunto")
     assunto = input()
-    imagens = pI.pegaAssunto(assunto)
+    imagens = get_image_from_folder(assunto)
     quantia = len(imagens)
     nome = assunto
     numeroPossivel = 0

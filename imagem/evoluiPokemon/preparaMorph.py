@@ -1,6 +1,17 @@
 from PIL import Image
-from pastaImagens import pegaImagem as pI
 import os
+
+
+def get_image(image_category: str, index_chosen: int = 1) -> str:
+    folder = f"imagens/{image_category}"
+    if os.path.exists(folder):
+        index = 0
+        for file_name in os.listdir(folder):
+            if file_name.lower().endswith((".png", ".jpg", ".jpeg", ".bmp", ".gif")):
+                index += 1
+                if index == index_chosen:
+                    return os.path.join(folder, file_name)
+    return ""
 
 
 def pegaInteiro(
@@ -34,10 +45,9 @@ def limpaPasta(pasta):
 def salvaLayers(nome):
     fundo = False
     indice = pegaInteiro("escolha um pokemon entre 0 e 761", minimo=0, maximo=761)
-    im = Image.open(pI("PokedexSemFundo", indice))
+    im = Image.open(get_image("PokedexSemFundo", indice))
     im.save("C:\\pythonscript\\imagem\\evoluiPokemon\\" + nome + ".png")
     im.close()
-
 
 
 def main() -> None:

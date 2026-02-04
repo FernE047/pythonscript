@@ -1,6 +1,16 @@
-import pastaImagens as pI
+import os
 from time import time
 from PIL import Image
+
+
+def get_image_from_folder(image_category: str) -> list[str]:
+    folder = f"imagens/{image_category}"
+    images: list[str] = []
+    if os.path.exists(folder):
+        for file_name in os.listdir(folder):
+            if file_name.lower().endswith((".png", ".jpg", ".jpeg", ".bmp", ".gif")):
+                images.append(os.path.join(folder, file_name))
+    return images
 
 
 def print_elapsed_time(seconds: float) -> None:
@@ -57,7 +67,7 @@ def procuraMaiorSize(imagens):
 def main() -> None:
     print("diga um assunto")
     assunto = input()
-    imagens = pI.pegaAssunto(assunto)
+    imagens = get_image_from_folder(assunto)
     tamanho = procuraMaiorSize(imagens)
     largura, altura = tamanho
     print(tamanho)
