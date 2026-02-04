@@ -1,33 +1,50 @@
+# type: ignore
+
+# matplotlib missing strict type hints. YES, I like strict type hints.
+
 import matplotlib.pyplot as plt
-import matplotlib.tri as tri
 import numpy as np
-import math
 import shelve
 import os
 
+AVAILABLE_COLORS = [
+    "viridis",
+    "plasma",
+    "inferno",
+    "hot",
+    "Paired",
+    "Dark2",
+    "hsv",
+    "gist_ncar",
+]
+MAX_BRIGHTNESS = 256
+PARAMS_SIZE = 8
+
 
 def main() -> None:
-    BD = shelve.open(os.path.join(os.getcwd(), "dadosPreProcessados"))
-    xHeat = BD["x"]
-    yHeat = BD["y"]
-    zHeat = BD["z"]
-    maximo = BD["maximo"]
-    print(maximo)
-    numero = int(input())
-    BD.close()
-    colors = ["viridis", "plasma", "inferno", "hot", "Paired", "Dark2", "hsv", "gist_ncar"]
+    database = shelve.open(os.path.join(os.getcwd(), "dadosPreProcessados"))
+    xHeat = database["x"]
+    yHeat = database["y"]
+    zHeat = database["z"]
+    maximum = database["maximo"]
+    print(maximum)
+    num_contour_levels = int(input())
+    database.close()
+    colors = AVAILABLE_COLORS
     for color in colors:
         plt.figure()
         ax = plt.gca()
         ax.set_aspect("equal")
         cmap = plt.get_cmap(color)
-        level = []
-        for a in range(0, maximo, int(maximo / numero)):
-            level.append(a)
-        level.append(maximo)
-        CS = ax.tricontourf(xHeat, yHeat, zHeat, np.linspace(0, maximo, 256), cmap=cmap)
+        level: list[int] = []
+        for contour_level in range(0, maximum, int(maximum / num_contour_levels)):
+            level.append(contour_level)
+        level.append(maximum)
+        cs = ax.tricontourf(
+            xHeat, yHeat, zHeat, np.linspace(0, maximum, MAX_BRIGHTNESS), cmap=cmap
+        )
         cbar = plt.colorbar(
-            CS,
+            cs,
             ticks=np.sort(np.array(level)),
             ax=ax,
             orientation="horizontal",
@@ -39,7 +56,7 @@ def main() -> None:
         cbar.ax.set_xticklabels(
             list(map(str, np.sort(np.array(level))))
         )  # horizontal colorbar
-        cbar.ax.tick_params(labelsize=8)
+        cbar.ax.tick_params(labelsize=PARAMS_SIZE)
         plt.title("Heat Map " + color)
         plt.xlabel("X Label")
         plt.ylabel("Y Label")
