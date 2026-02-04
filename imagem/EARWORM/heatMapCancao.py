@@ -26,7 +26,7 @@ def main() -> None:
     xHeat = database["x"]
     yHeat = database["y"]
     zHeat = database["z"]
-    maximum = database["maximo"]
+    maximum = database["maximum"]
     print(maximum)
     num_contour_levels = int(input())
     database.close()

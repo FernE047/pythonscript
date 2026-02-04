@@ -2,67 +2,63 @@ import shelve
 import os
 from PIL import Image
 
-
-def imagensPasta(pasta):
-    imagens = os.listdir(pasta)
-    imagensCaminho = [os.path.join(pasta, imagem) for imagem in imagens]
-    return imagensCaminho
+BLACK = (0, 0, 0, 255)
 
 
-def mediaDasImagens(imagens):
-    imageNumber = 0
-    alturaTotal = 0
-    larguraTotal = 0
-    for imagem in imagens:
-        cancao = Image.open(imagem)
-        largura, altura = cancao.size
-        alturaTotal += altura
-        larguraTotal += largura
-        imageNumber += 1
-    return (larguraTotal / imageNumber, alturaTotal / imageNumber)
+def get_images_from_folder(folder: str) -> list[str]:
+    images = os.listdir(folder)
+    images_path = [os.path.join(folder, image) for image in images]
+    return images_path
 
+
+def get_images_average_size(images_path: list[str]) -> int:
+    length_total = 0
+    for image_path in images_path:
+        image = Image.open(image_path)
+        length, _ = image.size
+        length_total += length
+    return int(length_total / len(images_path))
 
 
 def main() -> None:
-    diretorio = os.getcwd()
-    base = os.path.join(diretorio, "imagens")
-    imagens = imagensPasta(base)
-    for pastaMaior in ["artist", "album"]:
-        base = os.path.join(diretorio, pastaMaior)
-        pastas = os.listdir(base)
-        pastasCaminho = [os.path.join(base, pasta) for pasta in pastas]
-        for pastaCaminho in pastasCaminho:
-            imagens += imagensPasta(pastaCaminho)
-    larguraMedia, alturaMedia = mediaDasImagens(imagens)
-    tamanhoMedio = int(larguraMedia)
-    xHeat = []
-    yHeat = []
-    zHeat = []
-    for xIndex in range(tamanhoMedio):
-        for yIndex in range(tamanhoMedio):
-            xHeat.append(xIndex)
-            yHeat.append(yIndex)
-            zHeat.append(0)
-    for imagem in imagens:
-        print(imagem)
-        cancao = Image.open(imagem)
-        largura, altura = cancao.size
-        if largura > tamanhoMedio:
-            media = tamanhoMedio
-        else:
-            media = largura
-        for y in range(media):
-            for x in range(media):
-                if x != y:
-                    if cancao.getpixel((x, y)) != (0, 0, 0, 255):
-                        zHeat[tamanhoMedio * x + y] += 1
+    diretory = os.getcwd()
+    folder = os.path.join(diretory, "imagens")
+    images_path = get_images_from_folder(folder)
+    for category_folder in ["artist", "album"]:
+        folder = os.path.join(diretory, category_folder)
+        folders = os.listdir(folder)
+        folders_path = [os.path.join(folder, folder_name) for folder_name in folders]
+        for folder_path in folders_path:
+            images_path += get_images_from_folder(folder_path)
+    average_length = get_images_average_size(images_path)
+    x_heat: list[int] = []
+    y_heat: list[int] = []
+    z_heat: list[int] = []
+    for x in range(average_length):
+        for y in range(average_length):
+            x_heat.append(x)
+            y_heat.append(y)
+            z_heat.append(0)
+    for image_path in images_path:
+        print(image_path)
+        image = Image.open(image_path)
+        length, _ = image.size
+        if length <= average_length:
+            average_length = length
+        for y in range(average_length):
+            for x in range(average_length):
+                if x == y:
+                    continue
+                if image.getpixel((x, y)) == BLACK:
+                    continue
+                z_heat[average_length * x + y] += 1
 
-    BD = shelve.open(os.path.join(diretorio, "dadosPreProcessados"))
-    BD["x"] = xHeat
-    BD["y"] = yHeat
-    BD["z"] = zHeat
-    BD["maximo"] = max(zHeat)
-    BD.close()
+    database = shelve.open(os.path.join(diretory, "dadosPreProcessados"))
+    database["x"] = x_heat
+    database["y"] = y_heat
+    database["z"] = z_heat
+    database["maximum"] = max(z_heat)
+    database.close()
 
 
 if __name__ == "__main__":
