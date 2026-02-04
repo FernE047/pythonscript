@@ -27,9 +27,9 @@ class State:
             cost += graph[self.path[-1]][destination]
         path = self.path + [destination]
         return State(graph=graph, path=path, path_cost=cost)
-    
+
     def walk_path(self) -> None:
-        state: State = State(graph=self.graph)
+        state = State(graph=self.graph)
         for destination in self.path:
             state = state.build_path(destination)
             print(f"Path : {state.path}\nCost : {state.path_cost}\n")
@@ -234,7 +234,7 @@ def solve(graph: GraphData, mode: Literal[0, 1] = 1) -> None:
     counter_manager.create_counter("iterations")
     counter_manager.create_counter("heuristic cuts")
     start_time = time()
-    initial_state: State = State(graph)
+    initial_state = State(graph)
     if mode:
         solution_state = depth_first_search(initial_state, counter_manager)
     else:
