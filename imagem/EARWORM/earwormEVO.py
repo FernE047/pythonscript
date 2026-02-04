@@ -1,205 +1,212 @@
+from typing import Literal
+from urllib.parse import quote, urlparse
 from PIL import Image
-import requests, bs4, re
-from typing import cast
+import requests
+import bs4
 import os
 
 
-def conecta(site: str) -> requests.Response:
-    siteBaguncado = requests.get(site)
-    while siteBaguncado.status_code != requests.codes.ok:
-        siteBaguncado = requests.get(site)
-    return siteBaguncado
+def filter_site_name(url: str) -> str:
+    parsed = urlparse(url if "://" in url else "https://" + url)
+    host = parsed.netloc or parsed.path
+    if host.startswith("www."):
+        host = host[4:]
+    return host.split(".")[0]
 
 
-def pesquisaGoogle(
+def remove_extra_spaces(text: str) -> str:
+    while text.find("  ") != -1:
+        text = text.replace("  ", " ")
+    return text.lower().strip()
+
+
+def clean_soup(soup: bs4.ResultSet[bs4.element.Tag]) -> str:
+    allowed_chars = (
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 éáíóúãàêÉÀç"
+    )
+    allowed = set(list(allowed_chars))
+    raw = " ".join(tag.get_text(" ", strip=False) for tag in soup)
+    filtered_text = "".join(ch for ch in raw if ch in allowed or ch.isspace())
+    return remove_extra_spaces(filtered_text)
+
+
+def fetch_website(site: str) -> requests.Response:
+    response = requests.get(site)
+    while response.status_code != requests.codes.ok:
+        response = requests.get(site)
+    return response
+
+
+def google_search(
     search: str, adicao: str = "%20full%20lyrics"
 ) -> bs4.ResultSet[bs4.element.Tag]:
-    musicaSearch = conecta(f"https://www.google.com.br/search?q={search}{adicao}")
-    musicaSearchSoup = bs4.BeautifulSoup(musicaSearch.text, features="html.parser")
-    informacao = musicaSearchSoup.select(".r")
-    return informacao
+    response = fetch_website(f"https://www.google.com.br/search?q={search}{adicao}")
+    response_soup = bs4.BeautifulSoup(response.text, features="html.parser")
+    search_results = response_soup.select(".r")
+    return search_results
 
 
-def qualSite(site: str) -> str:
-    dot_com_index = site.find(".com")
-    if dot_com_index == -1:
-        raise ValueError("no .com found")
-    if site[:12] == "https://www.":
-        return site[12:dot_com_index]
-    if site[:11] == "http://www.":
-        return site[11:dot_com_index]
-    if site[:8] == "https://":
-        return site[8:dot_com_index]
-    if site[:7] == "http://":
-        return site[7:dot_com_index]
-    return site[:dot_com_index]
-
-
-def ondeComecaHttp(palavra: str) -> int:
-    for index in range(len(palavra)):
-        if (
-            (palavra[index] == "h")
-            and (palavra[index + 1] == "t")
-            and (palavra[index + 2] == "t")
-            and (palavra[index + 3] == "p")
-        ):
-            return index
-    raise ValueError("no https found")
-
-
-def encontraSite(palavra: str) -> str:
-    site = ""
-    comeco = ondeComecaHttp(palavra)
-    for a in range(comeco, len(palavra)):
-        if palavra[a] != "&":
-            site += palavra[a]
-        else:
-            return site
-    raise ValueError("no & finish found")
-
-
-def procuraComplemento(site):
-    if site[20] == "r":
+def get_site_type(site: str) -> Literal["artist", "album"] | None:
+    if site.find("/artists/") != -1:
         return "artist"
-    else:
+    if site.find("/albums/") != -1:
         return "album"
+    return None
 
 
-def achaGenius(informacao, tem=""):
-    for info in informacao:
-        try:
-            bomResultado = info.select("a")[0].get("href")
-        except:
+def find_genius_url(
+    search_results: bs4.ResultSet[bs4.element.Tag],
+    search_word: Literal["artist", "album"] = "album",
+) -> str:
+    for search_result in search_results:
+        anchor_list = search_result.select("a")
+        if len(anchor_list) == 0:
             continue
-        site = encontraSite(bomResultado)
-        nomeSite = qualSite(site)
-        print(site)
-        print(nomeSite + "\n")
-        if nomeSite == "genius":
-            if tem == "album":
-                complemento = procuraComplemento(site)
-                if tem == complemento:
-                    return site
-            else:
-                return site
-
-
-def siteProcura(site: str, html: str) -> bs4.ResultSet[bs4.element.Tag]:
-    siteBaguncado = conecta(site)
-    siteSoup = bs4.BeautifulSoup(siteBaguncado.text, features="html.parser")
-    informacao = siteSoup.select(html)
-    return informacao
-
-
-def fazImagem(site, pasta="imagens/"):
-    titulo = siteProcura(site, ".header_with_cover_art-primary_info-title")
-    titulo = textos.limpaSopa(titulo)
-    print(titulo + "\n")
-    informacao = siteProcura(site, ".lyrics")
-    musica = textos.limpaSopa(informacao)
-    print(musica + "\n")
-    musicaSeparada = musica.split(" ")
-    quantPalavras = len(musicaSeparada)
-    print("quantidade de palavras: " + str(quantPalavras) + "\n")
-    if quantPalavras:
-        imagem = Image.new("RGBA", (quantPalavras, quantPalavras), (0, 0, 0, 255))
-        for coordX in range(quantPalavras):
-            for coordY in range(quantPalavras):
-                if musicaSeparada[coordX] == musicaSeparada[coordY]:
-                    imagem.putpixel((coordX, coordY), (255, 0, 0, 255))
-        imagem.save("C:/pythonscript/EARWORM/" + pasta + str(titulo) + ".png")
-    print("feita com sucesso\n\n")
-
-
-def pegaTodosSites(informacao: bs4.ResultSet[bs4.element.Tag]) -> list[str]:
-    sites: list[str] = []
-    for info in informacao:
-        try:
-            bomResultado = cast(str, info.select("a")[0].get("href"))
-        except Exception as _:
+        anchor = anchor_list[0]
+        href_result = anchor.get("href")
+        if not isinstance(href_result, str):
             continue
-        site = encontraSite(bomResultado)
-        nomeSite = qualSite(site)
+        site = filter_site_name(href_result)
         print(site)
-        print(nomeSite + "\n")
-        if nomeSite == "genius":
-            sites.append(site)
-    return sites
+        if site != "genius":
+            continue
+        if search_word != "album":
+            return href_result
+        criteria_match = get_site_type(site)
+        if criteria_match is None:
+            continue
+        if criteria_match == search_word:
+            return href_result
+    return ""
 
 
-def albumImagens(site, album):
-    fazDiretorio("album/" + album)
-    faixa = 1
-    informacao = siteProcura(site, ".u-display_block")
-    musicasSites = pegaTodosSites(informacao)
-    for site in musicasSites:
-        fazImagem(site, pasta=f"album/{album}/{faixa:03d}-")
-        faixa += 1
+def get_specific_tag(url: str, tag_descriptor: str) -> bs4.ResultSet[bs4.element.Tag]:
+    response = fetch_website(url)
+    parsed_html = bs4.BeautifulSoup(response.text, features="html.parser")
+    tag_elements = parsed_html.select(tag_descriptor)
+    return tag_elements
+
+def generate_lyrics_image(url:str, output_path:str="imagens/") -> None:
+    title_tag = get_specific_tag(url, ".header_with_cover_art-primary_info-title")
+    track_title = clean_soup(title_tag)
+    print(f"{track_title}\n")
+    lyrics_tags = get_specific_tag(url, ".lyrics")
+    lyrics = clean_soup(lyrics_tags)
+    print(f"{lyrics}\n")
+    words = lyrics.split(" ")
+    word_count = len(words)
+    if word_count == 0:
+        print("No lyrics found\n")
+        return
+    print(f"Word count: {word_count}\n")
+    image = Image.new("RGBA", (word_count, word_count), (0, 0, 0, 255))
+    for x in range(word_count):
+        for y in range(word_count):
+            if words[x] == words[y]:
+                image.putpixel((x, y), (255, 0, 0, 255))
+    filename = f"./{output_path}{track_title}.png"
+    image.save(filename)
+    print(f"Successfully created {filename}\n\n")
 
 
-def artistImagens(site, artist):
-    fazDiretorio(f"artist/{artist}")
-    faixa = 1
-    informacao = siteProcura(site, ".mini_card")
-    musicasSites = pegaTodosSites(informacao)
-    for site in musicasSites:
-        fazImagem(site, pasta=f"artist/{artist}/{faixa:03d}-")
-        faixa += 1
+def fetch_all_genius_urls(result_set: bs4.ResultSet[bs4.element.Tag]) -> list[str]:
+    genius_urls: list[str] = []
+    for html_element in result_set:
+        anchors = html_element.select("a")
+        if len(anchors) == 0:
+            continue
+        anchor = anchors[0]
+        href_result = anchor.get("href")
+        if not isinstance(href_result, str):
+            continue
+        site = filter_site_name(href_result)
+        if site == "genius":
+            genius_urls.append(href_result)
+    return genius_urls
 
 
-def fazDiretorio(diretorio):
-    diretorio = f"C:/pythonscript/EARWORM/{diretorio}"
-    os.mkdir(diretorio)
+def generate_album_images(url: str, album: str) -> None:
+    create_directory(f"album/{album}")
+    track_number = 1
+    site_tags = get_specific_tag(url, ".u-display_block")
+    lyrics_urls = fetch_all_genius_urls(site_tags)
+    for url in lyrics_urls:
+        generate_lyrics_image(url, output_path=f"album/{album}/{track_number:03d}-")
+        track_number += 1
 
 
-def novoSite(site):
-    informacao = siteProcura(site, ".header_with_cover_art-primary_info-primary_artist")
-    return informacao[0].get("href")
+def generate_artist_images(url: str, artist: str) -> None:
+    create_directory(f"artist/{artist}")
+    track_number = 1
+    site_tags = get_specific_tag(url, ".mini_card")
+    lyrics_urls = fetch_all_genius_urls(site_tags)
+    for url in lyrics_urls:
+        generate_lyrics_image(url, output_path=f"artist/{artist}/{track_number:03d}-")
+        track_number += 1
 
+
+def create_directory(directory_path: str) -> None:
+    directory_path = f"./{directory_path}"
+    os.mkdir(directory_path)
+
+
+def get_artist_from_album(url: str) -> str | None:
+    album_site = fetch_website(url)
+    album_soup = bs4.BeautifulSoup(album_site.text, features="html.parser")
+    artist_data = album_soup.select(
+        ".header_with_cover_art-primary_info-primary_artist"
+    )
+    if len(artist_data) == 0:
+        return None
+    tag = artist_data[0]
+    href_result = tag.get("href")
+    if not isinstance(href_result, str):
+        return None
+    return href_result
 
 
 def main() -> None:
     album = False
     artist = False
     while True:
-        print("\ndigite o titulo da música")
-        titulo = input()
-        if titulo == "0":
-            break
-        tituloList = list(titulo)
-        if tituloList[:5] == ["a", "l", "b", "u", "m"]:
-            tituloList = tituloList[6:]
+        print(
+            "\nenter the music/album/artist (prefix with 'album ' or 'artist ', no prefix for music) or 0 to exit:"
+        )
+        user_input = input()
+        if user_input == "0":
+            return
+        search_term = user_input.lower()
+        if search_term[:5] == "album":
+            search_term = search_term[6:]
             album = True
-        if tituloList[:6] == ["a", "r", "t", "i", "s", "t"]:
-            tituloList = tituloList[7:]
+        if search_term[:6] == "artist":
+            search_term = search_term[7:]
             artist = True
-        tituloFormatada = ""
-        for index, letra in enumerate(tituloList):
-            if letra == " ":
-                tituloList[index] = "%20"
-            tituloFormatada += tituloList[index]
+        encoded_search = quote(search_term)
         if album:
-            informacao = pesquisaGoogle(
-                tituloFormatada, adicao="%20albums+site%3Ahttps%3A%2F%2Fgenius.com%2F"
+            search_results = google_search(
+                encoded_search, adicao="%20albums+site%3Ahttps%3A%2F%2Fgenius.com%2F"
             )
-            site = achaGenius(informacao, tem="album")
-            nome = titulo[6:]
-            albumImagens(site, nome)
+            url = find_genius_url(search_results, search_word="album")
+            generate_album_images(url, search_term)
         elif artist:
-            informacao = pesquisaGoogle(
-                tituloFormatada, adicao="%20artist+site%3Ahttps%3A%2F%2Fgenius.com%2F"
+            search_results = google_search(
+                encoded_search, adicao="%20artist+site%3Ahttps%3A%2F%2Fgenius.com%2F"
             )
-            site = achaGenius(informacao, tem="artist")
-            if procuraComplemento(site) != "artist":
-                site = novoSite(site)
-            nome = titulo[7:]
-            artistImagens(site, nome)
+            url = find_genius_url(search_results, search_word="artist")
+            if get_site_type(url) != "artist":
+                url_test = get_artist_from_album(url)
+                if url_test is None:
+                    print("Artist not found, proceeding with original URL.")
+                else:
+                    url = url_test
+            generate_artist_images(url, search_term)
         else:
-            informacao = pesquisaGoogle(
-                tituloFormatada, adicao="+site%3Ahttps%3A%2F%2Fgenius.com%2F"
+            search_results = google_search(
+                encoded_search, adicao="+site%3Ahttps%3A%2F%2Fgenius.com%2F"
             )
-            site = achaGenius(informacao)
-            fazImagem(site)
+            url = find_genius_url(search_results)
+            generate_lyrics_image(url)
 
 
 if __name__ == "__main__":
