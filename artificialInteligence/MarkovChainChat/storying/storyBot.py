@@ -4,6 +4,7 @@ from random import randint
 DIRECTORY = "./FanficAnime/"
 TAMANHO = 1
 EMPTY_CHAR = "¨"
+GENERATED_STORIES = 1000
 
 def generate_initial_words(is_title: bool) -> list[str]:
     initial_word = generate_word(is_title)
@@ -93,7 +94,7 @@ def generate_text(is_title: bool) -> str:
 
 
 def main() -> None:
-    for _ in range(1000):
+    for _ in range(GENERATED_STORIES):
         generate_text(True)
         print(" : ", end="")
         generate_text(False)

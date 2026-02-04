@@ -1,6 +1,7 @@
 from random import randint
 
 EMPTY_CHAR = "¨"
+WORDS_GENERATED = 1000
 
 def fetch_word_from_chain(index: int, previous_word: str = "") -> str:
     with open(f"chain/{index:03d}.txt", "r", encoding="utf-8") as file:
@@ -41,7 +42,7 @@ def generate_message() -> str:
 
 
 def main() -> None:
-    for index in range(1000):
+    for index in range(WORDS_GENERATED):
         print(f"{index} : {generate_message()}")
 
 

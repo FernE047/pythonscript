@@ -24,14 +24,15 @@ def make_tabulation(name: str, ident: str, tabs: bool = False) -> None:
             ident = " "
         for line in lines:
             end_tag = line.find(">")
-            if line[end_tag - 1] != "/":
-                if line[1] != "/":
-                    level += 1
-                    line = level * ident + line + "\n"
-                else:
-                    line = level * ident + line + "\n"
-                    level += -1
-                output_file.write(line)
+            if line[end_tag - 1] == "/":
+                continue
+            if line[1] != "/":
+                level += 1
+                line = f"{level * ident}{line}\n"
+            else:
+                line = f"{level * ident}{line}\n"
+                level += -1
+            output_file.write(line)
 
 
 def main() -> None:

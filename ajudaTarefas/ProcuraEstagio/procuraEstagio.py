@@ -4,6 +4,8 @@ import webbrowser
 from bs4 import ResultSet
 from bs4.element import Tag
 
+MAX_PAGE = 10
+
 
 class jobListingData(TypedDict):
     title: str
@@ -27,8 +29,8 @@ def choose_from_options(
     prompt: str, options: list[str], mode: Literal["text", "number"] = "text"
 ) -> str | int:
     while True:
-        for i, option in enumerate(options):
-            print(f"{i} - {option}")
+        for index, option in enumerate(options):
+            print(f"{index} - {option}")
         user_choice = input(prompt)
         try:
             if mode == "number":
@@ -114,7 +116,7 @@ def main() -> None:
     )
     final_job_listings: list[jobListingData] = []
     for site in sites:
-        for page in range(1, 10):
+        for page in range(1, MAX_PAGE + 1):
             information = get_tag_site(site.format(page), ".thumbnail")
             vagasDisponiveis = filter_job_listing(information)
             if search_locations:

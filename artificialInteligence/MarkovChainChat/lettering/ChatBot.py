@@ -1,6 +1,7 @@
 from random import randint
 
 EMPTY_CHAR = "¨"
+GENERATED_MESSAGES = 1000
 
 def fetch_character_from_chain(index: int, previous_character: str = "") -> str:
     with open(f"chain/{index:03d}.txt", "r", encoding="utf-8") as file:
@@ -39,7 +40,7 @@ def generate_message() -> str:
 
 
 def main() -> None:
-    for index in range(1000):
+    for index in range(GENERATED_MESSAGES):
         print(str(index) + " : " + generate_message())
 
 

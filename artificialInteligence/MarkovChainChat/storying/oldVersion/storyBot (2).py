@@ -1,6 +1,7 @@
 from random import randint
 
 EMPTY_CHAR = "¨"
+GENERATED_STORIES = 10
 
 class ChainManager:
     def __init__(self, chain_size: int) -> None:
@@ -102,7 +103,7 @@ def generate_text(is_title: bool, chain_manager: ChainManager) -> str:
 
 def main() -> None:
     chain_manager = ChainManager(chain_size=2)
-    for _ in range(10):
+    for _ in range(GENERATED_STORIES):
         generate_text(True, chain_manager)
         print(" : ", end="")
         generate_text(False, chain_manager)

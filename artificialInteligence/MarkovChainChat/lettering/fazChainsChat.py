@@ -52,7 +52,7 @@ def main() -> None:
                     if character == "<":
                         character = "~"
                         update_chain_file(index, character)
-                        update_chain_file(index + 1, character + " ¨")
+                        update_chain_file(index + 1, character + f" {EMPTY_CHAR}")
                         break
                     update_chain_file(index, character)
                 if message_length > 1:

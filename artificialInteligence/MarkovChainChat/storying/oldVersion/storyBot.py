@@ -1,6 +1,7 @@
 from random import randint
 
 EMPTY_CHAR = "¨"
+GENERATED_STORIES = 10
 
 def generate_word(index: int, is_title: bool, previous_word: str = "") -> str:
     if is_title:
@@ -45,7 +46,7 @@ def generate_text(is_title: bool) -> str:
 
 
 def main() -> None:
-    for _ in range(10):
+    for _ in range(GENERATED_STORIES):
         print(generate_text(True) + " : " + generate_text(False), end="\n\n")
 
 

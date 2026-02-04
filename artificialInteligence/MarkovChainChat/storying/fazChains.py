@@ -2,6 +2,11 @@ import os
 from time import time
 
 EMPTY_CHAR = "¨"
+OVERFLOWLIMIT = 50000
+CHAINSIZE = 1
+ALLOWED_CHARS = (".", "-", ",", "!", "?", "(", "—", ")", ":", "...", "..", "/", "/")
+REPLACE_BY_QUOTE = ('“', '”', "'")
+REPLACE_BY_SPACE = ("\n", "\t")
 
 
 def format_elapsed_time(seconds: float) -> str:
@@ -76,12 +81,12 @@ def update_keyword_counts(keywords: list[str], directory: str) -> None:
 
 
 def generate_word_chain(text: str) -> list[str]:
-    text = text.replace("\n", " ")
-    text = text.replace("\t", " ")
-    text = text.replace("“", '"')
-    text = text.replace("”", '"')
-    for spaced in [".", "-", ",", "!", "?", "(", "—", ")", ":", "...", "..", "/", "/"]:
-        text = text.replace(spaced, f" {spaced} ")
+    for char in REPLACE_BY_SPACE:
+        text = text.replace(char, " ")
+    for char in REPLACE_BY_QUOTE:
+        text = text.replace(char, '"')
+    for char in ALLOWED_CHARS:
+        text = text.replace(char, f" {char} ")
     words = text.split()
     text_word_count = len(words)
     word_combinations: list[str] = []
@@ -98,10 +103,6 @@ def generate_word_chain(text: str) -> list[str]:
         phrase_chunk = " ".join(phrase_segment)
         word_combinations.append(phrase_chunk)
     return word_combinations
-
-
-OVERFLOWLIMIT = 50000
-CHAINSIZE = 1
 
 
 def main() -> None:

@@ -2,6 +2,11 @@ from time import time
 import os
 
 EMPTY_CHAR = "¨"
+ALLOWED_CHARS = (".", "-", ",", "!", "?", "(", "—", ")", ":", "...", "..", "/", "/")
+REPLACE_BY_QUOTE = ("“", "”", "'")
+REPLACE_BY_SPACE = ("\n", "\t")
+MIN_CHAIN_SIZE = 2
+MAX_CHAIN_SIZE = 2
 
 def format_elapsed_time(seconds: float) -> str:
     if seconds < 0:
@@ -73,12 +78,12 @@ def update_keyword_frequencies(keywords: list[str], directory: str) -> None:
 
 
 def generate_markov_chain(text: str, chain_size: int, is_title: bool = False) -> None:
-    text = text.replace("\n", " ")
-    text = text.replace("\t", " ")
-    text = text.replace("“", ' " ')
-    text = text.replace("”", ' " ')
-    for spaced in [".", "-", ",", "!", "?", "(", "—", ")", ":", "...", "..", "/", "\\"]:
-        text = text.replace(spaced, f" {spaced} ")
+    for char in REPLACE_BY_SPACE:
+        text = text.replace(char, " ")
+    for char in REPLACE_BY_QUOTE:
+        text = text.replace(char, '"')
+    for char in ALLOWED_CHARS:
+        text = text.replace(char, f" {char} ")
     words = text.split()
     text_length = len(words)
     pair_list: list[str] = []
@@ -100,7 +105,7 @@ def generate_markov_chain(text: str, chain_size: int, is_title: bool = False) ->
 def main() -> None:
     chain_size = 2
     total = len(os.listdir("stories"))
-    for chain_size in range(2, 3):
+    for chain_size in range(MIN_CHAIN_SIZE, MAX_CHAIN_SIZE + 1):
         processed_file_count = 0
         for name in os.listdir("stories"):
             processed_file_count += 1
