@@ -1,91 +1,123 @@
 from PIL import Image
-from time import time
 import os
 import multiprocessing
 
+FRAMES_TOTAL = 30
+SOURCE_IMAGE = "./inicial.png"
+TARGET_IMAGE = "./final.png"
+FRAMES_FOLDER = "./frames"
+TRANSPARENT_WHITE = (255, 255, 255, 0)
+CONFIG_FILE = "./config.txt"
 
-def pegaInteiro(
-    mensagem: str, minimo: int | None = None, maximo: int | None = None
-) -> int:
-    while True:
-        entrada = input(f"{mensagem} : ")
+CoordData = tuple[int, int]
+PixelData = tuple[int, ...] | float
+
+
+def interpolate_color(
+    pixel_source: PixelData, pixel_target: PixelData, index: int
+) -> PixelData:
+    if not isinstance(pixel_source, tuple):
+        source: tuple[int, ...] = (int(pixel_source),)
+    else:
+        source = pixel_source
+    if not isinstance(pixel_target, tuple):
+        target: tuple[int, ...] = (int(pixel_target),)
+    else:
+        target = pixel_target
+    color_values: list[int] = []
+    for color_source, color_target in zip(source, target):
+        interpolation_factor = (color_target - color_source) / (FRAMES_TOTAL + 1)
+        color_values.append(int(interpolation_factor * index + color_source))
+    return tuple(color_values)
+
+
+def interpolate_coordinates(
+    source: CoordData, target: CoordData, index: int
+) -> CoordData:
+    interpolated_coordinates: list[int] = []
+    for coord_source, coord_target in zip(source, target):
+        interpolation_factor = (coord_target - coord_source) / (FRAMES_TOTAL + 1)
+        interpolated_coordinates.append(
+            int(interpolation_factor * index + coord_source)
+        )
+    return (interpolated_coordinates[0], interpolated_coordinates[1])
+
+
+def get_pixel(image: Image.Image, coord: tuple[int, int]) -> float | tuple[int, ...]:
+    try:
+        pixel = image.getpixel(coord)
+    except IndexError:
+        raise ValueError(
+            f"Coordinate {coord} is out of bounds for the image size {image.size}"
+        )
+    if pixel is None:
+        raise ValueError(f"Pixel not found at coordinate: {coord}")
+    return pixel
+
+
+def makeFrame(frame_index: int) -> None:
+    def separate_coords(coord_str: str) -> tuple[int, int]:
         try:
-            valor = int(entrada)
-            if (minimo is not None) and (valor < minimo):
-                print(f"valor deve ser maior ou igual a {minimo}")
+            x_str, y_str = coord_str.split(",")
+            return (int(x_str), int(y_str))
+        except ValueError:
+            raise ValueError(f"Invalid coordinate format: {coord_str}")
+
+    image_source = Image.open(SOURCE_IMAGE)
+    image_target = Image.open(TARGET_IMAGE)
+    print(f"Generating Frame : {frame_index}")
+    frame = Image.new("RGBA", image_target.size, TRANSPARENT_WHITE)
+    with open(CONFIG_FILE, "r", encoding="utf-8") as file:
+        line = file.readline()
+        while line:
+            if line.find("fundo") != -1:
+                coord = separate_coords(line[: -len(" fundo")])
+                if len(coord) != 2:
+                    raise ValueError(f"Invalid coordinate format: {line}")
+                pixel = get_pixel(image_source, coord)
+                frame.putpixel(coord, pixel)
+                line = file.readline()
                 continue
-            if (maximo is not None) and (valor > maximo):
-                print(f"valor deve ser menor ou igual a {maximo}")
-                continue
-            return valor
-        except Exception as _:
-            print("valor inválido, tente novamente")
-
-
-def funcaoCor(inicio, fim, total, n):
-    elemento = []
-    for elementoInicial, elementoFinal in zip(inicio, fim):
-        B = elementoInicial
-        A = (elementoFinal - elementoInicial) / (total + 1)
-        elemento.append(int(A * n + B))
-    return tuple(elemento)
-
-
-def funcaoCoord(inicio, fim, total, n):
-    elemento = []
-    for elementoInicial, elementoFinal in zip(inicio, fim):
-        B = elementoInicial
-        A = (elementoFinal - elementoInicial) / (total + 1)
-        elemento.append(int(A * n + B))
-    return tuple(elemento)
-
-
-def makeFrame(args):
-    n, total = args
-    imagemInicial = Image.open("C:\\pythonscript\\imagem\\evoluiPokemon\\inicial.png")
-    imagemFinal = Image.open("C:\\pythonscript\\imagem\\evoluiPokemon\\final.png")
-    print("Fazendo Frame : " + str(n))
-    frame = Image.new("RGBA", imagemFinal.size, (255, 255, 255, 0))
-    with open("C:\\pythonscript\\imagem\\evoluiPokemon\\config.txt", "r", encoding="utf-8") as file:
-        linha = file.readline()
-        while linha:
-            if linha.find("fundo") != -1:
-                coord = tuple([int(b) for b in linha[:-6].split(",")])
-                frame.putpixel(coord, imagemInicial.getpixel(coord))
-            else:
-                coords = [
-                    tuple([int(b) for b in coord.split(",")]) for coord in linha.split(" ")
-                ]
-                coordFinal = coords[1]
-                pixelFinal = imagemFinal.getpixel(coordFinal)
-                coordInicial = coords[0]
-                pixelInicial = imagemInicial.getpixel(coordInicial)
-                novaCoord = funcaoCoord(coordInicial, coordFinal, total, n + 1)
-                novaCor = funcaoCor(pixelInicial, pixelFinal, total, n + 1)
-                frame.putpixel(novaCoord, novaCor)
-            linha = file.readline()
-    print("\tFrame Terminado : " + str(n))
-    frame.save(f"C:\\pythonscript\\imagem\\evoluiPokemon\\frames\\frame{n + 1:03d}.png")
-    imagemInicial.close()
-    imagemFinal.close()
+            coords: list[tuple[int, int]] = []
+            for coord_str in line.split(" "):
+                coord = separate_coords(coord_str)
+                if len(coord) != 2:
+                    raise ValueError(f"Invalid coordinate format: {line}")
+                coords.append(coord)
+            coord_target = coords[1]
+            pixel_target = get_pixel(image_target, coord_target)
+            coord_source = coords[0]
+            pixel_source = get_pixel(image_source, coord_source)
+            interpolated_coord = interpolate_coordinates(
+                coord_source, coord_target, frame_index + 1
+            )
+            interpolated_color = interpolate_color(
+                pixel_source, pixel_target, frame_index + 1
+            )
+            frame.putpixel(interpolated_coord, interpolated_color)
+            line = file.readline()
+    print(f"\tFrame Completed : {frame_index}")
+    frame.save(f"{FRAMES_FOLDER}/frame{frame_index + 1:03d}.png")
+    image_source.close()
+    image_target.close()
     frame.close()
 
 
+def move_image(image_name: str, image_rename: str) -> None:
+    image = Image.open(image_name)
+    image.save(f"{FRAMES_FOLDER}/{image_rename}")
+    image.close()
+
+
+def create_first_and_last_frames() -> None:
+    move_image(SOURCE_IMAGE, "frame000.png")
+    move_image(TARGET_IMAGE, f"frame{FRAMES_TOTAL + 1:03d}.png")
+
 
 def main() -> None:
-    quantiaFrames = 30  # pegaInteiro("quantos frames?")
-    nomeFrame = "C:\\pythonscript\\imagem\\evoluiPokemon\\frames\\frame{0:03d}.png"
-
-    imagemInicial = Image.open("C:\\pythonscript\\imagem\\evoluiPokemon\\inicial.png")
-    imagemFinal = Image.open("C:\\pythonscript\\imagem\\evoluiPokemon\\final.png")
-    imagemInicial.save(nomeFrame.format(0))
-    imagemFinal.save(nomeFrame.format(quantiaFrames + 1))
-    imagemInicial.close()
-    imagemFinal.close()
-
-    print("\n tamanho: " + str(imagemInicial.size), end="\n\n")
-    p = multiprocessing.Pool(os.cpu_count())
-    p.map(makeFrame, [[a, quantiaFrames] for a in range(quantiaFrames)])
+    create_first_and_last_frames()
+    cpu_pool = multiprocessing.Pool(os.cpu_count())
+    cpu_pool.map(makeFrame, range(FRAMES_TOTAL))
 
 
 if __name__ == "__main__":
