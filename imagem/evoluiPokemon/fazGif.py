@@ -3,9 +3,8 @@ import os
 from PIL import Image
 
 RESIZE_FACTOR = 4
-DIRECTORY = "./"
 RESAMPLING_MODE = Image.Resampling.NEAREST
-FRAMES_FOLDER = f"{DIRECTORY}frames"
+FRAMES_FOLDER = "./frames"
 RESIZED_FOLDER = f"{FRAMES_FOLDER}/resized"
 # this constant is used to determine how many times the first and last frames will be repeated in the gif, to make it look better
 ATTENTION_INTERVAL = 10
