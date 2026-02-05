@@ -1,62 +1,74 @@
 from PIL import Image
+import send2trash
 import os
 
-
-def get_image(image_category: str, index_chosen: int = 1) -> str:
-    folder = f"imagens/{image_category}"
-    if os.path.exists(folder):
-        index = 0
-        for filename in os.listdir(folder):
-            if filename.lower().endswith((".png", ".jpg", ".jpeg", ".bmp", ".gif")):
-                index += 1
-                if index == index_chosen:
-                    return os.path.join(folder, filename)
-    return ""
+FRAMES_FOLDER = "./frames"
+RESIZED_FOLDER = "./frames/resized"
+POKEMON_COUNT = 761
+POKEMON_FOLDER = "./imagens/PokedexSemFundo"
+ALLOWED_FILE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".bmp", ".gif")
 
 
-def pegaInteiro(
-    mensagem: str, minimo: int | None = None, maximo: int | None = None
+def get_image(index_chosen: int = 1) -> str:
+    if not os.path.exists(POKEMON_FOLDER):
+        raise FileNotFoundError(f"Folder not found: {POKEMON_FOLDER}")
+    index = 0
+    for filename in os.listdir(POKEMON_FOLDER):
+        if not filename.lower().endswith(ALLOWED_FILE_EXTENSIONS):
+            continue
+        index += 1
+        if index == index_chosen:
+            return os.path.join(POKEMON_FOLDER, filename)
+    raise ValueError(f"Image with index {index_chosen} not found in {POKEMON_FOLDER}")
+
+
+def get_user_integer(
+    message: str, min_value: int | None = None, max_value: int | None = None
 ) -> int:
     while True:
-        entrada = input(f"{mensagem} : ")
+        user_input = input(f"{message} : ")
         try:
-            valor = int(entrada)
-            if (minimo is not None) and (valor < minimo):
-                print(f"valor deve ser maior ou igual a {minimo}")
+            value = int(user_input)
+            if (min_value is not None) and (value < min_value):
+                print(f"value must be greater than or equal to {min_value}")
                 continue
-            if (maximo is not None) and (valor > maximo):
-                print(f"valor deve ser menor ou igual a {maximo}")
+            if (max_value is not None) and (value > max_value):
+                print(f"value must be less than or equal to {max_value}")
                 continue
-            return valor
+            return value
         except Exception as _:
-            print("valor inválido, tente novamente")
+            print("invalid value, please try again")
 
 
-def limpaPasta(pasta):
-    arquivos = [pasta + "\\" + a for a in os.listdir(pasta)]
-    if "C:\\pythonscript\\imagem\\evoluiPokemon\\frames\\resized" in arquivos:
-        arquivos.pop(
-            arquivos.index("C:\\pythonscript\\imagem\\evoluiPokemon\\frames\\resized")
-        )
-    for arquivo in arquivos:
-        os.remove(arquivo)
+def clear_folder(folder: str) -> None:
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+    files = [folder + "/" + a for a in os.listdir(folder)]
+    if RESIZED_FOLDER in files:
+        files.pop(files.index(RESIZED_FOLDER))
+    for file in files:
+        send2trash.send2trash(file)
 
 
-def salvaLayers(nome):
-    fundo = False
-    indice = pegaInteiro("escolha um pokemon entre 0 e 761", minimo=0, maximo=761)
-    im = Image.open(get_image("PokedexSemFundo", indice))
-    im.save("C:\\pythonscript\\imagem\\evoluiPokemon\\" + nome + ".png")
-    im.close()
+def save_layers(image_name: str) -> None:
+    index = get_user_integer(
+        f"choose a pokemon between 0 and {POKEMON_COUNT}",
+        min_value=0,
+        max_value=POKEMON_COUNT,
+    )
+    pokemon_image = get_image(index)
+    image = Image.open(pokemon_image)
+    image.save(f"./{image_name}.png")
+    image.close()
 
 
 def main() -> None:
-    print("IREI EXCLUIR !!!!!")
-    input()
-    limpaPasta("C:\\pythonscript\\imagem\\evoluiPokemon\\frames")
-    limpaPasta("C:\\pythonscript\\imagem\\evoluiPokemon\\frames\\resized")
-    salvaLayers("inicial")
-    salvaLayers("final")
+    print("ATTENTION THE FOLDER CONTENTS WILL BE DELETED !!!!!")
+    input("Press Enter to continue... (ctrl + C to cancel)")
+    clear_folder(FRAMES_FOLDER)
+    clear_folder(RESIZED_FOLDER)
+    save_layers("source")
+    save_layers("target")
 
 
 if __name__ == "__main__":
