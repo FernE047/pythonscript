@@ -3,8 +3,8 @@ import os
 import multiprocessing
 
 FRAMES_TOTAL = 30
-SOURCE_IMAGE = "./inicial.png"
-TARGET_IMAGE = "./final.png"
+SOURCE_IMAGE = "./source.png"
+TARGET_IMAGE = "./target.png"
 FRAMES_FOLDER = "./frames"
 TRANSPARENT_WHITE = (255, 255, 255, 0)
 CONFIG_FILE = "./config.txt"
