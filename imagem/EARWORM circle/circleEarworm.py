@@ -19,14 +19,17 @@ CoordData = tuple[int, int]
 ColorData = tuple[int, int, int, int]
 
 
-def get_nail_coordinates(nail_index: int, nail_count: int, canvas_width: int) -> CoordData:
+def get_nail_coordinates(
+    nail_index: int, nail_count: int, canvas_width: int
+) -> CoordData:
     radius = canvas_width // 2 - PADDING
     nail_angle = FULL_CIRCLE_ANGLE / nail_count
     radian = nail_angle * nail_index * math.pi / HALF_CIRCLE_ANGLE
-    coord = (
-        int(radius * math.cos(radian)) + radius + PADDING,
-        int(radius * math.sin(radian)) + radius + PADDING,
-    )
+    def find_circle_position(alt_radian: float) -> int:
+        return int(radius * alt_radian) + radius + PADDING
+    x = find_circle_position(math.cos(radian))
+    y = find_circle_position(math.sin(radian))
+    coord = (x, y)
     return coord
 
 
