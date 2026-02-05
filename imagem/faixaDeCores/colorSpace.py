@@ -1,24 +1,25 @@
 from PIL import Image
-import cv2
-import os
+
+MAXIMUM_COLOR_VALUE = 256
+MAXIMUM_COLOR_SIZE = (MAXIMUM_COLOR_VALUE, MAXIMUM_COLOR_VALUE)
 
 
 def main() -> None:
-    os.chdir("camadas")
-    for z in range(256):
-        camadaR = Image.new("RGB", (256, 256), "white")
-        camadaG = Image.new("RGB", (256, 256), "white")
-        camadaB = Image.new("RGB", (256, 256), "white")
-        for x in range(256):
-            for y in range(256):
-                camadaR.putpixel((x, y), (z, x, y))
-                camadaG.putpixel((x, y), (y, z, x))
-                camadaB.putpixel((x, y), (x, y, z))
-        camadaR.save("R\\a" + str(z) + ".jpg")
-        camadaG.save("G\\a" + str(z) + ".jpg")
-        camadaB.save("B\\a" + str(z) + ".jpg")
+    for z in range(MAXIMUM_COLOR_VALUE):
+        red_layer = Image.new("RGB", MAXIMUM_COLOR_SIZE, "white")
+        green_layer = Image.new("RGB", MAXIMUM_COLOR_SIZE, "white")
+        blue_layer = Image.new("RGB", MAXIMUM_COLOR_SIZE, "white")
+        for x in range(MAXIMUM_COLOR_VALUE):
+            for y in range(MAXIMUM_COLOR_VALUE):
+                coord = (x, y)
+                red_layer.putpixel(coord, (z, x, y))
+                green_layer.putpixel(coord, (y, z, x))
+                blue_layer.putpixel(coord, (x, y, z))
+        red_layer.save(f"out/red/rgb_layer_{z:03d}.jpg")
+        green_layer.save(f"out/green/rgb_layer_{z:03d}.jpg")
+        blue_layer.save(f"out/blue/rgb_layer_{z:03d}.jpg")
         print(z)
-    print("veja")
+    print("Done!!!")
 
 
 if __name__ == "__main__":
