@@ -21,6 +21,8 @@ VERTICAL_PARTITION_PARITY = 0
 REGIONS_TRANSVERSAL_ORDER = (0, 2, 1, 3)
 # Layers transversal order to process regions and layers, idk why but it works
 LAYERS_TRANSVERSAL_ORDER = (0, 3, 2, 1)
+OPAQUE_ALPHA_VALUE = 255
+TRANSPARENT_ALPHA_VALUE = 0
 
 CoordData = tuple[int, int]
 LayerData = list["Line"]
@@ -73,14 +75,14 @@ def is_neighbors(coord_a: CoordData, coord_b: CoordData) -> bool:
 
 def get_pixel_alpha(pixel: float | tuple[int, ...] | None) -> int:
     if pixel is None:
-        return 0
+        return TRANSPARENT_ALPHA_VALUE
     if isinstance(pixel, int):
-        return 255
+        return OPAQUE_ALPHA_VALUE
     if isinstance(pixel, float):
-        return 255
+        return OPAQUE_ALPHA_VALUE
     if len(pixel) == 4:
         return pixel[3]
-    return 255
+    return OPAQUE_ALPHA_VALUE
 
 
 class Line:
@@ -369,7 +371,7 @@ class Area:
             was_last_pixel_opaque = False
             for x in range(width):
                 pixel = self.image.getpixel((x, y))
-                is_current_pixel_opaque = get_pixel_alpha(pixel) == 255
+                is_current_pixel_opaque = get_pixel_alpha(pixel) == OPAQUE_ALPHA_VALUE
                 if not was_last_pixel_opaque ^ is_current_pixel_opaque:
                     was_last_pixel_opaque = is_current_pixel_opaque
                     continue
@@ -387,7 +389,7 @@ class Area:
             was_last_pixel_opaque = False
             for y in range(height):
                 pixel = self.image.getpixel((x, y))
-                is_current_pixel_opaque = get_pixel_alpha(pixel) == 255
+                is_current_pixel_opaque = get_pixel_alpha(pixel) == OPAQUE_ALPHA_VALUE
                 if not was_last_pixel_opaque ^ is_current_pixel_opaque:
                     was_last_pixel_opaque = is_current_pixel_opaque
                     continue
@@ -425,13 +427,13 @@ class Area:
                         pixel = self.image.getpixel(current_coord)
                     except IndexError:
                         continue
-                    if get_pixel_alpha(pixel) == 0:
+                    if get_pixel_alpha(pixel) == TRANSPARENT_ALPHA_VALUE:
                         continue
                     if current_coord in current_line:
                         continue
                     if current_coord not in self:
                         current_line.append(current_coord)
-            if len(current_line) <= 0:
+            if len(current_line) == 0:
                 continue
             current_line.sort_all_coordinates()
             self.layer_regions[region_index].append(current_line)
