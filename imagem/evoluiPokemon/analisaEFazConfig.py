@@ -1,412 +1,498 @@
+from enum import Enum
+from io import TextIOWrapper
+from math import sqrt
 from PIL import Image
-import os
-import multiprocessing
-from random import randint
-from time import sleep
+
+FIRST_IMAGE_PATH = "./inicial.png"
+LAST_IMAGE_PATH = "./final.png"
+CONFIG_FILE_PATH = "./config.txt"
+ROUNDING_EPSILON = 0.1
+# euclidean distance plus a small margin
+NEIGHBORS_MINIMUM_DISTANCE = sqrt(2) + ROUNDING_EPSILON
+# arbitrary value to avoid connecting distant points in circular lines
+NEIGHBORS_MINIMUM_DISTANCE_INDEXED = 5
+# another arbitrary value to limit sorting attempts, or else we would have O(n^2)
+SORTING_MINIMUM_ATTEMPTS = 4
+LAYER_COUNT = 4
+SMALL_PERIMETER_MAX = LAYER_COUNT
+NO_SCORE_YET = float("inf")
+VERTICAL_PARTITION_PARITY = 0
+# Transversal order to process regions and layers, idk why but it works
+REGIONS_TRANSVERSAL_ORDER = (0, 2, 1, 3)
+# Layers transversal order to process regions and layers, idk why but it works
+LAYERS_TRANSVERSAL_ORDER = (0, 3, 2, 1)
+
+CoordData = tuple[int, int]
+LayerData = list["Line"]
 
 
-class Linha:
-    def __init__(self, pontos=None, circular=False):
-        if pontos is None:
-            self.pontos = []
-        else:
-            self.pontos = pontos.copy()
-        self.circular = circular
+class Direction(Enum):
+    DOWN_RIGHT = 0
+    DOWN = 1
+    DOWN_LEFT = 2
+    LEFT = 3
+    UP_LEFT = 4
+    UP = 5
+    UP_RIGHT = 6
+    RIGHT = 7
 
-    def sortAll(self):
-        linhas = self.separa()
-        self.pontos = []
-        for linha in linhas:
-            linha.sort()
-            self.copy(self + linha)
 
-    def separa(self):
-        linhas = []
-        for ponto in self.pontos:
-            linhasQueTemOPonto = []
-            for index, linha in enumerate(linhas):
-                for novoPonto in linha.pontos:
-                    if distancia(ponto, novoPonto) <= 2 ** (1 / 2) + 0.01:
-                        linhasQueTemOPonto.append(index)
+ORTHOGONAL_DIRECTIONS = (Direction.DOWN, Direction.LEFT, Direction.UP, Direction.RIGHT)
+
+
+def apply_direction(coord: CoordData, direction: Direction) -> CoordData:
+    x, y = coord
+    if direction == Direction.DOWN_RIGHT:
+        return (x + 1, y + 1)
+    if direction == Direction.DOWN:
+        return (x, y + 1)
+    if direction == Direction.DOWN_LEFT:
+        return (x - 1, y + 1)
+    if direction == Direction.LEFT:
+        return (x - 1, y)
+    if direction == Direction.UP_LEFT:
+        return (x - 1, y - 1)
+    if direction == Direction.UP:
+        return (x, y - 1)
+    if direction == Direction.UP_RIGHT:
+        return (x + 1, y - 1)
+    if direction == Direction.RIGHT:
+        return (x + 1, y)
+
+
+def get_distance(coords_a: tuple[int, int], coords_b: tuple[int, int]) -> float:
+    soma = 0
+    for coord_a, coord_b in zip(coords_a, coords_b):
+        soma += abs(coord_a - coord_b) ** 2
+    return sqrt(soma)
+
+
+def is_neighbors(coord_a: CoordData, coord_b: CoordData) -> bool:
+    return get_distance(coord_a, coord_b) <= NEIGHBORS_MINIMUM_DISTANCE
+
+
+def get_pixel_alpha(pixel: float | tuple[int, ...] | None) -> int:
+    if pixel is None:
+        return 0
+    if isinstance(pixel, int):
+        return 255
+    if isinstance(pixel, float):
+        return 255
+    if len(pixel) == 4:
+        return pixel[3]
+    return 255
+
+
+class Line:
+    def __init__(
+        self, coordinates: list[CoordData] | None = None, is_circular: bool = False
+    ) -> None:
+        self.coordinates: list[CoordData] = []
+        if coordinates is not None:
+            self.coordinates = coordinates.copy()
+        self.is_circular = is_circular
+
+    def sort_all_coordinates(self) -> None:
+        line_groups = self.group_connected_coordinates()
+        self.coordinates = []
+        for line_group in line_groups:
+            line_group.sort()
+            new_line = self.add_line(line_group)
+            self.clone(new_line)
+
+    def group_connected_coordinates(self) -> list["Line"]:
+        lines: list["Line"] = []
+        for coord in self.coordinates:
+            neighbor_lines: list[int] = []
+            for line_index, line in enumerate(lines):
+                for line_coord in line.coordinates:
+                    if is_neighbors(coord, line_coord):
+                        neighbor_lines.append(line_index)
                         break
-            if len(linhasQueTemOPonto) == 0:
-                linhas.append(Linha([ponto], circular=self.circular))
-            elif len(linhasQueTemOPonto) == 1:
-                linhas[linhasQueTemOPonto[0]].append(ponto)
-            else:
-                superLinha = linhas[linhasQueTemOPonto[0]].copy()
-                for index in linhasQueTemOPonto[1:]:
-                    superLinha += linhas[index]
-                for index in reversed(sorted(linhasQueTemOPonto)):
-                    linhas.pop(index)
-                superLinha.append(ponto)
-                linhas.append(superLinha)
-        return linhas
+            if len(neighbor_lines) == 0:
+                lines.append(Line([coord], is_circular=self.is_circular))
+                continue
+            if len(neighbor_lines) == 1:
+                lines[neighbor_lines[0]].append(coord)
+                continue
+            line = lines[neighbor_lines[0]].copy()
+            for line_index in neighbor_lines[1:]:
+                line.add_line(lines[line_index])
+            for line_index in reversed(sorted(neighbor_lines)):
+                lines.pop(line_index)
+            line.append(coord)
+            lines.append(line)
+        return lines
 
-    def sort(self):
-        tamanho = len(self)
-        maiorLinha = Linha(circular=self.circular)
-        for n in range(min(4, tamanho)):
-            linhaTeste = self.copy()
-            primeiroPonto = self.pontos[n]
-            linhaTeste.sortIt(Linha([primeiroPonto], circular=self.circular))
-            if len(linhaTeste) == tamanho:
-                maiorLinha = linhaTeste.copy()
+    def sort(self) -> None:
+        length = len(self)
+        best_line = Line(is_circular=self.is_circular)
+        for n in range(min(SORTING_MINIMUM_ATTEMPTS, length)):
+            test_line = self.copy()
+            first_coordinate = self.coordinates[n]
+            test_line.try_to_sort(
+                Line([first_coordinate], is_circular=self.is_circular)
+            )
+            if len(test_line) == length:
+                best_line = test_line.copy()
                 break
-            if len(linhaTeste) > len(maiorLinha):
-                maiorLinha = linhaTeste.copy()
-        self.copy(maiorLinha)
+            if len(test_line) > len(best_line):
+                best_line = test_line.copy()
+        self.clone(best_line)
 
-    def sortIt(self, linhaOrdenada):
+    def try_to_sort(self, ordered_line: "Line") -> None:
         while True:
-            pontoInicial = linhaOrdenada.pontos[-1]
-            pontos = self.pontosProximos(pontoInicial, exceptions=linhaOrdenada)
-            if len(pontos) == 1:
-                linhaOrdenada.append(pontos[0])
-            else:
-                if len(pontos) == 0:
-                    if self.circular:
-                        indice = self.pontos.index(pontoInicial)
-                        if indice < len(self) - 1:
-                            linhaOrdenada.append(self.pontos[indice + 1])
-                            continue
-                    maiorLinha = linhaOrdenada.copy()
-                else:
-                    antes = len(linhaOrdenada)
-                    for ponto in pontos:
-                        pontosProximosDele = self.pontosProximos(
-                            ponto, exceptions=linhaOrdenada
-                        )
-                        if len(pontosProximosDele) == 1:
-                            if pontosProximosDele[0] in pontos:
-                                linhaOrdenada.append(ponto)
-                                linhaOrdenada.append(pontosProximosDele[0])
-                                break
-                    if len(linhaOrdenada) != antes:
-                        continue
-                    maiorLinha = linhaOrdenada.copy()
-                    for ponto in pontos:
-                        novaLinha = self.copy()
-                        novaLinha.sortIt(linhaOrdenada + [ponto])
-                        if len(novaLinha) == len(self):
-                            maiorLinha = novaLinha.copy()
-                            break
-                        if len(novaLinha) > len(maiorLinha):
-                            maiorLinha = novaLinha.copy()
-                break
-        self.copy(maiorLinha)
+            first_coord = ordered_line.coordinates[-1]
+            coords = self.get_neighbor_coords(first_coord, exceptions=ordered_line)
+            if len(coords) == 1:
+                ordered_line.append(coords[0])
+                continue
+            if len(coords) == 0:
+                if not self.is_circular:
+                    best_line = ordered_line.copy()
+                    break
+                index = self.coordinates.index(first_coord)
+                if index == len(self) - 1:
+                    best_line = ordered_line.copy()
+                    break
+                ordered_line.append(self.coordinates[index + 1])
+                continue
+            initial_length = len(ordered_line)
+            for coord in coords:
+                neighbor_coords = self.get_neighbor_coords(
+                    coord, exceptions=ordered_line
+                )
+                if len(neighbor_coords) != 1:
+                    continue
+                if neighbor_coords[0] in coords:
+                    ordered_line.append(coord)
+                    ordered_line.append(neighbor_coords[0])
+                    break
+            if len(ordered_line) != initial_length:
+                continue
+            best_line = ordered_line.copy()
+            for coord in coords:
+                new_line = self.copy()
+                new_line.try_to_sort(ordered_line.add_coords([coord]))
+                if len(new_line) == len(self):
+                    best_line = new_line.copy()
+                    break
+                if len(new_line) > len(best_line):
+                    best_line = new_line.copy()
+            break
+        self.clone(best_line)
 
-    def pontosProximos(self, ponto, exceptions=None):
+    def get_neighbor_coords(
+        self,
+        origin_coord: CoordData,
+        exceptions: "Line | list[CoordData] | None" = None,
+    ) -> list[CoordData]:
         if exceptions is None:
             exceptions = []
-        pontos = []
-        for d in range(8):
-            pontoAtual = coordDirecao(ponto, d)
-            if pontoAtual in self:
-                if pontoAtual not in exceptions:
-                    if self.circular:
-                        if (
-                            abs(
-                                self.pontos.index(pontoAtual) - self.pontos.index(ponto)
-                            )
-                            < 5
-                        ):
-                            pontos.append(pontoAtual)
-                    else:
-                        pontos.append(pontoAtual)
-        return pontos
+        coords: list[CoordData] = []
+        origin_index = self.coordinates.index(origin_coord)
+        for direction in Direction:
+            current_coord = apply_direction(origin_coord, direction)
+            if current_coord not in self:
+                continue
+            current_index = self.coordinates.index(current_coord)
+            if current_coord in exceptions:
+                continue
+            if not self.is_circular:
+                coords.append(current_coord)
+                continue
+            if abs(current_index - origin_index) < NEIGHBORS_MINIMUM_DISTANCE_INDEXED:
+                coords.append(current_coord)
+        return coords
 
-    def divide(self, divisor, inicio):
-        particoes = [0] * divisor
+    def split_into_partitions(
+        self, partition_count: int, start_index: int
+    ) -> LayerData:
+        partition_sizes = [0] * partition_count
         for index in range(len(self)):
-            particoes[index % divisor] += 1
-        linhas = []
-        for index in range(divisor):
-            linha = Linha(circular=self.circular)
-            inicioParticao = inicio + sum(particoes[:index])
-            fimParticao = inicioParticao + particoes[index]
-            for ponto in self.pontos[inicioParticao:fimParticao]:
-                linha.append(ponto)
-            if index == divisor - 1:
-                for ponto in self.pontos[:inicio]:
-                    linha.append(ponto)
-            linhas.append(linha)
-        return linhas
+            partition_sizes[index % partition_count] += 1
+        lines: list[Line] = []
+        for index in range(partition_count):
+            current_line = Line(is_circular=self.is_circular)
+            partition_start = start_index + sum(partition_sizes[:index])
+            partition_end = partition_start + partition_sizes[index]
+            for coord in self.coordinates[partition_start:partition_end]:
+                current_line.append(coord)
+            if index == partition_count - 1:
+                for coord in self.coordinates[:start_index]:
+                    current_line.append(coord)
+            lines.append(current_line)
+        return lines
 
-    def makeCamada(self):
-        perimetro = len(self)
-        tamanhoSeccao = int((perimetro - 0.1) // 4 + 1)
-        if perimetro <= 4:
-            camada = []
-            for a in range(perimetro):
-                camada.append(Linha([self.pontos[a]], circular=self.circular))
-            while len(camada) != 4:
-                camada.append(Linha([self.pontos[-1]], circular=self.circular))
-            return camada
-        camada = []
-        melhorPontuacao = float("inf")
-        for inicioSeccao in range(tamanhoSeccao):
-            novaCamada = self.divide(4, inicioSeccao)
-            maiorY = novaCamada[0].pontoMedio()[1]
-            linhaDeBaixo = novaCamada[0]
-            for n in range(1, 4):
-                if novaCamada[n].pontoMedio()[1] > maiorY:
-                    maiorY = novaCamada[n].pontoMedio()[1]
-                    linhaDeBaixo = novaCamada[n]
-            while novaCamada[0] != linhaDeBaixo:
-                novaCamada = [novaCamada[-1]] + novaCamada
-                novaCamada.pop()
-            pontuacao = 0
-            for a in range(4):
-                if a % 2 == 0:
-                    pontuacao += abs(
-                        novaCamada[a].pontos[-1][1] - novaCamada[a].pontos[0][1]
-                    )
+    def turn_into_layers(self) -> LayerData:
+        perimeter = len(self)
+        layer_section_size = int((perimeter - ROUNDING_EPSILON) // LAYER_COUNT + 1)
+        if perimeter <= SMALL_PERIMETER_MAX:
+            best_layers: LayerData = []
+            for index in range(perimeter):
+                best_layers.append(
+                    Line([self.coordinates[index]], is_circular=self.is_circular)
+                )
+            while len(best_layers) != LAYER_COUNT:
+                best_layers.append(
+                    Line([self.coordinates[-1]], is_circular=self.is_circular)
+                )
+            return best_layers
+        best_layers = []
+        best_score = NO_SCORE_YET
+        for start_section in range(layer_section_size):
+            new_layers = self.split_into_partitions(LAYER_COUNT, start_section)
+            first_layer = new_layers[0]
+            bottommost_y = first_layer.calculate_mid_coord()[1]
+            bottom_line = first_layer
+            for layer_index in range(1, LAYER_COUNT):
+                current_layer = new_layers[layer_index]
+                current_y = current_layer.calculate_mid_coord()[1]
+                if current_y <= bottommost_y:  # y increases downwards
+                    continue
+                bottommost_y = current_y
+                bottom_line = current_layer
+            while first_layer != bottom_line:  # TODO: implement __ne__ between Lines
+                new_layers = [new_layers[-1]] + new_layers
+                new_layers.pop()
+            score = 0
+            for index in range(LAYER_COUNT):
+                current_layer = new_layers[index]
+                first_index = current_layer.coordinates[0]
+                last_index = current_layer.coordinates[-1]
+                if index % 2 == VERTICAL_PARTITION_PARITY:
+                    first_y = first_index[1]
+                    last_y = last_index[1]
+                    score += abs(last_y - first_y)
                 else:
-                    pontuacao += abs(
-                        novaCamada[a].pontos[-1][0] - novaCamada[a].pontos[0][0]
-                    )
-            if pontuacao < melhorPontuacao:
-                camada = novaCamada.copy()
-                melhorPontuacao = pontuacao
-        if camada[1].pontoMedio()[0] > camada[3].pontoMedio()[0]:
-            novaCamada = [camada[a] for a in (0, 3, 2, 1)]
-            for linha in camada:
-                linha.pontos = list(reversed(linha.pontos))
-        else:
-            novaCamada = camada
-        return novaCamada
+                    first_x = first_index[0]
+                    last_x = last_index[0]
+                    score += abs(last_x - first_x)
+            if score < best_score:
+                best_layers = new_layers.copy()
+                best_score = score
+        if (
+            best_layers[1].calculate_mid_coord()[0]
+            <= best_layers[3].calculate_mid_coord()[0]
+        ):
+            return best_layers
+        new_layers = [best_layers[a] for a in (0, 3, 2, 1)]
+        for line in best_layers:
+            line.coordinates = list(reversed(line.coordinates))
+        return new_layers
 
-    def pontoMedio(self):
+    def calculate_mid_coord(self) -> CoordData:
         x = 0
         y = 0
-        for ponto in self.pontos:
-            x += ponto[0]
-            y += ponto[1]
-        xmedio = x / len(self)
-        ymedio = y / len(self)
-        return (xmedio, ymedio)
+        for coordinate in self.coordinates:
+            x += coordinate[0]
+            y += coordinate[1]
+        average_x_coordinate = x // len(self)
+        average_y_coordinate = y // len(self)
+        return (average_x_coordinate, average_y_coordinate)
 
-    def escreve(self, other, file):
-        if len(self) == len(other):
-            for self_ponto, other_ponto in zip(self, other):
-                file.write(str(self_ponto[0]) + "," + str(self_ponto[1]))
-                file.write(" " + str(other_ponto[0]) + "," + str(other_ponto[1]) + "\n")
-        elif len(self) > len(other):
-            if len(self) - 1 == 0:
-                multiplicador = 0
-            else:
-                multiplicador = (len(other) - 1) / (len(self) - 1)
-            for n in range(len(self)):
-                pontoInicial = self.pontos[n]
-                pontoFinal = other.pontos[int(n * multiplicador)]
-                file.write(str(pontoInicial[0]) + "," + str(pontoInicial[1]))
-                file.write(" " + str(pontoFinal[0]) + "," + str(pontoFinal[1]) + "\n")
-        else:
-            if len(other) - 1 == 0:
-                multiplicador = 0
-            else:
-                multiplicador = (len(self) - 1) / (len(other) - 1)
-            for n in range(len(other)):
-                pontoInicial = self.pontos[int(n * multiplicador)]
-                pontoFinal = other.pontos[n]
-                file.write(str(pontoInicial[0]) + "," + str(pontoInicial[1]))
-                file.write(" " + str(pontoFinal[0]) + "," + str(pontoFinal[1]) + "\n")
+    def write_to_file(self, other_line: "Line", file: TextIOWrapper) -> None:
+        def format_coordinate(coord: CoordData) -> str:
+            return f"{coord[0]},{coord[1]}"
 
-    def copy(self, other=None):
-        if other is None:
-            return Linha(self.pontos, circular=self.circular)
-        else:
-            self.pontos = other.pontos
-            self.circular = other.circular
+        def write_line(coord_a: CoordData, coord_b: CoordData) -> None:
+            file.write(f"{format_coordinate(coord_a)} {format_coordinate(coord_b)}\n")
 
-    def append(self, elemento):
-        if type(elemento) is Linha:
-            for ponto in elemento.pontos:
+        if len(self) == len(other_line):
+            for coord_source, coord_target in zip(
+                self.coordinates, other_line.coordinates
+            ):
+                write_line(coord_source, coord_target)
+            return
+        line_source = self
+        line_target = other_line
+        if len(self) < len(other_line):
+            line_source = other_line
+            line_target = self
+        coordinate_ratio = 0.0
+        if len(line_source) - 1 != 0:
+            coordinate_ratio = (len(line_target) - 1) / (len(line_source) - 1)
+        for source_index, coord_source in enumerate(line_source.coordinates):
+            target_index = int(source_index * coordinate_ratio)
+            coord_target = line_target.coordinates[target_index]
+            write_line(coord_source, coord_target)
+
+    def copy(self) -> "Line":
+        return Line(self.coordinates, is_circular=self.is_circular)
+
+    def clone(self, other: "Line") -> None:
+        # clone is different from copy, clone changes the current object
+        self.coordinates = other.coordinates.copy()
+        self.is_circular = other.is_circular
+
+    def append(self, elemento: "Line | CoordData") -> None:
+        if isinstance(elemento, Line):
+            for ponto in elemento.coordinates:
                 self.append(ponto)
-        else:
-            self.pontos.append(elemento)
+            return
+        self.coordinates.append(elemento)
 
-    def __contains__(self, elemento):
-        if elemento in self.pontos:
+    def __contains__(self, elemento: CoordData) -> bool:
+        if elemento in self.coordinates:
             return True
         return False
 
-    def __add__(self, other):
-        resultado = self.copy()
-        if type(other) is list:
-            resultado.pontos += other
-        elif type(other) is Linha:
-            resultado.pontos += other.pontos
-        return resultado
+    def add_line(self, other_line: "Line") -> "Line":
+        new_line = self.copy()
+        new_line.coordinates += other_line.coordinates
+        return new_line
 
-    def __len__(self):
-        return len(self.pontos)
+    def add_coords(self, other_coords: list[CoordData]) -> "Line":
+        new_line = self.copy()
+        for element in other_coords:
+            new_line.coordinates.append(element)
+        return new_line
 
-    def __str__(self):
-        return str(self.pontos)
+    def __len__(self) -> int:
+        return len(self.coordinates)
+
+    def __str__(self) -> str:
+        return str(self.coordinates)
 
 
 class Area:
-    def __init__(self, imagem):
-        self.imagem = imagem
-        self.regioes = []
-        self.procuraContorno()
-        self.procuraCamadas()
+    def __init__(self, image: Image.Image) -> None:
+        self.image = image
+        self.layer_regions: list[list[Line]] = []
+        self.search_contour()
+        self.search_for_layers()
 
-    def procuraContorno(self):
-        contorno = []
-        largura, altura = self.imagem.size
-        for y in range(altura):
-            isUltimoPixelSolid = False
-            for x in range(largura):
-                isPixelAtualSolid = self.imagem.getpixel((x, y))[3] == 255
-                if (not isUltimoPixelSolid) and isPixelAtualSolid:
-                    if (x, y) not in contorno:
-                        contorno.append((x, y))
-                if (not isPixelAtualSolid) and isUltimoPixelSolid:
-                    if (x - 1, y) not in contorno:
-                        contorno.append((x - 1, y))
-                isUltimoPixelSolid = isPixelAtualSolid
-            if isUltimoPixelSolid:
-                if (x - 1, y) not in contorno:
-                    contorno.append((x - 1, y))
-        for x in range(largura):
-            isUltimoPixelSolid = False
-            for y in range(altura):
-                isPixelAtualSolid = self.imagem.getpixel((x, y))[3] == 255
-                if (not isUltimoPixelSolid) and isPixelAtualSolid:
-                    if (x, y) not in contorno:
-                        contorno.append((x, y))
-                if (not isPixelAtualSolid) and isUltimoPixelSolid:
-                    if (x, y - 1) not in contorno:
-                        contorno.append((x, y - 1))
-                isUltimoPixelSolid = isPixelAtualSolid
-            if isUltimoPixelSolid:
-                if (x, y - 1) not in contorno:
-                    contorno.append((x, y - 1))
-        linhaInicial = Linha(contorno)
+    def search_contour(self) -> None:
+        countour: list[CoordData] = []
+        width, height = self.image.size
+        for y in range(height):
+            was_last_pixel_opaque = False
+            for x in range(width):
+                pixel = self.image.getpixel((x, y))
+                is_current_pixel_opaque = get_pixel_alpha(pixel) == 255
+                if not was_last_pixel_opaque ^ is_current_pixel_opaque:
+                    was_last_pixel_opaque = is_current_pixel_opaque
+                    continue
+                coord = (x - 1, y)
+                if is_current_pixel_opaque:
+                    coord = (x, y)
+                if coord not in countour:
+                    countour.append(coord)
+                was_last_pixel_opaque = is_current_pixel_opaque
+            if was_last_pixel_opaque:
+                coord = (width - 1, y)
+                if coord not in countour:
+                    countour.append(coord)
+        for x in range(width):
+            was_last_pixel_opaque = False
+            for y in range(height):
+                pixel = self.image.getpixel((x, y))
+                is_current_pixel_opaque = get_pixel_alpha(pixel) == 255
+                if not was_last_pixel_opaque ^ is_current_pixel_opaque:
+                    was_last_pixel_opaque = is_current_pixel_opaque
+                    continue
+                coord = (x, y - 1)
+                if is_current_pixel_opaque:
+                    coord = (x, y)
+                if coord not in countour:
+                    countour.append(coord)
+                was_last_pixel_opaque = is_current_pixel_opaque
+            if was_last_pixel_opaque:
+                coord = (x, height - 1)
+                if coord not in countour:
+                    countour.append(coord)
+        linhaInicial = Line(countour)
         linhaInicial.sort()
-        camada = linhaInicial.makeCamada()
-        for linha in camada:
-            self.regioes.append([linha])
+        layers = linhaInicial.turn_into_layers()
+        for line in layers:
+            self.layer_regions.append([line])
 
-    def procuraCamadas(self):
-        alterationDone = False
-        for indice in [0, 2, 1, 3]:
-            linhaAtual = Linha(circular=True)
-            linhaAnterior = self.regioes[indice][-1]
-            for coord in linhaAnterior.pontos:
-                for direcao in (1, 3, 5, 7):
-                    coordenada = coordDirecao(coord, direcao)
+    def search_for_layers(self) -> None:
+        changed = True
+        while changed:
+            changed = self.find_layers()
+
+    def find_layers(self) -> bool:
+        # try to expand each layer region by finding neighboring pixels
+        has_changes_occurred = False
+        for region_index in LAYERS_TRANSVERSAL_ORDER:
+            current_line = Line(is_circular=True)
+            previous_line = self.layer_regions[region_index][-1]
+            for previous_coord in previous_line.coordinates:
+                for direction in ORTHOGONAL_DIRECTIONS:
+                    current_coord = apply_direction(previous_coord, direction)
                     try:
-                        pixel = self.imagem.getpixel(coordenada)
-                    except:
+                        pixel = self.image.getpixel(current_coord)
+                    except IndexError:
                         continue
-                    if pixel[3] != 0:
-                        if coordenada not in linhaAtual:
-                            if coordenada not in self:
-                                linhaAtual.append(coordenada)
-            if len(linhaAtual) > 0:
-                linhaAtual.sortAll()
-                self.regioes[indice].append(linhaAtual)
-                alterationDone = True
-        if alterationDone:
-            self.procuraCamadas()
+                    if get_pixel_alpha(pixel) == 0:
+                        continue
+                    if current_coord in current_line:
+                        continue
+                    if current_coord not in self:
+                        current_line.append(current_coord)
+            if len(current_line) <= 0:
+                continue
+            current_line.sort_all_coordinates()
+            self.layer_regions[region_index].append(current_line)
+            has_changes_occurred = True
+        return has_changes_occurred
 
-    def escreve(self, other, file):
-        for indice in range(4):
-            if len(self.regioes[indice]) == len(other.regioes[indice]):
-                for self_regiao, other_regiao in zip(
-                    self.regioes[indice], other.regioes[indice]
-                ):
-                    self_regiao.escreve(other_regiao, file)
-            elif len(self.regioes[indice]) > len(other.regioes[indice]):
-                if len(self.regioes[indice]) - 1 == 0:
-                    multiplicador = 0
-                else:
-                    multiplicador = (len(other.regioes[indice]) - 1) / (
-                        len(self.regioes[indice]) - 1
-                    )
-                for n in range(len(self.regioes[indice])):
-                    linhaFinal = other.regioes[indice][int(n * multiplicador)]
-                    self.regioes[indice][n].escreve(linhaFinal, file)
-            else:
-                if len(other.regioes[indice]) - 1 == 0:
-                    multiplicador = 0
-                else:
-                    multiplicador = (len(self.regioes[indice]) - 1) / (
-                        len(other.regioes[indice]) - 1
-                    )
-                for n in range(len(other.regioes[indice])):
-                    linhaInicial = self.regioes[indice][int(n * multiplicador)]
-                    linhaInicial.escreve(other.regioes[indice][n], file)
+    def write_region_data(self, other: "Area", file: TextIOWrapper) -> None:
+        for indice in range(LAYER_COUNT):
+            source_regions = self.layer_regions[indice]
+            target_regions = other.layer_regions[indice]
+            source_size = len(source_regions)
+            target_size = len(target_regions)
+            if source_size == target_size:
+                for self_line, other_line in zip(source_regions, target_regions):
+                    self_line.write_to_file(other_line, file)
+                return
+            elif source_size > target_size:
+                region_scale = 0.0
+                if source_size - 1 != 0:
+                    region_scale = (target_size - 1) / (source_size - 1)
+                for region_index in range(source_size):
+                    source_line = source_regions[region_index]
+                    target_index = int(region_index * region_scale)
+                    target_line = target_regions[target_index]
+                    source_line.write_to_file(target_line, file)
+                return
+            region_scale = 0.0
+            if target_size - 1 != 0:
+                region_scale = (source_size - 1) / (target_size - 1)
+            for region_index in range(target_size):
+                source_index = int(region_index * region_scale)
+                source_line = source_regions[source_index]
+                target_line = target_regions[region_index]
+                source_line.write_to_file(target_line, file)
 
-    def __contains__(self, other):
-        for regiao in self.regioes:
-            for linha in regiao:
-                if other in linha:
+    def __contains__(self, coord: CoordData) -> bool:
+        for layer_region in self.layer_regions:
+            for layer in layer_region:
+                if coord in layer:
                     return True
         return False
 
-    def tamanhoMaiorRegiao(self):
-        tamanho = float("-inf")
-        for regiao in self.regioes:
-            if len(regiao) > tamanho:
-                tamanho = len(regiao)
-        return tamanho
-
-
-class ImagemParte:
-    def __init__(self, nome):
-        imagem = Image.open(nome)
-        self.area = Area(imagem)
-        imagem.close()
-
-    def escreveArea(self, other, file):
-        self.area.escreve(other.area, file)
-
-
-def coordDirecao(coord, n):
-    x, y = coord
-    if n == 0:
-        return (x + 1, y + 1)
-    if n == 1:
-        return (x, y + 1)
-    if n == 2:
-        return (x - 1, y + 1)
-    if n == 3:
-        return (x - 1, y)
-    if n == 4:
-        return (x - 1, y - 1)
-    if n == 5:
-        return (x, y - 1)
-    if n == 6:
-        return (x + 1, y - 1)
-    if n == 7:
-        return (x + 1, y)
-    return (x, y)
-
-
-def distancia(pontoA, pontoB):
-    soma = 0
-    for coord_a, coord_b in zip(pontoA, pontoB):
-        soma += abs(coord_a - coord_b) ** 2
-    return soma ** (1 / 2)
-
+    def get_largest_region_size(self) -> int:
+        largest_size = float("-inf")
+        for layer_region in self.layer_regions:
+            if len(layer_region) > largest_size:
+                largest_size = len(layer_region)
+        return int(largest_size)
 
 
 def main() -> None:
-    print("Fazendo Analise : " + str(0))
-    parteInicial = Image.open("C:\\pythonscript\\imagem\\evoluiPokemon\\inicial.png")
-    areaInicial = Area(parteInicial)
-    parteInicial.close()
-    parteFinal = Image.open("C:\\pythonscript\\imagem\\evoluiPokemon\\final.png")
-    areaFinal = Area(parteFinal)
-    parteFinal.close()
-    with open("C:\\pythonscript\\imagem\\evoluiPokemon\\config.txt", "w", encoding="utf-8") as fileConfig:
-        areaInicial.escreve(areaFinal, fileConfig)
-        print("\Analise Terminada : " + str(0))
+    print("Fazendo Analise : ")
+    initial_image = Image.open(FIRST_IMAGE_PATH)
+    initial_area = Area(initial_image)
+    initial_image.close()
+    last_image = Image.open(LAST_IMAGE_PATH)
+    last_area = Area(last_image)
+    last_image.close()
+    with open(CONFIG_FILE_PATH, "w", encoding="utf-8") as config_file:
+        initial_area.write_region_data(last_area, config_file)
+        print("\nAnalise Terminada : ")
 
 
 if __name__ == "__main__":
