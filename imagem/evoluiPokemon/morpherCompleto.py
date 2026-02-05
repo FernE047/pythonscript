@@ -35,42 +35,38 @@ def print_elapsed_time(seconds: float) -> None:
     print(sign + ", ".join(parts))
 
 
-def fazProcesso(processo, nome):
-    inicio = time()
+def fazProcesso(processo:str, nome: str) -> None:
+    print(f"starting {nome}")
+    start_time = time()
     subprocess.call(processo)
-    fim = time()
-    duracao = fim - inicio
-    print_elapsed_time(duracao)
-
+    end_time = time()
+    elapsed_time = end_time - start_time
+    print(f"\n{nome} finished")
+    print_elapsed_time(elapsed_time)
 
 
 def main() -> None:
     while True:
-        inicioDef = time()
+        start_time = time()
         fazProcesso(
-            "python C:\\pythonscript\\imagem\\evoluiPokemon\\preparaMorph.py ",
-            "limpar directory",
+            "python ./preparaMorph.py ",
+            "clean directory",
         )
         fazProcesso(
-            "python C:\\pythonscript\\imagem\\evoluiPokemon\\analisaEFazConfig.py ",
-            "fazer configurações",
+            "python ./analisaEFazConfig.py ",
+            "make configurations",
         )
+        fazProcesso("python ./recolor.py ", "recolor")
+        fazProcesso("python ./morpher.py ", "make animations")
         fazProcesso(
-            "python C:\\pythonscript\\imagem\\evoluiPokemon\\recolor.py ", "recolor"
+            "python ./corrigeFrames.py ",
+            "frame correction",
         )
-        fazProcesso(
-            "python C:\\pythonscript\\imagem\\evoluiPokemon\\morpher.py ", "fazer animações"
-        )
-        fazProcesso(
-            "python C:\\pythonscript\\imagem\\evoluiPokemon\\corrigeFrames.py ",
-            "correção de frames",
-        )
-        fazProcesso(
-            "python C:\\pythonscript\\imagem\\evoluiPokemon\\fazGif.py ", "fazer Gif"
-        )
-        fimDef = time()
-        print("\nfinalizado")
-        print_elapsed_time(fimDef - inicioDef)
+        fazProcesso("python ./fazGif.py ", "make Gif")
+        print("\nfinished")
+        end_time = time()
+        elapsed_time = end_time - start_time    
+        print_elapsed_time(elapsed_time)
         gc.collect()
 
 
