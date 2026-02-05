@@ -4,6 +4,16 @@ from time import time
 
 # esse algoritmo faz o morph completo
 
+EXECUTABLE = "python"
+STEPS = (
+    ("./preparaMorph.py ", "clean directory"),
+    ("./analisaEFazConfig.py ", "make configurations"),
+    ("./recolor.py ", "recolor"),
+    ("./morpher.py ", "make animations"),
+    ("./corrigeFrames.py ", "frame correction"),
+    ("./fazGif.py ", "make Gif"),
+)
+
 
 def print_elapsed_time(seconds: float) -> None:
     if seconds < 0:
@@ -35,37 +45,24 @@ def print_elapsed_time(seconds: float) -> None:
     print(sign + ", ".join(parts))
 
 
-def fazProcesso(processo:str, nome: str) -> None:
-    print(f"starting {nome}")
+def execute_process(command: str, name: str) -> None:
+    print(f"starting {name}")
     start_time = time()
-    subprocess.call(processo)
+    subprocess.call(f"{EXECUTABLE} {command}", shell=True)
     end_time = time()
     elapsed_time = end_time - start_time
-    print(f"\n{nome} finished")
+    print(f"\n{name} finished")
     print_elapsed_time(elapsed_time)
 
 
 def main() -> None:
     while True:
         start_time = time()
-        fazProcesso(
-            "python ./preparaMorph.py ",
-            "clean directory",
-        )
-        fazProcesso(
-            "python ./analisaEFazConfig.py ",
-            "make configurations",
-        )
-        fazProcesso("python ./recolor.py ", "recolor")
-        fazProcesso("python ./morpher.py ", "make animations")
-        fazProcesso(
-            "python ./corrigeFrames.py ",
-            "frame correction",
-        )
-        fazProcesso("python ./fazGif.py ", "make Gif")
+        for command, name in STEPS:
+            execute_process(command, name)
         print("\nfinished")
         end_time = time()
-        elapsed_time = end_time - start_time    
+        elapsed_time = end_time - start_time
         print_elapsed_time(elapsed_time)
         gc.collect()
 
