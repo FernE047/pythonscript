@@ -1,29 +1,29 @@
 from PIL import Image
 from os import listdir
 
+WHITE = (255, 255, 255, 255)
+LABYRINTH_FOLDER = "pureLabyrinth"
+
 
 def main() -> None:
-    BRANCO = (255, 255, 255, 255)
-    PRETO = (0, 0, 0, 255)
-    VERMELHO = (255, 0, 0, 255)
-    quantiasBranco = []
-    quantiasPreto = []
-    for arq in listdir("pureLabirint"):
-        imagem = Image.open("pureLabirint\\" + arq)
-        largura, altura = imagem.size
-        if largura > 500:
+    white_count: list[int] = []
+    black_count: list[int] = []
+    for arq in listdir(LABYRINTH_FOLDER):
+        image = Image.open(f"{LABYRINTH_FOLDER}/{arq}")
+        width, height = image.size
+        if width > 500:
             continue
-        quantiaBranco = 0
-        quantiaPreto = 0
-        for x in range(1, largura - 1):
-            for y in range(1, altura - 1):
-                if imagem.getpixel((x, y)) == BRANCO:
-                    quantiaBranco += 1
+        white_pixels = 0
+        black_pixels = 0
+        for x in range(1, width - 1):
+            for y in range(1, height - 1):
+                if image.getpixel((x, y)) == WHITE:
+                    white_pixels += 1
                 else:
-                    quantiaPreto += 1
-        quantiasBranco.append(quantiaBranco)
-        quantiasPreto.append(quantiaPreto)
-    imagem.close()
+                    black_pixels += 1
+        white_count.append(white_pixels)
+        black_count.append(black_pixels)
+        image.close()
 
 
 if __name__ == "__main__":
