@@ -25,12 +25,14 @@ def get_image_from_folder() -> list[str]:
         quantity = None
     folder = f"images/{image_folder}"
     images: list[str] = []
-    if os.path.exists(folder):
-        for filename in os.listdir(folder):
-            if filename.lower().endswith(ACCEPTED_IMAGE_FORMATS):
-                images.append(os.path.join(folder, filename))
-                if quantity is not None and len(images) >= quantity:
-                    break
+    if not os.path.exists(folder):
+        return images
+    for filename in os.listdir(folder):
+        if not filename.lower().endswith(ACCEPTED_IMAGE_FORMATS):
+            continue
+        images.append(os.path.join(folder, filename))
+        if quantity is not None and len(images) >= quantity:
+            return images
     return images
 
 

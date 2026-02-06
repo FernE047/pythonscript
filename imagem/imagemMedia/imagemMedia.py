@@ -10,10 +10,12 @@ ALLOWED_FILE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".bmp", ".gif")
 
 def get_image_from_folder(folder: str) -> list[str]:
     images: list[str] = []
-    if os.path.exists(folder):
-        for filename in os.listdir(folder):
-            if filename.lower().endswith(ALLOWED_FILE_EXTENSIONS):
-                images.append(os.path.join(folder, filename))
+    if not os.path.exists(folder):
+        return images
+    for filename in os.listdir(folder):
+        if not filename.lower().endswith(ALLOWED_FILE_EXTENSIONS):
+            continue
+        images.append(os.path.join(folder, filename))
     return images
 
 
