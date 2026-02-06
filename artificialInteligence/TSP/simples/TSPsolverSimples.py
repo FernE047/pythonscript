@@ -98,7 +98,7 @@ def print_elapsed_time(seconds: float) -> None:
 def get_graph_from_file(filename: str, nodes_limit: int | None = None) -> GraphData:
     with open(filename, "r", encoding="utf-8") as file:
         lines = file.read().splitlines()
-        vertexes: list[VertexData] = []
+        vertices: list[VertexData] = []
         index = 0
         if nodes_limit:
             index = 1
@@ -112,12 +112,12 @@ def get_graph_from_file(filename: str, nodes_limit: int | None = None) -> GraphD
             coordinates = line.split()
             x_str = coordinates[2]
             y_str = coordinates[1]
-            vertexes.append((float(x_str), float(y_str)))
+            vertices.append((float(x_str), float(y_str)))
             if nodes_limit:
                 index += 1
-        graph = [[0.0 for _ in vertexes] for _ in vertexes]
-        for x, source in enumerate(vertexes):
-            for y, destination in enumerate(vertexes):
+        graph = [[0.0 for _ in vertices] for _ in vertices]
+        for x, source in enumerate(vertices):
+            for y, destination in enumerate(vertices):
                 distance_x = abs(destination[0] - source[0])
                 distance_y = abs(destination[1] - source[1])
                 distance = (distance_x**2 + distance_y**2) ** 0.5

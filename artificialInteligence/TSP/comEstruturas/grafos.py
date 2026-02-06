@@ -44,7 +44,7 @@ class Graph:
 def get_graph_from_file(filename: str, limit: None | int = None) -> Graph:
     with open(filename, "r", encoding="utf-8") as file:
         line = file.readline()
-        vertexes: list[tuple[float, float]] = []
+        vertices: list[tuple[float, float]] = []
         index = 0
         if limit is not None:
             index = 1
@@ -55,13 +55,13 @@ def get_graph_from_file(filename: str, limit: None | int = None) -> Graph:
             elementos = line.split()
             x_str = elementos[2]
             y_str = elementos[1]
-            vertexes.append((float(x_str), float(y_str)))
+            vertices.append((float(x_str), float(y_str)))
             line = file.readline()
             if limit is not None:
                 index += 1
-        graph = Graph(len(vertexes))
-        for x, source in enumerate(vertexes):
-            for y, destination in enumerate(vertexes):
+        graph = Graph(len(vertices))
+        for x, source in enumerate(vertices):
+            for y, destination in enumerate(vertices):
                 coord = (x, y)
                 distance = (
                     (destination[0] - source[0]) ** 2
