@@ -1,62 +1,83 @@
+from enum import Enum
+import os
 from PIL import Image
-from os import listdir
 
-def coordDirection(coordIni,direction):
-    x,y = coordIni
-    if(direction == 0):
-        coord = (x,y+1)
-    elif(direction == 1):
-        coord = (x+1,y)
-    elif(direction == 2):
-        coord = (x,y-1)
+BACKGROUND_COLOR = (255, 255, 255, 255)
+WALL_COLOR = (0, 0, 0, 255)
+END_COLOR = (255, 0, 0, 255)
+INITIAL_POSITION = (1, 1)
+INPUT_MAZE = "labyrinth.png"
+MAX_DIRECTIONS = 4
+
+
+class Direction(Enum):
+    DOWN = 0
+    RIGHT = 1
+    UP = 2
+    LEFT = 3
+
+
+CoordData = tuple[int, int]
+
+
+def apply_direction(coordIni: CoordData, direction: Direction) -> CoordData:
+    x, y = coordIni
+    if direction == Direction.DOWN:
+        return (x, y + 1)
+    elif direction == Direction.RIGHT:
+        return (x + 1, y)
+    elif direction == Direction.UP:
+        return (x, y - 1)
     else:
-        coord = (x-1,y)
-    return coord
+        return (x - 1, y)
 
-def isSolved(labirint):
-    return labirint.getpixel(FINAL) == VERMELHO
 
-def labirintSolver(labirint,coord,path):
-    """print(coord)
-    print(path)"""
-    if not isSolved(labirint):
-        for direction in range(4):
-            if direction == (path[-1]-2)%4:
-                continue
-            else:
-                path.append(direction)
-            testCoord = coordDirection(coord,direction)
-            nextCoord = coordDirection(testCoord,direction)
-            try:
-                nextPixel = labirint.getpixel(nextCoord)
-                nextPixel = labirint.getpixel(testCoord)
-            except:
-                path.pop()
-                continue
-            if nextPixel == BRANCO:
-                if nextCoord == FINAL:
-                    labirint.putpixel(nextCoord,VERMELHO)
-                else:
-                    labirintSolver(labirint,nextCoord,path)
-            if isSolved(labirint):
-                imagem.putpixel(testCoord,VERMELHO)
-                imagem.putpixel(nextCoord,VERMELHO)
-                break
+def is_maze_solved(labyrinth: Image.Image, coord_to_check: CoordData) -> bool:
+    return labyrinth.getpixel(coord_to_check) == END_COLOR
+
+
+def labyrinth_solver(
+    labyrinth: Image.Image, coord: CoordData, path: list[Direction]
+) -> None:
+    width, height = labyrinth.size
+    final = (width - 2, height - 2)
+    if is_maze_solved(labyrinth, coord):
+        return
+    for direction in Direction:
+        if direction.value == (path[-1].value - MAX_DIRECTIONS // 2) % MAX_DIRECTIONS:
+            continue
+        path.append(direction)
+        test_coord = apply_direction(coord, direction)
+        next_coord = apply_direction(test_coord, direction)
+        try:
+            next_pixel = labyrinth.getpixel(next_coord)
+            next_pixel = labyrinth.getpixel(test_coord)
+        except Exception:
             path.pop()
+            continue
+        if next_pixel == BACKGROUND_COLOR:
+            if next_coord == final:
+                labyrinth.putpixel(next_coord, END_COLOR)
+            else:
+                labyrinth_solver(labyrinth, next_coord, path)
+        if is_maze_solved(labyrinth, coord):
+            labyrinth.putpixel(test_coord, END_COLOR)
+            labyrinth.putpixel(next_coord, END_COLOR)
+            break
+        path.pop()
 
 
 def main() -> None:
-    BRANCO = (255,255,255,255)
-    PRETO = (0,0,0,255)
-    VERMELHO = (255,0,0,255)
-    imagem = Image.open(f"pureLabirint//labirint{234:04d}.png")
-    largura,altura = imagem.size
-    FINAL = (largura-2,altura-2)
-    INICIAL = (1,1)
-    path = [8]
-    labirintSolver(imagem,INICIAL,path)
-    imagem.save(f"labirintSolved{len(listdir("pureLabirint")):03d}.png")
-    imagem.close()
+    labyrinth = Image.open(INPUT_MAZE)
+    path = [
+        Direction.DOWN
+    ]  # starts with DOWN, because we skip the opposite of the last direction, and the opposite of DOWN is UP, which is never the first direction to try
+    labyrinth_solver(labyrinth, INITIAL_POSITION, path)
+    image_name, extension = os.path.splitext(INPUT_MAZE)
+    name = f"{image_name}_solved{extension}"
+    print(name)
+    labyrinth.save(name)
+    labyrinth.close()
 
 
 if __name__ == "__main__":
