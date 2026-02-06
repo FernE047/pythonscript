@@ -1,44 +1,66 @@
+from math import sqrt
 from PIL import Image
 
+BACKGROUND_COLOR = (255, 255, 255, 255)
+HIGHLIGHT_COLOR = (0, 0, 0, 255)
+MAX_BRIGHTNESS = 255
+VALUE_THRESHOLD_MULTIPLIER = 10
+OUTPUT_IMAGE_COUNT = 5
+INPUT_IMAGE_COUNT = 1
+TOTAL_COLOR_CHANNELS = 3
 
-def compara(pixelA, pixelB):
-    soma = 0
-    for a in range(3):
-        soma += abs(pixelA[a] - pixelB[a]) ** 2
-    return soma**0.5
 
+def get_pixel(imagem: Image.Image, x: int, y: int) -> tuple[int, ...]:
+    pixel = imagem.getpixel((x, y))
+    if pixel is None:
+        return BACKGROUND_COLOR
+    if not isinstance(pixel, tuple):
+        pixel_int = int(pixel)
+        return (pixel_int, pixel_int, pixel_int, MAX_BRIGHTNESS)
+    return pixel
+
+
+def euclidean_distance_between_pixels(
+    pixel_a: tuple[int, ...], pixel_b: tuple[int, ...]
+) -> float:
+    total_squared_distance = 0.0
+    for color_channel in range(TOTAL_COLOR_CHANNELS):
+        channel_distance = abs(pixel_a[color_channel] - pixel_b[color_channel])
+        total_squared_distance += channel_distance**2
+    return sqrt(total_squared_distance)
 
 
 def main() -> None:
-    nomeOpen = "A{0:03d}0.jpg"
-    nomeSave = "A{0:03d}{1:01d}.png"
-    for a in range(1, 2):
-        imagem = Image.open(nomeOpen.format(a))
-        altura, largura = imagem.size
-        print(
-            "\nimagem " + nomeOpen.format(a) + " tamanho: " + str(imagem.size), end="\n\n"
-        )
-        for b in range(1, 6):
-            imagemTransform = Image.new("RGBA", imagem.size, (255, 255, 255, 255))
-            for y in range(altura):
-                for x in range(largura):
-                    pixelAtual = imagem.getpixel((y, x))
-                    arredores = []
+    for input_index in range(1, INPUT_IMAGE_COUNT + 1):
+        input_name = f"A{input_index:03d}0.jpg"
+        imagem = Image.open(input_name)
+        width, height = imagem.size
+        print(f"\nimage {input_name} size: {imagem.size}\n")
+        for output_index in range(OUTPUT_IMAGE_COUNT):
+            output_image = Image.new("RGBA", imagem.size, BACKGROUND_COLOR)
+            for y in range(height):
+                for x in range(width):
+                    current_pixel = get_pixel(imagem, x, y)
+                    neighbor_pixels: list[tuple[int, ...]] = []
                     if x > 0:
-                        arredores.append(imagem.getpixel((y, x - 1)))
-                    if x < largura - 1:
-                        arredores.append(imagem.getpixel((y, x + 1)))
+                        neighbor_pixels.append(get_pixel(imagem, x - 1, y))
+                    if x < width - 1:
+                        neighbor_pixels.append(get_pixel(imagem, x + 1, y))
                     if y > 0:
-                        arredores.append(imagem.getpixel((y - 1, x)))
-                    if y < altura - 1:
-                        arredores.append(imagem.getpixel((y + 1, x)))
-                    for pixel in arredores:
-                        if compara(pixel, pixelAtual) > 10 * b:
-                            imagemTransform.putpixel((y, x), (0, 0, 0, 255))
-                    pixelVelho = pixelAtual
-            imagemTransform.save(nomeSave.format(a, b))
-            imagemTransform.close()
-            print("finalizado " + nomeSave.format(a, b))
+                        neighbor_pixels.append(get_pixel(imagem, x, y - 1))
+                    if y < height - 1:
+                        neighbor_pixels.append(get_pixel(imagem, x, y + 1))
+                    for pixel in neighbor_pixels:
+                        value_difference = euclidean_distance_between_pixels(
+                            pixel, current_pixel
+                        )
+                        if value_difference > VALUE_THRESHOLD_MULTIPLIER * output_index:
+                            output_image.putpixel((x, y), HIGHLIGHT_COLOR)
+                            break
+            output_name = f"A{input_index:03d}{output_index:01d}.png"
+            output_image.save(output_name)
+            output_image.close()
+            print(f"{output_name} was created")
         imagem.close()
 
 
