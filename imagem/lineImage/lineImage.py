@@ -61,16 +61,16 @@ def main() -> None:
                     total_value += valor / MAX_BRIGHTNESS_TOTAL
                     total_line += 1
             average_pixel_value = total_value / total_line if total_line != 0 else 0
-            if average_pixel_value >= biggest_value:
-                biggest_value = average_pixel_value
-                biggest_nail = nail
-        if biggest_value != 0:
-            line_coords = current_nail + biggest_nail
-            image_draw.line(line_coords, fill=BACKGROUND_COLOR, width=LINE_WIDTH)
-            output_draw.line(line_coords, fill=LINE_COLOR, width=LINE_WIDTH)
-            current_nail = biggest_nail
-        else:
+            if average_pixel_value < biggest_value:
+                continue
+            biggest_value = average_pixel_value
+            biggest_nail = nail
+        if biggest_value == 0:
             break
+        line_coords = current_nail + biggest_nail
+        image_draw.line(line_coords, fill=BACKGROUND_COLOR, width=LINE_WIDTH)
+        output_draw.line(line_coords, fill=LINE_COLOR, width=LINE_WIDTH)
+        current_nail = biggest_nail
     output_image.save(OUTPUT_IMAGE)
 
 
