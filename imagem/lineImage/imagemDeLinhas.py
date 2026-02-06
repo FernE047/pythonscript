@@ -3,13 +3,42 @@ import os
 import math
 import numpy
 
+BACKGROUND_COLOR = (255, 255, 255)
 
-def coordenadasPregos(quantia, img):
+CoordData = tuple[int, int]
+ColorData = tuple[int, int, int, int]
+
+
+def save_image(image: Image.Image, path: str) -> None:
+    try:
+        image.save(path)
+    except PermissionError:
+        image_name, extension = os.path.splitext(path)
+        index_attempt = 0
+        while True:
+            try:
+                image.save(f"{image_name}_{index_attempt}.{extension}")
+                break
+            except PermissionError:
+                index_attempt += 1
+
+
+def get_pixel(imagem: Image.Image, coord: tuple[int, int]) -> tuple[int, ...]:
+    pixel = imagem.getpixel(coord)
+    if pixel is None:
+        return BACKGROUND_COLOR
+    if not isinstance(pixel, tuple):
+        pixel_int = int(pixel)
+        return (pixel_int, pixel_int, pixel_int)
+    return pixel
+
+
+def coordenadasPregos(nail_count: int, img: Image.Image) -> list[CoordData]:
     largura, altura = img.size
     hip = int(math.sqrt((largura / 2) ** 2 + (altura / 2) ** 2)) + 1
     print(hip)
-    pregosAngulo = 360 / quantia
-    pregos = []
+    pregosAngulo = 360 / nail_count
+    pregos: list[CoordData] = []
     for angulo in numpy.arange(0, 360, pregosAngulo):
         radiano = angulo * math.pi / 180
         pregos.append(
@@ -18,7 +47,7 @@ def coordenadasPregos(quantia, img):
     return pregos
 
 
-def dimensoesPorPregos(pregos):
+def dimensoesPorPregos(pregos: list[CoordData]) -> tuple[int, int]:
     maiorX = 0
     maiorY = 0
     for prego in pregos:
@@ -30,29 +59,30 @@ def dimensoesPorPregos(pregos):
     return tamanho
 
 
-def ehMaior(pregoProximo, pregoAtual, menorValor, imagemPregos):
+def ehMaior(
+    pregoProximo: CoordData,
+    pregoAtual: CoordData,
+    menorValor: float,
+    imagemPregos: Image.Image,
+) -> tuple[float, bool]:
     menorValorOriginal = menorValor
-    imagemAnalise = imagemPregos.copy()
-    totalValor = 0
+    totalValor = 0.0
     totalLinha = 0
-    """print(pregoAtual)
-    print(pregoProximo)"""
     if pregoAtual == pregoProximo:
         return (menorValor, False)
+    auxB = 0.0
     if pregoAtual[0] != pregoProximo[0]:
         auxA = (pregoAtual[1] - pregoProximo[1]) / (pregoAtual[0] - pregoProximo[0])
         auxB = pregoProximo[1] - pregoProximo[0] * auxA
-        """print(auxA)
-        print(auxB)"""
     else:
-        auxA = 2
+        auxA = 2.0
     if (auxA <= 1) and (auxA >= -1):
         if pregoAtual[0] > pregoProximo[0]:
             flow = -1
         else:
             flow = 1
         for x in range(pregoAtual[0], pregoProximo[0], flow):
-            pixel = imagemPregos.getpixel((x, int(auxA * x + auxB)))
+            pixel = get_pixel(imagemPregos, (x, int(auxA * x + auxB)))
             if pixel[3] == 255:
                 valor = 0
                 valor += pixel[0]
@@ -67,14 +97,12 @@ def ehMaior(pregoProximo, pregoAtual, menorValor, imagemPregos):
     else:
         auxA = (pregoAtual[0] - pregoProximo[0]) / (pregoAtual[1] - pregoProximo[1])
         auxB = pregoProximo[0] - pregoProximo[1] * auxA
-        """print(auxA)
-        print(auxB)"""
         if pregoAtual[1] > pregoProximo[1]:
             flow = -1
         else:
             flow = 1
         for y in range(pregoAtual[1], pregoProximo[1], flow):
-            pixel = imagemPregos.getpixel((int(auxA * y + auxB), y))
+            pixel = get_pixel(imagemPregos, (int(auxA * y + auxB), y))
             if pixel[3] == 255:
                 valor = 0
                 valor += pixel[0]
@@ -86,34 +114,35 @@ def ehMaior(pregoProximo, pregoAtual, menorValor, imagemPregos):
             totalLinha = 1
         if (totalValor / totalLinha) <= menorValor:
             menorValor = totalValor / totalLinha
-    """print(menorValor)"""
     return (menorValor, (menorValor != menorValorOriginal))
 
 
-def fazLinha(pontoInicial, pontoFinal, imagem, cor):
-    if pontoInicial[0] != pontoFinal[0]:
-        auxA = (pontoInicial[1] - pontoFinal[1]) / (pontoInicial[0] - pontoFinal[0])
-        auxB = pontoFinal[1] - pontoFinal[0] * auxA
-    else:
-        auxA = 2
-    if (auxA <= 1) and (auxA >= -1):
-        if pontoInicial[0] > pontoFinal[0]:
-            flow = -1
-        else:
-            flow = 1
-        for x in range(pontoInicial[0], pontoFinal[0], flow):
-            imagem.putpixel((x, int(auxA * x + auxB)), cor)
-    else:
-        auxA = (pontoInicial[0] - pontoFinal[0]) / (pontoInicial[1] - pontoFinal[1])
-        auxB = pontoFinal[0] - pontoFinal[1] * auxA
-        if pontoInicial[1] > pontoFinal[1]:
-            flow = -1
-        else:
-            flow = 1
-        for y in range(pontoInicial[1], pontoFinal[1], flow):
-            imagem.putpixel((int(auxA * y + auxB), y), cor)
-    return imagem
-
+def draw_line(
+    initial_coordinate: CoordData,
+    final_coordinate: CoordData,
+    image: Image.Image,
+    color: ColorData,
+) -> Image.Image:
+    slope = 2.0
+    line_offset = 0.0
+    start_x, start_y = initial_coordinate
+    final_x, final_y = final_coordinate
+    if start_x != final_x:
+        slope = (start_y - final_y) / (start_x - final_x)
+        line_offset = final_y - final_x * slope
+    if (slope <= 1) and (slope >= -1):
+        flow = -1 if start_x > final_x else 1
+        for x in range(start_x, final_x, flow):
+            y = int(slope * x + line_offset)
+            image.putpixel((x, y), color)
+        return image
+    slope = (start_x - final_x) / (start_y - final_y)
+    line_offset = final_x - final_y * slope
+    flow = -1 if start_y > final_y else 1
+    for y in range(start_y, final_y, flow):
+        x = int(slope * y + line_offset)
+        image.putpixel((x, y), color)
+    return image
 
 
 def main() -> None:
@@ -135,35 +164,27 @@ def main() -> None:
     imagemExemplo.save(os.path.join(imagemPasta, "valCroche400Exemplo.png"))
     while True:
         menorPrego = pregos[0]
-        menorValor = 1
+        menorValor = 1.0
         for prego in pregos:
             menorValor, alterou = ehMaior(prego, pregoAtual, menorValor, imagemPregos)
             if alterou:
                 menorPrego = prego
-        if menorValor != 1:
+        if menorValor != 1.0:
             print(
                 "do prego "
                 + str(pregos.index(pregoAtual))
                 + " para o prego "
                 + str(pregos.index(menorPrego))
             )
-            imagemPregos = fazLinha(
+            imagemPregos = draw_line(
                 pregoAtual, menorPrego, imagemPregos, (255, 255, 255, 255)
             )
-            imagemFinal = fazLinha(pregoAtual, menorPrego, imagemFinal, (0, 0, 0, 255))
-            """
-            if(indice==quantiaPregos-1):
-                indice=0
-            else:
-                indice+=1"""
+            imagemFinal = draw_line(pregoAtual, menorPrego, imagemFinal, (0, 0, 0, 255))
             pregoAtual = menorPrego
         else:
             break
-        try:
-            imagemFinal.save(os.path.join(imagemPasta, "valCroche400Pregos.png"))
-        except:
-            imagemFinal.save(os.path.join(imagemPasta, "valCroche400PregosToSee.png"))
-    imagemFinal.save(os.path.join(imagemPasta, "valCroche400Pregos.png"))
+        save_image(imagemFinal, os.path.join(imagemPasta, "out.png"))
+    save_image(imagemFinal, os.path.join(imagemPasta, "final.png"))
 
 
 if __name__ == "__main__":
