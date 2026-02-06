@@ -1,30 +1,45 @@
 from PIL import Image
 
+IMAGE_COUNT = 2
+TOTAL_BITS = 8
+MAX_BIT_VALUE = 256
+DEFAULT_COLOR = (0, 0, 0)
+COLOR_CHANNELS = 3
+
 
 def main() -> None:
-    nomeOpen = "A{0:03d}.png"
-    nomeSave = "A{0:03d}{1:01d}.png"
-    for a in range(2):
-        imagem = Image.open(nomeOpen.format(a))
-        altura, largura = imagem.size
-        print(
-            "\nimagem " + nomeOpen.format(a) + " tamanho: " + str(imagem.size), end="\n\n"
-        )
-        for bit in range(1, 8):
-            imagemTransform = Image.new("RGBA", imagem.size)
-            divisor = 256 / 2**bit
-            multiplicador = 255 / ((2**bit) - 1)
-            for y in range(altura):
-                for x in range(largura):
-                    pixelVelho = imagem.getpixel((y, x))
-                    pixelNovo = list(pixelVelho)
-                    for n in range(3):
-                        pixelNovo[n] = int((pixelVelho[n] // divisor) * multiplicador)
-                    imagemTransform.putpixel((y, x), tuple(pixelNovo))
-            imagemTransform.save(nomeSave.format(a, bit))
-            imagemTransform.close()
-            print("finalizado " + nomeSave.format(a, bit))
-        imagem.close()
+    for input_index in range(IMAGE_COUNT):
+        input_name = f"A{input_index:03d}.png"
+        image = Image.open(input_name)
+        size = image.size
+        width, height = size
+        print(f"\nimage {input_name} size: {size}\n")
+        for bit in range(1, TOTAL_BITS):
+            output_image = Image.new("RGBA", size)
+            bit_position = 2**bit
+            divisor = MAX_BIT_VALUE / bit_position
+            scaling_factor = (MAX_BIT_VALUE - 1) / (bit_position - 1)
+            for y in range(height):
+                for x in range(width):
+                    coord = (x, y)
+                    input_pixel = image.getpixel(coord)
+                    if input_pixel is None:
+                        input_pixel = DEFAULT_COLOR
+                    if not isinstance(input_pixel, tuple):
+                        pixel_int = int(input_pixel)
+                        input_pixel = (pixel_int, pixel_int, pixel_int)
+                    output_pixel = list(input_pixel)
+                    for channel_index in range(COLOR_CHANNELS):
+                        color_normalized = input_pixel[channel_index] // divisor
+                        output_pixel[channel_index] = int(
+                            color_normalized * scaling_factor
+                        )
+                    output_image.putpixel(coord, tuple(output_pixel))
+            output_name = f"A{input_index:03d}{bit:01d}.png"
+            output_image.save(output_name)
+            output_image.close()
+            print(f"finalizado {output_name}\n")
+        image.close()
 
 
 if __name__ == "__main__":
