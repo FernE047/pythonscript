@@ -55,7 +55,7 @@ def get_user_int(prompt: str, default: int) -> int:
         if value <= 0:
             return default
         return value
-    except:
+    except ValueError:
         return default
 
 
@@ -76,7 +76,7 @@ def main() -> None:
         map_image = Image.new("RGBA", size, OCEAN_COLOR)
         land_count = seed
         seed_map_with_land(width, height, land_count, map_image)
-        os.makedirs(name)
+        os.makedirs(name, exist_ok=True)
         map_image.save(os.path.join(name, "map_0.png"))
         map_iteration = 1
         map_area = width * height
