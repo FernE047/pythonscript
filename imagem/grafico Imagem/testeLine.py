@@ -1,5 +1,7 @@
 from PIL import Image, ImageDraw
 
+#this was the first time I used PIL ImageDraw to draw a line
+
 WHITE = (255, 255, 255, 255)
 SIZE = (100, 100)
 COORD_A = (50, 25)
