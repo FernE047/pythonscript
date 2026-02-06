@@ -36,35 +36,28 @@ def main() -> None:
             red = pixel[0]
             green = pixel[1]
             blue = pixel[2]
-            if red == green:
-                if red == blue:
-                    faixa.putpixel(coord, WHITE)
-                elif red > blue:
-                    faixa.putpixel(coord, YELLOW)
-                else:
+            if red > green:
+                if red > blue:
+                    faixa.putpixel(coord, RED)
+                elif red < blue:
                     faixa.putpixel(coord, BLUE)
-            elif red == blue:
-                if red > green:
+                else:
                     faixa.putpixel(coord, MAGENTA)
-                else:
+            elif red < green:
+                if green > blue:
                     faixa.putpixel(coord, GREEN)
-            elif green == blue:
-                if green > red:
-                    faixa.putpixel(coord, CYAN)
-                else:
-                    faixa.putpixel(coord, RED)
-            elif green > blue:
-                if green > red:
-                    faixa.putpixel(coord, GREEN)
-                else:
-                    faixa.putpixel(coord, RED)
-            elif blue > green:
-                if blue > red:
+                elif green < blue:
                     faixa.putpixel(coord, BLUE)
                 else:
-                    faixa.putpixel(coord, RED)
+                    faixa.putpixel(coord, CYAN)
             else:
-                faixa.putpixel(coord, BLACK)
+                if red > blue:
+                    faixa.putpixel(coord, YELLOW)
+                elif red < blue:
+                    faixa.putpixel(coord, BLUE)
+                else:
+                    faixa.putpixel(coord, WHITE)
+            
     faixa.save("bContraste.jpg")
     print("veja")
 
