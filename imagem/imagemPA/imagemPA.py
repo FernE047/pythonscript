@@ -1,69 +1,81 @@
 from PIL import Image
-from userUtil import pegaImagem as pImg
+
+MAX_BRIGHTNESS = 255
+BACKGROUND_COLOR = (255, 255, 255, 255)
+COLOR_CHANNELS = 4
 
 
-def pegaInteiro(
-    mensagem: str, minimo: int | None = None, maximo: int | None = None
-) -> int:
+def get_user_integer(message: str) -> int:
     while True:
-        entrada = input(f"{mensagem} : ")
+        user_input = input(f"{message}")
         try:
-            valor = int(entrada)
-            if (minimo is not None) and (valor < minimo):
-                print(f"valor deve ser maior ou igual a {minimo}")
-                continue
-            if (maximo is not None) and (valor > maximo):
-                print(f"valor deve ser menor ou igual a {maximo}")
-                continue
+            valor = int(user_input)
             return valor
         except Exception as _:
-            print("valor inválido, tente novamente")
+            print("Invalid value, please try again")
 
 
-def processaImagemPorImagem(imagemInicial, imagemFinal, frames):
-    tamanho = imagemInicial.size
-    largura, altura = tamanho
+def get_user_image() -> Image.Image:
+    while True:
+        user_input = input("Enter the image name (with extension): ")
+        try:
+            imagem = Image.open(user_input)
+            return imagem
+        except Exception as _:
+            print("Invalid file, please try again")
+
+
+def get_pixel(imagem: Image.Image, coord: tuple[int, int]) -> tuple[int, ...]:
+    pixel = imagem.getpixel(coord)
+    if pixel is None:
+        return BACKGROUND_COLOR
+    if not isinstance(pixel, tuple):
+        pixel_int = int(pixel)
+        return (pixel_int, pixel_int, pixel_int, MAX_BRIGHTNESS)
+    return pixel
+
+
+def processaImagemPorImagem(
+    image_input: Image.Image, image_target: Image.Image, frames: int
+) -> None:
+    size = image_input.size
+    width, height = size
+    total_frames = frames + 1
     for frame in range(frames):
-        imagem = Image.new("RGBA", tamanho, (255, 255, 255, 255))
-        for x in range(largura):
-            for y in range(altura):
+        current_frame = frame + 1
+        image = Image.new("RGBA", size, BACKGROUND_COLOR)
+        for x in range(width):
+            for y in range(height):
                 coord = (x, y)
-                pixelInicial = imagemInicial.getpixel(coord)
-                pixelFinal = imagemFinal.getpixel(coord)
-                cor = []
-                for index in range(4):
-                    cor.append(
-                        int(
-                            pixelInicial[index]
-                            + ((frame + 1) * (pixelFinal[index] - pixelInicial[index]))
-                            / (frames + 1)
-                        )
-                    )
-                cor = tuple(cor)
-                imagem.putpixel(coord, cor)
-        imagem.save(f"output{frame + 1:02d}.png")
-
-
-def processaPixelPorPixel(imagemInicial, imagemFinal, frames):
-    pass
-
+                pixel_input = get_pixel(image_input, coord)
+                pixel_target = get_pixel(image_target, coord)
+                color: list[int] = []
+                for index in range(COLOR_CHANNELS):
+                    channel_input = pixel_input[index]
+                    channel_target = pixel_target[index]
+                    difference = channel_target - channel_input
+                    frame_normalized = current_frame / total_frames
+                    current_change = frame_normalized * difference
+                    color.append(int(channel_input + current_change))
+                image.putpixel(coord, tuple(color))
+        image.save(f"output_{current_frame:02d}.png")
 
 
 def main() -> None:
-    imagemInicial = pImg(texto="\ndigite o assunto da primeira imagem", infoAdicional=1)
-    imagemFinal = pImg(texto="\ndigite o assunto da última imagem", infoAdicional=1)
-    frames = pegaInteiro("\ndigite a quantidade de frames do meio")
-    larg1, alt1 = imagemInicial.size
-    larg2, alt2 = imagemFinal.size
-    tamanho1 = larg1 * alt1
-    tamanho2 = larg2 * alt2
-    if tamanho1 > tamanho2:
-        imagemInicial = imagemInicial.resize((larg2, alt2))
+    input_image = get_user_image()
+    target_image = get_user_image()
+    frames = get_user_integer("\nEnter the number of middle frames: ")
+    width_input, height_input = input_image.size
+    width_target, height_target = target_image.size
+    size_input = width_input * height_input
+    size_target = width_target * height_target
+    if size_input > size_target:
+        input_image = input_image.resize((width_target, height_target))
     else:
-        imagemFinal = imagemFinal.resize((larg1, alt1))
-    imagemInicial.save(f"output{0:02d}.png")
-    imagemFinal.save(f"output{frames + 1:02d}.png")
-    processaImagemPorImagem(imagemInicial, imagemFinal, frames)
+        target_image = target_image.resize((width_input, height_input))
+    input_image.save("output_00.png")
+    target_image.save(f"output_{frames + 1:02d}.png")
+    processaImagemPorImagem(input_image, target_image, frames)
 
 
 if __name__ == "__main__":
