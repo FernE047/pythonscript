@@ -1,0 +1,23 @@
+# TODO
+
+- [x] create a TODO.md file (meta task lmao)
+- [x] remove all self-made modules and replace them with in-file implementations
+- [x] add if `__name__ == "__main__":` guards
+- [ ] translate everything to English (search imagem for examples)
+- [ ] replace full paths with relative paths (search // or C:\ for examples)
+- [ ] start using pathlib for path handling
+- [ ] fix all linter errors and warnings (19k+)
+- [ ] add type annotations everywhere
+- [ ] Constants for magic numbers/strings
+- [ ] improve variable and function names by using underline_case
+- [ ] translate filenames to English git mv galore :v
+- [ ] improve README.md to have all projects documented properly
+- [ ] separate different projects into different folders
+- [ ] rename files to main.py where applicable
+- [ ] make all code run faster
+- [ ] Add project description
+- [ ] Add usage instructions
+- [ ] create .examples
+- [ ] Better .gitignore global and local (venv, pycache, dist, build, etc.)
+- [ ] adicionar requirements.txt
+- [ ] Celebrate by buying ice cream :D
