@@ -44,7 +44,7 @@ def main() -> None:
     current_nail = nails[0]
     while True:
         biggest_nail = nails[0]
-        biggest_value = 0
+        biggest_value = 0.0
         for nail in nails:
             analysis_image = line_image.copy()
             draw_analysis = ImageDraw.Draw(analysis_image)
@@ -60,7 +60,7 @@ def main() -> None:
                     valor = sum(pixel[0:COLOR_CHANNELS])
                     total_value += valor / MAX_BRIGHTNESS_TOTAL
                     total_line += 1
-            average_pixel_value = total_value / total_line if total_line != 0 else 0
+            average_pixel_value = total_value / total_line if total_line != 0 else 0.0
             if average_pixel_value < biggest_value:
                 continue
             biggest_value = average_pixel_value
