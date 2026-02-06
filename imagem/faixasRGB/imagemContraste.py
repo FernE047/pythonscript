@@ -1,46 +1,70 @@
 from PIL import Image
-import os
 
+INPUT_IMAGE = "b.jpg"
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
+MAGENTA = (255, 0, 255)
+CYAN = (0, 255, 255)
+
+CoordData = tuple[int, int]
+
+def get_pixel(image: Image.Image, coord: CoordData) -> tuple[int, int, int]:
+    pixel = image.getpixel(coord)
+    if pixel is None:
+        raise ValueError("Pixel not found")
+    if isinstance(pixel, int):
+        raise ValueError("Image is not in RGB mode")
+    if isinstance(pixel, float):
+        raise ValueError("Image is not in RGB mode")
+    if len(pixel) < 3:
+        raise ValueError("Image is not in RGB mode")
+    return pixel[0], pixel[1], pixel[2]
 
 def main() -> None:
-    aImage = Image.open("b.jpg")
-    width, height = aImage.size
-    faixa = Image.new("RGB", (width, height), "white")
+    input_image = Image.open(INPUT_IMAGE)
+    size = input_image.size
+    width, height = size
+    faixa = Image.new("RGB", size, "white")
     for x in range(width):
         for y in range(height):
-            pixelA = aImage.getpixel((x, y))
-            vermelho = pixelA[0]
-            verde = pixelA[1]
-            azul = pixelA[2]
-            if vermelho == verde:
-                if vermelho == azul:
-                    faixa.putpixel((x, y), (255, 255, 255))
-                elif vermelho > azul:
-                    faixa.putpixel((x, y), (255, 255, 0))
+            coord = (x, y)
+            pixel = get_pixel(input_image, coord)
+            red = pixel[0]
+            green = pixel[1]
+            blue = pixel[2]
+            if red == green:
+                if red == blue:
+                    faixa.putpixel(coord, WHITE)
+                elif red > blue:
+                    faixa.putpixel(coord, YELLOW)
                 else:
-                    faixa.putpixel((x, y), (0, 0, 255))
-            elif vermelho == azul:
-                if vermelho > verde:
-                    faixa.putpixel((x, y), (255, 0, 255))
+                    faixa.putpixel(coord, BLUE)
+            elif red == blue:
+                if red > green:
+                    faixa.putpixel(coord, MAGENTA)
                 else:
-                    faixa.putpixel((x, y), (0, 255, 0))
-            elif verde == azul:
-                if verde > vermelho:
-                    faixa.putpixel((x, y), (0, 255, 255))
+                    faixa.putpixel(coord, GREEN)
+            elif green == blue:
+                if green > red:
+                    faixa.putpixel(coord, CYAN)
                 else:
-                    faixa.putpixel((x, y), (255, 0, 0))
-            elif verde > azul:
-                if verde > vermelho:
-                    faixa.putpixel((x, y), (0, 255, 0))
+                    faixa.putpixel(coord, RED)
+            elif green > blue:
+                if green > red:
+                    faixa.putpixel(coord, GREEN)
                 else:
-                    faixa.putpixel((x, y), (255, 0, 0))
-            elif azul > verde:
-                if azul > vermelho:
-                    faixa.putpixel((x, y), (0, 0, 255))
+                    faixa.putpixel(coord, RED)
+            elif blue > green:
+                if blue > red:
+                    faixa.putpixel(coord, BLUE)
                 else:
-                    faixa.putpixel((x, y), (255, 0, 0))
+                    faixa.putpixel(coord, RED)
             else:
-                faixa.putpixel((x, y), (0, 0, 0))
+                faixa.putpixel(coord, BLACK)
     faixa.save("bContraste.jpg")
     print("veja")
 
