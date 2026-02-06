@@ -1,42 +1,86 @@
+from math import sqrt
 from PIL import Image
 
+# duplicate code from linePower.py in imagemLiner/RGB. no difference between the two
 
-def compara(pixelA, pixelB):
-    soma = 0
-    for a in range(3):
-        soma += abs(pixelA[a] - pixelB[a]) ** 2
-    return soma**0.5
+BACKGROUND_COLOR = (255, 255, 255, 255)
+HIGHLIGHT_COLOR = (0, 0, 0, 255)
+MAX_BRIGHTNESS = 255
+VALUE_THRESHOLD_MULTIPLIER = 10
+INPUT_IMAGE_COUNT = 1
+TOTAL_COLOR_CHANNELS = 3
+MAX_DISTANCE_BETWEEN_PIXELS = sqrt(MAX_BRIGHTNESS**2 * TOTAL_COLOR_CHANNELS)
 
+
+def get_pixel(imagem: Image.Image, coord: tuple[int, int]) -> tuple[int, ...]:
+    pixel = imagem.getpixel(coord)
+    if pixel is None:
+        return BACKGROUND_COLOR
+    if not isinstance(pixel, tuple):
+        pixel_int = int(pixel)
+        return (pixel_int, pixel_int, pixel_int, MAX_BRIGHTNESS)
+    return pixel
+
+
+def euclidean_distance_between_pixels(
+    pixel_a: tuple[int, ...], pixel_b: tuple[int, ...]
+) -> float:
+    total_squared_distance = 0.0
+    for color_channel in range(TOTAL_COLOR_CHANNELS):
+        channel_distance = abs(pixel_a[color_channel] - pixel_b[color_channel])
+        total_squared_distance += channel_distance**2
+    return sqrt(total_squared_distance)
 
 
 def main() -> None:
-    nomeOpen = "A{0:03d}0.jpg"
-    nomeSave = "A{0:03d}{1:01d}.png"
-    for a in range(2):
-        imagem = Image.open(nomeOpen.format(a))
-        altura, largura = imagem.size
-        print(
-            "\nimagem " + nomeOpen.format(a) + " tamanho: " + str(imagem.size), end="\n\n"
-        )
-        imagemTransform = Image.new("RGBA", imagem.size, (255, 255, 255, 255))
-        for y in range(altura):
-            for x in range(largura):
-                pixelAtual = imagem.getpixel((y, x))
-                soma = []
+    for input_index in range(1, INPUT_IMAGE_COUNT + 1):
+        input_name = f"A{input_index:03d}_source.jpg"
+        image = Image.open(input_name)
+        width, height = image.size
+        print(f"\nimage {input_name} size: {image.size}\n")
+        output_image = Image.new("RGBA", image.size, BACKGROUND_COLOR)
+        for y in range(height):
+            for x in range(width):
+                current_pixel = get_pixel(image, (x, y))
+                cummulative_distance: list[float] = []
                 if x > 0:
-                    soma.append(compara(imagem.getpixel((y, x - 1)), pixelAtual))
-                if x < largura - 1:
-                    soma.append(compara(imagem.getpixel((y, x + 1)), pixelAtual))
+                    coord = (x - 1, y)
+                    neighbor_pixel = get_pixel(image, coord)
+                    distance = euclidean_distance_between_pixels(
+                        neighbor_pixel, current_pixel
+                    )
+                    cummulative_distance.append(distance)
+                if x < width - 1:
+                    coord = (x + 1, y)
+                    neighbor_pixel = get_pixel(image, coord)
+                    distance = euclidean_distance_between_pixels(
+                        neighbor_pixel, current_pixel
+                    )
+                    cummulative_distance.append(distance)
                 if y > 0:
-                    soma.append(compara(imagem.getpixel((y - 1, x)), pixelAtual))
-                if y < altura - 1:
-                    soma.append(compara(imagem.getpixel((y + 1, x)), pixelAtual))
-                cor = int(sum(soma) / len(soma) * -255 / 442 + 255)
-                imagemTransform.putpixel((y, x), (cor, cor, cor, 255))
-        imagemTransform.save(nomeSave.format(a, 6))
-        imagemTransform.close()
-        print("finalizado " + nomeSave.format(a, 6))
-        imagem.close()
+                    coord = (x, y - 1)
+                    neighbor_pixel = get_pixel(image, coord)
+                    distance = euclidean_distance_between_pixels(
+                        neighbor_pixel, current_pixel
+                    )
+                    cummulative_distance.append(distance)
+                if y < height - 1:
+                    coord = (x, y + 1)
+                    neighbor_pixel = get_pixel(image, coord)
+                    distance = euclidean_distance_between_pixels(
+                        neighbor_pixel, current_pixel
+                    )
+                    cummulative_distance.append(distance)
+                average_distance = sum(cummulative_distance) / len(cummulative_distance)
+                distance_normalized = average_distance / MAX_DISTANCE_BETWEEN_PIXELS
+                color = int((1 - distance_normalized) * MAX_BRIGHTNESS)
+                pixel_color = (color, color, color, MAX_BRIGHTNESS)
+                output_image.putpixel((x, y), pixel_color)
+        output_name = f"A{input_index:03d}_output.png"
+        output_image.save(output_name)
+        output_image.close()
+        print(f"{output_name} was created")
+        image.close()
 
 
 if __name__ == "__main__":
