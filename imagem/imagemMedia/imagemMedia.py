@@ -2,13 +2,17 @@ import os
 from time import time
 from PIL import Image
 
+BACKGROUND_COLOR = (0, 0, 0, 0)
+MAX_BRIGHTNESS = 255
+MAX_COLOR_CHANNELS = 4
+ALLOWED_FILE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".bmp", ".gif")
 
-def get_image_from_folder(image_category: str) -> list[str]:
-    folder = f"imagens/{image_category}"
+
+def get_image_from_folder(folder: str) -> list[str]:
     images: list[str] = []
     if os.path.exists(folder):
         for filename in os.listdir(folder):
-            if filename.lower().endswith((".png", ".jpg", ".jpeg", ".bmp", ".gif")):
+            if filename.lower().endswith(ALLOWED_FILE_EXTENSIONS):
                 images.append(os.path.join(folder, filename))
     return images
 
@@ -43,75 +47,89 @@ def print_elapsed_time(seconds: float) -> None:
     print(sign + ", ".join(parts))
 
 
-def salva(nome, img):
+def save_image(image_name: str, image: Image.Image) -> None:
     try:
-        img.save(nome + ".png")
-    except:
-        img.save(nome + "1.png")
+        image.save(f"{image_name}.png")
+    except PermissionError:
+        pass
+    index = 1
+    while True:
+        try:
+            image.save(f"{image_name}_{index}.png")
+            return
+        except PermissionError:
+            # just in case the user has a lot of files with the same name open at the same time
+            index += 1
 
 
-def procuraMaiorSize(imagens):
-    largura = 0
-    altura = 0
-    for img in imagens:
-        tamanho = Image.open(img).size
-        if tamanho[0] >= largura:
-            largura = tamanho[0]
-        if tamanho[1] >= altura:
-            altura = tamanho[1]
-    tamanho = (largura, altura)
-    return tamanho
+def get_largest_image_size(image_names: list[str]) -> tuple[int, int]:
+    max_width = 0
+    max_height = 0
+    for image_name in image_names:
+        size = Image.open(image_name).size
+        if size[0] >= max_width:
+            max_width = size[0]
+        if size[1] >= max_height:
+            max_height = size[1]
+    size = (max_width, max_height)
+    if size == (0, 0):
+        raise ValueError("No images found in the specified folder.")
+    return size
 
 
 def main() -> None:
-    print("diga um assunto")
-    assunto = input()
-    imagens = get_image_from_folder(assunto)
-    tamanho = procuraMaiorSize(imagens)
-    largura, altura = tamanho
-    print(tamanho)
-    total = largura * altura
+    print("enter the name of the image folder")
+    folder = input()
+    image_names = get_image_from_folder(folder)
+    size = get_largest_image_size(image_names)
+    width, height = size
+    print(size)
+    total = width * height
     print(total)
-    novaImagem = Image.new("RGBA", tamanho, (0, 0, 0, 0))
-    quantia = len(imagens)
-    print("dê um nome a imagem média")
-    nome = input()
-    inicio = time()
-    porcentagem = 0
-    momento = 0
-    ultimo = time()
+    average_image = Image.new("RGBA", size, BACKGROUND_COLOR)
+    print("enter a name for the average image")
+    output_name = input()
+    start_time = time()
+    percentage = 0
+    tick = 0
+    end_time = time()
     try:
-        for y in range(altura):
-            for x in range(largura):
-                momento += 1
-                novaCor = [0, 0, 0, 0]
-                for img in imagens:
-                    imageToUse = Image.new("RGBA", tamanho, (0, 0, 0, 0))
-                    imagem = Image.open(img).convert("RGBA")
-                    imageToUse.paste(imagem, (0, 0))
-                    pixel = imageToUse.getpixel((x, y))
-                    divisor = 0
-                    if pixel[3] != 0:
+        for y in range(height):
+            for x in range(width):
+                tick += 1
+                new_color = [0 for _ in range(MAX_COLOR_CHANNELS)]
+                divisor = 0
+                for image_name in image_names:
+                    current_image = Image.new("RGBA", size, BACKGROUND_COLOR)
+                    image = Image.open(image_name).convert("RGBA")
+                    current_image.paste(image, (0, 0))
+                    pixel = current_image.getpixel((x, y))
+                    if pixel is None:
+                        pixel = BACKGROUND_COLOR
+                    if not isinstance(pixel, tuple):
+                        pixel_int = int(pixel)
+                        pixel = (pixel_int, pixel_int, pixel_int, MAX_BRIGHTNESS)
+                    if pixel[-1] != 0:
                         divisor += 1
-                        for index in range(4):
-                            novaCor[index] += pixel[index]
-                    if divisor == 0:
-                        divisor = 1
-                for index in range(4):
-                    novaCor[index] = int(novaCor[index] / divisor)
-                novaImagem.putpixel((x, y), tuple(novaCor))
-                if int(momento * 100 / total) != porcentagem:
-                    final = time()
-                    porcentagem = int(momento * 100 / total)
-                    salva(nome, novaImagem)
-                    print(str(porcentagem) + "%")
-                    print_elapsed_time(final - ultimo)
-                    ultimo = final
-    except:
-        salva(nome, novaImagem)
-    salva(nome, novaImagem)
-    fim = time()
-    print_elapsed_time(fim - inicio)
+                        for index in range(MAX_COLOR_CHANNELS):
+                            new_color[index] += pixel[index]
+                if divisor == 0:
+                    divisor = 1
+                for index in range(MAX_COLOR_CHANNELS):
+                    new_color[index] = int(new_color[index] / divisor)
+                average_image.putpixel((x, y), tuple(new_color))
+                if int(tick * 100 / total) != percentage:
+                    current_time = time()
+                    percentage = int(tick * 100 / total)
+                    save_image(output_name, average_image)
+                    print(f"{percentage}%")
+                    print_elapsed_time(current_time - end_time)
+                    end_time = current_time
+    except KeyboardInterrupt:
+        pass
+    save_image(output_name, average_image)
+    end_time = time()
+    print_elapsed_time(end_time - start_time)
 
 
 if __name__ == "__main__":
