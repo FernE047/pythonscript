@@ -68,34 +68,34 @@ def makeFrame(frame_index: int) -> None:
     print(f"Generating Frame : {frame_index}")
     frame = Image.new("RGBA", image_target.size, TRANSPARENT_WHITE)
     with open(CONFIG_FILE, "r", encoding="utf-8") as file:
-        line = file.readline()
-        while line:
-            if line.find("fundo") != -1:
-                coord = separate_coords(line[: -len(" fundo")])
-                if len(coord) != 2:
-                    raise ValueError(f"Invalid coordinate format: {line}")
-                pixel = get_pixel(image_source, coord)
-                frame.putpixel(coord, pixel)
-                line = file.readline()
-                continue
-            coords: list[tuple[int, int]] = []
-            for coord_str in line.split(" "):
-                coord = separate_coords(coord_str)
-                if len(coord) != 2:
-                    raise ValueError(f"Invalid coordinate format: {line}")
-                coords.append(coord)
-            coord_target = coords[1]
-            pixel_target = get_pixel(image_target, coord_target)
-            coord_source = coords[0]
-            pixel_source = get_pixel(image_source, coord_source)
-            interpolated_coord = interpolate_coordinates(
-                coord_source, coord_target, frame_index + 1
-            )
-            interpolated_color = interpolate_color(
-                pixel_source, pixel_target, frame_index + 1
-            )
-            frame.putpixel(interpolated_coord, interpolated_color)
-            line = file.readline()
+        lines = file.readlines()
+    for line in lines:
+        if not line.strip():
+            continue
+        if line.find("fundo") != -1:
+            coord = separate_coords(line[: -len(" fundo")])
+            if len(coord) != 2:
+                raise ValueError(f"Invalid coordinate format: {line}")
+            pixel = get_pixel(image_source, coord)
+            frame.putpixel(coord, pixel)
+            continue
+        coords: list[tuple[int, int]] = []
+        for coord_str in line.split(" "):
+            coord = separate_coords(coord_str)
+            if len(coord) != 2:
+                raise ValueError(f"Invalid coordinate format: {line}")
+            coords.append(coord)
+        coord_target = coords[1]
+        pixel_target = get_pixel(image_target, coord_target)
+        coord_source = coords[0]
+        pixel_source = get_pixel(image_source, coord_source)
+        interpolated_coord = interpolate_coordinates(
+            coord_source, coord_target, frame_index + 1
+        )
+        interpolated_color = interpolate_color(
+            pixel_source, pixel_target, frame_index + 1
+        )
+        frame.putpixel(interpolated_coord, interpolated_color)
     print(f"\tFrame Completed : {frame_index}")
     frame.save(f"{FRAMES_FOLDER}/frame{frame_index + 1:03d}.png")
     image_source.close()

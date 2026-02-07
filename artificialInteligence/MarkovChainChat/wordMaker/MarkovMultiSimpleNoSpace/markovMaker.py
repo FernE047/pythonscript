@@ -6,29 +6,29 @@ EMPTY_CHAR = "¨"
 
 def generate_char(filename: str, index: int, previous_char: str = "") -> str:
     with open(f"{filename}/{index:03d}.txt", encoding="utf-8") as file:
-        line = file.readline()
-        character_weights: dict[str, int] = {}
-        while line:
-            if index == 0:
-                char = line[0]
-                weight = int(line[2:-1])
+        lines = file.readlines()
+    character_weights: dict[str, int] = {}
+    for line in lines:
+        if not line.strip():
+            continue
+        if index == 0:
+            char = line[0]
+            weight = int(line[2:-1])
+        else:
+            if previous_char == line[0]:
+                char = line[2]
+                weight = int(line[4:-1])
             else:
-                if previous_char == line[0]:
-                    char = line[2]
-                    weight = int(line[4:-1])
-                else:
-                    line = file.readline()
-                    continue
-            character_weights[char] = weight
-            line = file.readline()
-        total = sum(list(character_weights.values()))
-        chosen = randint(1, total)
-        cumulative_frequency = 0
-        for index, value in enumerate(character_weights.values()):
-            cumulative_frequency += value
-            if cumulative_frequency >= chosen:
-                return list(character_weights.keys())[index]
-        return ""
+                continue
+        character_weights[char] = weight
+    total = sum(list(character_weights.values()))
+    chosen = randint(1, total)
+    cumulative_frequency = 0
+    for index, value in enumerate(character_weights.values()):
+        cumulative_frequency += value
+        if cumulative_frequency >= chosen:
+            return list(character_weights.keys())[index]
+    return ""
 
 
 def generate_word(filename: str) -> str:

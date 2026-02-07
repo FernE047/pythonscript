@@ -18,30 +18,30 @@ def generate_char(
     filename: str, index: int, space_index: int, previous_char: str = ""
 ) -> str:
     with open(f"{filename}/{index:03d}.txt", encoding="utf-8") as file:
-        line = file.readline()
-        character_weights: dict[str, int] = {}
-        while line:
-            if int(line[0]) == space_index:
-                if index == 0:
-                    char = line[2]
-                    frequency = int(line[4:-1])
-                elif previous_char == line[2]:
-                    char = line[4]
-                    frequency = int(line[6:-1])
-                else:
-                    line = file.readline()
-                    continue
-                character_weights[char] = frequency
-            line = file.readline()
-        print_debug(previous_char, character_weights, index, space_index)
-        total = sum(list(character_weights.values()))
-        chosen = randint(1, total)
-        cumulative_frequency = 0
-        for index, value in enumerate(character_weights.values()):
-            cumulative_frequency += value
-            if cumulative_frequency >= chosen:
-                return list(character_weights.keys())[index]
-        return ""
+        lines = file.readlines()
+    character_weights: dict[str, int] = {}
+    for line in lines:
+        if not line.strip():
+            continue
+        if int(line[0]) == space_index:
+            if index == 0:
+                char = line[2]
+                frequency = int(line[4:-1])
+            elif previous_char == line[2]:
+                char = line[4]
+                frequency = int(line[6:-1])
+            else:
+                continue
+            character_weights[char] = frequency
+    print_debug(previous_char, character_weights, index, space_index)
+    total = sum(list(character_weights.values()))
+    chosen = randint(1, total)
+    cumulative_frequency = 0
+    for index, value in enumerate(character_weights.values()):
+        cumulative_frequency += value
+        if cumulative_frequency >= chosen:
+            return list(character_weights.keys())[index]
+    return ""
 
 
 def generate_word(filename: str, space_index: int) -> str:
@@ -89,10 +89,13 @@ def main() -> None:
     filename = get_filename()
     word_occurrence_map: list[int] = []
     with open(filename + "/c.txt", "r", encoding="UTF-8") as markov_chain_file:
-        linha = markov_chain_file.readline()[:-1].split()
-        while linha:
-            word_occurrence_map.append(int(linha[-1]))
-            linha = markov_chain_file.readline()[:-1].split()
+        lines = markov_chain_file.readlines()
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
+        words = line.split()
+        word_occurrence_map.append(int(words[-1]))
     word_frequencies_map = normalize_statistics(word_occurrence_map)
     for _ in range(WORDS_GENERATED):
         generated_words: list[str] = []

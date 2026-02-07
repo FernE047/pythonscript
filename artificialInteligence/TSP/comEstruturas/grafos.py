@@ -43,29 +43,30 @@ class Graph:
 
 def get_graph_from_file(filename: str, limit: None | int = None) -> Graph:
     with open(filename, "r", encoding="utf-8") as file:
-        line = file.readline()
-        vertices: list[tuple[float, float]] = []
-        index = 0
+        lines = file.readlines()
+    vertices: list[tuple[float, float]] = []
+    index = 0
+    if limit is not None:
+        index = 1
+    for line in lines:
+        if not line.strip():
+            continue
         if limit is not None:
-            index = 1
-        while line:
-            if limit is not None:
-                if index == limit:
-                    break
-            elementos = line.split()
-            x_str = elementos[2]
-            y_str = elementos[1]
-            vertices.append((float(x_str), float(y_str)))
-            line = file.readline()
-            if limit is not None:
-                index += 1
-        graph = Graph(len(vertices))
-        for x, source in enumerate(vertices):
-            for y, destination in enumerate(vertices):
-                coord = (x, y)
-                distance = (
-                    (destination[0] - source[0]) ** 2
-                    + (destination[1] - source[1]) ** 2
-                ) ** 0.5
-                graph.set_element(coord, distance, False)
+            if index == limit:
+                break
+        elementos = line.split()
+        x_str = elementos[2]
+        y_str = elementos[1]
+        vertices.append((float(x_str), float(y_str)))
+        if limit is not None:
+            index += 1
+    graph = Graph(len(vertices))
+    for x, source in enumerate(vertices):
+        for y, destination in enumerate(vertices):
+            coord = (x, y)
+            distance = (
+                (destination[0] - source[0]) ** 2
+                + (destination[1] - source[1]) ** 2
+            ) ** 0.5
+            graph.set_element(coord, distance, False)
     return graph

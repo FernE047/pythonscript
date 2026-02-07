@@ -16,24 +16,23 @@ def generate_char(
     while len(previous_chars) != 2:
         previous_chars = [EMPTY_CHAR] + previous_chars
     with open(f"{filename}/{index:03d}.txt", encoding="utf-8") as file:
-        line = file.readline()
-        character_weights: dict[str, int] = {}
-        while line:
-            chars = [line[a] for a in range(0, 5, 2)]
-            if int(chars[0]) == space_index:
-                if previous_chars == chars[1:-2]:
-                    letra = chars[-2]
-                    numero = int(chars[-1])
-                    character_weights[letra] = numero
-            line = file.readline()
-        total = sum(list(character_weights.values()))
-        chosen = randint(1, total)
-        cumulative_frequency = 0
-        for index, value in enumerate(character_weights.values()):
-            cumulative_frequency += value
-            if cumulative_frequency >= chosen:
-                return list(character_weights.keys())[index]
-        return ""
+        lines = file.readlines()
+    character_weights: dict[str, int] = {}
+    for line in lines:
+        chars = [line[a] for a in range(0, 5, 2)]
+        if int(chars[0]) == space_index:
+            if previous_chars == chars[1:-2]:
+                letra = chars[-2]
+                numero = int(chars[-1])
+                character_weights[letra] = numero
+    total = sum(list(character_weights.values()))
+    chosen = randint(1, total)
+    cumulative_frequency = 0
+    for index, value in enumerate(character_weights.values()):
+        cumulative_frequency += value
+        if cumulative_frequency >= chosen:
+            return list(character_weights.keys())[index]
+    return ""
 
 
 def generate_word(filename: str, space_index: int) -> str:

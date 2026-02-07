@@ -14,23 +14,25 @@ def main() -> None:
     source_image_colored = source_image.copy()
     target_image_colored = target_image.copy()
     with open(CONFIG_FILE, "r", encoding="utf-8") as file:
-        line = file.readline()
-        while line:
-            coords: list[tuple[int, ...]] = [
-                tuple([int(b) for b in coord.split(",")]) for coord in line.split(" ")
-            ]
-            coord_source, coord_target = coords
-            if len(coord_source) != 2 or len(coord_target) != 2:
-                raise ValueError(f"Invalid coordinate format: {line}")
-            pixel_target = target_image.getpixel(coord_target)
-            if pixel_target is None:
-                raise ValueError(f"Pixel not found at coordinate: {coord_target}")
-            pixel_source = source_image.getpixel(coord_source)
-            if pixel_source is None:
-                raise ValueError(f"Pixel not found at coordinate: {coord_source}")
-            source_image_colored.putpixel(coord_source, pixel_target)
-            target_image_colored.putpixel(coord_target, pixel_source)
-            line = file.readline()
+        lines = file.readlines()
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
+        coords: list[tuple[int, ...]] = [
+            tuple([int(b) for b in coord.split(",")]) for coord in line.split(" ")
+        ]
+        coord_source, coord_target = coords
+        if len(coord_source) != 2 or len(coord_target) != 2:
+            raise ValueError(f"Invalid coordinate format: {line}")
+        pixel_target = target_image.getpixel(coord_target)
+        if pixel_target is None:
+            raise ValueError(f"Pixel not found at coordinate: {coord_target}")
+        pixel_source = source_image.getpixel(coord_source)
+        if pixel_source is None:
+            raise ValueError(f"Pixel not found at coordinate: {coord_source}")
+        source_image_colored.putpixel(coord_source, pixel_target)
+        target_image_colored.putpixel(coord_target, pixel_source)
     source_image_colored.save(SOURCE_IMAGE_COLORED)
     target_image_colored.save(TARGET_IMAGE_COLORED)
     source_image_colored.close()

@@ -9,23 +9,24 @@ def generate_char(filename: str, previous_chars: list[str] | None = None) -> str
     while len(previous_chars) != 2:
         previous_chars = [EMPTY_CHAR] + previous_chars
     with open(filename, "r", encoding="UTF-8") as file:
-        line = file.readline()
-        character_weights: dict[str, int] = {}
-        while line:
-            chars = [line[a] for a in range(0, 5, 2)]
-            if previous_chars == chars[:2]:
-                char = chars[2]
-                frequency = int(line[6:-1])
-                character_weights[char] = frequency
-            line = file.readline()
-        total = sum(list(character_weights.values()))
-        chosen = randint(1, total)
-        cumulative_frequency = 0
-        for index, value in enumerate(character_weights.values()):
-            cumulative_frequency += value
-            if cumulative_frequency >= chosen:
-                return list(character_weights.keys())[index]
-        return ""
+        lines = file.readlines()
+    character_weights: dict[str, int] = {}
+    for line in lines:
+        if not line.strip():
+            continue
+        chars = [line[a] for a in range(0, 5, 2)]
+        if previous_chars == chars[:2]:
+            char = chars[2]
+            frequency = int(line[6:-1])
+            character_weights[char] = frequency
+    total = sum(list(character_weights.values()))
+    chosen = randint(1, total)
+    cumulative_frequency = 0
+    for index, value in enumerate(character_weights.values()):
+        cumulative_frequency += value
+        if cumulative_frequency >= chosen:
+            return list(character_weights.keys())[index]
+    return ""
 
 
 def generate_word(filename: str) -> str:

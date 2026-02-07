@@ -64,17 +64,16 @@ def update_keyword_counts(keywords: list[str], directory: str) -> None:
                 file_write.write(f"{keyword} 1\n")
             return
         with open(f"{directory}/chain.txt", "r", encoding="utf-8") as file_read:
-            line = file_read.readline()
-            while line:
-                words = line.split()
-                current_keyword = " ".join(words[:-1])
-                while current_keyword in keywords:
-                    words[-1] = str(int(words[-1]) + 1)
-                    keywords.remove(current_keyword)
-                file_write.write(" ".join(words) + "\n")
-                if not keywords:
-                    break
-                line = file_read.readline()
+            lines = file_read.readlines()
+        for line in lines:
+            words = line.split()
+            current_keyword = " ".join(words[:-1])
+            while current_keyword in keywords:
+                words[-1] = str(int(words[-1]) + 1)
+                keywords.remove(current_keyword)
+            file_write.write(" ".join(words) + "\n")
+            if not keywords:
+                break
         if keywords:
             for keyword in keywords:
                 file_write.write(f"{keyword} 1\n")

@@ -2,6 +2,7 @@ import os
 
 EMPTY_CHAR = "¨"
 
+
 def rename_file(source_filename: str, destination_filename: str) -> None:
     with (
         open(source_filename, "r", encoding="utf-8") as source_file,
@@ -17,19 +18,20 @@ def update_term_count(index: int, keyword: str) -> None:
             file_write.write(keyword + " 1\n")
             return
         with open(f"chain/{index:03d}.txt", "r", encoding="utf-8") as file_read:
-            line = file_read.readline()
-            keyword_found = False
-            index = len(keyword)
-            while line:
-                if line[:index] == keyword:
-                    count = int(line[index + 1 :]) + 1
-                    file_write.write(line[: index + 1] + str(count) + "\n")
-                    keyword_found = True
-                else:
-                    file_write.write(line)
-                line = file_read.readline()
-            if not keyword_found:
-                file_write.write(keyword + " 1\n")
+            lines = file_read.readlines()
+        keyword_found = False
+        index = len(keyword)
+        for line in lines:
+            if not line:
+                continue
+            if line[:index] == keyword:
+                count = int(line[index + 1 :]) + 1
+                file_write.write(f"{line[: index + 1]}{count}\n")
+                keyword_found = True
+            else:
+                file_write.write(line)
+        if not keyword_found:
+            file_write.write(f"{keyword} 1\n")
 
 
 def update_chain_file(index: int, keyword: str) -> None:

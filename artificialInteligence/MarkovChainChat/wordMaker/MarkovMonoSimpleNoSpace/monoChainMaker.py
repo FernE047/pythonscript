@@ -62,22 +62,24 @@ def update_chain_file_contents(filename: str, chain_terms: list[ChainData]) -> N
                 write_terms(terms, 1)
             return
         with open(f"{filename}/chain.txt", "r", encoding="UTF-8") as file_read:
-            line = file_read.readline()
-            while line:
-                term_list = cast(tuple[str, str, str], line.split())
-                term_tuple = cast(ChainData, tuple(term_list[:-1]))
-                if term_tuple not in chain_terms:
-                    file_write.write(line)
-                    line = file_read.readline()
-                    continue
-                frequency = int(term_list[-1])
-                while term_tuple in chain_terms:
-                    frequency += 1
-                    chain_terms.remove(term_tuple)
-                write_terms(term_tuple, frequency)
+            lines = file_read.readlines()
+        for line in lines:
+            if not line.strip():
+                continue
+            term_list = cast(tuple[str, str, str], line.split())
+            term_tuple = cast(ChainData, tuple(term_list[:-1]))
+            if term_tuple not in chain_terms:
+                file_write.write(line)
                 line = file_read.readline()
-            for terms in chain_terms:
-                write_terms(terms, 1)
+                continue
+            frequency = int(term_list[-1])
+            while term_tuple in chain_terms:
+                frequency += 1
+                chain_terms.remove(term_tuple)
+            write_terms(term_tuple, frequency)
+            line = file_read.readline()
+        for terms in chain_terms:
+            write_terms(terms, 1)
 
 
 def get_filename() -> str:
@@ -99,31 +101,35 @@ def main() -> None:
     filename = get_filename()
     start_time = time()
     with open(f"{filename}.txt", "r", encoding="UTF-8") as file:
-        line = file.readline()[1:-1]
+        lines = file.readlines()
+    line_length = 0
+    for line in lines:
+        if not line.strip():
+            continue
         line_length = len(line)
-        while line:
-            line_length = len(line)
-            update_chain_values: list[ChainData] = []
-            for n in range(line_length):
-                current_character = line[n]
-                if n == 0:
-                    update_chain_values.append((EMPTY_CHAR, current_character))
-                    if line_length == 1:
-                        update_chain_values.append((current_character, EMPTY_CHAR))
-                        break
-                if line_length > 1:
-                    if n >= line_length - 1:
-                        next_character = EMPTY_CHAR
-                    else:
-                        next_character = line[n + 1]
-                    update_chain_values.append((current_character, next_character))
-                    if next_character == EMPTY_CHAR:
-                        break
-            update_chain_file(filename, update_chain_values)
-            line = file.readline()[:-1]
-        print(line_length)
-        end_time = time()
-        print_elapsed_time(end_time - start_time)
+        if line_length == 0:
+            continue
+        line = line[1:]
+        update_chain_values: list[ChainData] = []
+        for n in range(line_length):
+            current_character = line[n]
+            if n == 0:
+                update_chain_values.append((EMPTY_CHAR, current_character))
+                if line_length == 1:
+                    update_chain_values.append((current_character, EMPTY_CHAR))
+                    break
+            if line_length > 1:
+                if n >= line_length - 1:
+                    next_character = EMPTY_CHAR
+                else:
+                    next_character = line[n + 1]
+                update_chain_values.append((current_character, next_character))
+                if next_character == EMPTY_CHAR:
+                    break
+        update_chain_file(filename, update_chain_values)
+    print(line_length)
+    end_time = time()
+    print_elapsed_time(end_time - start_time)
 
 
 if __name__ == "__main__":

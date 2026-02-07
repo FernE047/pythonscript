@@ -63,15 +63,14 @@ def update_keyword_frequencies(keywords: list[str], directory: str) -> None:
                 file_write.write(keyword + " 1\n")
             return
         with open(f"{directory}//chain.txt", "r", encoding="utf-8") as file_read:
-            line = file_read.readline()
-            while line:
-                words = line.split()
-                test_keyword = " ".join(words[:-1])
-                while test_keyword in keywords:
-                    words[-1] = str(int(words[-1]) + 1)
-                    keywords.remove(test_keyword)
-                file_write.write(" ".join(words) + "\n")
-                line = file_read.readline()
+            lines = file_read.readlines()
+        for line in lines:
+            words = line.split()
+            test_keyword = " ".join(words[:-1])
+            while test_keyword in keywords:
+                words[-1] = str(int(words[-1]) + 1)
+                keywords.remove(test_keyword)
+            file_write.write(" ".join(words) + "\n")
         if keywords:
             for keyword in keywords:
                 file_write.write(keyword + " 1\n")

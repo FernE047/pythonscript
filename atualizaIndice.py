@@ -16,24 +16,26 @@ def read_python(filename: str, imported_modules: list[str]) -> None:
 
     try:
         with open(filename, "r", encoding="utf-8") as file:
-            line = file.readline()
-            while line:
-                import_index = line.find("import")
-                if import_index == -1:
-                    line = file.readline()
-                    continue
-                import_from_index = line.find("from ")
-                if import_from_index != -1:
-                    line = line[import_from_index + 5 : import_index - 1]
-                    add_imported_modules(line)
-                    continue
-                line = line[import_index + 7 :]
-                import_as_index = line.find(" as ")
-                if import_as_index != -1:
-                    line = line[:import_as_index]
-                add_imported_modules(line)
+            lines = file.read().splitlines()
     except Exception as _:
-        pass
+        return
+    for line in lines:
+        if not line:
+            continue
+        import_index = line.find("import")
+        if import_index == -1:
+            line = file.readline()
+            continue
+        import_from_index = line.find("from ")
+        if import_from_index != -1:
+            line = line[import_from_index + 5 : import_index - 1]
+            add_imported_modules(line)
+            continue
+        line = line[import_index + 7 :]
+        import_as_index = line.find(" as ")
+        if import_as_index != -1:
+            line = line[:import_as_index]
+        add_imported_modules(line)
 
 
 def get_python_version(filename: str) -> str | Literal[False]:

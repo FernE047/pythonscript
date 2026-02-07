@@ -63,25 +63,26 @@ def update_chain_file(
                     unique_terms.append(term)
                     return
         with open(f"{filename}/{index:03d}.txt", "r", encoding="UTF-8") as file_read:
-            line = file_read.readline()[:-1]
-            while line:
-                words = line.split()
-                terms = words[:-1]
-                if terms in chain_element:
-                    frequency = int(words[-1])
-                    frequency += counter[str(terms)]
-                    while terms in chain_element:
-                        chain_element.remove(terms)
-                    words[-1] = str(frequency)
-                    file_write.write(" ".join(words) + "\n")
-                else:
-                    file_write.write(line + "\n")
-                line = file_read.readline()[:-1]
-            unique_terms = []
-            for term in chain_element:
-                if term not in unique_terms:
-                    file_write.write(" ".join(term + [str(counter[str(term)])]) + "\n")
-                    unique_terms.append(term)
+            lines = file_read.readlines()
+        for line in lines:
+            if not line.strip():
+                continue
+            words = line.split()
+            terms = words[:-1]
+            if terms in chain_element:
+                frequency = int(words[-1])
+                frequency += counter[str(terms)]
+                while terms in chain_element:
+                    chain_element.remove(terms)
+                words[-1] = str(frequency)
+                file_write.write(" ".join(words) + "\n")
+            else:
+                file_write.write(line + "\n")
+        unique_terms = []
+        for term in chain_element:
+            if term not in unique_terms:
+                file_write.write(" ".join(term + [str(counter[str(term)])]) + "\n")
+                unique_terms.append(term)
 
 
 def update_chain_files(filename: str, alterations: AlterationsData) -> None:
@@ -108,38 +109,43 @@ def main() -> None:
     filename = get_filename()
     start_time = time()
     with open(f"{filename}.txt", "r", encoding="UTF-8") as file:
-        line = file.readline()[1:-1]
-        count = 0
-        alterations: AlterationsData = {}
-        while line:
-            count += 1
-            line_length = len(line)
-            for char_index, current_char in enumerate(line):
-                if char_index == 0:
-                    if char_index not in alterations:
-                        alterations[char_index] = [[current_char]]
-                    else:
-                        alterations[char_index].append([current_char])
-                if line_length > 1:
-                    try:
-                        next_char = line[char_index + 1]
-                    except IndexError:
-                        next_char = EMPTY_CHAR
-                    if char_index + 1 not in alterations:
-                        alterations[char_index + 1] = [[current_char, next_char]]
-                    else:
-                        alterations[char_index + 1].append([current_char, next_char])
-                    if next_char == EMPTY_CHAR:
-                        break
-            if count == 100:
-                update_chain_files(filename, alterations)
-                alterations = {}
-                count = 0
-            print(line_length)
-            line = file.readline()[:-1]
-        update_chain_files(filename, alterations)
-        end_time = time()
-        print_elapsed_time(end_time - start_time)
+        lines = file.readlines()
+    count = 0
+    alterations: AlterationsData = {}
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
+        line = line[1:]
+        if not line:
+            continue
+        count += 1
+        line_length = len(line)
+        for char_index, current_char in enumerate(line):
+            if char_index == 0:
+                if char_index not in alterations:
+                    alterations[char_index] = [[current_char]]
+                else:
+                    alterations[char_index].append([current_char])
+            if line_length > 1:
+                try:
+                    next_char = line[char_index + 1]
+                except IndexError:
+                    next_char = EMPTY_CHAR
+                if char_index + 1 not in alterations:
+                    alterations[char_index + 1] = [[current_char, next_char]]
+                else:
+                    alterations[char_index + 1].append([current_char, next_char])
+                if next_char == EMPTY_CHAR:
+                    break
+        if count == 100:
+            update_chain_files(filename, alterations)
+            alterations = {}
+            count = 0
+        print(line_length)
+    update_chain_files(filename, alterations)
+    end_time = time()
+    print_elapsed_time(end_time - start_time)
 
 
 if __name__ == "__main__":

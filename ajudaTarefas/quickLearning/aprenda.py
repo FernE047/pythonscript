@@ -1,8 +1,9 @@
-from io import TextIOWrapper
 from typing import Literal, overload
 from send2trash import send2trash
 import random
 import os
+
+# TODO: add constants for file paths and other strings, there is A LOT of magic strings in this code, it is really hard to maintain, I need to change that
 
 
 @overload
@@ -146,48 +147,37 @@ def delete_module(folder: str, module: str) -> None:
 
 
 def make_question(
-    file_a: TextIOWrapper, file_b: TextIOWrapper, index: int, choice: str
+    questions: list[str], answers: list[str], index: int, choice: str
 ) -> str:
-    file_c: TextIOWrapper | None = None
+    temp_answers: list[str] | None = None
     if choice == "Respostas":
-        file_c = file_b
-        file_b = file_a
-        file_a = file_c
-        file_c = None
+        temp_answers = answers
+        answers = questions
+        questions = temp_answers
+        temp_answers = None
     else:
         mode = random.randint(0, 1)
         if mode:
-            file_c = file_b
-            file_b = file_a
-            file_a = file_c
-            file_c = None
-    line_a = file_a.readline()
-    line_b = file_b.readline()
-    current_index = 0
-    while line_a:
-        if index == current_index:
-            answer = input(line_a[:-1])
-            if answer == "0":
-                return answer
-            if answer == line_b[:-1]:
-                print("\tCongratulations!!!\n")
-            else:
-                print("\tWrong\n")
-            return answer
-        line_a = file_a.readline()
-        line_b = file_b.readline()
-        current_index += 1
-    return ""
+            temp_answers = answers
+            answers = questions
+            questions = temp_answers
+            temp_answers = None
+    current_question = questions[index]
+    current_answer = answers[index]
+    answer = input(current_question[:-1])
+    if answer == "0":
+        return answer
+    if answer == current_answer[:-1]:
+        print("\tCongratulations!!!\n")
+    else:
+        print("\tWrong\n")
+    return answer
 
 
 def count_lines(fileName: str) -> int:
     with open(fileName, "r") as file:
-        line = file.readline()
-        line_count = 0
-        while line:
-            line_count += 1
-            line = file.readline()
-    return line_count
+        lines = file.read().splitlines()
+    return len(lines)
 
 
 def study_module(folder: str, module: str) -> None:
@@ -196,13 +186,15 @@ def study_module(folder: str, module: str) -> None:
     options = ["Back", "Questions", "Answers", "Questions & Answers"]
     user_choice = choose_from_options("choose a mode : ", options)
     print("type 0 anywhere to exit")
+    with (
+        open(f"{module_path}/answer.txt", "r") as answers_file,
+        open(f"{module_path}/question.txt", "r") as questions_file,
+    ):
+        answers = answers_file.read().splitlines()
+        questions = questions_file.read().splitlines()
     while True:
-        with (
-            open(f"{module_path}/answer.txt", "r") as answers_file,
-            open(f"{module_path}/question.txt", "r") as questions_file,
-        ):
-            index = random.randint(0, quantity)
-            answer = make_question(questions_file, answers_file, index, user_choice)
+        index = random.randint(0, quantity - 1)
+        answer = make_question(questions, answers, index, user_choice)
         if answer == "0":
             return
 
@@ -263,12 +255,14 @@ def random_study(folder: str, mode: str) -> None:  # TODO implement partial modu
         else:
             module = modules[random.randint(0, len(modules) - 1)]
         module_path = f"{folder}/{module}"
-        index = random.randint(0, count_lines(f"{module_path}/answer.txt"))
+        index = random.randint(0, count_lines(f"{module_path}/answer.txt") - 1)
         with (
             open(f"{module_path}/answer.txt", "r") as answers_file,
             open(f"{module_path}/question.txt", "r") as questions_file,
         ):
-            answer = make_question(questions_file, answers_file, index, choice)
+            answers = answers_file.read().splitlines()
+            questions = questions_file.read().splitlines()
+        answer = make_question(questions, answers, index, choice)
         if answer == "0":
             return
 

@@ -68,27 +68,27 @@ def update_keywords_in_chain(filename: str, keyword_tuples: list[ChainData]) -> 
                     unique_keywords.add(keyword_tuple)
             return
         with open(f"{filename}/chain.txt", "r", encoding="UTF-8") as file_read:
-            line = file_read.readline()
-            while line:
-                keywords_read = cast(tuple[str, str, str, str], tuple(line.split()))
-                keyword_tuple = cast(ChainData, tuple(keywords_read[:-1]))
-                if keyword_tuple not in keyword_tuples:
-                    file_write.write(line)
-                    line = file_read.readline()
-                    continue
-                frequency = int(keywords_read[-1])
+            lines = file_read.readlines()
+        for line in lines:
+            if not line.strip():
+                continue
+            keywords_read = cast(tuple[str, str, str, str], tuple(line.split()))
+            keyword_tuple = cast(ChainData, tuple(keywords_read[:-1]))
+            if keyword_tuple not in keyword_tuples:
+                file_write.write(line)
+                continue
+            frequency = int(keywords_read[-1])
+            keyword_tuple_flat = " ".join(keyword_tuple)
+            frequency += counter[keyword_tuple_flat]
+            while keyword_tuple in keyword_tuples:
+                keyword_tuples.remove(keyword_tuple)
+            file_write.write(f"{keyword_tuple_flat} {frequency}\n")
+        for keyword_tuple in keyword_tuples:
+            if keyword_tuple not in unique_keywords:
                 keyword_tuple_flat = " ".join(keyword_tuple)
-                frequency += counter[keyword_tuple_flat]
-                while keyword_tuple in keyword_tuples:
-                    keyword_tuples.remove(keyword_tuple)
+                frequency = counter[keyword_tuple_flat]
                 file_write.write(f"{keyword_tuple_flat} {frequency}\n")
-                line = file_read.readline()
-            for keyword_tuple in keyword_tuples:
-                if keyword_tuple not in unique_keywords:
-                    keyword_tuple_flat = " ".join(keyword_tuple)
-                    frequency = counter[keyword_tuple_flat]
-                    file_write.write(f"{keyword_tuple_flat} {frequency}\n")
-                    unique_keywords.add(keyword_tuple)
+                unique_keywords.add(keyword_tuple)
 
 
 def get_filename() -> str:
@@ -110,58 +110,60 @@ def main() -> None:
     filename = get_filename()
     start_time = time()
     with open(f"{filename}.txt", "r", encoding="UTF-8") as file:
-        line = file.readline()[:-1]
-        word_frequency: list[int] = []
-        word_length = 0
-        count = 0
-        update_chain_values: list[ChainData] = []
-        while line:
-            words = line.split()
-            while len(words) > len(word_frequency):
-                word_frequency.append(0)
-            word_frequency[len(words) - 1] += 1
-            for word in words:
-                word_length = len(word)
-                previous_character = ""
-                for index in range(word_length):
-                    current_character = word[index]
-                    if index == 0:
-                        update_chain_values.append((EMPTY_CHAR, EMPTY_CHAR, current_character))
-                        if word_length == 1:
-                            update_chain_values.append((EMPTY_CHAR, current_character, EMPTY_CHAR))
-                            break
-                        else:
-                            next_character = word[index + 1]
-                            update_chain_values.append(
-                                (EMPTY_CHAR, current_character, next_character)
-                            )
-                            previous_character = current_character
-                        continue
-                    if word_length > 1:
-                        if index >= word_length - 1:
-                            next_character = EMPTY_CHAR
-                        else:
-                            next_character = word[index + 1]
+        lines = file.readlines()
+    word_frequency: list[int] = []
+    word_length = 0
+    count = 0
+    update_chain_values: list[ChainData] = []
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
+        words = line.split()
+        while len(words) > len(word_frequency):
+            word_frequency.append(0)
+        word_frequency[len(words) - 1] += 1
+        for word in words:
+            word_length = len(word)
+            previous_character = ""
+            for index in range(word_length):
+                current_character = word[index]
+                if index == 0:
+                    update_chain_values.append((EMPTY_CHAR, EMPTY_CHAR, current_character))
+                    if word_length == 1:
+                        update_chain_values.append((EMPTY_CHAR, current_character, EMPTY_CHAR))
+                        break
+                    else:
+                        next_character = word[index + 1]
                         update_chain_values.append(
-                            (previous_character, current_character, next_character)
+                            (EMPTY_CHAR, current_character, next_character)
                         )
-                        if next_character == EMPTY_CHAR:
-                            break
-                    previous_character = current_character
-            if count == 100:
-                update_chain_file(filename, update_chain_values)
-                update_chain_values = []
-                count = 0
-            else:
-                count += 1
-            line = file.readline()[:-1]
-        update_chain_file(filename, update_chain_values)
-        with open(f"{filename}/length.txt", "w", encoding="UTF-8") as arqInput:
-            for index, quantity in enumerate(word_frequency):
-                arqInput.write(f"{index} {quantity}\n")
-        print(word_length)
-        end_time = time()
-        print(format_elapsed_time(end_time - start_time))
+                        previous_character = current_character
+                    continue
+                if word_length > 1:
+                    if index >= word_length - 1:
+                        next_character = EMPTY_CHAR
+                    else:
+                        next_character = word[index + 1]
+                    update_chain_values.append(
+                        (previous_character, current_character, next_character)
+                    )
+                    if next_character == EMPTY_CHAR:
+                        break
+                previous_character = current_character
+        if count == 100:
+            update_chain_file(filename, update_chain_values)
+            update_chain_values = []
+            count = 0
+        else:
+            count += 1
+    update_chain_file(filename, update_chain_values)
+    with open(f"{filename}/length.txt", "w", encoding="UTF-8") as arqInput:
+        for index, quantity in enumerate(word_frequency):
+            arqInput.write(f"{index} {quantity}\n")
+    print(word_length)
+    end_time = time()
+    print(format_elapsed_time(end_time - start_time))
 
 
 if __name__ == "__main__":

@@ -26,19 +26,20 @@ def update_keyword_frequency(keywords: list[str], directory: str) -> None:
             file_write.write(" ".join(keywords) + " 1\n")
             return
         with open(f"{directory}/chain.txt", "r", encoding="utf-8") as file_read:
-            line = file_read.readline()
-            keyword_found = False
-            while line:
-                words = line.split()
-                if words[:-1] == keywords:
-                    words[-1] = str(int(words[-1]) + 1)
-                    file_write.write(" ".join(words) + "\n")
-                    keyword_found = True
-                else:
-                    file_write.write(line)
-                line = file_read.readline()
-            if not keyword_found:
-                file_write.write(" ".join(keywords) + " 1\n")
+            lines = file_read.readlines()
+        keyword_found = False
+        for line in lines:
+            if not line:
+                continue
+            words = line.split()
+            if words[:-1] == keywords:
+                words[-1] = str(int(words[-1]) + 1)
+                file_write.write(" ".join(words) + "\n")
+                keyword_found = True
+            else:
+                file_write.write(line)
+        if not keyword_found:
+            file_write.write(" ".join(keywords) + " 1\n")
 
 
 def generate_markov_chain(text: str, is_title: bool = False) -> None:

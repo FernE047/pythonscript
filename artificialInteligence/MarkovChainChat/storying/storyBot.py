@@ -14,29 +14,31 @@ def generate_initial_words(is_title: bool) -> list[str]:
         directory = f"{DIRECTORY}chainStory/{TAMANHO}"
     filename = f"{directory}/chain.txt"
     with open(filename, "r", encoding="utf-8") as file:
-        line = file.readline().lower()
-        word_frequency_map: dict[str, int] = {}
-        while line:
-            words = line.split()
-            if initial_word == words[0]:
-                usable_words = words[1:-1]
-                number = int(words[-1])
-            else:
-                line = file.readline().lower()
-                continue
-            word = " ".join(usable_words)
-            if word not in word_frequency_map.keys():
-                word_frequency_map[word] = number
-            else:
-                word_frequency_map[word] += number
+        lines = file.readlines()
+    word_frequency_map: dict[str, int] = {}
+    for line in lines:
+        if not line:
+            continue
+        words = line.lower().split()
+        if initial_word == words[0]:
+            usable_words = words[1:-1]
+            number = int(words[-1])
+        else:
             line = file.readline().lower()
-        total = sum(list(word_frequency_map.values()))
-        chosen = randint(1, total)
-        cumulative_sum = 0
-        for index, value in enumerate(word_frequency_map.values()):
-            cumulative_sum += value
-            if cumulative_sum >= chosen:
-                return [initial_word] + list(word_frequency_map.keys())[index].split()
+            continue
+        word = " ".join(usable_words)
+        if word not in word_frequency_map.keys():
+            word_frequency_map[word] = number
+        else:
+            word_frequency_map[word] += number
+        line = file.readline().lower()
+    total = sum(list(word_frequency_map.values()))
+    chosen = randint(1, total)
+    cumulative_sum = 0
+    for index, value in enumerate(word_frequency_map.values()):
+        cumulative_sum += value
+        if cumulative_sum >= chosen:
+            return [initial_word] + list(word_frequency_map.keys())[index].split()
     return [initial_word, EMPTY_CHAR]
 
 
@@ -50,28 +52,30 @@ def generate_word(is_title: bool, previous_words: list[str] | None = None) -> st
     previous = " ".join(previous_words)
     filename = f"{directory}/chain.txt"
     with open(filename, "r", encoding="utf-8") as file:
-        line = file.readline().lower()
-        word_frequency_map: dict[str, int] = {}
-        while line:
-            words = line.split()
-            word_test = " ".join(words[:-2])
-            if previous != word_test:
-                line = file.readline().lower()
-                continue
-            word = words[-2]
-            number = int(words[-1])
-            if word not in word_frequency_map.keys():
-                word_frequency_map[word] = number
-            else:
-                word_frequency_map[word] += number
+        lines = file.readlines()
+    word_frequency_map: dict[str, int] = {}
+    for line in lines:
+        if not line:
+            continue
+        words = line.lower().split()
+        word_test = " ".join(words[:-2])
+        if previous != word_test:
             line = file.readline().lower()
-        total = sum(list(word_frequency_map.values()))
-        chosen = randint(1, total)
-        cumulative_sum = 0
-        for index, value in enumerate(word_frequency_map.values()):
-            cumulative_sum += value
-            if cumulative_sum >= chosen:
-                return list(word_frequency_map.keys())[index]
+            continue
+        word = words[-2]
+        number = int(words[-1])
+        if word not in word_frequency_map.keys():
+            word_frequency_map[word] = number
+        else:
+            word_frequency_map[word] += number
+        line = file.readline().lower()
+    total = sum(list(word_frequency_map.values()))
+    chosen = randint(1, total)
+    cumulative_sum = 0
+    for index, value in enumerate(word_frequency_map.values()):
+        cumulative_sum += value
+        if cumulative_sum >= chosen:
+            return list(word_frequency_map.keys())[index]
     return EMPTY_CHAR
 
 
