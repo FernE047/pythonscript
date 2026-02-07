@@ -137,7 +137,7 @@ def findHoleContinuation(imagem, trappedPixels, freePixels):
     return pontos
 
 
-def fixTrappedPixels(imagem, freePixels):  # make it better
+def fixTrappedPixels(imagem:Image.Image, freePixels:list[tuple[int, ...]|float|int]) -> None:  # make it better
     trappedPixels = findHoleBorder(imagem, freePixels)
     while trappedPixels:
         for coordenada in trappedPixels:
