@@ -1,95 +1,114 @@
+from typing import TypeVar, cast
 from PIL import Image
-from time import time
 import os
 import multiprocessing
 
+SOURCE_IMAGE = "./inicial.png"
+TARGET_IMAGE = "./final.png"
+CONFIG_FOLDER = "./partes/config/"
+OUTPUT_IMAGE = "./frames/frame.png"
+TOTAL_FRAMES = 30
+FINAL_FRAME = TOTAL_FRAMES + 1
+BACKGROUND_COLOR = (255, 255, 255, 0)
+BACKGROUND_IDENTIFIER = "background"
+IDENTIFIER_LENGTH = len(BACKGROUND_IDENTIFIER)
 
-def pegaInteiro(
-    mensagem: str, minimo: int | None = None, maximo: int | None = None
-) -> int:
-    while True:
-        entrada = input(f"{mensagem} : ")
-        try:
-            valor = int(entrada)
-            if (minimo is not None) and (valor < minimo):
-                print(f"valor deve ser maior ou igual a {minimo}")
+# generic
+R = TypeVar("R", bound=tuple[int, ...])
+CoordData = tuple[int, int]
+
+
+def get_coord_data(line: str) -> CoordData:
+    comma_separated_values = line.split(",")
+    try:
+        coord_list = [int(value) for value in comma_separated_values]
+    except ValueError as e:
+        raise ValueError(f"Invalid coordinate value in line: {line}") from e
+    if len(coord_list) != 2:
+        raise ValueError(f"Expected 2 values for coordinates, got {len(coord_list)}")
+    return cast(CoordData, tuple(coord_list))
+
+
+def get_coords_data(line: str) -> list[CoordData]:
+    coords: list[CoordData] = []
+    for coord in line.split(" "):
+        coords.append(get_coord_data(coord))
+    if len(coords) != 2:
+        raise ValueError(f"Expected 2 coordinates, got {len(coords)} in line: {line}")
+    return coords
+
+
+def get_pixel(imagem: Image.Image, coord: CoordData) -> tuple[int, ...]:
+    pixel = imagem.getpixel(coord)
+    if pixel is None:
+        return BACKGROUND_COLOR
+    if not isinstance(pixel, tuple):
+        pixel_int = int(pixel)
+        return (pixel_int, pixel_int, pixel_int)
+    return pixel
+
+
+def interpolate_tuples(tuple_source: R, tuple_target: R, frame_index: int) -> R:
+    interpolated_values: list[int] = []
+    for source_value, target_value in zip(tuple_source, tuple_target):
+        difference = target_value - source_value
+        interpolation_step = difference / FINAL_FRAME
+        interpolated_value = int(interpolation_step * frame_index + source_value)
+        interpolated_values.append(interpolated_value)
+    return cast(R, tuple(interpolated_values))
+
+
+def inrerpolate_frames(index: int) -> None:
+    source_image = Image.open(SOURCE_IMAGE)
+    target_image = Image.open(TARGET_IMAGE)
+    print(f"generating Frame : {index}")
+    frame = Image.new("RGBA", target_image.size, BACKGROUND_COLOR)
+    for filename in os.listdir(CONFIG_FOLDER):
+        with open(f"{CONFIG_FOLDER}{filename}", "r", encoding="utf-8") as file:
+            lines = file.read().splitlines()
+        for line in lines:
+            if not line:
                 continue
-            if (maximo is not None) and (valor > maximo):
-                print(f"valor deve ser menor ou igual a {maximo}")
+            if line.find(BACKGROUND_IDENTIFIER) != -1:
+                coord = get_coord_data(line[:-IDENTIFIER_LENGTH])
+                pixel = get_pixel(source_image, coord)
+                frame.putpixel(coord, pixel)
                 continue
-            return valor
-        except Exception as _:
-            print("valor inválido, tente novamente")
-
-
-def funcaoCor(inicio, fim, total, n):
-    elemento = []
-    for elementoInicial, elementoFinal in zip(inicio, fim):
-        B = elementoInicial
-        A = (elementoFinal - elementoInicial) / (total + 1)
-        elemento.append(int(A * n + B))
-    return tuple(elemento)
-
-
-def funcaoCoord(inicio, fim, total, n):
-    elemento = []
-    for elementoInicial, elementoFinal in zip(inicio, fim):
-        B = elementoInicial
-        A = (elementoFinal - elementoInicial) / (total + 1)
-        elemento.append(int(A * n + B))
-    return tuple(elemento)
-
-
-def makeFrame(args):
-    n, total = args
-    imagemInicial = Image.open("C:\\pythonscript\\imagem\\morphManual\\inicial.png")
-    imagemFinal = Image.open("C:\\pythonscript\\imagem\\morphManual\\final.png")
-    print("Fazendo Frame : " + str(n))
-    frame = Image.new("RGBA", imagemFinal.size, (255, 255, 255, 0))
-    for fileName in os.listdir("C:\\pythonscript\\imagem\\morphManual\\partes\\config"):
-        with open(
-            "C:\\pythonscript\\imagem\\morphManual\\partes\\config\\" + fileName, "r", encoding="utf-8"
-        ) as file:
-            linha = file.readline()
-            while linha:
-                if linha.find("fundo") != -1:
-                    coord = tuple([int(b) for b in linha[:-6].split(",")])
-                    frame.putpixel(coord, imagemInicial.getpixel(coord))
-                else:
-                    coords = [
-                        tuple([int(b) for b in coord.split(",")])
-                        for coord in linha.split(" ")
-                    ]
-                    coordFinal = coords[1]
-                    pixelFinal = imagemFinal.getpixel(coordFinal)
-                    coordInicial = coords[0]
-                    pixelInicial = imagemInicial.getpixel(coordInicial)
-                    novaCoord = funcaoCoord(coordInicial, coordFinal, total, n + 1)
-                    novaCor = funcaoCor(pixelInicial, pixelFinal, total, n + 1)
-                    frame.putpixel(novaCoord, novaCor)
-                linha = file.readline()
-    print("\tFrame Terminado : " + str(n))
-    frame.save(f"C:\\pythonscript\\imagem\\morphManual\\frames\\frame{n + 1:03d}.png")
-    imagemInicial.close()
-    imagemFinal.close()
+            coord_source, coord_target = get_coords_data(line)
+            pixel_source = get_pixel(source_image, coord_source)
+            pixel_target = get_pixel(target_image, coord_target)
+            output_coord = interpolate_tuples(coord_source, coord_target, index)
+            output_pixel = interpolate_tuples(pixel_source, pixel_target, index)
+            frame.putpixel(output_coord, output_pixel)
+    print(f"\tFrame Finished : {index}")
+    save_frame(frame, index)
+    source_image.close()
+    target_image.close()
     frame.close()
 
 
+def move_image(image_name: str, frame_index: int) -> None:
+    image = Image.open(image_name)
+    print(f"\n {image_name} size: {image.size}\n")
+    save_frame(image, frame_index)
+    image.close()
+
+
+def create_first_and_last_frames() -> None:
+    move_image(SOURCE_IMAGE, 0)
+    move_image(TARGET_IMAGE, FINAL_FRAME)
+
+
+def save_frame(frame: Image.Image, index: int) -> None:
+    output_name, extension = os.path.splitext(OUTPUT_IMAGE)
+    filename = f"{output_name}_{index:03d}{extension}"
+    frame.save(filename)
+
 
 def main() -> None:
-    quantiaFrames = 30  # pegaInteiro("quantos frames?")
-    nomeFrame = "C:\\pythonscript\\imagem\\morphManual\\frames\\frame{0:03d}.png"
-
-    imagemInicial = Image.open("C:\\pythonscript\\imagem\\morphManual\\inicial.png")
-    imagemFinal = Image.open("C:\\pythonscript\\imagem\\morphManual\\final.png")
-    imagemInicial.save(nomeFrame.format(0))
-    imagemFinal.save(nomeFrame.format(quantiaFrames + 1))
-    imagemInicial.close()
-    imagemFinal.close()
-
-    print("\n tamanho: " + str(imagemInicial.size), end="\n\n")
+    create_first_and_last_frames()
     p = multiprocessing.Pool(os.cpu_count())
-    p.map(makeFrame, [[a, quantiaFrames] for a in range(quantiaFrames)])
+    p.map(inrerpolate_frames, range(1, FINAL_FRAME))
 
 
 if __name__ == "__main__":
