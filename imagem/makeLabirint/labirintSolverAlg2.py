@@ -1,6 +1,51 @@
+from enum import Enum
+import os
 from PIL import Image
-from os import listdir
 from time import time
+
+BACKGROUND_COLOR = (255, 255, 255, 255)
+END_COLOR = (255, 0, 0, 255)
+INITIAL_POSITION = (1, 1)
+INPUT_MAZE = "labyrinth.png"
+MAX_DIRECTIONS = 4
+OPPOSITE_DIRECTION_SHIFT = MAX_DIRECTIONS // 2
+DISTANCE_BETWEEN_FREE_CELLS = 2
+CURRENT_INDEX = -1
+PREVIOUS_INDEX = -2
+
+
+class Direction(Enum):
+    UNDEFINED = -1
+    DOWN = 0
+    RIGHT = 1
+    UP = 2
+    LEFT = 3
+
+
+CoordData = tuple[int, int]
+
+
+def apply_direction(
+    coord: CoordData,
+    direction: Direction,
+    add_offset: int = DISTANCE_BETWEEN_FREE_CELLS,
+) -> CoordData:
+    x, y = coord
+    if direction == Direction.UNDEFINED:
+        raise ValueError("Direction cannot be UNDEFINED")
+    if direction == Direction.DOWN:
+        return (x, y + add_offset)
+    elif direction == Direction.RIGHT:
+        return (x + add_offset, y)
+    elif direction == Direction.UP:
+        return (x, y - add_offset)
+    else:
+        return (x - add_offset, y)
+
+
+def get_next_direction(direction: Direction) -> Direction:
+    next_value = (direction.value + 1) % MAX_DIRECTIONS
+    return Direction(next_value)
 
 
 def print_elapsed_time(seconds: float) -> None:
@@ -32,125 +77,123 @@ def print_elapsed_time(seconds: float) -> None:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
     print(sign + ", ".join(parts))
 
-def coordDirection(coordIni,direction):
-    x,y = coordIni
-    if(direction == 2):
-        coord = (x,y-1)
-    elif(direction == 0):
-        coord = (x+1,y)
-    elif(direction == 1):
-        coord = (x,y+1)
-    else:
-        coord = (x-1,y)
-    return coord
 
-def coordOppositeDirection(coord,direction):
-    return coordDirection(coord,oppositeDirection(direction))
+def get_opposite_coord(coord: CoordData, direction: Direction) -> CoordData:
+    opposite_direction = get_opposite_direction(direction)
+    opposite_coord = apply_direction(coord, opposite_direction)
+    return opposite_coord
 
-def oppositeDirection(direction):
-    return 3-direction#(direction+2)%4
 
-def testaDirection(coord,direction,imagem):
-    largura,altura = imagem.size
-    x,y = coord
-    if direction==2:
-        if y > 1:
-            if imagem.getpixel((x,y-1)) == BRANCO:
-                return True
-    if direction==0:
-        if x < largura-2:
-            if imagem.getpixel((x+1,y)) == BRANCO:
-                return True
-    if direction==1:
-        if y < altura-2:
-            if imagem.getpixel((x,y+1)) == BRANCO:
-                return True
-    if direction==3:
-        if x > 1:
-            if imagem.getpixel((x-1,y)) == BRANCO:
-                return True
-    return False
+def get_opposite_direction(direction: Direction) -> Direction:
+    if direction == Direction.UNDEFINED:
+        raise ValueError("Direction cannot be UNDEFINED")
+    shifted_value = direction.value + OPPOSITE_DIRECTION_SHIFT
+    opposite_value = shifted_value % MAX_DIRECTIONS
+    opposite_direction = Direction(opposite_value)
+    return opposite_direction
 
-def possibleDirections(coord,imagem):
-    lista = []
-    for direction in range(4):
-        if testaDirection(coord,direction,imagem):
-            lista.append(direction)
-    return lista
+
+def is_move_valid(coord: CoordData, direction: Direction, image: Image.Image) -> bool:
+    coord = apply_direction(coord, direction)
+    x, y = coord
+    if y < 0 or x < 0:
+        return False
+    width, height = image.size
+    if y >= height or x >= width:
+        return False
+    if image.getpixel(coord) != BACKGROUND_COLOR:
+        return False
+    return True
+
+
+def possible_directions(coord: CoordData, image: Image.Image) -> list[Direction]:
+    valid_directions: list[Direction] = []
+    for direction in Direction:
+        if not is_move_valid(coord, direction, image):
+            continue
+        valid_directions.append(direction)
+    return valid_directions
 
 
 def main() -> None:
-    BRANCO = (255,255,255,255)
-    PRETO = (0,0,0,255)
-    VERMELHO = (255,0,0,255)
-    imagem = Image.open(f"pureLabirint//labirint{241:04d}.png")
-    largura,altura = imagem.size
-    FINAL = (largura-2,altura-2)
-    INICIAL = (1,1)
-    coord = INICIAL
-    path = [-1]
-    it = 0
-    it2 = 0
-    inicio = time()
-    while coord != FINAL:
-        it2 +=1
+    labyrinth = Image.open(INPUT_MAZE)
+    width, height = labyrinth.size
+    target_position = (
+        width - DISTANCE_BETWEEN_FREE_CELLS,
+        height - DISTANCE_BETWEEN_FREE_CELLS,
+    )
+    coord = INITIAL_POSITION
+    path = [Direction.UNDEFINED]
+
+    def backtrack_to_previous_coord(coord: CoordData) -> CoordData:
+        coord = get_opposite_coord(coord, path[PREVIOUS_INDEX])
+        path.pop()
+        while len(possible_directions(coord, labyrinth)) == 2:
+            coord = get_opposite_coord(coord, path[PREVIOUS_INDEX])
+            path.pop()
+        return coord
+
+    paths_count = 0
+    iterations = 0
+    start_time = time()
+    while coord != target_position:
+        iterations += 1
+        current_direction = path[CURRENT_INDEX]
         if len(path) == 1:
-            path[-1] +=1
-            if(testaDirection(coord,path[-1],imagem)):
-                coord = coordDirection(coord,path[-1])
-                coord = coordDirection(coord,path[-1])
-                path.append(-1)
-                it += 1
-        else:
-            directionsList = possibleDirections(coord,imagem)
-            if len(directionsList) == 1:                            #se o caminho for fechado, volte para trás
-                coord = coordOppositeDirection(coord,path[-2])
-                coord = coordOppositeDirection(coord,path[-2])
-                path.pop()
-                while len(possibleDirections(coord,imagem)) == 2:
-                    coord = coordOppositeDirection(coord,path[-2])
-                    coord = coordOppositeDirection(coord,path[-2])
-                    path.pop()
-            elif len(directionsList) == 2:                          #se só houver uma possibilidade siga ela
-                if directionsList[0] != oppositeDirection(path[-2]):
-                    path[-1] = directionsList[0]
-                else:
-                    path[-1] = directionsList[1]
-                coord = coordDirection(coord,path[-1])
-                coord = coordDirection(coord,path[-1])
-                path.append(-1)
-                it += 1
-            else:
-                if path[-1] == 4:                                   #se todas as direções foram testadas, volte para trás
-                    coord = coordOppositeDirection(coord,path[-2])
-                    coord = coordOppositeDirection(coord,path[-2])
-                    path.pop()
-                    while len(possibleDirections(coord,imagem)) == 2:
-                        coord = coordOppositeDirection(coord,path[-2])
-                        coord = coordOppositeDirection(coord,path[-2])
-                        path.pop()
-                else:                                               #se tem direções faltando, vá
-                    path[-1] +=1
-                    if(path[-1] != oppositeDirection(path[-2])):
-                        if(testaDirection(coord,path[-1],imagem)):
-                            coord = coordDirection(coord,path[-1])
-                            coord = coordDirection(coord,path[-1])
-                            path.append(-1)
-                            it += 1
-    final = time()
-    print("caminhos testados : "+str(it))
-    print("iterações feitas : "+str(it2))
-    print_elapsed_time(final-inicio)
+            current_direction = get_next_direction(path[CURRENT_INDEX])
+            path[CURRENT_INDEX] = current_direction
+            if not is_move_valid(coord, current_direction, labyrinth):
+                continue
+            coord = apply_direction(coord, current_direction)
+            path.append(Direction.UNDEFINED)
+            paths_count += 1
+            continue
+        directions_list = possible_directions(coord, labyrinth)
+        if len(directions_list) == 1:
+            # se o caminho for fechado, volte para trás
+            coord = backtrack_to_previous_coord(coord)
+            continue
+        if len(directions_list) == 2:
+            # se só houver uma possibilidade siga ela
+            current_direction = directions_list[1]
+            if directions_list[0] != get_opposite_direction(path[PREVIOUS_INDEX]):
+                current_direction = directions_list[0]
+            path[CURRENT_INDEX] = current_direction
+            coord = apply_direction(coord, current_direction)
+            path.append(Direction.UNDEFINED)
+            paths_count += 1
+            continue
+        if current_direction == Direction.LEFT:
+            # se todas as direções foram testadas, volte para trás
+            coord = backtrack_to_previous_coord(coord)
+            continue
+        # se tem direções faltando, vá
+        current_direction = get_next_direction(path[CURRENT_INDEX])
+        path[CURRENT_INDEX] = current_direction
+        if current_direction == get_opposite_direction(path[PREVIOUS_INDEX]):
+            continue
+        if not is_move_valid(coord, current_direction, labyrinth):
+            continue
+        coord = apply_direction(coord, current_direction)
+        path.append(Direction.UNDEFINED)
+        paths_count += 1
+    end_time = time()
+    print(f"paths tested : {paths_count}")
+    print(f"iterations made : {iterations}")
+    print_elapsed_time(end_time - start_time)
     path.pop()
-    coord = INICIAL
-    imagem.putpixel(coord,VERMELHO)
+    coord = INITIAL_POSITION
+    labyrinth.putpixel(coord, END_COLOR)
     for direction in path:
-        coord = coordDirection(coord,direction)
-        imagem.putpixel(coord,VERMELHO)
-        coord = coordDirection(coord,direction)
-        imagem.putpixel(coord,VERMELHO)
-    imagem.save(f"solvedLabirint//labirintSolved{len(listdir("solvedLabirint")):03d}.png")
-    imagem.close()
+        coord = apply_direction(coord, direction)
+        labyrinth.putpixel(coord, END_COLOR)
+        coord = apply_direction(coord, direction)
+        labyrinth.putpixel(coord, END_COLOR)
+    image_name, extension = os.path.splitext(INPUT_MAZE)
+    name = f"{image_name}_solved{extension}"
+    print(name)
+    labyrinth.save(name)
+    labyrinth.close()
 
 
 if __name__ == "__main__":
