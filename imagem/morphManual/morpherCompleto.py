@@ -2,6 +2,17 @@ import subprocess
 import gc
 from time import time
 
+EXECUTABLE = "python"
+STEPS = (
+    ("./preparaMorph.py ", "clean directory"),
+    ("./analisaEFazConfig.py ", "make configurations"),
+    ("./recolor.py ", "recolor"),
+    ("./morpher.py ", "make animations"),
+    ("./corrigeFrames.py ", "frame correction"),
+    ("./addBackground.py", "make backgrounds"),
+    ("./fazGif.py ", "make Gif"),
+)
+
 
 def print_elapsed_time(seconds: float) -> None:
     if seconds < 0:
@@ -32,29 +43,28 @@ def print_elapsed_time(seconds: float) -> None:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
     print(sign + ", ".join(parts))
 
-#esse algoritmo faz o morph completo
 
-def fazProcesso(processo,nome):
-    inicio = time()
-    subprocess.call (processo)
-    fim = time()
-    duracao = fim-inicio
-    print_elapsed_time(duracao)
+# this algorithm does the whole morphing process
 
+
+def execute_process(command: str, name: str) -> None:
+    print(f"starting {name}")
+    start_time = time()
+    subprocess.call(f"{EXECUTABLE} {command}", shell=True)
+    end_time = time()
+    elapsed_time = end_time - start_time
+    print(f"\n{name} finished")
+    print_elapsed_time(elapsed_time)
 
 
 def main() -> None:
-    inicioDef = time()
-    fazProcesso("python C:\\pythonscript\\imagem\\morphManual\\preparaMorph.py ","limpar directory")
-    fazProcesso("python C:\\pythonscript\\imagem\\morphManual\\analisaEFazConfig.py ","fazer configurações")
-    fazProcesso("python C:\\pythonscript\\imagem\\morphManual\\recolor.py ","recolor")
-    fazProcesso("python C:\\pythonscript\\imagem\\morphManual\\morpher.py ","fazer animações")
-    fazProcesso("python C:\\pythonscript\\imagem\\morphManual\\corrigeFrames.py ","correção de frames")
-    fazProcesso("python C:\\pythonscript\\imagem\\morphManual\\addBackground.py ","fazer backgrounds")
-    fazProcesso("python C:\\pythonscript\\imagem\\morphManual\\fazGif.py ","fazer Gif")
-    fimDef = time()
-    print("\nfinalizado")
-    print_elapsed_time(fimDef-inicioDef)
+    start_time = time()
+    for command, name in STEPS:
+        execute_process(command, name)
+    print("\nfinished")
+    end_time = time()
+    elapsed_time = end_time - start_time
+    print_elapsed_time(elapsed_time)
     gc.collect()
 
 
