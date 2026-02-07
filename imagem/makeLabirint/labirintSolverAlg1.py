@@ -78,9 +78,8 @@ def labyrinth_solver(
 
 def main() -> None:
     labyrinth = Image.open(INPUT_MAZE)
-    path = [
-        Direction.DOWN
-    ]  # starts with DOWN, because we skip the opposite of the last direction, and the opposite of DOWN is UP, which is never the first direction to try
+    path = [Direction.DOWN]
+    # starts with DOWN, because we skip the opposite of the last direction, and the opposite of DOWN is UP, which is never the first direction to try
     labyrinth_solver(labyrinth, INITIAL_POSITION, path)
     image_name, extension = os.path.splitext(INPUT_MAZE)
     name = f"{image_name}_solved{extension}"
