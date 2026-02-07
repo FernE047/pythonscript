@@ -8,6 +8,8 @@ END_COLOR = (255, 0, 0, 255)
 INITIAL_POSITION = (1, 1)
 INPUT_MAZE = "labyrinth.png"
 MAX_DIRECTIONS = 4
+OPPOSITE_DIRECTION_SHIFT = MAX_DIRECTIONS // 2
+DISTANCE_BETWEEN_FREE_CELLS = 2
 
 
 class Direction(Enum):
@@ -36,15 +38,22 @@ def is_maze_solved(labyrinth: Image.Image, coord_to_check: CoordData) -> bool:
     return labyrinth.getpixel(coord_to_check) == END_COLOR
 
 
+def get_opposite_direction(direction: Direction) -> Direction:
+    shifted_value = direction.value + OPPOSITE_DIRECTION_SHIFT
+    opposite_value = shifted_value % MAX_DIRECTIONS
+    opposite_direction = Direction(opposite_value)
+    return opposite_direction
+
+
 def labyrinth_solver(
     labyrinth: Image.Image, coord: CoordData, path: list[Direction]
 ) -> None:
     width, height = labyrinth.size
-    final = (width - 2, height - 2)
+    final = (width - DISTANCE_BETWEEN_FREE_CELLS, height - DISTANCE_BETWEEN_FREE_CELLS)
     if is_maze_solved(labyrinth, coord):
         return
     for direction in Direction:
-        if direction.value == (path[-1].value - MAX_DIRECTIONS // 2) % MAX_DIRECTIONS:
+        if direction == get_opposite_direction(path[-1]):
             continue
         path.append(direction)
         test_coord = apply_direction(coord, direction)
