@@ -20,8 +20,8 @@ class Direction(Enum):
 CoordData = tuple[int, int]
 
 
-def apply_direction(coordIni: CoordData, direction: Direction) -> CoordData:
-    x, y = coordIni
+def apply_direction(coord: CoordData, direction: Direction) -> CoordData:
+    x, y = coord
     if direction == Direction.DOWN:
         return (x, y + 1)
     elif direction == Direction.RIGHT:
