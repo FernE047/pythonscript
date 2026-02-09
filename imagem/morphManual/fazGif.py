@@ -7,6 +7,8 @@ RESIZED_FOLDER = f"{FRAME_FOLDER}/resized"
 RESIZE_FACTOR = 4
 RESAMPLING_MODE = Image.Resampling.NEAREST
 IMAGE_MAX_AREA = 10000
+#how many frames will be repeated at the beginning and end of the gif, to make it look better
+GIF_START_DELAY = 10
 
 
 def colocaImagemNoGif(
@@ -47,12 +49,12 @@ def main() -> None:
             for frame_name in os.listdir(f"{RESIZED_FOLDER}/")
         ]
         first_frame = frames.pop(0)
-        for _ in range(10):
+        for _ in range(GIF_START_DELAY):
             colocaImagemNoGif(writer, first_frame)
         last_frame = frames.pop()
         for frame in frames:
             colocaImagemNoGif(writer, frame)
-        for _ in range(10):
+        for _ in range(GIF_START_DELAY):
             colocaImagemNoGif(writer, last_frame)
     print("Gif created successfully!")
 
