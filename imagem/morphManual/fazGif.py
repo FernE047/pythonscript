@@ -2,47 +2,59 @@ import imageio
 import os
 from PIL import Image
 
+FRAME_FOLDER = "./frames"
+RESIZED_FOLDER = f"{FRAME_FOLDER}/resized"
+RESIZE_FACTOR = 4
+RESAMPLING_MODE = Image.Resampling.NEAREST
+IMAGE_MAX_AREA = 10000
 
-def colocaImagemNoGif(writer, nome):
-    imagem = imageio.imread(nome)
-    writer.append_data(imagem)
+
+def colocaImagemNoGif(
+    writer: imageio.core.format.Writer,  # type:ignore
+    nome: str,
+) -> None:
+    imagem = imageio.imread(nome)  # type:ignore
+    writer.append_data(imagem)  # type:ignore
 
 
-def resize(nome):
-    factor = 4
-    imagem = Image.open(nome)
-    if imagem.size[0] * imagem.size[1] < 10000:
-        nome = nome[:41] + "\\resized" + nome[41:-4] + "_resize" + nome[-4:]
-        imagem.resize(
-            tuple([imagem.size[0] * 4, imagem.size[1] * 4]), resample=Image.NEAREST
-        ).save(nome)
+def resize(image_file_path: str) -> None:
+    image = Image.open(image_file_path)
+    image_name, extension = os.path.splitext(image_file_path)
+    image_file_path = f"{image_name}_resize{extension}"
+    width, height = image.size
+    if width * height < IMAGE_MAX_AREA:
+        resize_width = width * RESIZE_FACTOR
+        resize_height = height * RESIZE_FACTOR
+        resize_size = (resize_width, resize_height)
+        image.resize(resize_size, resample=RESAMPLING_MODE).save(image_file_path)
     else:
-        imagem.save(nome[:41] + "\\resized" + nome[41:])
-    imagem.close()
-
+        image.save(image_file_path)
+    image.close()
 
 
 def main() -> None:
-    directory = "C:\\pythonscript\\imagem\\morphManual\\"
-    frames = [f"{directory}frames\\{a}" for a in os.listdir(f"{directory}frames")]
-    frames.remove(f"{directory}frames\\resized")
+    frames = [
+        f"{FRAME_FOLDER}/{frame_name}" for frame_name in os.listdir(f"{FRAME_FOLDER}")
+    ]
+    frames.remove(RESIZED_FOLDER)
     for frame in frames:
         resize(frame)
-    nomeGif = f"{directory}Animation{len(os.listdir(directory)):03d}.gif"
-    with imageio.get_writer(nomeGif, mode="I") as writer:
+    unique_id_file = len(os.listdir("./"))
+    gif_name = f"./Morph_{unique_id_file:03d}.gif"
+    with imageio.get_writer(gif_name, mode="I") as writer:  # type:ignore
         frames = [
-            directory + "frames\\resized\\" + a
-            for a in os.listdir(directory + "frames\\resized\\")
+            f"{RESIZED_FOLDER}/{frame_name}"
+            for frame_name in os.listdir(f"{RESIZED_FOLDER}/")
         ]
-        nome = frames.pop(0)
-        for a in range(10):
-            colocaImagemNoGif(writer, nome)
-        ultimoNome = frames.pop()
+        first_frame = frames.pop(0)
+        for _ in range(10):
+            colocaImagemNoGif(writer, first_frame)
+        last_frame = frames.pop()
         for frame in frames:
             colocaImagemNoGif(writer, frame)
-        for a in range(10):
-            colocaImagemNoGif(writer, ultimoNome)
-    print("fim")
+        for _ in range(10):
+            colocaImagemNoGif(writer, last_frame)
+    print("Gif created successfully!")
 
 
 if __name__ == "__main__":
