@@ -1,4 +1,5 @@
 from io import TextIOWrapper
+from typing import cast
 from PIL import Image
 import os
 import multiprocessing
@@ -31,25 +32,27 @@ class Linha:
             pontos: list[CoordData] = []
             for d in range(8):
                 pontoAtual = coordDirecao(pontoInicial, d)
-                if pontoAtual not in self:
-                    try:
-                        pixel = imagem.getpixel(pontoAtual)
-                        if pixel[3] == 0:
-                            continue
-                        if pixel[2] == 255:
-                            pontos.append(pontoAtual)
-                    except:
-                        pass
+                if pontoAtual in self:
+                    continue
+                try:
+                    pixel = imagem.getpixel(pontoAtual)
+                except IndexError:
+                    continue
+                if pixel[3] == 0:
+                    continue
+                if pixel[2] == 255:
+                    pontos.append(pontoAtual)
             if len(pontos) == 1:
                 self.append(pontos[0])
-            else:
-                for ponto in pontos:
-                    novaLinha = self.copy()
-                    novaLinha.append(ponto)
-                    novaLinha.procuraLinhaAzul(imagem)
-                    if len(novaLinha) > len(self):
-                        self.clone(novaLinha)
-                break
+                continue
+            for ponto in pontos:
+                novaLinha = self.copy()
+                novaLinha.append(ponto)
+                novaLinha.procuraLinhaAzul(imagem)
+                if len(novaLinha) <= len(self):
+                    continue
+                self.clone(novaLinha)
+            break
 
     def sortAll(self) -> None:
         linhas = self.separa()
@@ -60,39 +63,43 @@ class Linha:
 
     def separa(self) -> list["Linha"]:
         linhas: list[Linha] = []
+        neighbor_distance = 2 ** (1 / 2) + 0.01
         for ponto in self.pontos:
             linhasQueTemOPonto: list[int] = []
             for index, linha in enumerate(linhas):
                 for novoPonto in linha.pontos:
-                    if distancia(ponto, novoPonto) <= 2 ** (1 / 2) + 0.01:
-                        linhasQueTemOPonto.append(index)
-                        break
+                    if distancia(ponto, novoPonto) > neighbor_distance:
+                        continue
+                    linhasQueTemOPonto.append(index)
+                    break
             if len(linhasQueTemOPonto) == 0:
                 linhas.append(Linha([ponto], circular=self.circular))
-            elif len(linhasQueTemOPonto) == 1:
+                continue
+            if len(linhasQueTemOPonto) == 1:
                 linhas[linhasQueTemOPonto[0]].append(ponto)
-            else:
-                superLinha = linhas[linhasQueTemOPonto[0]].copy()
-                for n in linhasQueTemOPonto[1:]:
-                    superLinha += linhas[n]
-                for n in reversed(sorted(linhasQueTemOPonto)):
-                    linhas.pop(n)
-                superLinha.append(ponto)
-                linhas.append(superLinha)
+                continue
+            superLinha = linhas[linhasQueTemOPonto[0]].copy()
+            for line_index in linhasQueTemOPonto[1:]:
+                superLinha += linhas[line_index]
+            for line_index in reversed(sorted(linhasQueTemOPonto)):
+                linhas.pop(line_index)
+            superLinha.append(ponto)
+            linhas.append(superLinha)
         return linhas
 
     def sort(self) -> None:
         tamanho = len(self)
         maiorLinha = Linha(circular=self.circular)
-        for n in range(min(4, tamanho)):
+        for coord_index in range(min(4, tamanho)):
             linhaTeste = self.copy()
-            primeiroPonto = self.pontos[n]
+            primeiroPonto = self.pontos[coord_index]
             linhaTeste.sortIt(Linha([primeiroPonto], circular=self.circular))
             if len(linhaTeste) == tamanho:
                 maiorLinha = linhaTeste.copy()
                 break
-            if len(linhaTeste) > len(maiorLinha):
-                maiorLinha = linhaTeste.copy()
+            if len(linhaTeste) <= len(maiorLinha):
+                continue
+            maiorLinha = linhaTeste.copy()
         self.clone(maiorLinha)
 
     def sortIt(self, linhaOrdenada: "Linha") -> None:
@@ -101,37 +108,41 @@ class Linha:
             pontos = self.pontosProximos(pontoInicial, exceptions=linhaOrdenada)
             if len(pontos) == 1:
                 linhaOrdenada.append(pontos[0])
-            else:
-                if len(pontos) == 0:
-                    if self.circular:
-                        indice = self.pontos.index(pontoInicial)
-                        if indice < len(self) - 1:
-                            linhaOrdenada.append(self.pontos[indice + 1])
-                            continue
+                continue
+            if len(pontos) == 0:
+                if not self.circular:
                     maiorLinha = linhaOrdenada.copy()
-                else:
-                    antes = len(linhaOrdenada)
-                    for ponto in pontos:
-                        pontosProximosDele = self.pontosProximos(
-                            ponto, exceptions=linhaOrdenada
-                        )
-                        if len(pontosProximosDele) == 1:
-                            if pontosProximosDele[0] in pontos:
-                                linhaOrdenada.append(ponto)
-                                linhaOrdenada.append(pontosProximosDele[0])
-                                break
-                    if len(linhaOrdenada) != antes:
-                        continue
-                    maiorLinha = linhaOrdenada.copy()
-                    for ponto in pontos:
-                        novaLinha = self.copy()
-                        novaLinha.sortIt(linhaOrdenada + [ponto])
-                        if len(novaLinha) == len(self):
-                            maiorLinha = novaLinha.copy()
-                            break
-                        if len(novaLinha) > len(maiorLinha):
-                            maiorLinha = novaLinha.copy()
-                break
+                    continue
+                indice = self.pontos.index(pontoInicial)
+                if indice < len(self) - 1:
+                    linhaOrdenada.append(self.pontos[indice + 1])
+                    continue
+                maiorLinha = linhaOrdenada.copy()
+                continue
+            antes = len(linhaOrdenada)
+            for ponto in pontos:
+                pontosProximosDele = self.pontosProximos(
+                    ponto, exceptions=linhaOrdenada
+                )
+                if len(pontosProximosDele) != 1:
+                    continue
+                if pontosProximosDele[0] in pontos:
+                    linhaOrdenada.append(ponto)
+                    linhaOrdenada.append(pontosProximosDele[0])
+                    break
+            if len(linhaOrdenada) != antes:
+                continue
+            maiorLinha = linhaOrdenada.copy()
+            for ponto in pontos:
+                novaLinha = self.copy()
+                novaLinha.sortIt(linhaOrdenada + [ponto])
+                if len(novaLinha) == len(self):
+                    maiorLinha = novaLinha.copy()
+                    break
+                if len(novaLinha) <= len(maiorLinha):
+                    continue
+                maiorLinha = novaLinha.copy()
+            break
         self.clone(maiorLinha)
 
     def pontosProximos(
@@ -142,18 +153,16 @@ class Linha:
         pontos: list[CoordData] = []
         for d in range(8):
             pontoAtual = coordDirecao(ponto, d)
-            if pontoAtual in self:
-                if  pontoAtual not in exceptions:
-                    if self.circular:
-                        if (
-                            abs(
-                                self.pontos.index(pontoAtual) - self.pontos.index(ponto)
-                            )
-                            < 5
-                        ):
-                            pontos.append(pontoAtual)
-                    else:
-                        pontos.append(pontoAtual)
+            if pontoAtual not in self:
+                continue
+            if pontoAtual in exceptions:
+                continue
+            if not self.circular:
+                pontos.append(pontoAtual)
+                continue
+            distance = self.pontos.index(pontoAtual) - self.pontos.index(ponto)
+            if abs(distance) < 5:
+                pontos.append(pontoAtual)
         return pontos
 
     def divide(self, divisor: int, inicio: int) -> list["Linha"]:
@@ -178,17 +187,24 @@ class Linha:
         for ponto in self.pontos:
             if ponto[1] < melhor[1]:
                 melhor = ponto
-            elif ponto[1] == melhor[1]:
-                if ponto[0] < melhor[0]:
-                    melhor = ponto
-        return melhor
+                continue
+            if ponto[1] != melhor[1]:
+                continue
+            if ponto[0] < melhor[0]:
+                melhor = ponto
+        if melhor == (float("inf"), float("inf")):
+            raise Exception("Linha sem pontos")
+        return cast(CoordData, melhor)
 
     def gira(self, novoInicio: CoordData) -> None:
-        if novoInicio in self:
-            while self.pontos[0] != novoInicio:
-                self.append(self.pontos[0])
-                self.pontos.pop(0)
-                self.inicio = self.pontos[0]
+        if novoInicio not in self:
+            return
+        while self.pontos[0] != novoInicio:
+            self.append(self.pontos[0])
+            self.pontos.pop(0)
+            self.inicio = self.pontos[0]
+
+#TODO: stopped here
 
     def makeCamada(self) -> list["Linha"]:
         perimetro = len(self)
