@@ -278,7 +278,7 @@ class Line:
             <= best_layers[3].calculate_mid_coord()[0]
         ):
             return best_layers
-        new_layers = [best_layers[a] for a in (0, 3, 2, 1)]
+        new_layers = [best_layers[a] for a in LAYERS_TRANSVERSAL_ORDER]
         for line in best_layers:
             line.coordinates = list(reversed(line.coordinates))
         return new_layers
