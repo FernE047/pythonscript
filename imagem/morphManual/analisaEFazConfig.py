@@ -1,5 +1,4 @@
 from enum import Enum
-from io import TextIOWrapper
 from math import sqrt
 from PIL import Image
 import os
@@ -300,17 +299,18 @@ class Line:
         average_y = y // len(self)
         return (average_x, average_y)
 
-    def write_to_file(self, other: "Line", file: TextIOWrapper) -> None:
+    def to_config(self, other: "Line") -> str:
         def format_coordinate(coord: CoordData) -> str:
             return f"{coord[0]},{coord[1]}"
 
-        def write_line(coord_a: CoordData, coord_b: CoordData) -> None:
-            file.write(f"{format_coordinate(coord_a)} {format_coordinate(coord_b)}\n")
+        def format_line(coord_a: CoordData, coord_b: CoordData) -> str:
+            return f"{format_coordinate(coord_a)} {format_coordinate(coord_b)}\n"
 
+        text = ""
         if len(self) == len(other):
             for coord_source, coord_target in zip(self.coordinates, other.coordinates):
-                write_line(coord_source, coord_target)
-            return
+                text += format_line(coord_source, coord_target)
+            return text
         line_source = self
         line_target = other
         if len(self) < len(other):
@@ -322,7 +322,8 @@ class Line:
         for source_index, coord_source in enumerate(line_source.coordinates):
             target_index = int(source_index * coordinate_ratio)
             coord_target = line_target.coordinates[target_index]
-            write_line(coord_source, coord_target)
+            text += format_line(coord_source, coord_target)
+        return text
 
     def clone(self, other: "Line") -> "Line":
         self.coordinates = other.coordinates.copy()
@@ -456,11 +457,12 @@ class Area:
             current_line.sort_all()
             self.lines.append(current_line)
 
-    def write_to_file(self, other: "Area", file: TextIOWrapper) -> None:
+    def to_config(self, other: "Area") -> str:
+        text = ""
         if len(self) == len(other):
             for line_source, line_target in zip(self.lines, other.lines):
-                line_source.write_to_file(line_target, file)
-            return
+                text += line_source.to_config(line_target)
+            return text
         area_source = self
         area_target = other
         if len(self) < len(other):
@@ -472,7 +474,8 @@ class Area:
         for source_index, line_source in enumerate(area_source.lines):
             target_index = int(source_index * line_ratio)
             line_target = area_target.lines[target_index]
-            line_source.write_to_file(line_target, file)
+            text += line_source.to_config(line_target)
+        return text
 
     def __contains__(self, other: CoordData) -> bool:
         for line in self.lines:
@@ -568,13 +571,14 @@ class AreaRed:
             current_line.sort_all()
             self.layer_regions[indice].append(current_line)
 
-    def write_to_file(self, other: "AreaRed", file: TextIOWrapper) -> None:
+    def to_config(self, other: "AreaRed") -> str:
+        text = ""
         for region_index in range(4):
             self_layer = self.layer_regions[region_index]
             other_layer = other.layer_regions[region_index]
             if len(self_layer) == len(other_layer):
                 for line_source, line_target in zip(self_layer, other_layer):
-                    line_source.write_to_file(line_target, file)
+                    text += line_source.to_config(line_target)
                 continue
             layer_source = self_layer
             layer_target = other_layer
@@ -587,7 +591,8 @@ class AreaRed:
             for source_index, line_source in enumerate(layer_source):
                 target_index = int(source_index * layer_ratio)
                 line_target = layer_target[target_index]
-                line_source.write_to_file(line_target, file)
+                text += line_source.to_config(line_target)
+        return text
 
     def __contains__(self, other: CoordData) -> bool:
         for regiao in self.layer_regions:
@@ -636,13 +641,11 @@ class ImagePart:
                     self.blue_coord = (x, y)
                     return
 
-    def write_to_file(self, other: "ImagePart", file: TextIOWrapper) -> None:
+    def to_config(self, other: "ImagePart") -> str:
         if isinstance(self.area, Area) and isinstance(other.area, Area):
-            self.area.write_to_file(other.area, file)
-            return
+            return self.area.to_config(other.area)
         if isinstance(self.area, AreaRed) and isinstance(other.area, AreaRed):
-            self.area.write_to_file(other.area, file)
-            return
+            return self.area.to_config(other.area)
         raise Exception("Imagens incompatíveis para escrita")
 
 
@@ -657,8 +660,11 @@ def configPart(part_index: int) -> None:
     print(f"Processing Part : {part_index}")
     source_part = ImagePart(f"./partes/iniciais/{part_index:03d}.png")
     target_part = ImagePart(f"./partes/finais/{part_index:03d}.png")
-    with open(f"./partes/config/{part_index:03d}.txt", "w", encoding="utf-8") as fileConfig:
-        source_part.write_to_file(target_part, fileConfig)
+    with open(
+        f"./partes/config/{part_index:03d}.txt", "w", encoding="utf-8"
+    ) as file_config:
+        config = source_part.to_config(target_part)
+        file_config.write(config)
         print(f"\tPart Completed : {part_index}")
 
 
