@@ -6,6 +6,31 @@ import multiprocessing
 
 CoordData = tuple[int, int]
 
+SOURCE_FOLDER = "./parts/source"
+TARGET_FOLDER = "./parts/target"
+CONFIG_FOLDER = "./parts/config"
+ROUNDING_EPSILON = 0.1
+# euclidean distance plus a small margin
+NEIGHBORS_MINIMUM_DISTANCE = sqrt(2) + ROUNDING_EPSILON
+# arbitrary value to avoid connecting distant points in circular lines
+NEIGHBORS_MINIMUM_DISTANCE_INDEXED = 5
+# another arbitrary value to limit sorting attempts, or else we would have O(n^2)
+SORTING_MINIMUM_ATTEMPTS = 4
+LAYER_COUNT = 4
+SMALL_PERIMETER_MAX = LAYER_COUNT
+NO_SCORE_YET = float("inf")
+VERTICAL_PARTITION_PARITY = 0
+# Transversal order to process regions and layers, idk why but it works
+REGIONS_TRANSVERSAL_ORDER = (0, 2, 1, 3)
+# Layers transversal order to process regions and layers, idk why but it works
+LAYERS_TRANSVERSAL_ORDER = (0, 3, 2, 1)
+MAX_BRIGHTNESS = 255
+MIN_BRIGHTNESS = 0
+ALPHA_CHANNEL = 3
+RED_CHANNEL = 0
+BLUE_CHANNEL = 2
+SPECIAL_BLUE_BRIGHTNESS = 200
+
 
 def get_pixel(image: Image.Image, coord: CoordData) -> tuple[int, ...]:
     pixel = image.getpixel(coord)
@@ -86,9 +111,9 @@ class Line:
                     pixel = get_pixel(image, current_coord)
                 except IndexError:
                     continue
-                if pixel[3] == 0:
+                if pixel[ALPHA_CHANNEL] == MIN_BRIGHTNESS:
                     continue
-                if pixel[2] == 255:
+                if pixel[BLUE_CHANNEL] == MAX_BRIGHTNESS:
                     detected_coordinates.append(current_coord)
             if len(detected_coordinates) == 1:
                 self.append(detected_coordinates[0])
@@ -112,12 +137,11 @@ class Line:
 
     def group_connected_coordinates(self) -> list["Line"]:
         lines: list[Line] = []
-        neighbor_distance = 2 ** (1 / 2) + 0.01
         for coord in self.coordinates:
             neighbor_lines: list[int] = []
             for index, line in enumerate(lines):
                 for line_coord in line.coordinates:
-                    if get_distance(coord, line_coord) > neighbor_distance:
+                    if get_distance(coord, line_coord) > NEIGHBORS_MINIMUM_DISTANCE:
                         continue
                     neighbor_lines.append(index)
                     break
@@ -139,7 +163,7 @@ class Line:
     def sort(self) -> None:
         length = len(self)
         best_line = Line(is_cyclic=self.is_cyclic)
-        for coord_index in range(min(4, length)):
+        for coord_index in range(min(SORTING_MINIMUM_ATTEMPTS, length)):
             test_line = self.copy()
             first_coord = self.coordinates[coord_index]
             test_line.try_to_sort(Line([first_coord], is_cyclic=self.is_cyclic))
@@ -210,25 +234,23 @@ class Line:
                 continue
             current_index = self.coordinates.index(current_coord)
             origin_index = self.coordinates.index(origin_coord)
-            distance = current_index - origin_index
-            if abs(distance) < 5:
+            distance = abs(current_index - origin_index)
+            if distance < NEIGHBORS_MINIMUM_DISTANCE_INDEXED:
                 coords.append(current_coord)
         return coords
 
-    def split_into_partitions(
-        self, partition_count: int, start_index: int
-    ) -> list["Line"]:
-        partition_sizes = [0] * partition_count
+    def split_into_partitions(self, start_index: int) -> list["Line"]:
+        partition_sizes = [0] * LAYER_COUNT
         for index in range(len(self)):
-            partition_sizes[index % partition_count] += 1
+            partition_sizes[index % LAYER_COUNT] += 1
         lines: list[Line] = []
-        for index in range(partition_count):
+        for index in range(LAYER_COUNT):
             current_line = Line(is_cyclic=self.is_cyclic)
             partition_start = start_index + sum(partition_sizes[:index])
             partition_end = partition_start + partition_sizes[index]
             for coord in self.coordinates[partition_start:partition_end]:
                 current_line.append(coord)
-            if index == partition_count - 1:
+            if index == LAYER_COUNT - 1:
                 for coord in self.coordinates[:start_index]:
                     current_line.append(coord)
             lines.append(current_line)
@@ -236,44 +258,45 @@ class Line:
 
     def turn_into_layers(self) -> list["Line"]:
         perimeter = len(self)
-        layer_section_size = int((perimeter - 0.1) // 4 + 1)
-        if perimeter <= 4:
+        layer_section_size = int((perimeter - ROUNDING_EPSILON) // LAYER_COUNT + 1)
+        if perimeter <= SMALL_PERIMETER_MAX:
             best_layers: list[Line] = []
-            for a in range(perimeter):
+            for index in range(perimeter):
                 best_layers.append(
-                    Line([self.coordinates[a]], is_cyclic=self.is_cyclic)
+                    Line([self.coordinates[index]], is_cyclic=self.is_cyclic)
                 )
-            while len(best_layers) != 4:
+            while len(best_layers) != LAYER_COUNT:
                 best_layers.append(
                     Line([self.coordinates[-1]], is_cyclic=self.is_cyclic)
                 )
             return best_layers
         best_layers = []
-        best_score = float("inf")
+        best_score = NO_SCORE_YET
         for start_section in range(layer_section_size):
-            new_layers = self.split_into_partitions(4, start_section)
+            new_layers = self.split_into_partitions(start_section)
             bottommost_y = new_layers[0].calculate_mid_coord()[1]
             bottom_line = new_layers[0]
-            for n in range(1, 4):
-                if new_layers[n].calculate_mid_coord()[1] <= bottommost_y:
+            for layer_index in range(1, LAYER_COUNT):
+                if new_layers[layer_index].calculate_mid_coord()[1] <= bottommost_y:
                     continue
-                bottommost_y = new_layers[n].calculate_mid_coord()[1]
-                bottom_line = new_layers[n]
+                bottommost_y = new_layers[layer_index].calculate_mid_coord()[1]
+                bottom_line = new_layers[layer_index]
             while new_layers[0] != bottom_line:
                 new_layers = [new_layers[-1]] + new_layers
                 new_layers.pop()
             score = 0
-            for a in range(4):
-                if a % 2 == 0:
-                    score += abs(
-                        new_layers[a].coordinates[-1][1]
-                        - new_layers[a].coordinates[0][1]
-                    )
+            for index in range(LAYER_COUNT):
+                current_layer = new_layers[index]
+                first_index = current_layer.coordinates[0]
+                last_index = current_layer.coordinates[-1]
+                if index % 2 == VERTICAL_PARTITION_PARITY:
+                    first_y = first_index[1]
+                    last_y = last_index[1]
+                    score += abs(last_y - first_y)
                 else:
-                    score += abs(
-                        new_layers[a].coordinates[-1][0]
-                        - new_layers[a].coordinates[0][0]
-                    )
+                    first_x = first_index[0]
+                    last_x = last_index[0]
+                    score += abs(last_x - first_x)
             if score < best_score:
                 best_layers = new_layers.copy()
                 best_score = score
@@ -282,7 +305,7 @@ class Line:
             <= best_layers[3].calculate_mid_coord()[0]
         ):
             return best_layers
-        new_layers = [best_layers[a] for a in (0, 3, 2, 1)]
+        new_layers = [best_layers[a] for a in LAYERS_TRANSVERSAL_ORDER]
         for line in best_layers:
             line.coordinates = list(reversed(line.coordinates))
             line.start_coordinate = line.coordinates[0]
@@ -387,7 +410,7 @@ class Area:
             was_last_pixel_opaque = False
             for x in range(width):
                 pixel = get_pixel(self.image, (x, y))
-                is_current_pixel_opaque = pixel[3] == 255
+                is_current_pixel_opaque = pixel[ALPHA_CHANNEL] == MAX_BRIGHTNESS
                 if not was_last_pixel_opaque ^ is_current_pixel_opaque:
                     was_last_pixel_opaque = is_current_pixel_opaque
                     continue
@@ -405,7 +428,7 @@ class Area:
             was_last_pixel_opaque = False
             for y in range(height):
                 pixel = get_pixel(self.image, (x, y))
-                is_current_pixel_opaque = pixel[3] == 255
+                is_current_pixel_opaque = pixel[ALPHA_CHANNEL] == MAX_BRIGHTNESS
                 if not was_last_pixel_opaque ^ is_current_pixel_opaque:
                     was_last_pixel_opaque = is_current_pixel_opaque
                     continue
@@ -423,7 +446,7 @@ class Area:
         initial_contour_line.sort_all()
         layers = initial_contour_line.turn_into_layers()
         initial_contour_line = layers[0]
-        for indice in range(1, 4):
+        for indice in range(1, LAYER_COUNT):
             initial_contour_line.append(layers[indice])
         self.lines.append(initial_contour_line)
 
@@ -446,7 +469,7 @@ class Area:
                     pixel = get_pixel(self.image, current_coord)
                 except IndexError:
                     continue
-                if pixel[3] == 0:
+                if pixel[ALPHA_CHANNEL] == 0:
                     continue
                 if current_coord in current_line:
                     continue
@@ -501,7 +524,7 @@ class AreaRed:
             was_last_pixel_opaque = False
             for x in range(width):
                 pixel = get_pixel(self.image, (x, y))
-                is_current_pixel_opaque = pixel[3] == 255
+                is_current_pixel_opaque = pixel[ALPHA_CHANNEL] == MAX_BRIGHTNESS
                 if not was_last_pixel_opaque ^ is_current_pixel_opaque:
                     was_last_pixel_opaque = is_current_pixel_opaque
                     continue
@@ -519,7 +542,7 @@ class AreaRed:
             was_last_pixel_opaque = False
             for y in range(height):
                 pixel = get_pixel(self.image, (x, y))
-                is_current_pixel_opaque = pixel[3] == 255
+                is_current_pixel_opaque = pixel[ALPHA_CHANNEL] == MAX_BRIGHTNESS
                 if not was_last_pixel_opaque ^ is_current_pixel_opaque:
                     was_last_pixel_opaque = is_current_pixel_opaque
                     continue
@@ -549,9 +572,9 @@ class AreaRed:
             previous_layer_count = current_layer_count
 
     def find_layers(self) -> None:
-        for indice in [0, 2, 1, 3]:
+        for layer_index in LAYERS_TRANSVERSAL_ORDER:
             current_line = Line(is_cyclic=True)
-            previous_line = self.layer_regions[indice][-1]
+            previous_line = self.layer_regions[layer_index][-1]
             for previous_coord in previous_line.coordinates:
                 for direction in ORTHOGONAL_DIRECTIONS:
                     current_coord = apply_direction(previous_coord, direction)
@@ -559,7 +582,7 @@ class AreaRed:
                         pixel = get_pixel(self.image, current_coord)
                     except IndexError:
                         continue
-                    if pixel[3] == 0:
+                    if pixel[ALPHA_CHANNEL] == 0:
                         continue
                     if current_coord in current_line:
                         continue
@@ -569,11 +592,11 @@ class AreaRed:
             if len(current_line) == 0:
                 continue
             current_line.sort_all()
-            self.layer_regions[indice].append(current_line)
+            self.layer_regions[layer_index].append(current_line)
 
     def to_config(self, other: "AreaRed") -> str:
         text = ""
-        for region_index in range(4):
+        for region_index in range(LAYER_COUNT):
             self_layer = self.layer_regions[region_index]
             other_layer = other.layer_regions[region_index]
             if len(self_layer) == len(other_layer):
@@ -595,8 +618,8 @@ class AreaRed:
         return text
 
     def __contains__(self, other: CoordData) -> bool:
-        for regiao in self.layer_regions:
-            for line in regiao:
+        for region in self.layer_regions:
+            for line in region:
                 if other in line:
                     return True
         return False
@@ -631,12 +654,12 @@ class ImagePart:
         for x in range(width):
             for y in range(height):
                 pixel = get_pixel(image, (x, y))
-                if pixel[3] == 0:
+                if pixel[ALPHA_CHANNEL] == 0:
                     continue
-                if pixel[0] == 255:
+                if pixel[RED_CHANNEL] == MAX_BRIGHTNESS:
                     self.has_red = True
                     return
-                if pixel[2] == 200:
+                if pixel[BLUE_CHANNEL] == SPECIAL_BLUE_BRIGHTNESS:
                     self.has_blue = True
                     self.blue_coord = (x, y)
                     return
@@ -650,26 +673,27 @@ class ImagePart:
 
 
 def get_distance(coords_a: tuple[int, int], coords_b: tuple[int, int]) -> float:
-    soma = 0
+    accumulator = 0
     for coord_a, coord_b in zip(coords_a, coords_b):
-        soma += abs(coord_a - coord_b) ** 2
-    return sqrt(soma)
+        accumulator += abs(coord_a - coord_b) ** 2
+    return sqrt(accumulator)
 
 
 def configPart(part_index: int) -> None:
     print(f"Processing Part : {part_index}")
-    source_part = ImagePart(f"./partes/iniciais/{part_index:03d}.png")
-    target_part = ImagePart(f"./partes/finais/{part_index:03d}.png")
-    with open(
-        f"./partes/config/{part_index:03d}.txt", "w", encoding="utf-8"
-    ) as file_config:
+    file_name = f"{part_index:03d}"
+    image_name = f"{file_name}.png"
+    source_part = ImagePart(f"{SOURCE_FOLDER}/{image_name}")
+    target_part = ImagePart(f"{TARGET_FOLDER}/{image_name}")
+    config_name = f"{CONFIG_FOLDER}/{file_name}.txt"
+    with open(config_name, "w", encoding="utf-8") as file_config:
         config = source_part.to_config(target_part)
         file_config.write(config)
         print(f"\tPart Completed : {part_index}")
 
 
 def main() -> None:
-    total_parts = len(os.listdir("./partes/finais"))
+    total_parts = len(os.listdir(TARGET_FOLDER))
     p = multiprocessing.Pool(os.cpu_count())
     p.map(configPart, range(total_parts))
 
