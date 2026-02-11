@@ -313,16 +313,8 @@ class Linha:
     def escreve(self, other: "Linha", file: TextIOWrapper) -> None:
         if len(self) == len(other):
             for index in range(len(self)):
-                file.write(
-                    str(self.pontos[index][0]) + "," + str(self.pontos[index][1])
-                )
-                file.write(
-                    " "
-                    + str(other.pontos[index][0])
-                    + ","
-                    + str(other.pontos[index][1])
-                    + "\n"
-                )
+                file.write(f"{self.pontos[index][0]},{self.pontos[index][1]}")
+                file.write(f" {other.pontos[index][0]},{other.pontos[index][1]}\n")
             return
         if len(self) > len(other):
             if len(self) - 1 == 0:
@@ -332,8 +324,8 @@ class Linha:
             for index in range(len(self)):
                 pontoInicial = self.pontos[index]
                 pontoFinal = other.pontos[int(index * multiplicador)]
-                file.write(str(pontoInicial[0]) + "," + str(pontoInicial[1]))
-                file.write(" " + str(pontoFinal[0]) + "," + str(pontoFinal[1]) + "\n")
+                file.write(f"{pontoInicial[0]},{pontoInicial[1]}")
+                file.write(f" {pontoFinal[0]},{pontoFinal[1]}\n")
             return
         if len(other) - 1 == 0:
             multiplicador = 0.0
@@ -342,8 +334,8 @@ class Linha:
         for index in range(len(other)):
             pontoInicial = self.pontos[int(index * multiplicador)]
             pontoFinal = other.pontos[index]
-            file.write(str(pontoInicial[0]) + "," + str(pontoInicial[1]))
-            file.write(" " + str(pontoFinal[0]) + "," + str(pontoFinal[1]) + "\n")
+            file.write(f"{pontoInicial[0]},{pontoInicial[1]}")
+            file.write(f" {pontoFinal[0]},{pontoFinal[1]}\n")
 
     def imprime(self, imagem: Image.Image) -> None:
         transparencia = 255
@@ -352,8 +344,9 @@ class Linha:
             transparencia -= 1
             if transparencia <= 80:
                 transparencia = 255
-        directory = "C:\\pythonscript\\imagem\\morphManual\\debug"
-        name = f"{directory}\\{len(os.listdir(directory)):03d}.png"
+        directory = "./debug"
+        unique_id = len(os.listdir(directory))
+        name = f"./debug/{unique_id:03d}.png"
         imagem.save(name)
 
     def clone(self, other: "Linha") -> "Linha":
@@ -399,7 +392,9 @@ class Linha:
 
 
 class Area:
-    def __init__(self, imagem: Image.Image, linhaInicial: "Linha | None" = None):
+    def __init__(
+        self, imagem: Image.Image, linhaInicial: "Linha | None" = None
+    ) -> None:
         self.imagem = imagem
         self.linhas: list[Linha] = []
         if linhaInicial is None:
@@ -480,8 +475,9 @@ class Area:
                 cor = tuple([randint(0, 255) for _ in range(3)])
                 for coord in linha.pontos:
                     imagem.putpixel(coord, cor)
-        path = "C:\\pythonscript\\imagem\\morphManual\\partesConfig"
-        imagem.save(f"{path}\\debugArea{len(os.listdir(path)):03d}.png")
+        path = "./partesConfig"
+        unique_id = len(os.listdir(path))
+        imagem.save(f"{path}/debugArea{unique_id:03d}.png")
 
     def escreve(self, other: "Area", file: TextIOWrapper) -> None:
         if len(self) == len(other):
@@ -598,11 +594,7 @@ class AreaVermelha:  # maybe add a separation for larger areas
                     self.imagem.putpixel(coord, tuple(cor + [transparencia]))
                     if transparencia:
                         transparencia -= 1
-        self.imagem.save(
-            f"C:\\pythonscript\\imagem\\morphManual\\debug\\{indice:03d}"
-            + nome
-            + ".png"
-        )
+        self.imagem.save(f"./debug/{nome}_{indice:03d}.png")
 
     def imprimeCamadas(self, nome: str) -> None:
         maximoLinhas = self.tamanhoMaiorRegiao()
@@ -618,13 +610,11 @@ class AreaVermelha:  # maybe add a separation for larger areas
                     transparencia -= 1
                     if transparencia <= 80:
                         transparencia = 255
-        directory = "C:\\pythonscript\\imagem\\morphManual\\debug"
-        name = directory
+        directory = "./debug"
         index = sum(
             [1 if file.find(nome) != -1 else 0 for file in os.listdir(directory)]
         )
-        name += f"\\{index:03d}"
-        name += nome + ".png"
+        name = f"{directory}/{index:03d}/{nome}.png"
         self.imagem.save(name)
 
     def escreve(self, other: "AreaVermelha", file: TextIOWrapper) -> None:
@@ -731,14 +721,10 @@ def distancia(pontoA: CoordData, pontoB: CoordData) -> float:
 
 def configPart(indice: int) -> None:
     print("Fazendo Parte : " + str(indice))
-    parteInicial = ImagemParte(
-        f"C:\\pythonscript\\imagem\\morphManual\\partes\\iniciais\\{indice:03d}.png"
-    )
-    parteFinal = ImagemParte(
-        f"C:\\pythonscript\\imagem\\morphManual\\partes\\finais\\{indice:03d}.png"
-    )
+    parteInicial = ImagemParte(f"./partes/iniciais/{indice:03d}.png")
+    parteFinal = ImagemParte(f"./partes/finais/{indice:03d}.png")
     with open(
-        f"C:\\pythonscript\\imagem\\morphManual\\partes\\config\\{indice:03d}.txt",
+        f"./partes/config/{indice:03d}.txt",
         "w",
         encoding="utf-8",
     ) as fileConfig:
@@ -747,9 +733,7 @@ def configPart(indice: int) -> None:
 
 
 def main() -> None:
-    quantiaPartes = len(
-        os.listdir("C:\\pythonscript\\imagem\\morphManual\\partes\\finais")
-    )
+    quantiaPartes = len(os.listdir("./partes/finais"))
     p = multiprocessing.Pool(os.cpu_count())
     p.map(configPart, range(quantiaPartes))
 
