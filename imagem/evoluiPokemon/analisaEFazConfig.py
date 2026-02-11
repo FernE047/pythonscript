@@ -119,7 +119,7 @@ class Line:
                 continue
             line = lines[neighbor_lines[0]].copy()
             for line_index in neighbor_lines[1:]:
-                line.add_line(lines[line_index])
+                line = line.add_line(lines[line_index])
             for line_index in reversed(sorted(neighbor_lines)):
                 lines.pop(line_index)
             line.append(coord)
@@ -129,9 +129,9 @@ class Line:
     def sort(self) -> None:
         length = len(self)
         best_line = Line(is_circular=self.is_circular)
-        for n in range(min(SORTING_MINIMUM_ATTEMPTS, length)):
+        for coord_index in range(min(SORTING_MINIMUM_ATTEMPTS, length)):
             test_line = self.copy()
-            first_coordinate = self.coordinates[n]
+            first_coordinate = self.coordinates[coord_index]
             test_line.try_to_sort(
                 Line([first_coordinate], is_circular=self.is_circular)
             )
@@ -403,20 +403,23 @@ class Area:
                 coord = (x, height - 1)
                 if coord not in countour:
                     countour.append(coord)
-        linhaInicial = Line(countour)
-        linhaInicial.sort()
-        layers = linhaInicial.turn_into_layers()
+        initial_contour_line = Line(countour)
+        initial_contour_line.sort()
+        layers = initial_contour_line.turn_into_layers()
         for line in layers:
             self.layer_regions.append([line])
 
     def search_for_layers(self) -> None:
-        changed = True
-        while changed:
-            changed = self.find_layers()
+        previous_layer_count = len(self.layer_regions)
+        while True:
+            self.find_layers()
+            current_layer_count = len(self.layer_regions)
+            if current_layer_count == previous_layer_count:
+                break
+            previous_layer_count = current_layer_count
 
-    def find_layers(self) -> bool:
+    def find_layers(self) -> None:
         # try to expand each layer region by finding neighboring pixels
-        has_changes_occurred = False
         for region_index in LAYERS_TRANSVERSAL_ORDER:
             current_line = Line(is_circular=True)
             previous_line = self.layer_regions[region_index][-1]
@@ -437,8 +440,6 @@ class Area:
                 continue
             current_line.sort_all_coordinates()
             self.layer_regions[region_index].append(current_line)
-            has_changes_occurred = True
-        return has_changes_occurred
 
     def write_region_data(self, other: "Area", file: TextIOWrapper) -> None:
         for indice in range(LAYER_COUNT):
