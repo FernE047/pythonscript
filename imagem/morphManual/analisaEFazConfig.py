@@ -1,6 +1,5 @@
 from enum import Enum
 from io import TextIOWrapper
-from turtle import width
 from typing import Literal, cast
 from PIL import Image
 import os
