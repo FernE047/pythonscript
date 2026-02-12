@@ -1,6 +1,9 @@
-import pypdn
 from PIL import Image
 import os
+import pypdn  # type: ignore
+# pypdn doesn't have type hints, so I ignore it
+
+# this code is legacy, I am only changing type hints and linter errors. it doesn't make sense to refactor it, since I already have a better version of it, and I don't want to break it by changing it too much
 
 CoordData = tuple[int, int]
 
@@ -18,7 +21,7 @@ def get_pixel(image: Image.Image, coord: CoordData) -> tuple[int, ...]:
     return pixel
 
 
-def limpaPasta(pasta):
+def limpaPasta(pasta: str) -> None:
     arquivos = [pasta + "/" + a for a in os.listdir(pasta)]
     if "./frames/resized" in arquivos:
         arquivos.pop(arquivos.index("./frames/resized"))
@@ -26,7 +29,7 @@ def limpaPasta(pasta):
         os.remove(arquivo)
 
 
-def salvaLayers(nome, pasta):
+def salvaLayers(nome: str, pasta: str) -> None:
     fundo = False
     layeredImage = pypdn.read(nome)
     new_im = Image.fromarray(layeredImage.layers[0].image)
@@ -37,11 +40,11 @@ def salvaLayers(nome, pasta):
         largura, altura = new_im.size
         for x in range(largura):
             for y in range(altura):
-                pixel = new_im.getpixel((x, y))
+                pixel = get_pixel(new_im, (x, y))
                 if pixel[3] == 0:
-                    pixel = new_im.putpixel((x, y), (0, 0, 0, 0))
+                    new_im.putpixel((x, y), (0, 0, 0, 0))
         if n == 1:
-            if new_im.getpixel((0, 0)) == (255, 255, 255, 255):
+            if get_pixel(new_im, (0, 0)) == (255, 255, 255, 255):
                 fundo = True
                 new_im.save(pasta + "/fundo.png")
                 continue

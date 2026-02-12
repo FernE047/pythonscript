@@ -1,5 +1,6 @@
 from PIL import Image
-from time import time
+
+# this code is legacy, I am only changing type hints and linter errors. it doesn't make sense to refactor it, since I already have a better version of it, and I don't want to break it by changing it too much
 
 CoordData = tuple[int, int]
 
@@ -17,15 +18,6 @@ def get_pixel(image: Image.Image, coord: CoordData) -> tuple[int, ...]:
     return pixel
 
 
-def funcaoAfim(inicio, fim, total, n):
-    elemento = []
-    for elementoInicial, elementoFinal in zip(inicio, fim):
-        B = elementoInicial
-        A = (elementoFinal - elementoInicial) / (total + 1)
-        elemento.append(int(A * n + B))
-    return tuple(elemento)
-
-
 def main() -> None:
     imagemInicial = Image.open("./inicial.png")
     imagemFinal = Image.new("RGBA", imagemInicial.size, (0, 0, 0, 0))
@@ -33,11 +25,12 @@ def main() -> None:
         linha = file.readline()
         while linha:
             coords = [
-                tuple([int(b) for b in coord.split(",")]) for coord in linha.split(" ")
+                (int(coord.split(",")[0]), int(coord.split(",")[1]))
+                for coord in linha.split(" ")
             ]
             coordInicial = coords[0]
             coordFinal = coords[1]
-            cor = imagemInicial.getpixel(coordInicial)
+            cor = get_pixel(imagemInicial, coordInicial)
             imagemFinal.putpixel(coordFinal, cor)
             linha = file.readline()
         imagemFinal.save("./final.png")

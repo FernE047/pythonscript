@@ -1,9 +1,11 @@
+from typing import TypeVar, cast
 from PIL import Image
-from time import time
 from os import cpu_count
 import multiprocessing
 
 CoordData = tuple[int, int]
+
+FINAL_FRAME = 30
 
 
 def get_pixel(image: Image.Image, coord: CoordData) -> tuple[int, ...]:
@@ -19,34 +21,20 @@ def get_pixel(image: Image.Image, coord: CoordData) -> tuple[int, ...]:
     return pixel
 
 
-def pegaInteiro(
-    mensagem: str, minimo: int | None = None, maximo: int | None = None
-) -> int:
-    while True:
-        entrada = input(f"{mensagem} : ")
-        try:
-            valor = int(entrada)
-            if (minimo is not None) and (valor < minimo):
-                print(f"valor deve ser maior ou igual a {minimo}")
-                continue
-            if (maximo is not None) and (valor > maximo):
-                print(f"valor deve ser menor ou igual a {maximo}")
-                continue
-            return valor
-        except Exception as _:
-            print("valor inválido, tente novamente")
+R = TypeVar("R", bound=tuple[int, ...])
 
 
-def funcaoAfim(inicio, fim, total, n):
-    elemento = []
-    for elementoInicial, elementoFinal in zip(inicio, fim):
-        B = elementoInicial
-        A = (elementoFinal - elementoInicial) / (total + 1)
-        elemento.append(int(A * n + B))
-    return tuple(elemento)
+def interpolate_tuples(tuple_source: R, tuple_target: R, frame_index: int) -> R:
+    interpolated_values: list[int] = []
+    for source_value, target_value in zip(tuple_source, tuple_target):
+        difference = target_value - source_value
+        interpolation_step = difference / FINAL_FRAME
+        interpolated_value = int(interpolation_step * frame_index + source_value)
+        interpolated_values.append(interpolated_value)
+    return cast(R, tuple(interpolated_values))
 
 
-def makeFrame(n):
+def makeFrame(n: int) -> None:
     imagemInicial = Image.open("./inicial.png")
     imagemFinal = Image.open("./final.png")
     print(n)
@@ -55,19 +43,19 @@ def makeFrame(n):
         linha = file.readline()
         while linha:
             if linha.find("fundo") != -1:
-                coord = tuple([int(b) for b in linha[:-6].split(",")])
-                frame.putpixel(coord, imagemInicial.getpixel(coord))
+                coord = (int(linha[:-6].split(",")[0]), int(linha[:-6].split(",")[1]))
+                frame.putpixel(coord, get_pixel(imagemInicial, coord))
             else:
                 coords = [
-                    tuple([int(b) for b in coord.split(",")])
+                    (int(coord.split(",")[0]), int(coord.split(",")[1]))
                     for coord in linha.split(" ")
                 ]
                 coordFinal = coords[1]
-                pixelFinal = imagemFinal.getpixel(coordFinal)
+                pixelFinal = get_pixel(imagemFinal, coordFinal)
                 coordInicial = coords[0]
-                pixelInicial = imagemInicial.getpixel(coordInicial)
-                novaCoord = funcaoAfim(coordInicial, coordFinal, 30, n + 1)
-                novaCor = funcaoAfim(pixelInicial, pixelFinal, 30, n + 1)
+                pixelInicial = get_pixel(imagemInicial, coordInicial)
+                novaCoord = interpolate_tuples(coordInicial, coordFinal, n + 1)
+                novaCor = interpolate_tuples(pixelInicial, pixelFinal, n + 1)
                 frame.putpixel(novaCoord, novaCor)
             linha = file.readline()
         frame.save(f"./frames/frame{n + 1:03d}.png")
@@ -78,14 +66,13 @@ def makeFrame(n):
 
 def main() -> None:
     nomeFrame = "./frames/frame{0:03d}.png"
-    quantiaFrames = 30  # pegaInteiro("quantos frames")
     imagemInicial = Image.open("./inicial.png")
     imagemFinal = Image.open("./final.png")
     imagemInicial.save(nomeFrame.format(0))
-    imagemFinal.save(nomeFrame.format(quantiaFrames + 1))
+    imagemFinal.save(nomeFrame.format(FINAL_FRAME + 1))
     print("\n tamanho: " + str(imagemInicial.size), end="\n\n")
     p = multiprocessing.Pool(cpu_count())
-    p.map(makeFrame, range(quantiaFrames))
+    p.map(makeFrame, range(FINAL_FRAME))
 
 
 if __name__ == "__main__":

@@ -1,5 +1,7 @@
+from typing import TypeVar, cast
 from PIL import Image
-from time import time
+
+FINAL_FRAME = 30
 
 CoordData = tuple[int, int]
 
@@ -35,13 +37,17 @@ def pegaInteiro(
             print("valor inválido, tente novamente")
 
 
-def funcaoAfim(inicio, fim, total, n):
-    elemento = []
-    for elementoInicial, elementoFinal in zip(inicio, fim):
-        B = elementoInicial
-        A = (elementoFinal - elementoInicial) / (total + 1)
-        elemento.append(int(A * n + B))
-    return tuple(elemento)
+R = TypeVar("R", bound=tuple[int, ...])
+
+
+def interpolate_tuples(tuple_source: R, tuple_target: R, frame_index: int) -> R:
+    interpolated_values: list[int] = []
+    for source_value, target_value in zip(tuple_source, tuple_target):
+        difference = target_value - source_value
+        interpolation_step = difference / FINAL_FRAME
+        interpolated_value = int(interpolation_step * frame_index + source_value)
+        interpolated_values.append(interpolated_value)
+    return cast(R, tuple(interpolated_values))
 
 
 def main() -> None:
@@ -64,17 +70,15 @@ def main() -> None:
                     # frame.putpixel(coord,imagemInicial.getpixel(coord))
                 else:
                     coords = [
-                        tuple([int(b) for b in coord.split(",")])
+                        (int(coord.split(",")[0]), int(coord.split(",")[1]))
                         for coord in linha.split(" ")
                     ]
                     coordFinal = coords[1]
-                    pixelFinal = imagemFinal.getpixel(coordFinal)
+                    pixelFinal = get_pixel(imagemFinal, coordFinal)
                     coordInicial = coords[0]
-                    pixelInicial = imagemInicial.getpixel(coordInicial)
-                    novaCoord = funcaoAfim(
-                        coordInicial, coordFinal, quantiaFrames, n + 1
-                    )
-                    novaCor = funcaoAfim(pixelInicial, pixelFinal, quantiaFrames, n + 1)
+                    pixelInicial = get_pixel(imagemInicial, coordInicial)
+                    novaCoord = interpolate_tuples(coordInicial, coordFinal, n + 1)
+                    novaCor = interpolate_tuples(pixelInicial, pixelFinal, n + 1)
                     frame.putpixel(novaCoord, novaCor)
                 linha = file.readline()
             frame.save(nomeFrame.format(n + 1))

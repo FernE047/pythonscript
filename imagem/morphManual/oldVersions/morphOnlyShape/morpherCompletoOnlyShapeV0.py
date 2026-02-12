@@ -1,6 +1,8 @@
 import subprocess
 from time import time
 
+# this code is legacy, I am only changing type hints and linter errors. it doesn't make sense to refactor it, since I already have a better version of it, and I don't want to break it by changing it too much
+
 
 def print_elapsed_time(seconds: float) -> None:
     if seconds < 0:
@@ -33,9 +35,10 @@ def print_elapsed_time(seconds: float) -> None:
 
 #esse algoritmo faz o morph completo
 
-def fazProcesso(processo,nome):
+def fazProcesso(processo: str,nome: str) -> None:
+    print(nome)
     inicio = time()
-    subprocess.call (processo)
+    subprocess.call(processo)
     fim = time()
     duracao = fim-inicio
     print_elapsed_time(duracao)
@@ -48,7 +51,7 @@ def main() -> None:
     fimDef = time()
     print("\nfinalizado")
     print_elapsed_time(fimDef-inicioDef)
-    a = input()
+    input()
 
 
 if __name__ == "__main__":
