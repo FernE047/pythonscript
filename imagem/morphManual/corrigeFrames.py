@@ -30,7 +30,10 @@ class Direction(Enum):
     RIGHT = 7
 
 
+FRAMES_FOLDER = "./frames"
 ORTHOGONAL_DIRECTIONS = (Direction.DOWN, Direction.LEFT, Direction.UP, Direction.RIGHT)
+OPAQUE_ALPHA_VALUE = 255
+TRANSPARENT_ALPHA_VALUE = 0
 
 
 def apply_direction(coord: CoordData | None, direction: Direction) -> CoordData:
@@ -55,146 +58,174 @@ def apply_direction(coord: CoordData | None, direction: Direction) -> CoordData:
         return (x + 1, y)
 
 
-def pixelMedio(coord, imagem):
-    lista = []
-    for direction in range(8):
-        coordenada = coordDirecao(coord, direction)
+def average_pixel(coord: CoordData, imagem: Image.Image) -> tuple[int, ...]:
+    neighbor_pixels: list[tuple[int, ...]] = []
+    for direction in Direction:
+        coordenada = apply_direction(coord, direction)
         if coordenada[0] not in range(imagem.size[0]):
             continue
         if coordenada[1] not in range(imagem.size[1]):
             continue
-        pixel = imagem.getpixel(coordenada)
-        if pixel[3] == 255:
-            lista.append(pixel)
-    novoPixel = [0 for _ in lista[0]]
-    for pixel in lista:
-        for n, cor in enumerate(pixel):
-            novoPixel[n] += cor
-    novoPixel = tuple([int(cor / len(lista)) for cor in novoPixel])
-    return novoPixel
+        pixel = get_pixel(imagem, coordenada)
+        if pixel[3] != OPAQUE_ALPHA_VALUE:
+            continue
+        neighbor_pixels.append(pixel)
+    if not neighbor_pixels:
+        return (0, 0, 0, 0)
+    average_color = [0 for _ in neighbor_pixels[0]]
+    for pixel in neighbor_pixels:
+        for color_index, color in enumerate(pixel):
+            average_color[color_index] += color
+    neighbors_size = len(neighbor_pixels)
+    if len(neighbor_pixels) == 0:
+        return (0, 0, 0, 0)
+    average_pixel = tuple([int(color / neighbors_size) for color in average_color])
+    return average_pixel
 
 
-def findBorderFreePixels(imagem):
-    largura, altura = imagem.size
-    freePixels = [[]]
-    for x in range(largura):
-        if imagem.getpixel((x, 0))[3] == 0:
-            freePixels[0].append((x, 0))
-        if imagem.getpixel((x, altura - 1))[3] == 0:
-            freePixels[0].append((x, altura - 1))
-    for y in range(1, altura - 1):
-        if imagem.getpixel((0, y))[3] == 0:
-            freePixels[0].append((0, y))
-        if imagem.getpixel((largura - 1, y))[3] == 0:
-            freePixels[0].append((largura - 1, y))
-    return freePixels
+def get_border_transparent_pixels(image: Image.Image) -> list[list[CoordData]]:
+    width, height = image.size
+    transparent_pixels: list[CoordData] = []
+
+    def test_pixel(x: int, y: int) -> None:
+        coord = (x, y)
+        pixel = get_pixel(image, coord)
+        if pixel[3] == TRANSPARENT_ALPHA_VALUE:
+            transparent_pixels.append(coord)
+
+    for x in range(width):
+        test_pixel(x, 0)
+        test_pixel(x, height - 1)
+    for y in range(1, height - 1):
+        test_pixel(0, y)
+        test_pixel(width - 1, y)
+    return [transparent_pixels]
 
 
-def findMoreFreePixels(imagem, freePixels):
-    candidates = []
-    for coord in freePixels[-1]:
-        for direction in (1, 3, 4, 6):
-            coordenada = coordDirecao(coord, direction)
+def find_all_transparent_pixels(
+    imagem: Image.Image, transparent_pixels: list[list[CoordData]]
+) -> None:
+    changed = True
+    while changed:
+        changed = find_more_transparent_pixels(imagem, transparent_pixels)
+
+
+def find_more_transparent_pixels(
+    imagem: Image.Image, transparent_pixels: list[list[CoordData]]
+) -> bool:
+    candidates: list[CoordData] = []
+    previous_layer = transparent_pixels[-1]
+    for coord in previous_layer:
+        for direction in ORTHOGONAL_DIRECTIONS:
+            coordenada = apply_direction(coord, direction)
             if coordenada[0] not in range(imagem.size[0]):
                 continue
             if coordenada[1] not in range(imagem.size[1]):
                 continue
-            pixel = imagem.getpixel(coordenada)
-            if pixel[3] == 0:
-                if coordenada in freePixels[-1]:
+            pixel = get_pixel(imagem, coordenada)
+            if pixel[3] != TRANSPARENT_ALPHA_VALUE:
+                continue
+            if coordenada in previous_layer:
+                continue
+            if coordenada in candidates:
+                continue
+            if len(transparent_pixels) > 1:
+                if coordenada in transparent_pixels[-2]:
                     continue
-                if coordenada in candidates:
-                    continue
-                if len(freePixels) > 1:
-                    if coordenada in freePixels[-2]:
-                        continue
-                candidates.append(coordenada)
+            candidates.append(coordenada)
     if candidates:
-        freePixels.append(candidates)
-        findMoreFreePixels(imagem, freePixels)
-
-
-def hasPontosProximos(imagem, ponto):
-    for d in (1, 3, 4, 6):
-        if imagem.getpixel(coordDirecao(ponto, d))[3] == 255:
-            return True
+        transparent_pixels.append(candidates)
+        return True
     return False
 
 
-def findHoleBorder(imagem, freePixels):
-    largura, altura = imagem.size
-    pontos = []
-    for x in range(largura):
-        isUltimoPixelTransparent = imagem.getpixel((x, 0))[3] == 0
-        for y in range(altura):
-            isPixelAtualTransparent = imagem.getpixel((x, y))[3] == 0
-            if (not isUltimoPixelTransparent) and isPixelAtualTransparent:
-                if (x, y) not in freePixels:
-                    if (x, y) not in pontos:
-                        pontos.append((x, y))
-            if (not isPixelAtualTransparent) and isUltimoPixelTransparent:
-                if (x, y - 1) not in freePixels:
-                    if (x, y - 1) not in pontos:
-                        pontos.append((x, y - 1))
-            isUltimoPixelTransparent = isPixelAtualTransparent
-    for y in range(altura):
-        isUltimoPixelTransparent = imagem.getpixel((0, y))[3] == 0
-        for x in range(largura):
-            isPixelAtualTransparent = imagem.getpixel((x, y))[3] == 0
-            if (not isUltimoPixelTransparent) and isPixelAtualTransparent:
-                if (x, y) not in freePixels:
-                    if (x, y) not in pontos:
-                        pontos.append((x, y))
-            if (not isPixelAtualTransparent) and isUltimoPixelTransparent:
-                if (x - 1, y) not in freePixels:
-                    if (x - 1, y) not in pontos:
-                        pontos.append((x - 1, y))
-            isUltimoPixelTransparent = isPixelAtualTransparent
-    return pontos
+def find_hole_border(
+    image: Image.Image, transparent_pixels: list[CoordData]
+) -> list[CoordData]:
+    width, height = image.size
+    border_coordinates: list[CoordData] = []
+
+    def test_coord(coord: CoordData) -> None:
+        if coord not in transparent_pixels:
+            if coord not in border_coordinates:
+                border_coordinates.append(coord)
+
+    for x in range(width):
+        pixel = get_pixel(image, (x, 0))
+        was_last_pixel_transparent = pixel[3] == TRANSPARENT_ALPHA_VALUE
+        for y in range(height):
+            pixel = get_pixel(image, (x, y))
+            is_current_pixel_transparent = pixel[3] == TRANSPARENT_ALPHA_VALUE
+            if was_last_pixel_transparent ^ is_current_pixel_transparent:
+                if is_current_pixel_transparent:
+                    test_coord((x, y))
+                else:
+                    test_coord((x, y - 1))
+            was_last_pixel_transparent = is_current_pixel_transparent
+    for y in range(height):
+        pixel = get_pixel(image, (0, y))
+        was_last_pixel_transparent = pixel[3] == TRANSPARENT_ALPHA_VALUE
+        for x in range(width):
+            pixel = get_pixel(image, (x, y))
+            is_current_pixel_transparent = pixel[3] == TRANSPARENT_ALPHA_VALUE
+            if was_last_pixel_transparent ^ is_current_pixel_transparent:
+                if is_current_pixel_transparent:
+                    test_coord((x, y))
+                else:
+                    test_coord((x - 1, y))
+            was_last_pixel_transparent = is_current_pixel_transparent
+    return border_coordinates
 
 
-def findHoleContinuation(imagem, trappedPixels, freePixels):
-    largura, altura = imagem.size
-    pontos = []
-    for pixel in trappedPixels:
-        for d in (1, 3, 4, 6):
-            coord = coordDirecao(pixel, d)
-            if coord not in freePixels:
-                if coord not in pontos:
-                    if imagem.getpixel(coord)[3] == 0:
-                        pontos.append(coord)
-    return pontos
+def extend_holes(
+    image: Image.Image,
+    trapped_pixels: list[CoordData],
+    transparent_pixels: list[CoordData],
+) -> list[CoordData]:
+    coords: list[CoordData] = []
+    for pixel_coord in trapped_pixels:
+        for direction in ORTHOGONAL_DIRECTIONS:
+            coord = apply_direction(pixel_coord, direction)
+            if coord in transparent_pixels:
+                continue
+            if coord in coords:
+                continue
+            pixel = get_pixel(image, coord)
+            if pixel[3] == TRANSPARENT_ALPHA_VALUE:
+                coords.append(coord)
+    return coords
 
 
-def fixTrappedPixels(imagem:Image.Image, freePixels:list[tuple[int, ...]|float|int]) -> None:  # make it better
-    trappedPixels = findHoleBorder(imagem, freePixels)
-    while trappedPixels:
-        for coordenada in trappedPixels:
-            imagem.putpixel(coordenada, pixelMedio(coordenada, imagem))
-        trappedPixels = findHoleContinuation(imagem, trappedPixels, freePixels)
+def fix_trapped_pixels(
+    image: Image.Image, transparent_pixels: list[CoordData]
+) -> None:  # make it better
+    trapped_pixels = find_hole_border(image, transparent_pixels)
+    while trapped_pixels:
+        for coord in trapped_pixels:
+            image.putpixel(coord, average_pixel(coord, image))
+        trapped_pixels = extend_holes(image, trapped_pixels, transparent_pixels)
 
 
-def corrigeFrame(indice):
-    print("corregindo Frame : " + str(indice))
-    nome = f"C:\\pythonscript\\imagem\\morphManual\\frames\\frame{indice:03d}.png"
-    imagem = Image.open(nome)
-    largura, altura = imagem.size
-    freePixels = findBorderFreePixels(imagem)
-    findMoreFreePixels(imagem, freePixels)
-    allFreePixels = []
-    for camada in freePixels:
-        for coord in camada:
-            allFreePixels.append(coord)
-    fixTrappedPixels(imagem, allFreePixels)
-    imagem.save(nome)
-    imagem.close()
-    print("\tFrame corrigido : " + str(indice))
+def corrigeFrame(index: int) -> None:
+    print(f"Fixing Frame : {index}")
+    filename = f"{FRAMES_FOLDER}/frame{index:03d}.png"
+    image = Image.open(filename)
+    transparent_pixels = get_border_transparent_pixels(image)
+    find_all_transparent_pixels(image, transparent_pixels)
+    all_transparent_pixels: list[CoordData] = []
+    for layer in transparent_pixels:
+        for coord in layer:
+            all_transparent_pixels.append(coord)
+    fix_trapped_pixels(image, all_transparent_pixels)
+    image.save(filename)
+    image.close()
+    print(f"\tFrame fixed : {index}")
 
 
 def main() -> None:
-    quantiaFrames = len(os.listdir("C:\\pythonscript\\imagem\\morphManual\\frames"))
-    p = multiprocessing.Pool(os.cpu_count())
-    p.map(corrigeFrame, range(1, quantiaFrames - 1))
+    quantiaFrames = len(os.listdir(FRAMES_FOLDER))
+    cpu_pool = multiprocessing.Pool(os.cpu_count())
+    cpu_pool.map(corrigeFrame, range(1, quantiaFrames - 1))
 
 
 if __name__ == "__main__":
