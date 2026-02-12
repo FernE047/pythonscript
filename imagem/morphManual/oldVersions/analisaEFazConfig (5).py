@@ -1,6 +1,58 @@
 from PIL import Image
 import os
 import pypdn
+from enum import Enum
+
+CoordData = tuple[int, int]
+
+
+def get_pixel(image: Image.Image, coord: CoordData) -> tuple[int, ...]:
+    pixel = image.getpixel(coord)
+    if pixel is None:
+        raise ValueError("Pixel not found")
+    if isinstance(pixel, int):
+        raise ValueError("Image is not in RGBA mode")
+    if isinstance(pixel, float):
+        raise ValueError("Image is not in RGBA mode")
+    if len(pixel) < 4:
+        raise ValueError("Image is not in RGBA mode")
+    return pixel
+
+
+class Direction(Enum):
+    DOWN_RIGHT = 0
+    DOWN = 1
+    DOWN_LEFT = 2
+    LEFT = 3
+    UP_LEFT = 4
+    UP = 5
+    UP_RIGHT = 6
+    RIGHT = 7
+
+
+ORTHOGONAL_DIRECTIONS = (Direction.DOWN, Direction.LEFT, Direction.UP, Direction.RIGHT)
+
+
+def apply_direction(coord: CoordData | None, direction: Direction) -> CoordData:
+    if coord is None:
+        raise ValueError("Coordinate cannot be None")
+    x, y = coord
+    if direction == Direction.DOWN_RIGHT:
+        return (x + 1, y + 1)
+    if direction == Direction.DOWN:
+        return (x, y + 1)
+    if direction == Direction.DOWN_LEFT:
+        return (x - 1, y + 1)
+    if direction == Direction.LEFT:
+        return (x - 1, y)
+    if direction == Direction.UP_LEFT:
+        return (x - 1, y - 1)
+    if direction == Direction.UP:
+        return (x, y - 1)
+    if direction == Direction.UP_RIGHT:
+        return (x + 1, y - 1)
+    if direction == Direction.RIGHT:
+        return (x + 1, y)
 
 """
 

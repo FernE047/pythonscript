@@ -2,6 +2,21 @@ from PIL import Image
 import imageio
 from time import time
 
+CoordData = tuple[int, int]
+
+
+def get_pixel(image: Image.Image, coord: CoordData) -> tuple[int, ...]:
+    pixel = image.getpixel(coord)
+    if pixel is None:
+        raise ValueError("Pixel not found")
+    if isinstance(pixel, int):
+        raise ValueError("Image is not in RGBA mode")
+    if isinstance(pixel, float):
+        raise ValueError("Image is not in RGBA mode")
+    if len(pixel) < 4:
+        raise ValueError("Image is not in RGBA mode")
+    return pixel
+
 
 def pegaInteiro(
     mensagem: str, minimo: int | None = None, maximo: int | None = None
