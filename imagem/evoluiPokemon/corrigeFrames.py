@@ -155,11 +155,13 @@ def find_hole_border(
         for y in range(height):
             pixel = get_pixel(image, (x, y))
             is_current_pixel_transparent = pixel[3] == TRANSPARENT_ALPHA_VALUE
-            if was_last_pixel_transparent ^ is_current_pixel_transparent:
-                if is_current_pixel_transparent:
-                    test_coord((x, y))
-                else:
-                    test_coord((x, y - 1))
+            if was_last_pixel_transparent == is_current_pixel_transparent:
+                was_last_pixel_transparent = is_current_pixel_transparent
+                continue
+            coord = (x, y)
+            if not is_current_pixel_transparent:
+                coord = (x, y - 1)
+            test_coord(coord)
             was_last_pixel_transparent = is_current_pixel_transparent
     for y in range(height):
         pixel = get_pixel(image, (0, y))
@@ -167,11 +169,13 @@ def find_hole_border(
         for x in range(width):
             pixel = get_pixel(image, (x, y))
             is_current_pixel_transparent = pixel[3] == TRANSPARENT_ALPHA_VALUE
-            if was_last_pixel_transparent ^ is_current_pixel_transparent:
-                if is_current_pixel_transparent:
-                    test_coord((x, y))
-                else:
-                    test_coord((x - 1, y))
+            if was_last_pixel_transparent == is_current_pixel_transparent:
+                was_last_pixel_transparent = is_current_pixel_transparent
+                continue
+            coord = (x, y)
+            if not is_current_pixel_transparent:
+                coord = (x - 1, y)
+            test_coord(coord)
             was_last_pixel_transparent = is_current_pixel_transparent
     return border_coordinates
 
