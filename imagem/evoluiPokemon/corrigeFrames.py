@@ -206,7 +206,7 @@ def fix_trapped_pixels(
 
 
 def corrigeFrame(index: int) -> None:
-    print(f"corregindo Frame : {index}")
+    print(f"Fixing Frame : {index}")
     filename = f"{FRAMES_FOLDER}/frame{index:03d}.png"
     image = Image.open(filename)
     transparent_pixels = get_border_transparent_pixels(image)
@@ -218,7 +218,7 @@ def corrigeFrame(index: int) -> None:
     fix_trapped_pixels(image, all_transparent_pixels)
     image.save(filename)
     image.close()
-    print(f"\tFrame corrigido : {index}")
+    print(f"\tFrame fixed : {index}")
 
 
 def main() -> None:
