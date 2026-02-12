@@ -1,6 +1,6 @@
 from PIL import Image
 from morpher import interpolate_tuples
-from corrigeFrames import fixTrappedPixels
+from corrigeFrames import fix_trapped_pixels
 import os
 
 CoordData = tuple[int, int]
@@ -42,7 +42,7 @@ def generate_background(image_name: str) -> Image.Image:
                 is_first_occurrence = False
             if not is_first_occurrence and (alterations == 0):
                 break
-    fixTrappedPixels(image, [])
+    fix_trapped_pixels(image, [])
     image.save(f"./background_{image_name}.png")
     print("background finished")
     return image
