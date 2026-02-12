@@ -1,8 +1,12 @@
+from typing import TypeVar, cast
 from PIL import Image
 import imageio
+#imageio doesn't have type hints, so all type ignore on this file is from imageio
 from time import time
 
 CoordData = tuple[int, int]
+
+FINAL_FRAME = 30
 
 
 def get_pixel(image: Image.Image, coord: CoordData) -> tuple[int, ...]:
@@ -65,75 +69,82 @@ def print_elapsed_time(seconds: float) -> None:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
     print(sign + ", ".join(parts))
 
-def funcaoAfim(inicio,fim,total,n):
-    elemento = []
-    for elementoInicial, elementoFinal in zip(inicio, fim):
-        B = elementoInicial
-        A = (elementoFinal-elementoInicial)/(total+1)
-        elemento.append(int(A*n+B))
-    return tuple(elemento)
+
+R = TypeVar("R", bound=tuple[int, ...])
+
+
+def interpolate_tuples(tuple_source: R, tuple_target: R, frame_index: int) -> R:
+    interpolated_values: list[int] = []
+    for source_value, target_value in zip(tuple_source, tuple_target):
+        difference = target_value - source_value
+        interpolation_step = difference / FINAL_FRAME
+        interpolated_value = int(interpolation_step * frame_index + source_value)
+        interpolated_values.append(interpolated_value)
+    return cast(R, tuple(interpolated_values))
+
 
 def verificaTamanho():
     with open("config.txt", "r", encoding="utf-8") as file:
         linha = file.readline()
         quantia = 0
-        while(linha):
-            quantia+=1
+        while linha:
+            quantia += 1
             linha = file.readline()
     return quantia
 
 
 def main() -> None:
+    inicio = time()
     nomeFrame = "pokemon002{0:02d}.png"
-    quantiaFrames = 30#pegaInteiro("quantos frames?")
+    quantiaFrames = FINAL_FRAME
     imagemInicial = Image.open("pokemon000.png")
     imagemFinal = Image.open("pokemon001.png")
-    nomeFile = "partesConfig/parte{0:02d}Config.txt"
     imagemInicial.save(nomeFrame.format(0))
-    imagemFinal.save(nomeFrame.format(quantiaFrames+1))
-    print("\n tamanho: "+str(imagemInicial.size),end="\n\n")
+    imagemFinal.save(nomeFrame.format(quantiaFrames + 1))
+    print("\n tamanho: " + str(imagemInicial.size), end="\n\n")
     for a in range(quantiaFrames):
-        frame = Image.new("RGBA",imagemFinal.size,(255,255,255,0))
-        frame.save(nomeFrame.format(a+1))
-    altura,largura = imagemFinal.size
+        frame = Image.new("RGBA", imagemFinal.size, (255, 255, 255, 0))
+        frame.save(nomeFrame.format(a + 1))
     tamanhoFile = verificaTamanho()
     with open("config.txt", "r", encoding="utf-8") as file:
         linha = file.readline()
         firstTime = True
         inicioDef = time()
-        while(linha):
-            if(firstTime):
+        while linha:
+            if firstTime:
                 inicio = time()
-            coords = [tuple([int(b) for b in coord.split(",")]) for coord in linha.split(" ")]
+            coords = [
+                (int(coord.split(",")[0]), int(coord.split(",")[1]))
+                for coord in linha.split(" ")
+            ]
             coordFinal = coords[1]
-            pixelFinal = imagemFinal.getpixel(coordFinal)
+            pixelFinal = get_pixel(imagemFinal, coordFinal)
             coordInicial = coords[0]
-            pixelInicial = imagemInicial.getpixel(coordInicial)
+            pixelInicial = get_pixel(imagemInicial, coordInicial)
             for n in range(quantiaFrames):
-                frame = Image.open(nomeFrame.format(n+1))
-                novaCoord = funcaoAfim(coordInicial,coordFinal,quantiaFrames,n+1)
-                novaCor = funcaoAfim(pixelInicial,pixelFinal,quantiaFrames,n+1)
-                frame.putpixel(novaCoord,novaCor)
-                frame.save(nomeFrame.format(n+1))
+                frame = Image.open(nomeFrame.format(n + 1))
+                novaCoord = interpolate_tuples(coordInicial, coordFinal, n + 1)
+                novaCor = interpolate_tuples(pixelInicial, pixelFinal, n + 1)
+                frame.putpixel(novaCoord, novaCor)
+                frame.save(nomeFrame.format(n + 1))
                 frame.close()
             linha = file.readline()
-            if(firstTime):
+            if firstTime:
                 fim = time()
-                duracao = fim-inicio
-                print("são "+str(tamanhoFile)+" transformações")
+                duracao = fim - inicio
+                print("são " + str(tamanhoFile) + " transformações")
                 print_elapsed_time(duracao)
-                print_elapsed_time(duracao*tamanhoFile)
-                fim,inicio,duracao,tamanhoFile = [None,None,None,None]
+                print_elapsed_time(duracao * tamanhoFile)
                 firstTime = False
-    with imageio.get_writer("bulbasaurEvolve.gif", mode="I") as writer:
+    with imageio.get_writer("bulbasaurEvolve.gif", mode="I") as writer:  # type: ignore
         for n in range(quantiaFrames):
-            imagem = imageio.imread(nomeFrame.format(n))
-            writer.append_data(imagem)
+            imagem = imageio.imread(nomeFrame.format(n))  # type: ignore
+            writer.append_data(imagem)  # type: ignore
     fimDef = time()
     imagemInicial.close()
     imagemFinal.close()
     print("\nfinalizado")
-    print_elapsed_time(fimDef-inicioDef)
+    print_elapsed_time(fimDef - inicioDef)
 
 
 if __name__ == "__main__":
