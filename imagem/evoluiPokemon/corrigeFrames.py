@@ -44,19 +44,20 @@ def apply_direction(coord: CoordData, direction: Direction) -> CoordData:
         return (x + 1, y)
 
 
-def get_pixel_alpha(pixel: float | tuple[int, ...] | None) -> int:
+def get_pixel(image: Image.Image, coord: CoordData) -> tuple[int, ...]:
+    pixel = image.getpixel(coord)
     if pixel is None:
-        return TRANSPARENT_ALPHA_VALUE
+        raise ValueError("Pixel not found")
     if isinstance(pixel, int):
-        return OPAQUE_ALPHA_VALUE
+        raise ValueError("Image is not in RGBA mode")
     if isinstance(pixel, float):
-        return OPAQUE_ALPHA_VALUE
-    if len(pixel) == 4:
-        return pixel[3]
-    return OPAQUE_ALPHA_VALUE
+        raise ValueError("Image is not in RGBA mode")
+    if len(pixel) < 4:
+        raise ValueError("Image is not in RGBA mode")
+    return pixel
 
 
-def pixelMedio(coord: CoordData, imagem: Image.Image) -> tuple[int, ...]:
+def average_pixel(coord: CoordData, imagem: Image.Image) -> tuple[int, ...]:
     neighbor_pixels: list[tuple[int, ...]] = []
     for direction in Direction:
         coordenada = apply_direction(coord, direction)
@@ -64,15 +65,12 @@ def pixelMedio(coord: CoordData, imagem: Image.Image) -> tuple[int, ...]:
             continue
         if coordenada[1] not in range(imagem.size[1]):
             continue
-        pixel = imagem.getpixel(coordenada)
-        if pixel is None:
+        pixel = get_pixel(imagem, coordenada)
+        if pixel[3] != OPAQUE_ALPHA_VALUE:
             continue
-        if isinstance(pixel, int):
-            continue
-        if isinstance(pixel, float):
-            continue
-        if pixel[3] == OPAQUE_ALPHA_VALUE:
-            neighbor_pixels.append(pixel)
+        neighbor_pixels.append(pixel)
+    if not neighbor_pixels:
+        return (0, 0, 0, 0)
     average_color = [0 for _ in neighbor_pixels[0]]
     for pixel in neighbor_pixels:
         for color_index, color in enumerate(pixel):
@@ -90,8 +88,8 @@ def get_border_transparent_pixels(image: Image.Image) -> list[list[CoordData]]:
 
     def test_pixel(x: int, y: int) -> None:
         coord = (x, y)
-        pixel = image.getpixel(coord)
-        if get_pixel_alpha(pixel) == 0:
+        pixel = get_pixel(image, coord)
+        if pixel[3] == TRANSPARENT_ALPHA_VALUE:
             transparent_pixels.append(coord)
 
     for x in range(width):
@@ -123,8 +121,8 @@ def find_more_transparent_pixels(
                 continue
             if coordenada[1] not in range(imagem.size[1]):
                 continue
-            pixel = imagem.getpixel(coordenada)
-            if get_pixel_alpha(pixel) != TRANSPARENT_ALPHA_VALUE:
+            pixel = get_pixel(imagem, coordenada)
+            if pixel[3] != TRANSPARENT_ALPHA_VALUE:
                 continue
             if coordenada in previous_layer:
                 continue
@@ -152,13 +150,11 @@ def find_hole_border(
                 border_coordinates.append(coord)
 
     for x in range(width):
-        pixel = image.getpixel((x, 0))
-        was_last_pixel_transparent = get_pixel_alpha(pixel) == TRANSPARENT_ALPHA_VALUE
+        pixel = get_pixel(image, (x, 0))
+        was_last_pixel_transparent = pixel[3] == TRANSPARENT_ALPHA_VALUE
         for y in range(height):
-            pixel = image.getpixel((x, y))
-            is_current_pixel_transparent = (
-                get_pixel_alpha(pixel) == TRANSPARENT_ALPHA_VALUE
-            )
+            pixel = get_pixel(image, (x, y))
+            is_current_pixel_transparent = pixel[3] == TRANSPARENT_ALPHA_VALUE
             if was_last_pixel_transparent ^ is_current_pixel_transparent:
                 if is_current_pixel_transparent:
                     test_coord((x, y))
@@ -166,13 +162,11 @@ def find_hole_border(
                     test_coord((x, y - 1))
             was_last_pixel_transparent = is_current_pixel_transparent
     for y in range(height):
-        pixel = image.getpixel((0, y))
-        was_last_pixel_transparent = get_pixel_alpha(pixel) == TRANSPARENT_ALPHA_VALUE
+        pixel = get_pixel(image, (0, y))
+        was_last_pixel_transparent = pixel[3] == TRANSPARENT_ALPHA_VALUE
         for x in range(width):
-            pixel = image.getpixel((x, y))
-            is_current_pixel_transparent = (
-                get_pixel_alpha(pixel) == TRANSPARENT_ALPHA_VALUE
-            )
+            pixel = get_pixel(image, (x, y))
+            is_current_pixel_transparent = pixel[3] == TRANSPARENT_ALPHA_VALUE
             if was_last_pixel_transparent ^ is_current_pixel_transparent:
                 if is_current_pixel_transparent:
                     test_coord((x, y))
@@ -195,8 +189,8 @@ def extend_holes(
                 continue
             if coord in coords:
                 continue
-            pixel = image.getpixel(coord)
-            if get_pixel_alpha(pixel) == TRANSPARENT_ALPHA_VALUE:
+            pixel = get_pixel(image, coord)
+            if pixel[3] == TRANSPARENT_ALPHA_VALUE:
                 coords.append(coord)
     return coords
 
@@ -207,7 +201,7 @@ def fix_trapped_pixels(
     trapped_pixels = find_hole_border(image, transparent_pixels)
     while trapped_pixels:
         for coord in trapped_pixels:
-            image.putpixel(coord, pixelMedio(coord, image))
+            image.putpixel(coord, average_pixel(coord, image))
         trapped_pixels = extend_holes(image, trapped_pixels, transparent_pixels)
 
 
