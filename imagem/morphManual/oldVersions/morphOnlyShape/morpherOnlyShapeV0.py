@@ -27,11 +27,9 @@ def funcaoAfim(inicio, fim, total, n):
 
 
 def main() -> None:
-    imagemInicial = Image.open("C:\\pythonscript\\imagem\\morphOnlyShape\\inicial.png")
+    imagemInicial = Image.open("./inicial.png")
     imagemFinal = Image.new("RGBA", imagemInicial.size, (0, 0, 0, 0))
-    with open(
-        "C:\\pythonscript\\imagem\\morphOnlyShape\\config.txt", "r", encoding="utf-8"
-    ) as file:
+    with open("./config.txt", "r", encoding="utf-8") as file:
         linha = file.readline()
         while linha:
             coords = [
@@ -42,7 +40,7 @@ def main() -> None:
             cor = imagemInicial.getpixel(coordInicial)
             imagemFinal.putpixel(coordFinal, cor)
             linha = file.readline()
-        imagemFinal.save("C:\\pythonscript\\imagem\\morphOnlyShape\\final.png")
+        imagemFinal.save("./final.png")
     imagemInicial.close()
     imagemFinal.close()
 

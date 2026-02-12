@@ -43,8 +43,8 @@ def fazProcesso(processo,nome):
 
 def main() -> None:
     inicioDef = time()
-    fazProcesso("python C:\\pythonscript\\imagem\\morphOnlyShape\\analisaEFazConfig.py ","fazer configurações")
-    fazProcesso("python C:\\pythonscript\\imagem\\morphOnlyShape\\morpher.py ","fazer animações")
+    fazProcesso("python ./analisaEFazConfig.py ","fazer configurações")
+    fazProcesso("python ./morpher.py ","fazer animações")
     fimDef = time()
     print("\nfinalizado")
     print_elapsed_time(fimDef-inicioDef)

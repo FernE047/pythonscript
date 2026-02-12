@@ -264,8 +264,8 @@ SECÇÃO MAIN:
 
 
 def main() -> None:
-    parteInicial = Image.open("C:\\pythonscript\\imagem\\morphOnlyShape\\inicial.png")
-    with open("C:\\pythonscript\\imagem\\morphOnlyShape\\config.txt","w", encoding = "utf-8") as fileConfig:
+    parteInicial = Image.open("./inicial.png")
+    with open("./config.txt","w", encoding = "utf-8") as fileConfig:
         blobInicial = procuraBlobs(parteInicial)
         parteFinal = fazForma(parteInicial)
         blobFinal = procuraBlobs(parteFinal)

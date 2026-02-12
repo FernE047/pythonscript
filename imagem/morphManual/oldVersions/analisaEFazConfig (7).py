@@ -93,9 +93,9 @@ def hasColor(imagem):
     return(hasRed,hasGreen,hasBlue)
 
 def limpaPasta(pasta):
-    arquivos = [pasta+"\\"+a for a in os.listdir(pasta)]
-    if("C:\\pythonscript\\imagem\\morphManual\\frames\\resized" in arquivos):
-        arquivos.pop(arquivos.index("C:\\pythonscript\\imagem\\morphManual\\frames\\resized"))
+    arquivos = [pasta+"/"+a for a in os.listdir(pasta)]
+    if("./frames/resized" in arquivos):
+        arquivos.pop(arquivos.index("./frames/resized"))
     for arquivo in arquivos:
         os.remove(arquivo)
 
@@ -450,7 +450,7 @@ def configPart(data):
     print(n)
     parteInicial = Image.fromarray(imagemInicial)
     parteFinal = Image.fromarray(imagemFinal)
-    with open(f"partesConfig\\parte{n:02d}Config.txt","w", encoding="utf-8") as fileConfig:
+    with open(f"partesConfig/parte{n:02d}Config.txt","w", encoding="utf-8") as fileConfig:
         if n == 1:
             fazFundo(fileConfig,parteInicial,parteFinal)
         else:
@@ -488,9 +488,9 @@ def configPart(data):
 
 
 def main() -> None:
-    limpaPasta("C:\\pythonscript\\imagem\\morphManual\\partesConfig")
-    limpaPasta("C:\\pythonscript\\imagem\\morphManual\\frames")
-    limpaPasta("C:\\pythonscript\\imagem\\morphManual\\frames\\resized")
+    limpaPasta("./partesConfig")
+    limpaPasta("./frames")
+    limpaPasta("./frames/resized")
     imagemInicial = pypdn.read("inicial.pdn")
     imagemFinal = pypdn.read("final.pdn")
     Image.fromarray(imagemInicial.layers[0].image).save("inicial.png")

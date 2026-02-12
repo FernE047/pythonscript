@@ -88,7 +88,7 @@ def main() -> None:
     quantiaFrames = 30#pegaInteiro("quantos frames?")
     imagemInicial = Image.open("pokemon000.png")
     imagemFinal = Image.open("pokemon001.png")
-    nomeFile = "partesConfig\\parte{0:02d}Config.txt"
+    nomeFile = "partesConfig/parte{0:02d}Config.txt"
     imagemInicial.save(nomeFrame.format(0))
     imagemFinal.save(nomeFrame.format(quantiaFrames+1))
     print("\n tamanho: "+str(imagemInicial.size),end="\n\n")

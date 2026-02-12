@@ -54,6 +54,7 @@ def apply_direction(coord: CoordData | None, direction: Direction) -> CoordData:
     if direction == Direction.RIGHT:
         return (x + 1, y)
 
+
 """
 
 SECÇÃO UTILITARIOS DO MAIN:
@@ -100,11 +101,9 @@ def hasColor(imagem):
 
 
 def limpaPasta(pasta):
-    arquivos = [pasta + "\\" + a for a in os.listdir(pasta)]
-    if "C:\\pythonscript\\imagem\\morphManual\\frames\\resized" in arquivos:
-        arquivos.pop(
-            arquivos.index("C:\\pythonscript\\imagem\\morphManual\\frames\\resized")
-        )
+    arquivos = [pasta + "/" + a for a in os.listdir(pasta)]
+    if "./frames/resized" in arquivos:
+        arquivos.pop(arquivos.index("./frames/resized"))
     for arquivo in arquivos:
         os.remove(arquivo)
 
@@ -459,10 +458,10 @@ SECÇÃO MAIN:
 
 
 def main() -> None:
-    limpaPasta("C:\\pythonscript\\imagem\\morphManual\\partesConfig")
-    limpaPasta("C:\\pythonscript\\imagem\\morphManual\\frames")
-    limpaPasta("C:\\pythonscript\\imagem\\morphManual\\frames\\resized")
-    nomeConfig = "partesConfig\\parte{0:02d}Config.txt"
+    limpaPasta("./partesConfig")
+    limpaPasta("./frames")
+    limpaPasta("./frames/resized")
+    nomeConfig = "partesConfig/parte{0:02d}Config.txt"
     imagemInicial = pypdn.read("inicial.pdn")
     imagemFinal = pypdn.read("final.pdn")
     Image.fromarray(imagemInicial.layers[0].image).save("inicial.png")
@@ -475,7 +474,9 @@ def main() -> None:
             parteInicial = Image.fromarray(imagemInicial.layers[nParte].image)
             parteFinal = Image.fromarray(imagemFinal.layers[nParte].image)
             if nParte == 1:
-                with open(nomeConfig.format(nParte), "w", encoding="utf-8") as fileConfig:
+                with open(
+                    nomeConfig.format(nParte), "w", encoding="utf-8"
+                ) as fileConfig:
                     fazFundo(fileConfig, parteInicial, parteFinal)
                 continue
             with open(nomeConfig.format(nParte), "w", encoding="utf-8") as fileConfig:
@@ -485,11 +486,15 @@ def main() -> None:
                     coordVermelhosInicial = procuraCor(parteInicial, 0)
                     coordVermelhosFinal = procuraCor(parteFinal, 0)
                 if hasRGB[2]:
-                    linhaAzulInicial = procuraLinhaAzul(parteInicial, primeiro=hasRGB[2])
+                    linhaAzulInicial = procuraLinhaAzul(
+                        parteInicial, primeiro=hasRGB[2]
+                    )
                     linhaAzulFinal = procuraLinhaAzul(parteFinal)
                     escreveLinhas(linhaAzulInicial, linhaAzulFinal, fileConfig)
                 if hasRGB[3]:
-                    linhaAzulInicial = procuraLinhaAzulIterativo(parteInicial, inicio=hasRGB[3])
+                    linhaAzulInicial = procuraLinhaAzulIterativo(
+                        parteInicial, inicio=hasRGB[3]
+                    )
                     linhaAzulFinal = procuraLinhaAzulIterativo(parteFinal)
                     escreveLinhas(linhaAzulInicial, linhaAzulFinal, fileConfig)
                 if hasRGB[1]:
@@ -510,10 +515,14 @@ def main() -> None:
                         procuraBlob(parteFinal, blobsFinal[0], blobsFinal)
                     escreveBlobs(blobsInicial, blobsFinal, fileConfig)
                 if hasRGB[0]:
-                    for coordInicial, coordFinal in zip(coordVermelhosInicial, coordVermelhosFinal):
+                    for coordInicial, coordFinal in zip(
+                        coordVermelhosInicial, coordVermelhosFinal
+                    ):
                         for coord_i, coord_f in zip(coordInicial, coordFinal):
                             fileConfig.write(str(coord_i[0]) + "," + str(coord_i[1]))
-                            fileConfig.write(" " + str(coord_f[0]) + "," + str(coord_f[1]) + "\n")
+                            fileConfig.write(
+                                " " + str(coord_f[0]) + "," + str(coord_f[1]) + "\n"
+                            )
                 print()
             parteInicial.close()
             parteFinal.close()
