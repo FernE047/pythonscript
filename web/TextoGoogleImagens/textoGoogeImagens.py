@@ -102,7 +102,7 @@ def achaLetra(site):
 def baixaImagens(lyrics,titulo):
     total=len(lyrics)
     titulo=titulo.proper()
-    pasta=os.path.join("C:\\","pythonscript","web","TextoGoogleImagens",titulo)
+    pasta=os.path.join("./",titulo)
     palavras={}
     for number,palavra in enumerate(lyrics):
         if(palavra not in palavras):
@@ -128,7 +128,7 @@ def baixaImagens(lyrics,titulo):
         
 
 def fazDiretorio(diretorio):
-    diretorio="C:/pythonscript/EARWORM/"+diretorio
+    diretorio=os.path.join("./",diretorio)
     os.mkdir(diretorio)
 
 def novoSite(site):

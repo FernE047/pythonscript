@@ -127,9 +127,9 @@ def main() -> None:
     DT = DDP*2+1 #DISTANCIATOTAL
 
     #Argumentos do FFMPEG
-    diretorioVideo = "C:\\pythonscript\\imagem\\SpeedrunMapping\\video"
-    origemVideo = "-i C:\pythonscript\\imagem\\SpeedrunMapping\\level.mp4"#"-i C:\\pythonscript\\videos\\videos\\video0002.mp4"
-    destinoTemp = diretorioVideo + "\\frame%04d.png"
+    diretorioVideo = "./video"
+    origemVideo = "-i ./level.mp4"
+    destinoTemp = diretorioVideo + "/frame%04d.png"
     extraArguments = "-r {0:02d}/1"
     processoArgs = ["ffmpeg",origemVideo,extraArguments,destinoTemp]
 
@@ -138,7 +138,7 @@ def main() -> None:
     processoArgs[2] = extraArguments.format(fps)
     #subprocess.call (" ".join(processoArgs))
 
-    diretorioFrames = diretorioVideo+"\\frame{0:04d}.png"
+    diretorioFrames = diretorioVideo+"/frame{0:04d}.png"
 
     ultimoFrame = openFrame(diretorioFrames.format(1))
     mapa = openFrame(diretorioFrames.format(1))
@@ -151,7 +151,7 @@ def main() -> None:
         adds = comparaFrames(ultimoFrame,frameAtual)
         mapa,posicao = ampliaMapa(mapa,frameAtual,posicao,adds)
         ultimoFrame,_ = ampliaMapa(ultimoFrame,frameAtual,[0,0],adds)
-        ultimoFrame.save(f"results\\frame{n:04d}.png")
+        ultimoFrame.save(f"results/frame{n:04d}.png")
         ultimoFrame.close()
         ultimoFrame = frameAtual
         fim = time()

@@ -24,14 +24,11 @@ def imagemToText(imagem):
     imagemShow.save(imagem)
 
 
-
 def main() -> None:
     showAltura = 0
     niveis = [" ", "`", ".", ",", "+", "%", "@", "#"]
     showLargura = 80
-    diretorio = (
-        "C:\\Users\\DELL\\Desktop\\antigo_PC\\pythonscript\\imagem\\terminalVideo\\video"
-    )
+    diretorio = "./video"
     imagens = [os.path.join(diretorio, imagem) for imagem in os.listdir(diretorio)]
     for imagem in imagens:
         imagemToText(imagem)

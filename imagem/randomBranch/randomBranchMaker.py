@@ -51,9 +51,7 @@ def main() -> None:
             break
         except:
             print("digite um numero")
-
-    diretorio = "C:\\pythonscript\\randomBranch\\"
-    BD = shelve.open(diretorio + "numero")
+    BD = shelve.open("./numero")
     imagemNome = BD["imagemNome"]
     bracos = [a for a in range(minimo, maximo + 1)]
     shuffle(bracos)
@@ -89,7 +87,7 @@ def main() -> None:
             for a in range(elemento):
                 posicao[1] -= 1
                 imagemNova.putpixel(tuple(posicao), preto)
-    imagemNova.save(diretorio + "imagem" + str(imagemNome) + ".png")
+    imagemNova.save("./imagem" + str(imagemNome) + ".png")
     imagemNome += 1
     BD["imagemNome"] = imagemNome
     BD.close()

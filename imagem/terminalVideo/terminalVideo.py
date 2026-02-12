@@ -1,7 +1,7 @@
 from PIL import Image
 import os
 
-diretorio="C:\\Users\\DELL\\Desktop\\antigo_PC\\pythonscript\\imagem\\terminalVideo\\video"
+diretorio="./video"
 
 def imagemToText(imagem):
     global showAltura

@@ -139,9 +139,9 @@ def main() -> None:
 
     # Argumentos do FFMPEG
 
-    diretorioVideo = "C:\\pythonscript\\imagem\\SpeedrunMapping\\video"
-    origemVideo = "-i C:\pythonscript\\imagem\\SpeedrunMapping\\level.mp4"  # "-i C:\\pythonscript\\videos\\videos\\video0002.mp4"
-    destinoTemp = diretorioVideo + "\\frame%02d.png"
+    diretorioVideo = "./video"
+    origemVideo = "-i ./level.mp4"
+    destinoTemp = diretorioVideo + "/frame%02d.png"
     extraArguments = "-r {0:02d}/1 -ss {1:02d}:{2:02d}:{3:02d}.0 -t 1.03"
     processoArgs = ["ffmpeg", origemVideo, extraArguments, destinoTemp]
     fps = 10
@@ -154,7 +154,7 @@ def main() -> None:
     # iniciadores
     processoArgs[2] = extraArguments.format(fps, 0, 0, 0)
     subprocess.call(" ".join(processoArgs))
-    diretorioFrames = diretorioVideo + "\\"
+    diretorioFrames = diretorioVideo + "/"
     mapa = openFrame(diretorioFrames + listdir(diretorioVideo)[0])
     tamanho = mapa.size
     posicao = [0, 0]

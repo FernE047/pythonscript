@@ -2,16 +2,16 @@ from PIL import Image
 
 
 def main() -> None:
-    imagem = Image.open("C:\\pythonscript\\imagem\\visualizarCompressaoJPG\\pic0001.png")
+    imagem = Image.open("./pic0001.png")
     for a in range(1000):
         print(a)
         imagem = imagem.convert("RGB")
-        imagem.save("C:\\pythonscript\\imagem\\visualizarCompressaoJPG\\pic0002.jpg")
+        imagem.save("./pic0002.jpg")
         imagem.close()
-        imagem = Image.open("C:\\pythonscript\\imagem\\visualizarCompressaoJPG\\pic0002.jpg")
-        imagem.save("C:\\pythonscript\\imagem\\visualizarCompressaoJPG\\pic0002.png")
+        imagem = Image.open("./pic0002.jpg")
+        imagem.save("./pic0002.png")
         imagem.close()
-        imagem = Image.open("C:\\pythonscript\\imagem\\visualizarCompressaoJPG\\pic0002.png")
+        imagem = Image.open("./pic0002.png")
     imagem.close()
 
 

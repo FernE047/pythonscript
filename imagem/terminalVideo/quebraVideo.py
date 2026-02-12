@@ -3,15 +3,20 @@ import shutil
 
 
 def main() -> None:
-    nome=input()
-    video=nome+".mp4""
-    os.system("ffmpeg -i "+video+" thumb%06d.jpg -hide_banner")
+    nome = input()
+    video = nome + ".mp4"
+    os.system("ffmpeg -i " + video + " thumb%06d.jpg -hide_banner")
     print("baixado")
-    directory = "" #complete
-    frames=[os.path.join(directory,frame) for frame in os.listdir(os.path.join(directory))]
+    directory = "./video"  # complete
+    frames = [
+        os.path.join(directory, frame) for frame in os.listdir(os.path.join(directory))
+    ]
     for frame in frames:
-        if(frame[1][-4:]==".jpg"):
-            shutil.move(frame,os.path.join("C:\\","pythonscript","terminalVideo","video2"))
+        if frame[1][-4:] == ".jpg":
+            shutil.move(
+                frame, os.path.join("C:/", "pythonscript", "terminalVideo", "./video2")
+            )
+
 
 if __name__ == "__main__":
     main()

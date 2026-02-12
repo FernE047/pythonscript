@@ -51,11 +51,9 @@ def capturaFaces(nome):
     image = imutils.resize(image, width=800)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     rects = DETECTOR(gray, 1)
-    nome = "C:\\pythonscript\\imagem\\projetoFaces\\comparaFaces\\tempFaces\\face{0:04d}.png"
+    nome = "./comparaFaces/tempFaces/face{0:04d}.png"
     for rect in rects:
-        indice = len(
-            listdir("C:\\pythonscript\\imagem\\projetoFaces\\comparaFaces\\tempFaces")
-        )
+        indice = len(listdir("./comparaFaces/tempFaces"))
         faceAligned = FA.align(image, gray, rect)
         cv2.imwrite(nome.format(indice), faceAligned)
         cv2.imwrite(nome.format(indice + 1), cv2.flip(faceAligned, 1))
@@ -79,11 +77,8 @@ def comparaFaces(face1, nome2):
     face2 = facialLandmarks(nome2)
     if face2 == []:
         return 100
-    distancia = (
-        lambda ponto1, ponto2: (
-            (ponto1[0] - ponto2[0]) ** 2 + (ponto1[1] - ponto2[1]) ** 2
-        )
-        ** 0.5
+    distancia = lambda ponto1, ponto2: (
+        ((ponto1[0] - ponto2[0]) ** 2 + (ponto1[1] - ponto2[1]) ** 2) ** 0.5
     )
     maiorDistancia = distancia((0, 0), (255, 255))
     soma = sum(
@@ -96,11 +91,9 @@ def comparaFaces(face1, nome2):
 
 
 # Constantes:
-nome = f"C:\\pythonscript\\imagem\\projetoFaces\\faces\\alinhadas\\output{0:04d}.png"
+nome = f"./faces/alinhadas/output{0:04d}.png"
 DETECTOR = dlib.get_frontal_face_detector()
-PREDICTOR = dlib.shape_predictor(
-    "C:\\pythonscript\\imagem\\projetoFaces\\shape_predictor_68_face_landmarks.dat"
-)
+PREDICTOR = dlib.shape_predictor("./shape_predictor_68_face_landmarks.dat")
 FA = FaceAligner(PREDICTOR, desiredFaceWidth=256)
 faceOriginal = facialLandmarks(nome)
 
@@ -111,12 +104,9 @@ def main() -> None:
     minutos = 0
     horas = 0
 
-
     # Argumentos do FFMPEG
-    origemVideo = "-i C:\pythonscript\\imagem\\projetoFaces\\comparaFaces\\aim.mp4"  #"-i C:\\pythonscript\\videos\\videos\\video0002.mp4"
-    destinoTemp = (
-        "C:\\pythonscript\\imagem\\projetoFaces\\comparaFaces\\tempFrames\\frame%04d.png"
-    )
+    origemVideo = "-i C:/pythonscript/imagem/projetoFaces/comparaFaces/aim.mp4"  # "-i C:/pythonscript/videos/videos/video0002.mp4"
+    destinoTemp = "./comparaFaces/tempFrames/frame%04d.png"
     extraArguments = "-r 24/1 -ss {0:02d}:{1:02d}:{2:02d}.0 -t 1"
     processoArgs = ["ffmpeg", origemVideo, extraArguments, destinoTemp]
 
@@ -131,25 +121,14 @@ def main() -> None:
             for segundo in range(segundos + 1):
                 processoArgs[2] = extraArguments.format(hora, minuto, segundo)
                 subprocess.call(" ".join(processoArgs))
-                for frame in listdir(
-                    "C:\\pythonscript\\imagem\\projetoFaces\\comparaFaces\\tempFrames"
-                ):
-                    capturaFaces(
-                        "C:\\pythonscript\\imagem\\projetoFaces\\comparaFaces\\tempFrames\\"
-                        + frame
-                    )
-                    remove(
-                        "C:\\pythonscript\\imagem\\projetoFaces\\comparaFaces\\tempFrames\\"
-                        + frame
-                    )
-                    # send2trash("C:\\pythonscript\\imagem\\projetoFaces\\comparaFaces\\tempFrames\\"+frame)
-                for face in listdir(
-                    "C:\\pythonscript\\imagem\\projetoFaces\\comparaFaces\\tempFaces"
-                ):
+                for frame in listdir("./comparaFaces/tempFrames"):
+                    capturaFaces("./comparaFaces/tempFrames/" + frame)
+                    remove("./comparaFaces/tempFrames/" + frame)
+                    # send2trash("./comparaFaces/tempFrames/"+frame)
+                for face in listdir("./comparaFaces/tempFaces"):
                     diferenca = comparaFaces(
                         faceOriginal,
-                        "C:\\pythonscript\\imagem\\projetoFaces\\comparaFaces\\tempFaces\\"
-                        + face,
+                        "./comparaFaces/tempFaces/" + face,
                     )
                     if diferenca < maiorDiferenca:
                         print(f"{hora:02d}:{minuto:02d}:{segundo:02d}.0")
@@ -157,21 +136,17 @@ def main() -> None:
                         print()
                         maiorDiferenca = diferenca
                         cv2.imwrite(
-                            "C:\\pythonscript\\imagem\\projetoFaces\\comparaFaces\\perfectFrame.png",
-                            cv2.imread(
-                                "C:\\pythonscript\\imagem\\projetoFaces\\comparaFaces\\tempFaces\\"
-                                + face
-                            ),
+                            "./comparaFaces/perfectFrame.png",
+                            cv2.imread("./comparaFaces/tempFaces/" + face),
                         )
-                    remove(
-                        "C:\\pythonscript\\imagem\\projetoFaces\\comparaFaces\\tempFaces\\"
-                        + face
-                    )
+                    remove("./comparaFaces/tempFaces/" + face)
                 if first:
                     finalFirst = time()
                     duracao = finalFirst - inicioFirst
                     first = False
-                    print_elapsed_time(duracao * (segundos + minutos * 60 + horas * 60 * 60))
+                    print_elapsed_time(
+                        duracao * (segundos + minutos * 60 + horas * 60 * 60)
+                    )
                     finalFirst, inicioFirst, duracao = [None, None, None]
                 if maiorDiferenca == 0:
                     break

@@ -4,7 +4,7 @@ import subprocess
 
 
 def main() -> None:
-    subprocess.call ( "python C:\\pythonscript\\100DemonetizedYoutubers\\100DemonetizedYoutubersUntilWinnerNoProbs.py ")
+    subprocess.call ( "python C:/pythonscript/100DemonetizedYoutubers/100DemonetizedYoutubersUntilWinnerNoProbs.py ")
 
 
 if __name__ == "__main__":

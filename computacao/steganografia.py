@@ -1,5 +1,5 @@
 import os
-from typing import List, LiteralString, cast
+from typing import List, cast
 from PIL import Image
 import copy
 from PIL.ImageFile import ImageFile
@@ -23,13 +23,13 @@ def is_image_hidable(img_to_hide: ImageFile, img_source: ImageFile) -> bool:
     return False
 
 
-def open_image_by_name(directory: LiteralString, message: str) -> ImageFile:
+def open_image_by_name(message: str) -> ImageFile:
     while True:
         try:
             print(message)
             user_input = input()
             if user_input.find("/") == -1:
-                return Image.open(os.path.join(directory, user_input))
+                return Image.open(os.path.join("./images", user_input))
             return Image.open(user_input)
         except Exception as _:
             print("invalid name")
@@ -100,15 +100,12 @@ def convert_pixel_to_binary(pixel: tuple[int, int, int]) -> list[list[str]]:
 
 
 def main() -> None:
-    diretorio = os.path.join("C:/", "pythonscript", "Imagens")
-    source_image = open_image_by_name(diretorio, "enter the name of the original image")
-    image_to_hide = open_image_by_name(diretorio, "enter the name of the image to hide")
+    source_image = open_image_by_name("enter the name of the original image")
+    image_to_hide = open_image_by_name("enter the name of the image to hide")
     while not (is_image_hidable(image_to_hide, source_image)):
-        image_to_hide = open_image_by_name(
-            diretorio, "enter the name of the image to hide"
-        )
+        image_to_hide = open_image_by_name("enter the name of the image to hide")
     stego_image = hide_image(image_to_hide, source_image)
-    filename = os.path.join(diretorio, "output_steg.jpg")
+    filename = os.path.join("output_steg.jpg")
     print(f"saving stego image as {filename}")
     stego_image.save(filename)
 

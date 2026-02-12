@@ -138,8 +138,8 @@ def main() -> None:
 
 
     # iniciadores
-    diretorioVideo = "C:\\pythonscript\\imagem\\SpeedrunMapping\\video"
-    diretorioFrames = diretorioVideo + "\\"
+    diretorioVideo = "./video"
+    diretorioFrames = diretorioVideo + "/"
     mapa = openFrame(diretorioFrames + listdir(diretorioVideo)[0])
     tamanho = mapa.size
     posicao = [0, 0]

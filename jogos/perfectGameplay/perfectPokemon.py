@@ -153,7 +153,7 @@ def limpaBD():
     BD["jogadorPokemons"]=[0,"","","","",""]
     BD["jogadorItens"]=[]
     BD.close()
-    BD = shelve.open("C:/pythonscript/jogos/perfectGameplay/bd")
+    BD = shelve.open("./bd")
 
 def colocaPokemon(slot,pokemon):
     global BD
@@ -335,7 +335,7 @@ def scanNomeInimigo(inimigo):
                         imagem.putpixel((xLetra,yLetra),(0,0,0,255))
             for nomeArq in range(1,38):
                 try:
-                    comparada=Image.open("C:/pythonscript/jogos/perfectGameplay/alfabeto1/"+str(nomeArq)+".png")
+                    comparada=Image.open("./alfabeto1/"+str(nomeArq)+".png")
                 except:
                     comparada=False
                 teste=False
@@ -351,7 +351,7 @@ def scanNomeInimigo(inimigo):
                 print(nome)
                 print("qual o numero dessa letra?")
                 nomeArq=int(input())
-                imagem.save("C:/pythonscript/jogos/perfectGameplay/alfabeto1/"+str(nomeArq)+".png")
+                imagem.save("./alfabeto1/"+str(nomeArq)+".png")
             nome+=decifraFonte(nomeArq)
             x+=10
         elif(x==315):
@@ -424,7 +424,7 @@ def main() -> None:
     botaoA="x"
     botaoB="z"
     teclas=[enter,botaoA,botaoB,cima,baixo,esquerda,direita]
-    BD = shelve.open("C:/pythonscript/jogos/perfectGameplay/bd")
+    BD = shelve.open("./bd")
     limpaBD()
     try:
         comeco=time.time()

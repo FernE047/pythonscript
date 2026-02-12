@@ -15,7 +15,7 @@ def facialLandmarks(nome,detector,predictor):
 
 def comparaFaces(nome1,nome2):
     detector = dlib.get_frontal_face_detector()
-    predictor = dlib.shape_predictor("C:\\pythonscript\\imagem\\projetoFaces\\shape_predictor_68_face_landmarks.dat")
+    predictor = dlib.shape_predictor("./shape_predictor_68_face_landmarks.dat")
     face1 = facialLandmarks(nome1,detector,predictor)
     face2 = facialLandmarks(nome2,detector,predictor)
     distancia = lambda ponto1,ponto2:((ponto1[0]-ponto2[0])**2+(ponto1[1]-ponto2[1])**2)**0.5
@@ -25,7 +25,7 @@ def comparaFaces(nome1,nome2):
 
 
 def main() -> None:
-    nome = "C:\\pythonscript\\imagem\\projetoFaces\\faces\\alinhadas\\output{0:04d}.png"
+    nome = "./faces/alinhadas/output{0:04d}.png"
     print(comparaFaces(nome.format(0),nome.format(1)))
 
 

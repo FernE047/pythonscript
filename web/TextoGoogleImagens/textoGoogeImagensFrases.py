@@ -108,7 +108,7 @@ def baixaImagens(lyrics, titulo, adicao, tamanho):
     titulo = f"{adicao[0]} {titulo} {str(tamanho)} {adicao[1]}".proper().replace(
         " ", "_"
     )
-    pasta = os.path.join("C:\\", "pythonscript", "web", "TextoGoogleImagens", titulo)
+    pasta = os.path.join("C:/", "pythonscript", "web", "TextoGoogleImagens", titulo)
     newLyrics = []
     frase = ""
     for number, palavra in enumerate(lyrics):

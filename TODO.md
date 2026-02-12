@@ -4,13 +4,13 @@
 - [x] Remove all self-made modules and replace them with in-file implementations
 - [x] Add if `__name__ == "__main__":` guards
 - [ ] Translate everything to English (search imagem for examples)
-- [ ] Replace full paths with relative paths (search // or C:\ for examples)
+- [x] Replace full paths with relative paths (search // or C:\ for examples)
 - [ ] Start using pathlib for path handling
 - [ ] Fix all linter errors and warnings (19k+)
 - [ ] Add type annotations everywhere
 - [ ] Constants for magic numbers/strings
 - [ ] Improve variable and function names by using underline_case
-- [ ] Translate filenames to English git mv galore :v
+- [ ] Translate filenames to English: git mv galore :v
 - [ ] Improve README.md to have all projects documented properly
 - [ ] Separate different projects into different folders
 - [ ] Rename files to main.py where applicable
