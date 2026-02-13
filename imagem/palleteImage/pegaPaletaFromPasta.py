@@ -1,13 +1,40 @@
 from PIL import Image
 import os
 
+IMAGES_FOLDER = "imagens"
+SUBFOLDER_DEFAULT = "pokedex_no_background"
+MAX_COLOR_CHANNELS = 4
+MAX_BRIGHTNESS = 256
+TRANSPARENT = (0, 0, 0, 0)
+ALLOWED_IMAGE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".bmp", ".gif")
+PALETTE_FOLDER = "palette"
+PALETTE_OUTPUT = "palette_pokemons.png"
+
+PixelData = tuple[int, ...]
+PaletteData = set[PixelData]
+
+CoordData = tuple[int, int]
+
+
+def get_pixel(image: Image.Image, coord: CoordData) -> PixelData:
+    pixel = image.getpixel(coord)
+    if pixel is None:
+        raise ValueError("Pixel not found")
+    if isinstance(pixel, int):
+        raise ValueError("Image is not in RGB mode")
+    if isinstance(pixel, float):
+        raise ValueError("Image is not in RGB mode")
+    if len(pixel) < MAX_COLOR_CHANNELS:
+        raise ValueError("Image is not in RGB mode")
+    return pixel
+
 
 def get_image_from_folder(image_category: str) -> list[str]:
-    folder = f"imagens/{image_category}"
+    folder = f"{IMAGES_FOLDER}/{image_category}"
     images: list[str] = []
     if os.path.exists(folder):
         for filename in os.listdir(folder):
-            if filename.lower().endswith((".png", ".jpg", ".jpeg", ".bmp", ".gif")):
+            if filename.lower().endswith(ALLOWED_IMAGE_EXTENSIONS):
                 images.append(os.path.join(folder, filename))
     return images
 
@@ -21,28 +48,23 @@ def open_image_as_rgba(image_path: str) -> Image.Image:
 
 
 def main() -> None:
-    imagens = get_image_from_folder("pokedex sem fundo")
-    paleta = []
-    for img in imagens:
+    images = get_image_from_folder(SUBFOLDER_DEFAULT)
+    palette: PaletteData = set()
+    for img in images:
         imagem = open_image_as_rgba(img)
         largura, altura = imagem.size
         for x in range(largura):
             for y in range(altura):
-                pixel = imagem.getpixel((x, y))
-                if pixel not in paleta:
-                    paleta.append(pixel)
-    altura = int(len(paleta) / 256) + 1
+                pixel = get_pixel(imagem, (x, y))
+                palette.add(pixel)
+    altura = int(len(palette) / MAX_BRIGHTNESS) + 1
     if altura > 1:
-        paletaImg = Image.new("RGBA", (256, altura), (0, 0, 0, 0))
+        paletteImg = Image.new("RGBA", (MAX_BRIGHTNESS, altura), TRANSPARENT)
     else:
-        paletaImg = Image.new("RGBA", (len(paleta), altura), (0, 0, 0, 0))
-    m = 0
-    for index in range(len(paleta)):
-        if m % 256 == 0:
-            m = 0
-        paletaImg.putpixel((m, int(index / 256)), paleta[index])
-        m += 1
-    paletaImg.save(os.path.join("paleta", "paletaPokemons.png"))
+        paletteImg = Image.new("RGBA", (len(palette), altura), TRANSPARENT)
+    for index, color in enumerate(palette):
+        paletteImg.putpixel((index % MAX_BRIGHTNESS, index // MAX_BRIGHTNESS), color)
+    paletteImg.save(os.path.join(PALETTE_FOLDER, PALETTE_OUTPUT))
 
 
 if __name__ == "__main__":
