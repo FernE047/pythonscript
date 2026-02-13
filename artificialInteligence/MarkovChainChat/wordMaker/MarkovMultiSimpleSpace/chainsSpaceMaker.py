@@ -20,7 +20,7 @@ def update_chain(filename: str, index: int, chain_element: str) -> None:
 def update_chain_file(filename: str, index: int, chain_element: str) -> None:
     with open(f"{filename}/c.txt", "w", encoding="UTF-8") as file_write:
         if f"{index:03d}.txt" not in os.listdir(filename):
-            file_write.write(chain_element + " 1\n")
+            file_write.write(f"{chain_element} 1\n")
             return
         with open(f"{filename}/{index:03d}.txt", "r", encoding="UTF-8") as file_read:
             lines = file_read.readlines()
@@ -36,7 +36,7 @@ def update_chain_file(filename: str, index: int, chain_element: str) -> None:
             else:
                 file_write.write(line)
         if not element_found:
-            file_write.write(chain_element + " 1\n")
+            file_write.write(f"{chain_element} 1\n")
 
 
 def get_filename() -> str:
@@ -104,7 +104,7 @@ def main() -> None:
                         break
             print(word_length)
         line = file.readline()[:-1]
-    with open(filename + "/c.txt", "w", encoding="UTF-8") as output_chain_file:
+    with open(f"{filename}/c.txt", "w", encoding="UTF-8") as output_chain_file:
         for index, quantity in enumerate(word_frequency_map):
             output_chain_file.write(f"{index} {quantity}\n")
 

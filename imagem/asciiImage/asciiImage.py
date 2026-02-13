@@ -80,7 +80,7 @@ def main() -> None:
     image_paths = get_image_from_folder()
     width_output = set_display_width()
     for image in image_paths:
-        print("\n" + image + "\n")
+        print(f"\n{image}\n")
         image_colored = open_image_as_rgb(image)
         image_black_white = image_colored.convert("L")
         image_output = resize_image_to_width(width_output, image_black_white)

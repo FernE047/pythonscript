@@ -64,9 +64,9 @@ def main() -> None:
         print(altura)
         print(largura)
         imagemNova = Image.new("RGBA", (largura, altura), branco)
-        print("altura :  " + str(altura))
-        print("largura : " + str(largura))
-        print("inicial : " + str(inicial))
+        print(f"altura :  {altura}")
+        print(f"largura : {largura}")
+        print(f"inicial : {inicial}")
         imagemNova.putpixel(inicial, vermelho)
         posicao = list(inicial)
         for n, elemento in enumerate(bracos):
@@ -87,7 +87,7 @@ def main() -> None:
                 for a in range(elemento):
                     posicao[1] -= 1
                     imagemNova.putpixel(tuple(posicao), preto)
-        imagemNova.save("./imagem" + str(imagemNome) + ".png")
+        imagemNova.save(f"./imagem{imagemNome}.png")
         imagemNome += 1
         BD["imagemNome"] = imagemNome
 

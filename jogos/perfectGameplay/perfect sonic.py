@@ -5,7 +5,7 @@ import time
 
 
 def pressFor(tecla, tempo=1 / 15):
-    print("press " + tecla)
+    print(f"press {tecla}")
     pyautogui.keyDown(tecla)
     time.sleep(tempo)
     pyautogui.keyUp(tecla)
@@ -58,7 +58,7 @@ def quantoTempo(tecla):
         velhoi = i
         i = i + 1
         velho = novo
-        print("testando " + tecla + " por " + str(i) + "/15")
+        print(f"testando {tecla} por {i}/15")
         novo = esseTempo(tecla, i)
         if velho != novo:
             return velhoi
@@ -68,8 +68,8 @@ def main() -> None:
     try:
         tecla = "l"
         tempofinal = quantoTempo(tecla)
-        print("tempo final foi " + str(tempofinal))
-        print("adicione \npressFor( + tecla + );")
+        print(f"tempo final foi {tempofinal}")
+        print(f"adicione \npressFor({tecla});")
         pyautogui.click(900, 600)
     except KeyboardInterrupt:
         print("\nDone.")

@@ -209,7 +209,7 @@ def corrigeFrame(nome: str) -> None:
 
 
 def main() -> None:
-    frames = ["./frames/" + a for a in os.listdir("./frames")]
+    frames = [f"./frames/{a}" for a in os.listdir("./frames")]
     frames.pop(0)
     frames.pop()
     with multiprocessing.Pool(os.cpu_count()) as cpu_pool:

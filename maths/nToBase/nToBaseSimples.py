@@ -24,8 +24,8 @@ def impressao(n, base, tamanhoBase=0, tamanhoN=3):
     resultado = nToBase(n, base)
     mensagem = []
     mensagem.append(str(base))
-    mensagem.append((" : {0:0" + str(tamanhoN) + "} : ").format(n))
-    mensagem.append((" {:0>" + str(tamanhoBase) + "}").format(resultado))
+    mensagem.append((f" : {n:0{tamanhoN}} : "))
+    mensagem.append((f" {:0>{tamanhoBase}}").format(resultado))
     print("".join(mensagem))
 
 

@@ -29,7 +29,7 @@ def print_elapsed_time(seconds: float) -> None:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(sign + ", ".join(parts))
+    print(f"{sign}{', '.join(parts)}")
 
 
 def geraLista(listaInicial, x):
@@ -57,7 +57,7 @@ def analisaAsListas(n):
             if first == limite:
                 fim = time()
                 duracao = fim - inicio
-                print(str(limite) + " execucoes deu : ")
+                print(f"{limite} execucoes deu : ")
                 print_elapsed_time(duracao)
                 print("Previsao de Execucao Total  : ")
                 print_elapsed_time(duracao * (math.factorial(n) / limite))

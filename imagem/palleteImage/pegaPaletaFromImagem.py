@@ -26,7 +26,7 @@ def main() -> None:
     imagens = get_image_from_folder(assunto)
     for indice, imagem_a in enumerate(imagens):
         print(f"{indice}  -  {imagem_a}")
-    print("\nqual imagem? 0 a " + str(len(imagens)))
+    print(f"\nqual imagem? 0 a {len(imagens) - 1}")
     numImagem = int(input())
     img = imagens[numImagem]
     imagem = open_image_as_rgba(img)
@@ -52,7 +52,7 @@ def main() -> None:
     print(img)
     print("digite o novo nome")
     nome = input()
-    paletaImg.save(os.path.join("paleta", "paleta" + nome + ".png"))
+    paletaImg.save(os.path.join("paleta", f"paleta{nome}.png"))
 
 
 if __name__ == "__main__":

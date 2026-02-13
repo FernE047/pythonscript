@@ -20,7 +20,7 @@ def update_chain_file(index: int, keywords: list[str]) -> None:
 def update_keyword_count(index: int, keywords: list[str]) -> None:
     with open("chain/c.txt", "w", encoding="utf-8") as file_write:
         if f"{index:03d}.txt" not in os.listdir("chain"):
-            file_write.write(" ".join(keywords) + " 1\n")
+            file_write.write(f"{' '.join(keywords)} 1\n")
             return
         with open(f"chain/{index:03d}.txt", "r", encoding="utf-8") as file_read:
             lines = file_read.readlines()
@@ -33,10 +33,10 @@ def update_keyword_count(index: int, keywords: list[str]) -> None:
                 file_write.write(line)
                 continue
             words[-1] = str(int(words[-1]) + 1)
-            file_write.write(" ".join(words) + "\n")
+            file_write.write(f"{' '.join(words)}\n")
             keyword_exists = True
         if not keyword_exists:
-            file_write.write(" ".join(keywords) + " 1\n")
+            file_write.write(f"{' '.join(keywords)} 1\n")
 
 
 def main() -> None:

@@ -59,8 +59,8 @@ def imprime(board):
         return
     tamanho=len(board)
     lista=[str(a) for a in range(tamanho)]
-    print(" "+" ".join(lista))
-    entreLinha=" "+"+".join(["-" for a in range(tamanho)])
+    print(f" {' '.join(lista)}")
+    entreLinha=f" {'+'.join(['-' for a in range(tamanho)])}"
     for n,linhaValores in enumerate(board):
         linha=str(n)
         for m,valor in enumerate(linhaValores):
@@ -243,7 +243,7 @@ def jogadaMirrorDiagonalX(board):
 def jogadaNormal(board,jogador,number):
     global IMPRESSAO
     simbolo=jogador["simbolo"]
-    if(IMPRESSAO):print("simbolo "+simbolo+" : \n")
+    if(IMPRESSAO):print(f"simbolo {simbolo} : \n")
     possibilidades=fazJogada(tabuleiro,jogador["estrategia"])
     total=len(possibilidades)
     if(total==0):
@@ -252,7 +252,7 @@ def jogadaNormal(board,jogador,number):
     coordenadas=possibilidades[number%total]
     tabuleiro[coordenadas[0]][coordenadas[1]]=simbolo
     imprime(tabuleiro)
-    return final(board,"simbolo "+simbolo)
+    return final(board,f"simbolo {simbolo}")
 
 def fazJogada(tabuleiro,estrategia):
     if(estrategia=="random"):
@@ -302,13 +302,13 @@ def main() -> None:
                     if(resultado=="win"):
                         jogador[vez%2]["vitorias"]+=1
                     break
-        print("tamanho do tabuleiro : "+str(tamanho))
-        print("partidas no total : "+str(partidasTotal))
+        print(f"tamanho do tabuleiro : {tamanho}")
+        print(f"partidas no total : {partidasTotal}")
         vitoria1=jogador[0]["vitorias"]
         vitoria2=jogador[1]["vitorias"]
-        print("jogador "+jogador[0]["simbolo"]+" ganhou "+str(vitoria1)+" vezes, "+str(vitoria1*100/partidasTotal)+"%, com a estrategia "+jogador[0]["estrategia"])
-        print("jogador "+jogador[1]["simbolo"]+" ganhou "+str(vitoria2)+" vezes, "+str(vitoria2*100/partidasTotal)+"%, com a estrategia "+jogador[1]["estrategia"])
-        print("Empatou "+str(partidasTotal-vitoria1-vitoria2)+" vezes, "+str(100-(vitoria1+vitoria2)*100/partidasTotal)+"%")
+        print(f"jogador {jogador[0]['simbolo']} ganhou {vitoria1} vezes, {vitoria1*100/partidasTotal}%, com a estrategia {jogador[0]['estrategia']}")
+        print(f"jogador {jogador[1]['simbolo']} ganhou {vitoria2} vezes, {vitoria2*100/partidasTotal}%, com a estrategia {jogador[1]['estrategia']}")
+        print(f"Empatou {partidasTotal-vitoria1-vitoria2} vezes, {100-(vitoria1+vitoria2)*100/partidasTotal}%")
         if("não"==choose_from_options("continuar?",("sim","não"))):
             break
 

@@ -32,7 +32,7 @@ def print_elapsed_time(seconds: float) -> None:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(sign + ", ".join(parts))
+    print(f"{sign}{', '.join(parts)}")
 
 
 def tiraEspaçoBranco(texto: str) -> str:
@@ -55,11 +55,11 @@ def main() -> None:
     imagens = os.listdir()
     imagens = [os.path.join(pasta, arquivo) for arquivo in os.listdir(pasta)]
     for imagem in imagens:
-        print("\n" + imagem)
+        print(f"\n{imagem}")
         phrase = ocr.image_to_string(open_image(imagem), lang="por")
         phraseBonita = tiraEspaçoBranco(phrase)
-        print(str(len(phrase)))
-        print(str(len(phraseBonita)) + "\n")
+        print(f"{len(phrase)}")
+        print(f"{len(phraseBonita)}\n")
         print(phraseBonita)
     final = time.time()
     print("demorou ")

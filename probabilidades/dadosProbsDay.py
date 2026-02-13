@@ -4,7 +4,7 @@
 
 def main() -> None:
 	for a in range(0,20):
-		print("\nquantia de dados: "+str(a+1))
+		print(f"\nquantia de dados: {a+1}")
 		vezes=6**a
 		minuto=0
 		hora=0
@@ -14,26 +14,26 @@ def main() -> None:
 		if(vezes>60):
 			minuto=int(vezes/12)
 		else:
-			print("segundos: "+str(vezes))
+			print(f"segundos: {vezes}")
 		if(minuto>=1):
 			hora=int(minuto/60)
 			minuto=minuto%60
-			print("minuto: "+str(minuto))
+			print(f"minuto: {minuto}")
 		if(hora>=1):
 			dia=int(hora/24)
 			hora=hora%24
-			print("horas: "+str(hora))
+			print(f"horas: {hora}")
 		if(dia>=1):
 			ano=int(dia/365.25)
 			dia=dia%365
-			print("dia: "+str(dia))
+			print(f"dia: {dia}")
 		if(ano>=1):
 			seculo=int(ano/100)
 			ano=ano%100
-			print("ano: "+str(ano))
+			print(f"ano: {ano}")
 		if(seculo>=1):
-			print("seculo: "+str(seculo))
-		print("probabilidade: 1 em "+str(vezes))
+			print(f"seculo: {seculo}")
+		print(f"probabilidade: 1 em {vezes}")
 
 
 if __name__ == "__main__":

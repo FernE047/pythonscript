@@ -9,6 +9,7 @@
 - [x] remove Image.open(...) and replace with context manager in all scripts
 - [x] shelve.open(...) with context manager in all scripts too :o
 - [x] and MULTIPROCESSING POOL :v
+- [x] use f-strings everywhere instead of string concatenation
 - [ ] Start using pathlib for path handling
 - [ ] Fix all linter errors and warnings (19k+)
 - [ ] Add type annotations everywhere

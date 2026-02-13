@@ -92,7 +92,7 @@ def print_elapsed_time(seconds: float) -> None:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(sign + ", ".join(parts))
+    print(f"{sign}{', '.join(parts)}")
 
 
 def get_graph_from_file(filename: str, nodes_limit: int | None = None) -> GraphData:

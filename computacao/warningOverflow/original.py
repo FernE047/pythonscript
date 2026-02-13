@@ -5,10 +5,10 @@ from time import time
 
 arquivosQuantia = len(os.listdir())
 if arquivosQuantia < 10:
-    nomeClone = "clone" + str(int(time() * 100)) + ".py"
+    nomeClone = f"clone{int(time() * 100)}.py"
     with open(nomeClone, "w", encoding="utf-8") as clone, open("original.py", "r", encoding="utf-8") as original:
         linha = original.readline()
         while linha:
             clone.write(linha)
             linha = original.readline()
-    subprocess.call("python " + nomeClone)
+    subprocess.call(f"python {nomeClone}")

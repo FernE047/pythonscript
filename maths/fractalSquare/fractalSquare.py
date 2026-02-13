@@ -4,7 +4,7 @@ import os
 def vetorParaImagem(vetor):
     altura=len(vetor)
     largura=max([len(a) for a in vetor])
-    print("\naltura: "+str(altura)+"\nlargura: "+str(largura))
+    print(f"\naltura: {altura}\nlargura: {largura}")
     for a in range(altura):
         while(len(vetor[a])<largura):
             vetor[a].append(0)
@@ -40,7 +40,7 @@ def fazNFractais(vetor,nome):
     while True:
         bloco=proximoFractal(bloco,guia)
         if(bloco==""):
-            print("feito "+str(a)+" fractais\n")
+            print(f"feito {a} fractais\n")
             return()
         pastaSalvar=os.path.join(novaPasta,f"{nome.proper()}{a:02d}.png")
         bloco.save(pastaSalvar)

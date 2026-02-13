@@ -1,4 +1,5 @@
 from typing import Literal, overload
+from regex import F
 from send2trash import send2trash
 import random
 import os
@@ -110,9 +111,9 @@ def edit_module(folder: str, module: str) -> None:
                 else:
                     answers_fileTemp.write(answers_line)
                     questions_fileTemp.write(questions_line)
-                    print(index, end=") \n")
+                    print(f"{index}) ")
                     print(questions_line, end="")
-                    print(answers_line + "\n")
+                    print(f"{answers_line}\n")
                 answers_line = answers_file.readline()
                 questions_line = questions_file.readline()
                 index += 1
@@ -216,9 +217,9 @@ def new_module(folder: str, evaluation_folder: str, module: str) -> None:
             word = input("type the question word: ")
             if word == "0":
                 return
-            questions_file.write(word + "\n")
+            questions_file.write(f"{word}\n")
             word = input("type the answer word: ")
-            answers_file.write(word + "\n")
+            answers_file.write(f"{word}\n")
 
 
 def random_study(folder: str, mode: str) -> None:  # TODO implement partial modular mode
@@ -285,8 +286,8 @@ def main() -> None:
             else:
                 print("already exists")
             continue
-        folder = "./categories/" + user_choice
-        evaluation_folder = "./evaluations/" + user_choice
+        folder = f"./categories/{user_choice}"
+        evaluation_folder = f"./evaluations/{user_choice}"
         while True:
             options = ["Back"]
             options += ["Modules"]

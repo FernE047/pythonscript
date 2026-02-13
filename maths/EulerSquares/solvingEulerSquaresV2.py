@@ -1,6 +1,6 @@
 def imprime(matriz):
     global iterations
-    print("Iteracoes Totais " +str(iterations))
+    print(f"Iteracoes Totais {iterations}")
     if matriz:
         for linha in matriz:
             print(" ".join([str(elemento) for elemento in linha]))

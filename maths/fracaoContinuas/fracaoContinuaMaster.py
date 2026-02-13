@@ -90,15 +90,15 @@ def decimalToFraction(numero):
         iteracao+=1
         #print()
         inteiro=int(numero)
-        #print("inteiro : "+str(inteiro))
+        #print(f"inteiro : {inteiro}")
         real=numero-inteiro
-        #print("real : "+str(real))
+        #print(f"real : {real}")
         fraction.append(inteiro)
         if(real==0):
             return(fraction)
         else:
             numero=1/real
-            #print("invertido : "+str(numero))
+            #print(f"invertido : {numero}")
         if(iteracao==1000):
             fraction.append(real)
             return(fraction)
@@ -110,12 +110,13 @@ def fracaoToFraction(numerador,denominador):
         iteracao+=1
         #print()
         inteiro=int(numerador/denominador)
-        #print("inteiro : "+str(inteiro))
+        #print(f"inteiro : {inteiro}")
         velhoNumerador=numerador
         numerador=denominador
-        #print("numerador : "+str(numerador))
+        #print(f"numerador : {numerador}")
         denominador=velhoNumerador-inteiro*denominador
-        #print("denominador : "+str(denominador))
+        #print(f"denominador : {denominador}"
+        )
         fraction.append(inteiro)
         if(denominador==0):
             return(fraction)

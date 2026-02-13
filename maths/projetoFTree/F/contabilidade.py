@@ -16,7 +16,7 @@ def main() -> None:
     cores = (vermelho, azul, preto)
 
     for numeroCurva in range(0, 11):
-        nome = "curva" + str(numeroCurva) + ".png"
+        nome = f"curva{numeroCurva}.png"
         img = open_image_as_rgba(nome)
         larg, alt = img.size
         cont = 0
@@ -26,15 +26,7 @@ def main() -> None:
                 if img.getpixel((x, y)) in cores:
                     cont += 1
         print(
-            "\nnivel:"
-            + str(numeroCurva)
-            + "\ntotal:"
-            + str(area)
-            + "\nquant:"
-            + str(cont)
-            + "\nporcentagem:"
-            + str(cont * 100 / area)
-            + "%\n"
+            f"\nnivel:{numeroCurva}\ntotal:{area}\nquant:{cont}\nporcentagem:{cont * 100 / area}%\n"
         )
 
 

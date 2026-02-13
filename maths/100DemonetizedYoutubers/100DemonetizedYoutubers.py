@@ -31,13 +31,11 @@ def main() -> None:
         porcentagemAtual = int(jogo * 100 / total)
         if porcentagemAtual != porcentagem:
             porcentagem = porcentagemAtual
-            print(str(porcentagem) + "%")
+            print(f"{porcentagem}%")
     for participante, prob in enumerate(probIndividual):
         if prob != 0:
-            print(
-                "participante " + str(participante) + " : " + str(prob * 100 / total) + "%"
-            )
-    print("total : " + str(soma * 100 / total) + "%")
+            print(f"participante {participante} : {prob * 100 / total}%")
+    print(f"total : {soma * 100 / total}%")
 
 
 if __name__ == "__main__":

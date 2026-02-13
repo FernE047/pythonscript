@@ -191,7 +191,7 @@ def main() -> None:
                 print(config.script_id, end="\t")
                 print(programa, end="\t")
                 print(memory_tape, end="\t")
-                print("passos: " + str(config.steps))
+                print(f"passos: {config.steps}")
             if isinstance(memory_tape, list):
                 for result_output in memory_tape:
                     if config.steps == config.limit_exec:

@@ -36,7 +36,7 @@ def format_elapsed_time(seconds: float) -> str:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    return sign + ", ".join(parts)
+    return f"{sign}{', '.join(parts)}"
 
 
 def rename_file(source_filename: str, destination_filename: str) -> None:
@@ -71,7 +71,7 @@ def update_keyword_counts(keywords: list[str], directory: str) -> None:
             while current_keyword in keywords:
                 words[-1] = str(int(words[-1]) + 1)
                 keywords.remove(current_keyword)
-            file_write.write(" ".join(words) + "\n")
+            file_write.write(f"{' '.join(words)}\n")
             if not keywords:
                 break
         if keywords:
@@ -129,9 +129,9 @@ def main() -> None:
             finish_time = time()
             elapsed_time = (finish_time - start_time) / quantity
             print(name)
-            print("duração média : " + format_elapsed_time(elapsed_time))
-            print("tempo Passado : " + format_elapsed_time(finish_time - start_time))
-            print("falta : " + format_elapsed_time(elapsed_time * (total - quantity)))
+            print(f"duração média : {format_elapsed_time(elapsed_time)}")
+            print(f"tempo Passado : {format_elapsed_time(finish_time - start_time)}")
+            print(f"falta : {format_elapsed_time(elapsed_time * (total - quantity))}")
             print()
     print("concluindo...")
     if len(title_keywords) > OVERFLOWLIMIT:
@@ -142,7 +142,7 @@ def main() -> None:
         story_keywords = []
         finish_time = time()
         elapsed_time = (finish_time - start_time) / total
-        print("falta : " + format_elapsed_time(elapsed_time * (total - quantity)))
+        print(f"falta : {format_elapsed_time(elapsed_time * (total - quantity))}")
     print()
 
 

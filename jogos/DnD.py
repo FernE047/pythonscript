@@ -28,7 +28,7 @@ def chances(function,m,n=2,potencia=10**6):
     for a in range(potencia):
         lista[function(m,n)-1]+=1
     for num,elemento in enumerate(lista):
-        print(str(num+1)+" : "+str(elemento*100/potencia))
+        print(f"{num+1} : {elemento*100/potencia}")
 
 def sequenciaChance(m,sequencia,potencia=10**6):
     n=len(sequencia)
@@ -39,7 +39,7 @@ def sequenciaChance(m,sequencia,potencia=10**6):
         if(lista==sequencia):
             total+=1
         lista.pop(0)
-    print(str(sequencia)+" : "+str(total*100/potencia))
+    print(f"{sequencia} : {total*100/potencia}")
     
 
 

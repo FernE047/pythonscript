@@ -73,7 +73,7 @@ def hasColor(
 
 
 def limpaPasta(pasta: str) -> None:
-    arquivos = [pasta + "/" + a for a in os.listdir(pasta)]
+    arquivos = [f"{pasta}/{a}" for a in os.listdir(pasta)]
     if "./frames/resized" in arquivos:
         arquivos.pop(arquivos.index("./frames/resized"))
     for arquivo in arquivos:
@@ -359,14 +359,14 @@ def escreveLinhas(
             for m in range(2):
                 b = linhaInicial[n][m]
                 a = linhaFinal[n][m] - b
-                linha.append(str(a) + "," + str(b))
+                linha.append(f"{a},{b}")
             pixelInicial = get_pixel(imagemInicialPNG, linhaInicial[n])
             pixelFinal = get_pixel(imagemFinalPNG, linhaFinal[n])
             for m in range(3):
                 b = pixelInicial[m]
                 a = pixelFinal[m] - b
-                linha.append(str(a) + "," + str(b))
-            file.write(" ".join(linha) + "\n")
+                linha.append(f"{a},{b}")
+            file.write(f"{' '.join(linha)}\n")
     elif pontosLinhaInicial > pontosLinhaFinal:
         if pontosLinhaInicial - 1 == 0:
             multiplicador = 0.0
@@ -378,14 +378,14 @@ def escreveLinhas(
             for m in range(2):
                 b = linhaInicial[n][m]
                 a = linhaFinal[pontoFinal][m] - b
-                linha.append(str(a) + "," + str(b))
+                linha.append(f"{a},{b}")
             pixelInicial = get_pixel(imagemInicialPNG, linhaInicial[n])
             pixelFinal = get_pixel(imagemFinalPNG, linhaFinal[pontoFinal])
             for m in range(3):
                 b = pixelInicial[m]
                 a = pixelFinal[m] - b
-                linha.append(str(a) + "," + str(b))
-            file.write(" ".join(linha) + "\n")
+                linha.append(f"{a},{b}")
+            file.write(f"{' '.join(linha)}\n")
     else:
         if pontosLinhaFinal - 1 == 0:
             multiplicador = 0.0
@@ -397,14 +397,14 @@ def escreveLinhas(
             for m in range(2):
                 b = linhaInicial[pontoInicial][m]
                 a = linhaFinal[n][m] - b
-                linha.append(str(a) + "," + str(b))
+                linha.append(f"{a},{b}")
             pixelInicial = get_pixel(imagemInicialPNG, linhaInicial[pontoInicial])
             pixelFinal = get_pixel(imagemFinalPNG, linhaFinal[n])
             for m in range(3):
                 b = pixelInicial[m]
                 a = pixelFinal[m] - b
-                linha.append(str(a) + "," + str(b))
-            file.write(" ".join(linha) + "\n")
+                linha.append(f"{a},{b}")
+            file.write(f"{' '.join(linha)}\n")
 
 
 def escreveBlobs(
@@ -475,11 +475,9 @@ def fazFundo(
             pixel = get_pixel(parteInicial, (x, y))
             if pixel[3] != 0:
                 if get_pixel(parteFinal, (x, y))[3] != 0:
-                    fileConfig.write(
-                        str(x) + "," + str(y) + " " + str(x) + "," + str(y) + "\n"
-                    )
+                    fileConfig.write(f"{x},{y} {x},{y}\n")
                 else:
-                    fileConfig.write(str(x) + "," + str(y) + " fundo\n")
+                    fileConfig.write(f"{x},{y} fundo\n")
     parteInicial.close()
     parteFinal.close()
 
@@ -493,9 +491,9 @@ SECÇÃO DEBUG:
 
 def imprimeBlob(blobs: list[list[CoordData]]) -> None:
     for n, blob in enumerate(blobs):
-        print("\nblob " + str(n) + " : \n")
+        print(f"\nblob {n} : \n")
         for m, camada in enumerate(blob):
-            print("camada " + str(m) + " : \n")
+            print(f"camada {m} : \n")
             for coord in camada:
                 print(coord)
 
@@ -588,10 +586,8 @@ def fazConfig(quantiaFrames: int) -> tuple[Image.Image, Image.Image]:
                         coordVermelhosInicial, coordVermelhosFinal
                     ):
                         for coord_i, coord_f in zip(coordInicial, coordFinal):
-                            fileConfig.write(str(coord_i[0]) + "," + str(coord_i[1]))
-                            fileConfig.write(
-                                " " + str(coord_f[0]) + "," + str(coord_f[1]) + "\n"
-                            )
+                            fileConfig.write(f"{coord_i[0]},{coord_i[1]}")
+                            fileConfig.write(f" {coord_f[0]},{coord_f[1]}\n")
                 print()
             parteInicial.close()
             parteFinal.close()
@@ -613,7 +609,7 @@ def main() -> None:
     imagemInicial, imagemFinal = fazConfig(quantiaFrames)
     imagemInicial.save(nomeFrame.format(0))
     imagemFinal.save(nomeFrame.format(quantiaFrames + 1))
-    print("\n tamanho: " + str(imagemInicial.size), end="\n\n")
+    print(f"\n tamanho: {imagemInicial.size}", end="\n\n")
     for n in range(quantiaFrames):
         print(n)
         frame = Image.new("RGBA", imagemFinal.size, (255, 255, 255, 0))
@@ -650,7 +646,7 @@ def main() -> None:
                         novaCor.append(int((n + 1) * a / (quantiaFrames + 1) + b))
                     novaCor.append(255)
                     novaCor_tuple = tuple(novaCor)
-                    assert len(novaCoord_tuple) == 2 # Gambiarra :v
+                    assert len(novaCoord_tuple) == 2  # Gambiarra :v
                     frame.putpixel(novaCoord_tuple, novaCor_tuple)
                 linha = file.readline()
             frame.save(nomeFrame.format(n + 1))

@@ -10,7 +10,7 @@ BLACK = (0, 0, 0, 255)
 
 
 def filter_site_name(url: str) -> str:
-    parsed = urlparse(url if "://" in url else "https://" + url)
+    parsed = urlparse(url if "://" in url else f"https://{url}")
     host = parsed.netloc or parsed.path
     if host.startswith("www."):
         host = host[4:]

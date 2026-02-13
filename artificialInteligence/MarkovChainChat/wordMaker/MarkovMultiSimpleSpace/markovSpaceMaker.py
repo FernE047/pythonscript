@@ -88,7 +88,7 @@ def get_filename() -> str:
 def main() -> None:
     filename = get_filename()
     word_occurrence_map: list[int] = []
-    with open(filename + "/c.txt", "r", encoding="UTF-8") as markov_chain_file:
+    with open(f"{filename}/c.txt", "r", encoding="UTF-8") as markov_chain_file:
         lines = markov_chain_file.readlines()
     for line in lines:
         line = line.strip()

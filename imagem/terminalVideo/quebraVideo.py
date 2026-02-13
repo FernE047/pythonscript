@@ -4,8 +4,7 @@ import shutil
 
 def main() -> None:
     nome = input()
-    video = nome + ".mp4"
-    os.system("ffmpeg -i " + video + " thumb%06d.jpg -hide_banner")
+    os.system(f"ffmpeg -i {nome}.mp4 thumb%06d.jpg -hide_banner")
     print("baixado")
     directory = "./video"  # complete
     frames = [

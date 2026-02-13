@@ -180,7 +180,7 @@ def solve_piccross_board(game: GameData, time_manager: TimeManager) -> BoardData
                 continue
             row_str += "0"
         print(row_str)
-    print("\n\nPorcentagem : " + str(100 * completed_count / element_count) + "%")
+    print(f"\n\nPorcentagem : {100 * completed_count / element_count}%")
     return solution_board
 
 

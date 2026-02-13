@@ -103,9 +103,9 @@ class Node:
 
     def __str__(self):
         texto = []
-        texto.append("TIPO : " + self.getType())
-        texto.append(str(self.coord))
-        texto.append(str(self.getValue()))
+        texto.append(f"TIPO : {self.getType()}")
+        texto.append(f"COORD : {self.coord}")
+        texto.append(f"VALUE : {self.getValue()}")
         if self.caminhoFeito is not None:
             if self.type == 2:
                 lista = self.caminhoFeito[1:]
@@ -259,7 +259,7 @@ def main() -> None:
             print("b")
             print(elemento.type)
             elemento.nextTurn(elementos,imagem)
-        imagem.save("anima/frame"+str(a)+".png")
+        imagem.save(f"anima/frame{a}.png")
         a += 1
         if(imagem.getpixel(elementos[0].coord) not in ((255,0,0,255),(255,0,0))):
             break

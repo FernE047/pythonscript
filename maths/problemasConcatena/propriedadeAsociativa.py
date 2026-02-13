@@ -11,7 +11,7 @@ def testaBase(num, zero=False, iguais=False):
                     if iguais:
                         if (a == b) and (b == c):
                             continue
-                    print(str(a) + "|" + str(b) + "|" + str(c))
+                    print(f"{a}|{b}|{c}")
                     print(primeiro)
                     print("")
 
@@ -19,7 +19,7 @@ def testaBase(num, zero=False, iguais=False):
 
 def main() -> None:
     for base in range(2, 21):
-        print("base " + str(base) + " :\n")
+        print(f"base {base} :\n")
         testaBase(base, zero=True, iguais=True)
 
 

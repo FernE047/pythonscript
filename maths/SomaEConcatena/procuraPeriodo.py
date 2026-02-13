@@ -35,9 +35,9 @@ def main() -> None:
         #print("primeiro termo")
         #termo=input()
         termos=chegaAFim(termo)
-        print("\ntermo "+termo+" chega a fim em "+str(len(termos)-1)+" passos")
+        print(f"\ntermo {termo} chega a fim em {len(termos)-1} passos")
         print(",".join(termos))
-        print("periodo de grau "+str(len(termos)-1-termos.index(termos[-1])))
+        print(f"periodo de grau {len(termos)-1-termos.index(termos[-1])}")
         print(",".join(termos[termos.index(termos[-1]):]))
 
 

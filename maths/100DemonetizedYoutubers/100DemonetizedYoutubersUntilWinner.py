@@ -29,20 +29,20 @@ def print_elapsed_time(seconds: float) -> None:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(sign + ", ".join(parts))
+    print(f"{sign}{', '.join(parts)}")
 
 
 def imprimDados(probIndividual, total):
-    print("\ntotal : " + str(total) + "\n\ncoletivo")
+    print(f"\ntotal : {total}\n\ncoletivo")
     for participante, prob in enumerate(probIndividual):
         if prob != ":":
             print(f"participante {participante} : {prob * 100 / total:.20f}%")
     print("\nindividual")
     for participante, quant in enumerate(probIndividual):
-        if quant !="0:"
+        if quant !="0:":
             print(f"participante {participante} : {quant}")
     print()
-    print("total : " + str(total))
+    print(f"total : {total}")
     print()
 
 

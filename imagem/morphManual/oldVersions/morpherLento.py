@@ -67,7 +67,7 @@ def print_elapsed_time(seconds: float) -> None:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(sign + ", ".join(parts))
+    print(f"{sign}{', '.join(parts)}")
 
 
 R = TypeVar("R", bound=tuple[int, ...])
@@ -109,7 +109,7 @@ def main() -> None:
     imagemFinal = open_image_as_rgba("pokemon001.png")
     imagemInicial.save(nomeFrame.format(0))
     imagemFinal.save(nomeFrame.format(quantiaFrames + 1))
-    print("\n tamanho: " + str(imagemInicial.size), end="\n\n")
+    print(f"\n tamanho: {imagemInicial.size}", end="\n\n")
     for a in range(quantiaFrames):
         frame = Image.new("RGBA", imagemFinal.size, (255, 255, 255, 0))
         frame.save(nomeFrame.format(a + 1))
@@ -139,7 +139,7 @@ def main() -> None:
             if firstTime:
                 fim = time()
                 duracao = fim - inicio
-                print("são " + str(tamanhoFile) + " transformações")
+                print(f"são {tamanhoFile} transformações")
                 print_elapsed_time(duracao)
                 print_elapsed_time(duracao * tamanhoFile)
                 firstTime = False

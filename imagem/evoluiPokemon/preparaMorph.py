@@ -43,7 +43,7 @@ def get_user_integer(
 def clear_folder(folder: str) -> None:
     if not os.path.exists(folder):
         os.makedirs(folder)
-    files = [folder + "/" + a for a in os.listdir(folder)]
+    files = [f"{folder}/{a}" for a in os.listdir(folder)]
     if RESIZED_FOLDER in files:
         files.pop(files.index(RESIZED_FOLDER))
     for file in files:

@@ -32,7 +32,7 @@ def print_elapsed_time(seconds: float) -> None:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(sign + ", ".join(parts))
+    print(f"{sign}{', '.join(parts)}")
 
 
 def procuraTipo(informacao, alolan, mega=False):
@@ -127,7 +127,7 @@ def capturaDados(info, alolan=False):
 def debugImprime(dados, numero):
     print(f"pokemon : {numero:03d}")
     for item in dados:
-        print(item + " : " + str(dados[item]))
+        print(f"{item} : {dados[item]}")
     print("")
 
 
@@ -163,7 +163,7 @@ def main() -> None:
                     pokemonDados = capturaDados(informacao, alolan=alolan)
                     informacaoTipo = siteSoup.select(".cen")[0]
                     tipo = procuraTipo(informacaoTipo, True)
-                    pokemonDados["name"] = "Alolan " + pokemonDados["name"]
+                    pokemonDados["name"] = f"Alolan {pokemonDados['name']}"
                     pokemonDados["tipo"] = tipo
                     pokemonDados["alola"] = alolan
                     BD[f"{a:03d}Alolan"] = pokemonDados
@@ -177,7 +177,7 @@ def main() -> None:
                             mega[1] = []
                         else:
                             add = "Primal"
-                        nome = add + " " + pokemonDados["name"]
+                        nome = f"{add} {pokemonDados['name']}"
                         indexMega = procuraMegaIndex(informacaoBruta, nome)
                         if (len(indexMega) % 2) and (len(indexMega) > 1):
                             indexMega.pop(0)

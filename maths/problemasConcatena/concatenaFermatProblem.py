@@ -28,7 +28,7 @@ def print_elapsed_time(seconds: float) -> None:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(sign + ", ".join(parts))
+    print(f"{sign}{', '.join(parts)}")
 
 
 def pos(a, pot):
@@ -55,14 +55,14 @@ def faz(limit, pot):
         inicio = time()
         num = pos(t, pot)
         if num:
-            print(str(t) + " : " + str(t**pot))
+            print(f"{t} : {t**pot}")
             for resp in num:
-                print(str(resp[0]) + "," + str(resp[1]))
+                print(f"{resp[0]},{resp[1]}")
             print("")
         fim = time()
         duracao = fim - inicio
         if duracao >= tempoRecorde:
-            print(str(t) + " :")
+            print(f"{t} :")
             print_elapsed_time(duracao)
             tempoRecorde = duracao
             resto = limit - t

@@ -37,10 +37,10 @@ def main() -> None:
         termo=input()
         sucesso,termos=chegaAFim(termo,limite)
         if(sucesso):
-            print("termo "+termo+" chega a fim em "+str(len(termos)-1))
+            print(f"termo {termo} chega a fim em {len(termos)-1}")
             print(",".join(termos))
         else:
-            print(termo+" estorou o limite:")
+            print(f"{termo} estorou o limite:")
             print("\n".join(termos))
 
 

@@ -5,7 +5,7 @@ def main() -> None:
         termo = 0
         for modular in range(1, semente + 1):
             termo += semente % modular
-        print(str(semente) + ":" + str(termo))
+        print(f"{semente}:{termo}")
 
 
 if __name__ == "__main__":

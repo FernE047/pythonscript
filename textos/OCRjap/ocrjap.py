@@ -30,7 +30,7 @@ def print_elapsed_time(seconds: float) -> None:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(sign + ", ".join(parts))
+    print(f"{sign}{', '.join(parts)}")
 
 
 from PIL import Image
@@ -56,7 +56,7 @@ def descobre(nome):
 def main() -> None:
     start = time.time()
     nome = os.path.join("jap", "1.png")
-    print("\n" + nome)
+    print(f"\n{nome}")
     imagem = open_image(nome)
     imagemCut = imagem.crop((34, 909, 671, 1072))
     imagemCut.save("cut.png")

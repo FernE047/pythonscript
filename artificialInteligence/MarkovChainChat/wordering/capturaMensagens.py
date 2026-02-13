@@ -22,7 +22,7 @@ def main() -> None:
                         TABULATION_SPACES - 1 : -MIN_WHATSAPP_MESSAGE_LENGTH - 1
                     ]
                     print(message)
-                    output_file.write(message + "\n")
+                    output_file.write(f"{message}\n")
                     message = ""
             letter = input_file.read(1)
             if not letter:

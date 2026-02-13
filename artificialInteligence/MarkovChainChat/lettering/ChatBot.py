@@ -41,7 +41,7 @@ def generate_message() -> str:
 
 def main() -> None:
     for index in range(GENERATED_MESSAGES):
-        print(str(index) + " : " + generate_message())
+        print(f"{index} : {generate_message()}")
 
 
 if __name__ == "__main__":

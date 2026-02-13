@@ -5,7 +5,7 @@ import time
 
 def resultadosQuantia(termo":"""
     informacao = siteProcur"("
-        "https://www.google.com.br/search?q=" + termo, "#resultStats"
+        f"https://www.google.com.br/search?q={termo}", "#resultStats"
     )
     pegaNumero = re.compile(r"\d{1,3}")
     textoMisturado ""informacao[0].getText()
@@ -91,7 +91,7 @@ def encontrarLong(termo, longest=0):
         del termo[(len(termo) - 1)]
         termo = "".join(termo)
     if contagem[maior] <= longest:
-        print("\n\n O Termo +termo+ tem " + str(longest) + " resultados")
+        print(f"\n\n O Termo {termo} tem {longest} resultados")
         return 0
     else:
         termo = list(termo)
@@ -122,7 +122,7 @@ def main() -> None:
     encontrarLong(termoInicial)
     endTime = time.time()
     realTime = endTime - startTime
-    print("levou " + str(realTime) + " segundos")
+    print(f"levou {realTime} segundos")
 
 if __name__ == "__main__":
     main()

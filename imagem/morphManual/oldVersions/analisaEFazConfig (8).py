@@ -59,7 +59,7 @@ def hasColor(imagem: Image.Image) -> tuple[bool, Literal[False] | CoordData]:
 
 
 def limpaPasta(pasta: str) -> None:
-    arquivos = [pasta + "/" + a for a in os.listdir(pasta)]
+    arquivos = [f"{pasta}/{a}" for a in os.listdir(pasta)]
     if "./frames/resized" in arquivos:
         arquivos.pop(arquivos.index("./frames/resized"))
     for arquivo in arquivos:
@@ -353,8 +353,8 @@ def escreveLinhas(
     pontosLinhaFinal = len(linhaFinal)
     if pontosLinhaInicial == pontosLinhaFinal:
         for n in range(pontosLinhaInicial):
-            file.write(str(linhaInicial[n][0]) + "," + str(linhaInicial[n][1]))
-            file.write(" " + str(linhaFinal[n][0]) + "," + str(linhaFinal[n][1]) + "\n")
+            file.write(f"{linhaInicial[n][0]},{linhaInicial[n][1]}")
+            file.write(f" {linhaFinal[n][0]},{linhaFinal[n][1]}\n")
     elif pontosLinhaInicial > pontosLinhaFinal:
         if pontosLinhaInicial - 1 == 0:
             multiplicador = 0.0
@@ -362,13 +362,9 @@ def escreveLinhas(
             multiplicador = (pontosLinhaFinal - 1) / (pontosLinhaInicial - 1)
         for n in range(pontosLinhaInicial):
             pontoFinal = int(n * multiplicador)
-            file.write(str(linhaInicial[n][0]) + "," + str(linhaInicial[n][1]))
+            file.write(f"{linhaInicial[n][0]},{linhaInicial[n][1]}")
             file.write(
-                " "
-                + str(linhaFinal[pontoFinal][0])
-                + ","
-                + str(linhaFinal[pontoFinal][1])
-                + "\n"
+                f" {linhaFinal[pontoFinal][0]},{linhaFinal[pontoFinal][1]}\n"
             )
     else:
         if pontosLinhaFinal - 1 == 0:
@@ -378,11 +374,10 @@ def escreveLinhas(
         for n in range(pontosLinhaFinal):
             pontoInicial = int(n * multiplicador)
             file.write(
-                str(linhaInicial[pontoInicial][0])
-                + ","
-                + str(linhaInicial[pontoInicial][1])
+                f"{linhaInicial[pontoInicial][0]},{linhaInicial[pontoInicial][1]}"
             )
-            file.write(" " + str(linhaFinal[n][0]) + "," + str(linhaFinal[n][1]) + "\n")
+            file.write(f" {linhaFinal[n][0]},{linhaFinal[n][1]}\n")
+
 
 
 def escreveBlobs(
@@ -453,7 +448,7 @@ SECÇÃO MAIN:
 
 def configPart(data: tuple[int, Image.Image, Image.Image]) -> None:
     n, imagemInicial, imagemFinal = data
-    print("Fazendo Parte : " + str(n))
+    print(f"Fazendo Parte : {n}")
     parteInicial = Image.fromarray(imagemInicial)
     parteFinal = Image.fromarray(imagemFinal)
     with open(
@@ -480,7 +475,7 @@ def configPart(data: tuple[int, Image.Image, Image.Image]) -> None:
                 escreveBlobs(blobInicial, blobFinal, fileConfig)
             else:
                 escreveLinhas(linhaAzulInicial, linhaAzulFinal, fileConfig)
-        print("\tParte Terminada : " + str(n))
+        print(f"\tParte Terminada : {n}")
     parteInicial.close()
     parteFinal.close()
 

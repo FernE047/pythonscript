@@ -20,7 +20,7 @@ def main() -> None:
                 if user == f"{PERSON_1}: ":
                     message = message[13:]
                     print(message)
-                    output_file.write(message + "\n")
+                    output_file.write(f"{message}\n")
                 message = ""
             letter = input_file.read(1)
             if not letter:

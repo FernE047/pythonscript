@@ -21,7 +21,7 @@ def main() -> None:
     cbar = plt.colorbar(CS, ticks=np.sort(np.array([0,127,254,381,508,635,762])),ax=ax, orientation="horizontal", shrink=.75, pad=.09, aspect=40,fraction=0.05)
     cbar.ax.set_xticklabels(list(map(str,np.sort(np.array([0,127,254,381,508,635,762])))))  # horizontal colorbar
     cbar.ax.tick_params(labelsize=8) 
-    plt.title("Heat Map "+color)
+    plt.title(f"Heat Map {color}")
     plt.xlabel("X Label")
     plt.ylabel("Y Label")
     plt.show()"""
@@ -36,7 +36,7 @@ def main() -> None:
         cbar = plt.colorbar(CS, ticks=np.sort(np.array([0,127,254,381,508,635,762])),ax=ax, orientation="horizontal", shrink=.75, pad=.09, aspect=40,fraction=0.05)
         cbar.ax.set_xticklabels(list(map(str,np.sort(np.array([0,127,254,381,508,635,762])))))  # horizontal colorbar
         cbar.ax.tick_params(labelsize=8) 
-        plt.title("Heat Map "+color)
+        plt.title(f"Heat Map {color}")
         plt.xlabel("X Label")
         plt.ylabel("Y Label")
         plt.show()

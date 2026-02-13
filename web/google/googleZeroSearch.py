@@ -19,7 +19,7 @@ def siteProcura(site: str, html: str) -> bs4.ResultSet[bs4.element.Tag]:
 
 def resultadosQuantia(termo):
     informacao = siteProcura(
-        "https://www.google.com.br/search?q=" + termo, "#resultStats"
+        f"https://www.google.com.br/search?q={termo}", "#resultStats"
     )
     pegaNumero = re.compile(r"\d{1,3}")
     textoMisturado = informacao[0].getText()
@@ -132,7 +132,7 @@ def main() -> None:
     encontrarZero(termoInicial)
     endTime = time.time()
     realTime = endTime - startTime
-    print("levou " + str(realTime) + " segundos")
+    print(f"levou {realTime} segundos")
 
 
 if __name__ == "__main__":

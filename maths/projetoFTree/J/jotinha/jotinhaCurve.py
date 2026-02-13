@@ -67,7 +67,7 @@ def main() -> None:
     curvaNova.putpixel((meio, meio + 1), vermelho)
     captarSalvar("curva0.png", curvaNova)
     for numeroCurva in range(0, 15):
-        nome = "curva" + str(numeroCurva) + ".png"
+        nome = f"curva{numeroCurva}.png"
         curvaAtual = open_image_as_rgba(nome)
         larg, alt = curvaAtual.size
         newTamanho = int(newTamanho * fracaoPerfeita)
@@ -105,8 +105,8 @@ def main() -> None:
             (posicao[0] - azulComprimentoRotate2, posicao[1] - azulAlturaRotate2),
             carimboRotate2,
         )
-        captarSalvar("curva" + str(numeroCurva + 1) + ".png", curvaNova)
-        print(str("curva" + str(numeroCurva + 1) + ".png"))
+        captarSalvar(f"curva{numeroCurva + 1}.png", curvaNova)
+        print(f"curva{numeroCurva + 1}.png")
 
 
 if __name__ == "__main__":

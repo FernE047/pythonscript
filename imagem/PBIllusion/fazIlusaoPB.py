@@ -37,12 +37,12 @@ def main() -> None:
                     cor = tuple(3 * [int((cor[0] + cor[1] + cor[2]) / 3)] + [255])
                     imagem.putpixel((x, y), cor)
         pastaImagens.salva(
-            f"{numero:03d}-" + assunto,
+            f"{numero:03d}-{assunto}",
             imagem,
             pasta=["Pbillusion", assunto],
             extensao=".png",
         )
-        print(f"{numero:03d}-" + assunto + " imagem concluida")
+        print(f"{numero:03d}-{assunto} imagem concluida")
 
 
 if __name__ == "__main__":

@@ -24,7 +24,7 @@ def update_chain(filename: str, chain_terms: ChainData, index: int) -> None:
 def update_chain_file(filename: str, chain_terms: ChainData, index: int) -> None:
     with open(f"{filename}/c.txt", "w", encoding="UTF-8") as file_write:
         if f"{index:03d}.txt" not in os.listdir(filename):
-            file_write.write(" ".join(chain_terms) + " 1\n")
+            file_write.write(f"{' '.join(chain_terms)} 1\n")
             return
         with open(f"{filename}/{index:03d}.txt", "r", encoding="UTF-8") as file_read:
             lines = file_read.readlines()
@@ -42,7 +42,7 @@ def update_chain_file(filename: str, chain_terms: ChainData, index: int) -> None
             file_write.write(f"{terms_flat} {frequency}\n")
             term_exists = True
         if not term_exists:
-            file_write.write(" ".join(chain_terms) + " 1\n")
+            file_write.write(f"{' '.join(chain_terms)} 1\n")
 
 
 def get_filename() -> str:

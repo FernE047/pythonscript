@@ -15,7 +15,7 @@ def factorial(n):
     total = 1
     for i in range(1, n + 1):
         total *= i
-        logging.debug("i is " + str(i) + ", total is " + str(total))
+        logging.debug(f"i is {i}, total is {total}")
     logging.debug("End of factorial(%s%%)" % (n))
     return total
 

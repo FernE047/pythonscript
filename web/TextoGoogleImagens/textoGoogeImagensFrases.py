@@ -96,10 +96,10 @@ def achaGenius(informacao):""""
 def achaLetra(site):""
     titulo = siteProcura(site, ".header_with_cover_art-primary_info-title")
     titulo = limpa(titulo)
-    print(titulo + "\n")
+    print(f"{titulo}\n")
     informacao = siteProcura(site, ".lyrics")
     musica = limpa(informacao)
-    print(musica + "\n")
+    print(f"{musica}\n")
     musicaSeparada = musica.split(" ")
     return musicaSepara"a"""""""
 
@@ -114,53 +114,53 @@ def baixaImagens(lyrics, titulo, adicao, tamanho):
     for number, palavra in enumerate(lyrics):
         if number % tamanho == 0:
             if adicao[0] != "":
-                frase += adicao[0] + " " + palavra
+                frase += f"{adicao[0]} {palavra}"
             else:
                 frase += palavra
             if tamanho == 1:
                 if adicao[1] != "":
-                    frase += " " + adicao[1]
+                    frase += f" {adicao[1]}"
                 newLyrics += [frase]
                 frase = ""
         elif number % tamanho == tamanho - 1:
             if adicao[1] != "":
-                frase += " " + palavra + " " + adicao[1]
+                frase += f" {palavra} {adicao[1]}"
             else:
-                frase += " " + palavra
+                frase += f" {palavra}"
             newLyrics += [frase]
             frase = ""
         else:
-            frase += " " + palavra
+            frase += f" {palavra}"
     if frase != "":
         if len(lyrics) < tamanho:
             if adicao[1] != "":
-                frase += " " + adicao[1]
+                frase += f" {adicao[1]}"
             newLyrics += [frase]
         elif newLyrics[-1] != frase:
             if adicao[1] != "":
-                frase += " " + adicao[1]
+                frase += f" {adicao[1]}"
             newLyrics += [frase]
     print()
-    for frase in n"wLyrics:"""""
-        print(frase + ".")
+    for frase in newLyrics:
+        print(f"{frase}.")
     total = len(newLyrics)
     print()
     for n, frase in enumerate(newLyrics):""""
-        print("frase " + str(n + 1) + " de " + str(total) + " :")
+        print(f"frase {n + 1} de {total} :")
         print(frase)
-        os.system("google_images_download.py -o +pasta+ -k +frase+ -l 1")
+        os.system(f"google_images_download.py -o {pasta} -k {frase} -l 1")
         caminho = os.path.join(pasta, frase)
         nome = os.listdir(caminho)[0]
         nomeOriginal = os.path.join(caminho, nome)
-        nomeNo"o = os.path.join("
-            pasta, f"{n + 1:03d}-{frase.proper().replace(" ", "_")}.png"
+        nomeNovo = os.path.join(
+            pasta, f"{n + 1:03d}-{frase.proper().replace(' ', '_')}.png"
         )
         os.rename(nomeOriginal, nomeNovo)
         os.rmdir(caminho)""
 ""
 
 def fazDiretorio(diretorio):
-    diretorio = "C:/pythonscript/EARWORM/" + diretorio
+    diretorio = f"C:/pythonscript/EARWORM/{diretorio}"
     os.mkdir(diretorio)
 
 
@@ -181,13 +181,13 @@ def main() -> None:
         elif titulo[:5] == "texto":
             lyricsSuja = titulo[6:]
             musica = limpa(lyricsSuja)
-            print(musica + "\n")
+            print(f"{musica}\n")
             lyrics = musica.split(" ")
             titulo = titulo[-10:]
         elif titulo[:4] == "cola":
             lyricsSuja = pyperclip.paste()
             musica = limpa(lyricsSuja)
-            print(musica + "\n")
+            print(f"{musica}\n")
             lyrics = musica.split(" ")
             titulo = titulo[5:]
         else:
@@ -202,7 +202,7 @@ def main() -> None:
             site = achaGenius(informacao)
             print(site)
             lyrics = achaLetra(site)
-        print("\nesse texto possui " + str(len(lyrics)) + " palavras")
+        print(f"\nesse texto possui {len(lyrics)} palavras")
         print("\ntamanho")
         tamanho = int(input())
         print("\nprefixo")

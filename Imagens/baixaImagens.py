@@ -13,12 +13,7 @@ def main() -> None:
         print("algum argumento adicional?")
         argumento = input()
         if nome:
-            os.system(
-                'google_images_download.py -o "C:/pythonscript/Imagens" -k "'
-                + nome
-                + '" '
-                + argumento
-            )
+            os.system(f'google_images_download.py -o "C:/pythonscript/Imagens" -k "{nome}" {argumento}')
         else:
             break
         print("baixado")

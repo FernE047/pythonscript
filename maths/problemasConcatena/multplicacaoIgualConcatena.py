@@ -8,7 +8,7 @@ def main() -> None:limite = 10000
             if numMult == numStr:
                 print(numMult)
                 print(numStr)
-                print(str(a) + " | " + str(b))
+                print(f"{a} | {b}")
                 print("")
 
 if __name__ == "__main__":

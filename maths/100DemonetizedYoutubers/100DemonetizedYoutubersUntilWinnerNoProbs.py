@@ -19,19 +19,19 @@ def main() -> None:
     except:
         fim=time()
         duracao=fim-comeco
-        print("total : "+str(total))
-        print("execução total : "+str(duracao))
-        print("media total :    "+str((duracao)/total))
-        print("100k :    "+str((duracao*100000)/total))
-        print("final :    "+str((duracao*345484498)/total))
+        print(f"total : {total}")
+        print(f"execução total : {duracao}")
+        print(f"media total :    {duracao/total}")
+        print(f"100k :    {(duracao*100000)/total}")
+        print(f"final :    {(duracao*345484498)/total}")
         a=input()
     fim=time()
     duracao=fim-comeco
-    print("total : "+str(total))
-    print("execução total : "+str(duracao))
-    print("media total :    "+str((duracao)/total))
-    print("100k :    "+str((duracao*100000)/total))
-    print("final :    "+str((duracao*345484498)/total))
+    print(f"total : {total}")
+    print(f"execução total : {duracao}")
+    print(f"media total :    {duracao/total}")
+    print(f"100k :    {(duracao*100000)/total}")
+    print(f"final :    {(duracao*345484498)/total}")
     a=input()
 
     # media 100k :       0.00045348677564376093 segundos

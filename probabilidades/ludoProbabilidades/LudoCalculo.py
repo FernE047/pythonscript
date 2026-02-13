@@ -71,12 +71,12 @@ def main() -> None:
 
             
     # Apresentação
-        print("\nlevel: "+str(levelBoard))
+        print(f"\nlevel: {levelBoard}")
         for elemento in Total:
-            print(str(elemento))
+            print(f"{elemento}")
         endTime=time.time()
         realTime=endTime-startTime
-        print(str(realTime))
+        print(f"{realTime}")
 
 
 if __name__ == "__main__":

@@ -161,8 +161,8 @@ class Linha:
     def escreve(self, other: "Linha", file: TextIOWrapper) -> None:
         if len(self) == len(other):
             for self_ponto, other_ponto in zip(self.pontos, other.pontos):
-                file.write(str(self_ponto[0]) + "," + str(self_ponto[1]))
-                file.write(" " + str(other_ponto[0]) + "," + str(other_ponto[1]) + "\n")
+                file.write(f"{self_ponto[0]},{self_ponto[1]}")
+                file.write(f" {other_ponto[0]},{other_ponto[1]}\n")
         elif len(self) > len(other):
             if len(self) - 1 == 0:
                 multiplicador = 0.0
@@ -171,8 +171,8 @@ class Linha:
             for index in range(len(self)):
                 pontoInicial = self.pontos[index]
                 pontoFinal = other.pontos[int(index * multiplicador)]
-                file.write(str(pontoInicial[0]) + "," + str(pontoInicial[1]))
-                file.write(" " + str(pontoFinal[0]) + "," + str(pontoFinal[1]) + "\n")
+                file.write(f"{pontoInicial[0]},{pontoInicial[1]}")
+                file.write(f" {pontoFinal[0]},{pontoFinal[1]}\n")
         else:
             if len(other) - 1 == 0:
                 multiplicador = 0.0
@@ -181,8 +181,8 @@ class Linha:
             for index in range(len(other)):
                 pontoInicial = self.pontos[int(index * multiplicador)]
                 pontoFinal = other.pontos[index]
-                file.write(str(pontoInicial[0]) + "," + str(pontoInicial[1]))
-                file.write(" " + str(pontoFinal[0]) + "," + str(pontoFinal[1]) + "\n")
+                file.write(f"{pontoInicial[0]},{pontoInicial[1]}")
+                file.write(f" {pontoFinal[0]},{pontoFinal[1]}\n")
 
     def copy(self, other: "Linha | None" = None) -> "Linha":
         if other is None:
@@ -355,7 +355,7 @@ class ImagemParte:
 
 
 def limpaPasta(pasta: str) -> None:
-    arquivos = [pasta + "/" + a for a in os.listdir(pasta)]
+    arquivos = [f"{pasta}/{a}" for a in os.listdir(pasta)]
     if "./frames/resized" in arquivos:
         arquivos.pop(arquivos.index("./frames/resized"))
     for arquivo in arquivos:
@@ -415,7 +415,7 @@ def convertePypdnToPil(nome: str, indice: int) -> Image.Image:
 
 
 def configPart(indice: int) -> None:
-    print("Fazendo Parte : " + str(indice))
+    print(f"Fazendo Parte : {indice}")
     parteInicial = ImagemParte(indice, "./inicial.pdn")
     print("a")
     parteFinal = ImagemParte(indice, "./final.pdn")
@@ -425,7 +425,7 @@ def configPart(indice: int) -> None:
     ) as fileConfig:
         print("c")
         parteInicial.escreveArea(parteFinal, fileConfig)
-        print("\tParte Terminada : " + str(indice))
+        print(f"\tParte Terminada : {indice}")
 
 
 def main() -> None:

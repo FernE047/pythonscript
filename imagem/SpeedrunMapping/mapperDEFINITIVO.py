@@ -32,7 +32,7 @@ def print_elapsed_time(seconds: float) -> None:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(sign + ", ".join(parts))
+    print(f"{sign}{', '.join(parts)}")
 
 
 def openFrame(image_path: str) -> Image.Image:
@@ -143,21 +143,21 @@ def main() -> None:
 
     # iniciadores
     diretorioVideo = "./video"
-    diretorioFrames = diretorioVideo + "/"
-    mapa = openFrame(diretorioFrames + listdir(diretorioVideo)[0])
+    diretorioFrames = f"{diretorioVideo}/"
+    mapa = openFrame(f"{diretorioFrames}{listdir(diretorioVideo)[0]}")
     tamanho = mapa.size
     posicao = [0, 0]
     inicio = time()
     totalFiles = len(listdir(diretorioVideo))
     for n, frame in enumerate(listdir(diretorioVideo)):
-        frameAtual = openFrame(diretorioFrames + frame)
+        frameAtual = openFrame(f"{diretorioFrames}{frame}")
         adds = comparaFrames(mapa, frameAtual, posicao)
         while max([abs(a) for a in adds]) == DDP:
             DDP = max([abs(a) for a in adds]) + 1
             DT = DDP * 2 + 1
             PY = DT
             PX = DT
-            print("novo DDP : " + str(DDP))
+            print(f"novo DDP : {DDP}")
             adds = comparaFrames(mapa, frameAtual, posicao)
         mapa, posicao = ampliaMapa(mapa, frameAtual, posicao, adds)
         fim = time()

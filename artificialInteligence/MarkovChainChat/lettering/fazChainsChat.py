@@ -15,7 +15,7 @@ def rename_file(source_filename: str, destination_filename: str) -> None:
 def update_term_count(index: int, keyword: str) -> None:
     with open("chain/c.txt", "w", encoding="utf-8") as file_write:
         if f"{index:03d}.txt" not in os.listdir("chain"):
-            file_write.write(keyword + " 1\n")
+            file_write.write(f"{keyword} 1\n")
             return
         with open(f"chain/{index:03d}.txt", "r", encoding="utf-8") as file_read:
             lines = file_read.readlines()
@@ -54,7 +54,7 @@ def main() -> None:
                     if character == "<":
                         character = "~"
                         update_chain_file(index, character)
-                        update_chain_file(index + 1, character + f" {EMPTY_CHAR}")
+                        update_chain_file(index + 1, f"{character} {EMPTY_CHAR}")
                         break
                     update_chain_file(index, character)
                 if message_length > 1:
@@ -64,7 +64,7 @@ def main() -> None:
                         next_character = EMPTY_CHAR
                     if next_character == "\n":
                         next_character = EMPTY_CHAR
-                    update_chain_file(index + 1, character + " " + next_character)
+                    update_chain_file(index + 1, f"{character} {next_character}")
                     if next_character == EMPTY_CHAR:
                         break
 

@@ -31,7 +31,7 @@ def imagemToText(imagem):
         for x in range(largura):
             pixel=imagemShow.getpixel((x,y))
             linha+=niveis[int(pixel/32)]
-        texto+=linha + "\n"
+        texto+=f"{linha}\n"
     return(texto)
 
 

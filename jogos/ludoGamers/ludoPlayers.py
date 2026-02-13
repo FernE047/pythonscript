@@ -9,13 +9,13 @@ import math
 def imprimirLista(lista,titulo):
     print(titulo,end="\n\n")
     for num,ele in enumerate(lista):
-        print(str(num)+" : "+str(ele))
+        print(f"{num} : {ele}")
     print()
 
 def imprimirDict(dictionary,titulo):
     print(titulo,end="\n\n")
     for num,ele in enumerate(dictionary):
-        print(" : ".join([str(num),str(ele),str(dictionary[ele])]))
+        print(f"{num} : {ele} : {dictionary[ele]}")
     print()
 
 #funções de inicialização
@@ -23,14 +23,14 @@ def imprimirDict(dictionary,titulo):
 def fazNome(numero):
     global ALFABETO
     global QUANTIA_JOGANDO
-    idNome="{0:0"+str(int((math.log(numero,10) if numero>0 else 0)+1))+"d}"
+    idNome=f"{0:0{str(int((math.log(numero,10) if numero>0 else 0)+1))}d}"
     nome=ALFABETO[a%26]+idNome.format(int(a/26))
     return(nome)
 
 def fazNomePecas(numero):
     global QUANTIA_PECAS_LUDO
     nome=fazNome(numero)
-    idPeca="-{0:0"+str(int((math.log(QUANTIA_PECAS_LUDO,10) if numero>0 else 0)+1))+"d}"
+    idPeca=f"-{0:0{str(int((math.log(QUANTIA_PECAS_LUDO,10) if numero>0 else 0)+1))}d}"
     nomes=[nome+idPeca.format(int(b)) for b in range(QUANTIA_PECAS_LUDO)]
     return(nomes)
 
@@ -83,7 +83,7 @@ def jogadorPlay(tabuleiro,ordem):
     estrategia=estrategiaPorOrdem(ordem)
     pecasPosicao=posicaoPecasPorOrdem(ordem)
     jogadorInfo={"dados":dados,"pecasPosicao":pecasPosicao,"cor":cor,"ordem":ordem}
-    print("jogador "+cor+" rolou: "+",".join([str(dado) for dado in dados]))
+    print(f"jogador {cor} rolou: {','.join([str(dado) for dado in dados])}")
     if(estrategia=="random"):
         tabuleiro=jogadaRandom(tabuleiro,jogadorInfo)
     return(tabuleiro)
@@ -171,7 +171,7 @@ def main() -> None:
 
     #DEBUG
 
-    print("tamanho : "+str(tamanhoTabuleiro))
+    print(f"tamanho : {tamanhoTabuleiro}")
     imprimirLista(tabuleiro,"tabuleiro : ")
     imprimirLista(jogador,"jogadores : ")
     imprimirLista(estrategia,"estrategias : ")

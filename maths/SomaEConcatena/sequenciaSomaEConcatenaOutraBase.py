@@ -78,7 +78,7 @@ def proximoTermo(termo,base):
 
 def fazMensagem(numeroTeste,termos):
     global base
-    print("\n"+str(numeroTeste)+" chega a um fim em "+str(len(termos)-1)+" passos")
+    print(f"\n{numeroTeste} chega a um fim em {len(termos)-1} passos")
     print(" , ".join(["|".join([str(a) for a in i]) for i in termos]))
     print(" , ".join([str(desconverte(i,base)) for i in termos]))
 
@@ -100,16 +100,16 @@ def imprime(termos,numeroTeste,modo,sucesso,passos):
                     quantia+=1
     else:
         if(modo=="0"):
-            print(str(numeroTeste)+" estorou o limite:")
+            print(f"{numeroTeste} estorou o limite:")
             print(",".join(termos))
             quantia+=1
         elif(modo=="1"):
             if(passos=="1"):
-                print(str(numeroTeste)+":")
+                print(f"{numeroTeste}:")
                 print(",".join(termos))
                 quantia+=1
             else:
-                print(str(numeroTeste))
+                print(f"{numeroTeste}")
                 quantia+=1
 
 def converte(num,base):
@@ -154,7 +154,7 @@ def main() -> None:
             except:
                 print("deu ruim")
                 print(numeroTeste)
-        print("quantidade total "+str(quantia))
+        print(f"quantidade total {quantia}")
 
 
 if __name__ == "__main__":

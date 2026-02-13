@@ -34,7 +34,7 @@ def print_elapsed_time(seconds: float) -> None:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(sign + ", ".join(parts))
+    print(f"{sign}{', '.join(parts)}")
 
 def openFrame(frame):
     return im.imread(frame)[42:1039,78:479,:]
@@ -78,7 +78,7 @@ def comparaFrames(mapa,frameB,posicao):
     maximo = max(firstIndice)
     teste = sum([probabilidades[x].count(maximo) for x in range(DT)])
     if teste >= 2:
-        print("aconteceu" + str(teste))
+        print(f"aconteceu {teste}")
     indiceX = firstIndice.index(maximo)
     yAdd = probabilidades[indiceX].index(maximo)-DDP
     xAdd = indiceX - DDP
@@ -131,7 +131,7 @@ def main() -> None:
     #Argumentos do FFMPEG
     diretorioVideo = "./video"
     origemVideo = "-i ./level.mp4"
-    destinoTemp = diretorioVideo + "/frame%04d.png"
+    destinoTemp = f"{diretorioVideo}/frame%04d.png"
     extraArguments = "-r {0:02d}/1"
     processoArgs = ["ffmpeg",origemVideo,extraArguments,destinoTemp]
 
@@ -140,7 +140,7 @@ def main() -> None:
     processoArgs[2] = extraArguments.format(fps)
     #subprocess.call (" ".join(processoArgs))
 
-    diretorioFrames = diretorioVideo+"/frame{0:04d}.png"
+    diretorioFrames = f"{diretorioVideo}/frame{{0:04d}}.png"
 
     mapa = openFrame(diretorioFrames.format(1))
     tamanho = mapa.shape[:-1]

@@ -26,7 +26,7 @@ def main() -> None:
             if(f==0):
                 break
         maior=len(str(int(a*10+b)))
-        mensagem="{0:"+str(maior)+"d}:{1:"+str(maior+1)+"d}"
+        mensagem=f"{{0:{maior}d}}:{{1:{maior+1}d}}"
         for c in range(11):
             print(mensagem.format(int(a*c+b),int((d*(a*c+b)+e)/f)))
         input()

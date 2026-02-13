@@ -14,8 +14,8 @@ def proximo(numero):
 def imprime(num):
     global tamanhoSeed
     global indice
-    formato="{0:0"+str(tamanhoSeed)+"d}"
-    print(formato.format(indice)+" : "+str(num))
+    formato=f"{0:0{tamanhoSeed}d}"
+    print(f"{formato.format(indice)} : {num}")
 
 def chance(casos):
     global repeticao
@@ -25,11 +25,11 @@ def chance(casos):
     for elemento in repeticao:
         valores[elemento%casos]+=1
     print("")
-    print("chance de "+str(casos)+" : ")
+    print(f"chance de {casos} : ")
     for valor,quant in enumerate(valores):
         if(quant!=0):
             porc=quant*100/len(repeticao)
-            print(str(valor)+" : "+str(porc)+"%")
+            print(f"{valor} : {porc}%")
             if(porc<=LIMITE):
                 retorno=True
     return(retorno)

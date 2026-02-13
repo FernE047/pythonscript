@@ -44,7 +44,7 @@ def print_elapsed_time(seconds: float) -> None:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(sign + ", ".join(parts))
+    print(f"{sign}{', '.join(parts)}")
 
 
 def open_image_as_rgb(image_path: str) -> Image.Image:
@@ -85,11 +85,11 @@ def main() -> None:
     except ValueError:
         imagens = get_image_from_folder(assunto)
     for imagem in imagens:
-        print("\n" + imagem)
+        print(f"\n{imagem}")
         imagem = melhora(imagem)
         phrase = ocr.image_to_string(imagem, lang="eng")
         phraseBonita = tiraEspaçoBranco(phrase)
-        print(str(len(phraseBonita)) + "\n")
+        print(f"{len(phraseBonita)}\n")
         print(phraseBonita)
     final = time.time()
     print("demorou ")

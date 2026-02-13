@@ -5,11 +5,11 @@ def walkTree(diretorio=""):
         diretorio = os.getcwd()
     files = os.listdir(diretorio)
     for folder in files:
-        if os.path.isdir(diretorio+"/"+folder):
-            for arquivo in walkTree(diretorio+"/"+folder):
+        if os.path.isdir(f"{diretorio}/{folder}"):
+            for arquivo in walkTree(f"{diretorio}/{folder}"):
                 yield arquivo
         else:
-            yield diretorio+"/"+folder
+            yield f"{diretorio}/{folder}"
 
 
 def main() -> None:

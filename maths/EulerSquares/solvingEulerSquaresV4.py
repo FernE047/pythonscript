@@ -7,12 +7,11 @@ def imprime():
     global matriz
     global iterations
     global profundidade
-    print("Profundidade "+str(profundidade
-                              ))
+    print(f"Profundidade {profundidade}")
     print(f"Iteracoes Totais {iterations:,}")
     if matriz:
         for linha in matriz:
-            print(" ".join([str(elemento)+" "*(30-len(str(elemento))) for elemento in linha]))
+            print(f"{' '.join([f'{elemento}{' '*(30-len(str(elemento)))}' for elemento in linha])}")
     else:
         print("nao existe solução")
 

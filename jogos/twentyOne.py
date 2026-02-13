@@ -3,12 +3,12 @@ def apresentar(player):
     soma=0
     mensagem=""
     for i in maos[player]:
-        mensagem+=str(i)+","
+        mensagem+=f"{i},"
         if(i in ("Q","J","K")):
             soma+=10
         else:
             soma+=int(i)
-    mensagem+="\b \n\nsoma:"+str(soma)
+    mensagem+=f"\b \n\nsoma:{soma}"
     print(mensagem)
     return(soma)
 
@@ -33,10 +33,10 @@ def main() -> None:
             print("suas cartas:")
             soma[0]=apresentar(0)
             if(soma[0]>21):
-                print("\nEXPLODIU"+3*"\n")
+                print(f"\nEXPLODIU{3*'\n'}")
                 break
             elif(soma[0]==21):
-                print("\nVENCEU"+3*"\n")
+                print(f"\nVENCEU{3*'\n'}")
                 break
             print("\n1:comprar")
             print("2:parar")
@@ -54,19 +54,19 @@ def main() -> None:
             time.sleep(1)
             if(soma[1]>21):
                 if(soma[0]>21):
-                    print("\nDEALER EXPLODIU"+3*"\n",end="")
+                    print(f"\nDEALER EXPLODIU{3*'\n'}", end="")
                     if(soma[0]>=soma[1]):
                         print("VOCÊ PERDEU\n")
                     else:
                         print("VOCÊ VENCEU\n")
                 break
             elif(soma[1]==21):
-                print("\nDEALER VENCEU"+3*"\n"+"VOCÊ PERDEU")
+                print(f"\nDEALER VENCEU{3*'\n'}VOCÊ PERDEU")
                 break
         if(soma[0]<=21):
-            print(3*"\n"+"VOCÊ VENCEU\n")
+            print(f"{3*'\n'}VOCÊ VENCEU\n")
         elif((soma[1]>soma[0])and(soma[1]<21)):
-            print("\nDEALER VENCEU"+3*"\n"+"VOCÊ PERDEU")
+            print(f"\nDEALER VENCEU{3*'\n'}VOCÊ PERDEU")
         print("jogar novamente?[1/0]")
         escolhas=int(input())
 

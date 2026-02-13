@@ -34,7 +34,7 @@ def print_elapsed_time(seconds: float) -> None:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(sign + ", ".join(parts))
+    print(f"{sign}{', '.join(parts)}")
 
 #menus
     
@@ -215,11 +215,11 @@ def verificaAtaque(ataqueVerifica):
 
 def espere(secs=1/2,mensagem=True):
     if(mensagem):
-        print("esperando "+str(secs)+" segundos")
+        print(f"esperando {secs} segundos")
     time.sleep(secs)
         
 def esperePor(coordenadas,cor,pressed=0):
-    print("esperando cor "+str(cor)+" nas coordenadas "+str(coordenadas))
+    print(f"esperando cor {cor} nas coordenadas {coordenadas}")
     if(pressed):
         pyautogui.keyDown(pressed)
     while True:
@@ -253,13 +253,13 @@ def setaVermelha(step,vermelho=(224,8,8)):
                 if(tela.getpixel((xCoord,434))==vermelho):
                     pyautogui.keyUp("x")
                     apertePor("x",mensagem=False)
-                    print("\ttecla x apertada "+str(x+1)+" vezes")
+                    print(f"\ttecla x apertada {x+1} vezes")
                     sair=True
                     break
                 elif(tela.getpixel((xCoord,482))==vermelho):
                     pyautogui.keyUp("x")
                     apertePor("x",mensagem=False)
-                    print("\ttecla x apertada "+str(x+1)+" vezes")
+                    print(f"\ttecla x apertada {x+1} vezes")
                     sair=True
                     break
             if(sair):
@@ -284,16 +284,16 @@ def conversaCompleta(setas,coordenadas):
 
 def apertePor(tecla,tempo=1/15,mensagem=True):
     if(mensagem):
-        print("tecla "+tecla+" apertada")
+        print(f"tecla {tecla} apertada")
     pyautogui.keyDown(tecla)
     time.sleep(tempo)
     pyautogui.keyUp(tecla)
 
 def andePassos(direction,steps=1):
-    print("andando para "+direction)
+    print(f"andando para {direction}")
     for a in range(steps):
         apertePor(direction,tempo=1/300,mensagem=False)
-        print("\t"+str(a+1)+" passos")
+        print(f"\t{a+1} passos")
         time.sleep(1/3)
     print("andando terminado")
 
@@ -342,7 +342,7 @@ def scanNomeInimigo(inimigo):
                         imagem.putpixel((xLetra,yLetra),(0,0,0,255))
             for nomeArq in range(1,38):
                 try:
-                    comparada=open_image_as_rgba("./alfabeto1/"+str(nomeArq)+".png")
+                    comparada=open_image_as_rgba(f"./alfabeto1/{nomeArq}.png")
                 except:
                     comparada=False
                 teste=False
@@ -358,7 +358,7 @@ def scanNomeInimigo(inimigo):
                 print(nome)
                 print("qual o numero dessa letra?")
                 nomeArq=int(input())
-                imagem.save("./alfabeto1/"+str(nomeArq)+".png")
+                imagem.save(f"./alfabeto1/{nomeArq}.png")
             nome+=decifraFonte(nomeArq)
             x+=10
         elif(x==315):
@@ -441,9 +441,9 @@ def main() -> None:
             setaVermelha(1,vermelho=(248,0,0))
             esperePor((400,440),(72,64,80))
             inimigo=Inimigo()
-            print("batalhando com "+inimigo.nome)
-            print("level "+str(inimigo.level))
-            print("vida: "+str(inimigo.vida)+"%")
+            print(f"batalhando com {inimigo.nome}")
+            print(f"level {inimigo.level}")
+            print(f"vida: {inimigo.vida}%")
             atualizaEmBatalha(0)
             fim=time.time()
             tempo=fim-comeco

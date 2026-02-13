@@ -75,7 +75,7 @@ def main() -> None:
     imagemFinal = open_image_as_rgba("./final.png")
     imagemInicial.save(nomeFrame.format(0))
     imagemFinal.save(nomeFrame.format(FINAL_FRAME + 1))
-    print("\n tamanho: " + str(imagemInicial.size), end="\n\n")
+    print(f"\n tamanho: {imagemInicial.size}", end="\n\n")
     with multiprocessing.Pool(cpu_count()) as cpu_pool:
         cpu_pool.map(makeFrame, range(FINAL_FRAME))
 

@@ -184,25 +184,25 @@ class Formula:
         texto = str(x)
         if self.b != 0:
             if self.b > 0:
-                texto += "+" + str(self.b)
+                texto += f"+{self.b}"
             else:
-                texto += str(self.b)
+                texto += f"{self.b}"
             if self.c != 1:
-                texto += ")/" + str(self.c)
+                texto += f")/{self.c}"
                 if self.a != 1:
-                    return "(" + str(self.a) + texto
+                    return f"({self.a}{texto}"
                 else:
-                    return "(" + texto
+                    return f"({texto}"
             else:
                 if self.a != 1:
-                    return str(self.a) + texto
+                    return f"{self.a}{texto}"
                 else:
                     return texto
         else:
             if self.c != 1:
-                texto += "/" + str(self.c)
+                texto += f"/{self.c}"
             if self.a != 1:
-                texto = str(self.a) + texto
+                texto = f"{self.a}{texto}"
             return texto
 
     def inversa(self) -> "Formula":
@@ -452,7 +452,7 @@ class Funcao:
         texto = ""
         index = 0
         for tipo in self.getTipos():
-            texto += "\n" + tipo + "\n\n"
+            texto += f"\n{tipo}\n\n"
             for regra in self.getRegras([tipo]):
                 texto += f"{index:03d} : "
                 formato = regra.getFormato()
@@ -465,7 +465,7 @@ class Funcao:
         texto = ""
         index = 0
         for tipo in self.getTipos():
-            texto += "\n" + tipo + "\n\n"
+            texto += f"\n{tipo}\n\n"
             for regra in self.getRegras([tipo]):
                 texto += f"{index:02d} : {str(regra)}\n"
                 index += 1

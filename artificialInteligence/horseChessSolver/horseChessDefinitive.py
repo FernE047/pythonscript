@@ -31,7 +31,7 @@ def format_elapsed_time(seconds: float) -> str:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    return sign + ", ".join(parts)
+    return f"{sign}{', '.join(parts)}"
 
 
 class Board:
@@ -81,9 +81,9 @@ def resolve_one_board(board: Board) -> None:
     begin = time()
     resolve_board(board)
     end = time()
-    print("\ntries: " + str(tries))
+    print(f"\ntries: {tries}")
     duration = end - begin
-    print("\n" + format_elapsed_time(duration) + "\n\n\n")
+    print(f"\n{format_elapsed_time(duration)}\n\n\n")
 
 
 def main() -> None:

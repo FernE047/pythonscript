@@ -14,9 +14,9 @@ def main() -> None:
             for a in range(1,quant+1):
                 print(str(int(termo)),end="")
                 if((termo%6)==1):
-                    print(" < "+str(int((4*termo-1)/3)),end="")
+                    print(f" < {int((4*termo-1)/3)}",end="")
                 elif((termo%6)==5):
-                    print(" < "+str(int((2*termo-1)/3)),end="")
+                    print(f" < {int((2*termo-1)/3)}",end="")
                 print("\nV")
                 if(termo!=semente):
                     termo=(termo-1)/4
@@ -24,7 +24,7 @@ def main() -> None:
             print(str(int(termo)))
             while((termo%2)==0):
                 termo/=2
-                print("V\n"+str(int(termo)))
+                print(f"V\n{int(termo)}")
         if((semente%4)==3):
             print(str(int((3*semente+1)/2)))
         elif((semente%8)==1):

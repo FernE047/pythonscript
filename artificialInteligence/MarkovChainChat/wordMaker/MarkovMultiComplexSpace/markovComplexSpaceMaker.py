@@ -83,7 +83,7 @@ def get_filename() -> str:
 def main() -> None:
     filename = get_filename()
     word_occurrence_map: list[int] = []
-    with open(filename + "/c.txt", "r", encoding="UTF-8") as markov_chain_file:
+    with open(f"{filename}/c.txt", "r", encoding="UTF-8") as markov_chain_file:
         linha = markov_chain_file.readline()[:-1].split()
         while linha:
             word_occurrence_map.append(int(linha[-1]))

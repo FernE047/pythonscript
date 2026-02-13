@@ -29,7 +29,7 @@ def main() -> None:
         print("\n\nqual o primeiro termo?")
         termo=input().lower()
         tituloTamanho=tamanhoParaTitulo()
-        print("tamanho do titulo "+tituloTamanho+" palavras")
+        print(f"tamanho do titulo {tituloTamanho} palavras")
         informacao=pesquisaGoogle(termo,adicao="+site%3A%2Ffanfiction.com.br%2F")
         tituloOficial=[termo]
         titulos=[]

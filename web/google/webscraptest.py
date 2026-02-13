@@ -2,9 +2,9 @@
 import requests, bs4, re
 
 def resultadosQuantia(termo):
-    pesquisa=requests.get("https://www.google.com.br/search?q="+termo)
+    pesquisa=requests.get(f"https://www.google.com.br/search?q={termo}")
     while(pesquisa.status_code != requests.codes.ok):
-        pesquisa=requests.get("https://www.google.com.br/search?q="+termo) 
+        pesquisa=requests.get(f"https://www.google.com.br/search?q={termo}") 
     googleSoup = bs4.BeautifulSoup(pesquisa.text,features="html.parser")        #arruma o HTML
     informacao=googleSoup.select("#resultStats")                                #procura a ID resultstats onde fica a informação
     pegaNumero=re.compile(r"\d{1,3}")                                           #cria um regex para retirada dos números dos pontos
@@ -57,7 +57,7 @@ def main() -> None:
     #print("digite o modo de operação:\n1:primeiro\n2:porcentagem\n3:menor numero")
     #modo=int(input())
     resultados=encontrar(termoInicial)
-    print("\n\nresultado:\n"+resultados)
+    print(f"\n\nresultado:\n{resultados}")
 
 
 if __name__ == "__main__":

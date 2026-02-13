@@ -35,7 +35,7 @@ class CardsHand:
     def __str__(self) -> str:
         text = ""
         for card in self.deck:
-            text += str(card) + "\n"
+            text += f"{str(card)}\n"
         return text
 
     def __len__(self) -> int:
@@ -136,7 +136,7 @@ class TrucoRound:
             print(
                 "Jogador "
                 if current_player.is_human
-                else "PC " + str(self.turn) + " : " + str(current_round[self.turn])
+                else f"PC {self.turn} : {current_round[self.turn]}"
             )
             situation = current_round[self.turn].compare(
                 current_round[highest_card_index], self.highest_rank

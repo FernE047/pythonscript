@@ -28,7 +28,7 @@ def proximoTermo(termo):
     return(termo)
 
 def fazMensagem(numeroTeste,termos):
-    print("\n"+str(numeroTeste)+" chega a um fim em "+str(len(termos)-1)+" passos")
+    print(f"\n{numeroTeste} chega a um fim em {len(termos)-1} passos")
     print(",".join(termos))
 
 
@@ -42,11 +42,11 @@ def main() -> None:
                 termo=str(numeroTeste)
                 sucesso,termos=chegaAFim(termo,limite)
                 if(str(numeroTeste)==termos[-1]):
-                    print("\n"+str(numeroTeste)+" chega a um fim em "+str(len(termos)-1)+" passos")
+                    print(f"\n{numeroTeste} chega a um fim em {len(termos)-1} passos")
                     print(",".join(termos))
                 numeroTeste+=1
             except:
-                print(numeroTeste)
+                print(f"{numeroTeste}")
 
 
 if __name__ == "__main__":

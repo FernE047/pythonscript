@@ -30,7 +30,7 @@ def print_elapsed_time(seconds: float) -> None:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(sign + ", ".join(parts))
+    print(f"{sign}{', '.join(parts)}")
 
 def ehLimpo(board):
     for elemento in board:
@@ -69,7 +69,7 @@ def main() -> None:
         dados=[]
         inicio=time.time()
         for jogo in range(quantJogo):
-            #print("jogo:"+str(jogo+1))
+            #print(f"jogo: {jogo+1}")
             board=[]
             memoria=[]
             for a in range(quantPar):
@@ -94,7 +94,7 @@ def main() -> None:
                     board[jogada[0]]=-1
                     board[jogada[1]]=-1
                 total+=1
-                #print("jogada:"+str(jogada))
+                #print(f"jogada: {jogada}")
                 #print("")
                 #print(board)
             dados.append(total)
@@ -103,10 +103,10 @@ def main() -> None:
         for elemento in dados:
             soma+=elemento
         fim=time.time()
-        print("quantia de jogos:"+str(quantJogo))
-        print("\n\nmedia:"+str(soma/quantJogo))
-        print("maximo:"+str(max(dados)))
-        print("minimo:"+str(min(dados)))
+        print(f"quantia de jogos: {quantJogo}")
+        print(f"\n\nmedia: {soma/quantJogo}")
+        print(f"maximo: {max(dados)}")
+        print(f"minimo: {min(dados)}")
         print_elapsed_time(fim-inicio)
         print("\ncontinuar")
         if(input()):

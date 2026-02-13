@@ -5,7 +5,7 @@ import time
 
 
 def pressFor(tecla, tempo=1):
-    print("press " + tecla)
+    print(f"press {tecla}")
     pyautogui.keyDown(tecla)
     time.sleep(tempo)
     pyautogui.keyUp(tecla)

@@ -95,10 +95,10 @@ def achaGenius(informacao):
 def achaLetra(site):
     titulo = siteProcura(site, ".header_with_cover_art-primary_info-title")
     titulo = limpa(titulo)
-    print(titulo + "\n")
+    print(f"{titulo}\n")
     informacao = siteProcura(site, ".lyrics")
     musica = limpa(informacao)
-    print(musica + "\n")
+    print(f"{musica}\n")
     musicaSeparada = musica.split(" ")
     return musicaSeparada
 
@@ -110,29 +110,22 @@ def baixaImagens(lyrics, titulo, adicao):
     palavras = {}
     for number, palavra in enumerate(lyrics):
         if adicao[0] != "":
-            palavra = adicao[0] + " " + palavra
+            palavra = f"{adicao[0]} {palavra}"
         if adicao[1] != "":
-            palavra = palavra + " " + adicao[1]
+            palavra = f"{palavra} {adicao[1]}"
         if palavra not in palavras:
             palavras[palavra] = []
             palavras[palavra] += [number]
         else:
             palavras[palavra] += [number]
     for palavra, lista in palavras.items():
-        print(palavra + " : " + str(len(lista)))
+        print(f"{palavra} : {len(lista)}")
     total = len(palavras)
     for n, (palavra, lista) in enumerate(palavras.items()):
-        print("palavra " + str(n + 1) + " de " + str(total) + " :")
+        print(f"palavra {n + 1} de {total} :")
         print(palavra)
         quantia = len(lista)
-        os.system(
-            "google_images_download.py -o ""
-            + pasta
-            + "" -k ""
-            + palavra
-            + "" -l "
-            + str(quantia)
-        )
+        os.system(f"google_images_download.py -o {pasta} -k {palavra} -l {quantia}")
         imagens = os.listdir(os.path.join(pasta, palavra))
         for numero, nome in enumerate(imagens):
             nomeOriginal = os.path.join(os.path.join(pasta, palavra), nome)
@@ -170,13 +163,13 @@ def main() -> None:
         elif titulo[:5] == "texto":
             lyricsSuja = titulo[6:]
             musica = limpa(lyricsSuja)
-            print(musica + "\n")
+            print(f"{musica}\n")
             lyrics = musica.split(" ")
             titulo = titulo[-10:]
         elif titulo[:4] == "cola":
             lyricsSuja = pyperclip.paste()
             musica = limpa(lyricsSuja)
-            print(musica + "\n")
+            print(f"{musica}\n")
             lyrics = musica.split(" ")
             titulo = titulo[5:]
         else:

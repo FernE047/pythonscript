@@ -40,7 +40,7 @@ def print_elapsed_time(seconds: float) -> None:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(sign + ", ".join(parts))
+    print(f"{sign}{', '.join(parts)}")
 
 
 def capturaFaces(nome):
@@ -122,13 +122,13 @@ def main() -> None:
                 processoArgs[2] = extraArguments.format(hora, minuto, segundo)
                 subprocess.call(" ".join(processoArgs))
                 for frame in listdir("./comparaFaces/tempFrames"):
-                    capturaFaces("./comparaFaces/tempFrames/" + frame)
-                    remove("./comparaFaces/tempFrames/" + frame)
-                    # send2trash("./comparaFaces/tempFrames/"+frame)
+                    capturaFaces(f"./comparaFaces/tempFrames/{frame}")
+                    remove(f"./comparaFaces/tempFrames/{frame}")
+                    # send2trash(f"./comparaFaces/tempFrames/{frame}")
                 for face in listdir("./comparaFaces/tempFaces"):
                     diferenca = comparaFaces(
                         faceOriginal,
-                        "./comparaFaces/tempFaces/" + face,
+                        f"./comparaFaces/tempFaces/{face}",
                     )
                     if diferenca < maiorDiferenca:
                         print(f"{hora:02d}:{minuto:02d}:{segundo:02d}.0")
@@ -137,9 +137,9 @@ def main() -> None:
                         maiorDiferenca = diferenca
                         cv2.imwrite(
                             "./comparaFaces/perfectFrame.png",
-                            cv2.imread("./comparaFaces/tempFaces/" + face),
+                            cv2.imread(f"./comparaFaces/tempFaces/{face}"),
                         )
-                    remove("./comparaFaces/tempFaces/" + face)
+                    remove(f"./comparaFaces/tempFaces/{face}")
                 if first:
                     finalFirst = time()
                     duracao = finalFirst - inicioFirst

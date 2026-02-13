@@ -65,7 +65,7 @@ def solve_one_board(
     timer.start()
     resolve_board(board)
     timer.stop()
-    print("\ntries: " + str(tries))
+    print(f"\ntries: {tries}")
     timer.print_elapsed_time()
 
 

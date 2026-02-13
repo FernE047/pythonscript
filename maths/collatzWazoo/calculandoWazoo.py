@@ -31,7 +31,7 @@ def print_elapsed_time(seconds: float) -> None:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    return sign + ", ".join(parts)
+    return f"{sign}{', '.join(parts)}"
 
 
 def main() -> None:
@@ -44,7 +44,7 @@ def main() -> None:
         with open(f"collatz{a}de{a+1}.txt","w", encoding= "utf-8") as saida:
             collatzAtual = collatzFuturo
             collatzFuturo = Funcao()
-            saida.write(str(collatzAtual)+"\n")
+            saida.write(f"{collatzAtual}\n")
             regrasPrincipais = collatzAtual.getRegras(["principal"])
             regrasAtivas = collatzAtual.getRegras(["ativa"])
             regrasPassivas = collatzAtual.getRegras(["passiva"])
@@ -72,12 +72,12 @@ def main() -> None:
                                 formula3=regra3.getFormula().inversa().copia()
                                 texto+="\n".join([str(formula1),str(formula2),str(formula3),""])
                                 formula4=formula3.aplica(formula2.aplica(formula1))
-                                texto+=str(formula4)+"\n"
+                                texto+=f"{formula4}\n"
                                 formatoDestino=regra3.getFormato()
                                 texto+="\n".join([str(formula4),str(newFormato),str(formatoDestino),""])
                                 saida.write(texto)
                                 newFormato2=newFormato.resolvePara(formatoDestino,formula4,saida=saida)
-                                saida.write("teste : "+str(newFormato2)+"\n")
+                                saida.write(f"teste : {newFormato2}\n")
                                 if(newFormato2):
                                     newRegra=Regra(newFormato2,formula4,"principal")
                                     collatzFuturo.addRegra(newRegra)

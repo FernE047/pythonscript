@@ -39,12 +39,12 @@ def fatoresPrimos(n):
     fatores=prime_factors(n)
     ultimo=fatores[0]
     n=0
-    retorno=str(ultimo)+"^"
+    retorno=f"{ultimo}^"
     for a in fatores:
         if(a==ultimo):
             n+=1
         else:
-            retorno+=str(n)+"*"+str(a)+"^"
+            retorno+=f"{n}*{a}^"
             n=1
         ultimo=a
     retorno+=str(n)
@@ -53,10 +53,10 @@ def fatoresPrimos(n):
 def itera(funcao,inicio=0):
     valor=funcao(inicio)
     for a in range(inicio,24):
-        print(str(a)+" : "+str(valor)+" : ",end="")
+        print(f"{a} : {valor} : ", end="")
         print(fatoresPrimos(valor))
         valor=funcao(valor)
-    print(str(a+1)+" : "+str(valor)+" : "+fatoresPrimos(valor))
+    print(f"{a+1} : {valor} : {fatoresPrimos(valor)}")
 
 
 def main() -> None:

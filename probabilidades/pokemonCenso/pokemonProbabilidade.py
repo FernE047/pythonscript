@@ -47,7 +47,7 @@ def main() -> None:
         for chaves in dados:
             total += 1
             pokemon = dados[chaves]
-            # print(chaves+" : "+str(pokemon))
+            # print(f"{chaves} : {pokemon}")
             tipos = pokemon["tipo"]
             for tipo in tipos:
                 soma["type"][tipo] += 1
@@ -63,20 +63,20 @@ def main() -> None:
                 soma["alola"] += 1
             if pokemon["mega"]:
                 soma["mega"] += 1
-        print("male rate : " + str(soma["male rate"] / (total - soma["genderless"])))
+        print(f"male rate : {soma['male rate'] / (total - soma['genderless'])}")
         print(
-            "female rate : " + str(soma["female rate"] / (total - soma["genderless"]))
+            f"female rate : {soma['female rate'] / (total - soma['genderless'])}"
         )
         for cat in categorias[2:-3]:
-            print(cat + " : " + str(soma[cat] / total))
+            print(f"{cat} : {soma[cat] / total}")
         print("")
         for tipo in tiposCat:
             porcentagem = soma["type"][tipo] * 100 / total
-            print(tipo + " : " + str(porcentagem) + "%")
-        print("\ngenderless : " + str(soma["genderless"] * 100 / total) + "%")
-        print("\nalola : " + str(soma["alola"] * 100 / (total - soma["alola"])) + "%")
-        print("\nmega : " + str(soma["mega"] * 100 / (total - soma["mega"])) + "%")
-        print("\ntotal : " + str(total))
+            print(f"{tipo} : {porcentagem}%")
+        print(f"\ngenderless : {soma['genderless'] * 100 / total}%")
+        print(f"\nalola : {soma['alola'] * 100 / (total - soma['alola'])}%")
+        print(f"\nmega : {soma['mega'] * 100 / (total - soma['mega'])}%")
+        print(f"\ntotal : {total}")
 
 
 if __name__ == "__main__":

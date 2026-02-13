@@ -33,7 +33,7 @@ def print_elapsed_time(seconds: float) -> None:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(sign + ", ".join(parts))
+    print(f"{sign}{', '.join(parts)}")
 
 
 def rename_file(source_filename: str, destination_filename: str) -> None:
@@ -59,7 +59,7 @@ def update_chain_file(
             unique_terms: list[list[str]] = []
             for term in chain_element:
                 if term not in unique_terms:
-                    file_write.write(" ".join(term + [str(counter[str(term)])]) + "\n")
+                    file_write.write(f"{' '.join(term + [str(counter[str(term)])])}\n")
                     unique_terms.append(term)
                     return
         with open(f"{filename}/{index:03d}.txt", "r", encoding="UTF-8") as file_read:
@@ -75,13 +75,13 @@ def update_chain_file(
                 while terms in chain_element:
                     chain_element.remove(terms)
                 words[-1] = str(frequency)
-                file_write.write(" ".join(words) + "\n")
+                file_write.write(f"{' '.join(words)}\n")
             else:
-                file_write.write(line + "\n")
+                file_write.write(f"{' '.join(line.split())}\n")
         unique_terms = []
         for term in chain_element:
             if term not in unique_terms:
-                file_write.write(" ".join(term + [str(counter[str(term)])]) + "\n")
+                file_write.write(f"{' '.join(term + [str(counter[str(term)])])}\n")
                 unique_terms.append(term)
 
 

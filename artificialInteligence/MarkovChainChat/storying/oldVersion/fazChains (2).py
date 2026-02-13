@@ -35,7 +35,7 @@ def format_elapsed_time(seconds: float) -> str:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    return sign + ", ".join(parts)
+    return f"{sign}{', '.join(parts)}"
 
 
 def rename_file(source_filename: str, destination_filename: str) -> None:
@@ -60,7 +60,7 @@ def update_keyword_frequencies(keywords: list[str], directory: str) -> None:
     with open(f"{directory}/c.txt", "w", encoding="utf-8") as file_write:
         if "chain.txt" not in os.listdir(directory):
             for keyword in keywords:
-                file_write.write(keyword + " 1\n")
+                file_write.write(f"{keyword} 1\n")
             return
         with open(f"{directory}/chain.txt", "r", encoding="utf-8") as file_read:
             lines = file_read.readlines()
@@ -70,10 +70,10 @@ def update_keyword_frequencies(keywords: list[str], directory: str) -> None:
             while test_keyword in keywords:
                 words[-1] = str(int(words[-1]) + 1)
                 keywords.remove(test_keyword)
-            file_write.write(" ".join(words) + "\n")
+            file_write.write(f"{' '.join(words)}\n")
         if keywords:
             for keyword in keywords:
-                file_write.write(keyword + " 1\n")
+                file_write.write(f"{keyword} 1\n")
 
 
 def generate_markov_chain(text: str, chain_size: int, is_title: bool = False) -> None:

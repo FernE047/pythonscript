@@ -115,12 +115,12 @@ def execute_program(
         elif current_instruction == ".":
             if config.isOut == 2:
                 config.isOut = 1
-                print("saida:" + str(memory_tape[cursor]), end="")
+                print(f"saida:{memory_tape[cursor]}", end="")
             elif config.isOut == 1:
-                print(" " + str(memory_tape[cursor]), end="")
+                print(f" {memory_tape[cursor]}", end="")
             else:
                 config.isOut = 1
-                print("\nsaida:" + str(memory_tape[cursor]), end="")
+                print(f"\nsaida:{memory_tape[cursor]}", end="")
         elif current_instruction == "[":
             if config.debug:
                 print("")
@@ -153,10 +153,8 @@ def execute_program(
             memory_tape[cursor] <= -config.limit_value
         ):
             if not (is_giving_error):
-                print("limite de valor excedido pelo indice:")
-                print(cursor)
-                print("valor:")
-                print(memory_tape[cursor])
+                print(f"limite de valor excedido pelo indice:{cursor}")
+                print(f"valor:{memory_tape[cursor]}")
             break
         if config.debug_final:
             if config.limit_steps > 0:
@@ -166,7 +164,7 @@ def execute_program(
                     break
         read_index += 1
         if config.debug:
-            print(str(cursor) + " " + str(memory_tape))
+            print(f"{cursor} {memory_tape}")
         if read_index == len(program_script):
             break
     print("")
@@ -188,10 +186,10 @@ def main() -> None:
         open_bracket_count = count_brackets(program_script)
         memory_tape = [0]
         if open_bracket_count < 0:
-            print("falta " + str(-open_bracket_count) + " colchete: [")
+            print(f"falta {-open_bracket_count} colchete: [")
             continue
         if open_bracket_count > 0:
-            print("falta " + str(open_bracket_count) + " colchete: ]")
+            print(f"falta {open_bracket_count} colchete: ]")
             continue
         memory_tape = cast(
             list[int], execute_program(program_script, memory_tape, config)

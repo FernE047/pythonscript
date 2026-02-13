@@ -20,7 +20,7 @@ def get_integer_input(message: str) -> int:
 def prompt_for_yes_no(message: str) -> Literal["y", "n", "0"]:
     choice = ""
     while choice not in ("y", "n", "0"):
-        print(message + " [y/n]")
+        print(f"{message} [y/n]")
         choice = input()
     if not isinstance(Literal["y", "n", "0"], type(choice)):
         raise TypeError("choice is not of the expected Literal type")

@@ -15,7 +15,7 @@ def main() -> None:
                 byte_as_char = bin(byte_as_integer)
                 byte_as_char = byte_as_char.lstrip("0b")
                 while len(byte_as_char) < 8:
-                    byte_as_char = "0" + byte_as_char
+                    byte_as_char = f"0{byte_as_char}"
                 print(byte_as_char)
                 byte = arquivo.read(1)
 

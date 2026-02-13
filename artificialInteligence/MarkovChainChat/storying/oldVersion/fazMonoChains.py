@@ -23,7 +23,7 @@ def update_mono_chain_file(keywords: list[str], is_title: bool) -> None:
 def update_keyword_frequency(keywords: list[str], directory: str) -> None:
     with open(f"{directory}/c.txt", "w", encoding="utf-8") as file_write:
         if "chain.txt" not in os.listdir(directory):
-            file_write.write(" ".join(keywords) + " 1\n")
+            file_write.write(f"{' '.join(keywords)} 1\n")
             return
         with open(f"{directory}/chain.txt", "r", encoding="utf-8") as file_read:
             lines = file_read.readlines()
@@ -34,12 +34,12 @@ def update_keyword_frequency(keywords: list[str], directory: str) -> None:
             words = line.split()
             if words[:-1] == keywords:
                 words[-1] = str(int(words[-1]) + 1)
-                file_write.write(" ".join(words) + "\n")
+                file_write.write(f"{' '.join(words)}\n")
                 keyword_found = True
             else:
                 file_write.write(line)
         if not keyword_found:
-            file_write.write(" ".join(keywords) + " 1\n")
+            file_write.write(f"{' '.join(keywords)} 1\n")
 
 
 def generate_markov_chain(text: str, is_title: bool = False) -> None:

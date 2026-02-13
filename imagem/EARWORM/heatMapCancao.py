@@ -57,7 +57,7 @@ def main() -> None:
                 list(map(str, np.sort(np.array(level))))
             )  # horizontal colorbar
             cbar.ax.tick_params(labelsize=PARAMS_SIZE)
-            plt.title("Heat Map " + color)
+            plt.title(f"Heat Map {color}")
             plt.xlabel("X Label")
             plt.ylabel("Y Label")
             plt.show()

@@ -31,7 +31,7 @@ def print_elapsed_time(seconds: float) -> None:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(sign + ", ".join(parts))
+    print(f"{sign}{', '.join(parts)}")
 
 
 def rename_file(source_filename: str, destination_filename: str) -> None:
@@ -55,7 +55,7 @@ def update_chain_file(filename: str, file_index: int, terms: list[list[str]]) ->
             unique_terms: list[list[str]] = []
             for term in terms:
                 if term not in unique_terms:
-                    file_write.write(" ".join(term + [str(counter[str(term)])]) + "\n")
+                    file_write.write(f"{' '.join(term + [str(counter[str(term)])])}\n")
                     unique_terms.append(term)
             return
         with open(
@@ -72,13 +72,13 @@ def update_chain_file(filename: str, file_index: int, terms: list[list[str]]) ->
                 while words[:-1] in terms:
                     terms.remove(words[:-1])
                 words[-1] = str(frequency)
-                file_write.write(" ".join(words) + "\n")
+                file_write.write(f"{' '.join(words)}\n")
             else:
-                file_write.write(line + "\n")
+                file_write.write(f"{' '.join(line.split())}\n")
         unique_terms = []
         for term in terms:
             if term not in unique_terms:
-                file_write.write(" ".join(term + [str(counter[str(term)])]) + "\n")
+                file_write.write(f"{' '.join(term + [str(counter[str(term)])])}\n")
                 unique_terms.append(term)
 
 
@@ -173,7 +173,7 @@ def main() -> None:
         else:
             count += 1
     update_chain_files(filename, alterations)
-    with open(filename + "/c.txt", "w", encoding="UTF-8") as word_count_file:
+    with open(f"{filename}/c.txt", "w", encoding="UTF-8") as word_count_file:
         for index, quantity in enumerate(word_frequency_map):
             word_count_file.write(f"{index} ")
             word_count_file.write(f"{quantity}\n")

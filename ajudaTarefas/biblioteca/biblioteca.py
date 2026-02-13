@@ -270,7 +270,7 @@ def insert_book(system: System) -> bool:
     print("Category:")
     while True:
         system.show_category_list()
-        print(str(len(system.categories)) + "-add category")
+        print(f"{len(system.categories)}-add category")
         try:
             user_choice = int(input())
         except ValueError:

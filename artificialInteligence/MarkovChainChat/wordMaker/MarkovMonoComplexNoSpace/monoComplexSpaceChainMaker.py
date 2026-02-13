@@ -36,7 +36,7 @@ def format_elapsed_time(seconds: float) -> str:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    return sign + ", ".join(parts)
+    return f"{sign}{', '.join(parts)}"
 
 
 def rename_file(source_filename: str, destination_filename: str) -> None:

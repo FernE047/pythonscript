@@ -59,7 +59,7 @@ if args.keywords:
 
 #Additional words added to keywords
 if args.suffix_keywords:
-    suffix_keywords = [" " + str(sk) for sk in args.suffix_keywords.split(",")]
+    suffix_keywords = [f" {sk}" for sk in args.suffix_keywords.split(",")]
 else:
     suffix_keywords = []
 
@@ -155,7 +155,7 @@ def similar_images():
     cur_version = sys.version_info
     if cur_version >= version:  # If the Current Version of Python is 3.0 or above
         try:
-            searchUrl = "https://www.google.com/searchbyimage?site=search&sa=X&image_url=" + args.similar_images
+            searchUrl = f"https://www.google.com/searchbyimage?site=search&sa=X&image_url={args.similar_images}"
             headers = {}
             headers["User-Agent"] = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
 
@@ -166,7 +166,7 @@ def similar_images():
             l2 = content.find("&", l1)
             urll = content[l1:l2]
 
-            newurl = "https://www.google.com/search?tbs=sbi:" + urll + "&site=search&sa=X"
+            newurl = f"https://www.google.com/search?tbs=sbi:{urll}&site=search&sa=X"
             req2 = urllib.request.Request(newurl, headers=headers)
             resp2 = urllib.request.urlopen(req2)
             # print(resp2.read())
@@ -178,7 +178,7 @@ def similar_images():
             return "Cloud not connect to Google Imagees endpoint"
     else:  # If the Current Version of Python is 2.x
         try:
-            searchUrl = "https://www.google.com/searchbyimage?site=search&sa=X&image_url=" + args.similar_images
+            searchUrl = f"https://www.google.com/searchbyimage?site=search&sa=X&image_url={args.similar_images}"
             headers = {}
             headers["User-Agent"] = "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.27 Safari/537.17"
 
@@ -189,7 +189,7 @@ def similar_images():
             l2 = content.find("&", l1)
             urll = content[l1:l2]
 
-            newurl = "https://www.google.com/search?tbs=sbi:" + urll + "&site=search&sa=X"
+            newurl = f"https://www.google.com/search?tbs=sbi:{urll}&site=search&sa=X"
             #print newurl
             req2 = urllib2.Request(newurl, headers=headers)
             resp2 = urllib2.urlopen(req2)
@@ -219,10 +219,10 @@ def build_url_parameters():
             # counter will tell if it is first param added or not
             if counter == 0:
                 # add it to the built url
-                built_url = built_url + ext_param
+                built_url = f"{built_url}{ext_param}"
                 counter += 1
             else:
-                built_url = built_url + "," + ext_param
+                built_url = f"{built_url},{ext_param}"
                 counter += 1
     return built_url
 
@@ -242,16 +242,16 @@ def single_image():
     image_name = str(url[(url.rfind("/")) + 1:])
     if "?" in image_name:
         image_name = image_name[:image_name.find("?")]
-    path_name = main_directory + "/" + image_name
+    path_name = f"{main_directory}/{image_name}"
     if ".jpg" in image_name or ".gif" in image_name or ".png" in image_name or ".bmp" in image_name or ".svg" in image_name or ".webp" in image_name or ".ico" in image_name:
         output_filename = path_name
     else:
-        output_filename = path_name + ".jpg"
+        output_filename = f"{path_name}.jpg"
     with open(output_filename, "wb") as output_file:
         data = response.read()
         output_file.write(data)
         response.close()
-    print("completed ====> " + image_name)
+    print(f"completed ====> {image_name}")
     return
 
 
@@ -270,11 +270,11 @@ def bulk_download(search_keyword,suffix_keywords,limit,main_directory,delay_time
         i = 0
         while i < len(search_keyword):
             items = []
-            iteration = "\n" + "Item no.: " + str(i + 1) + " -->" + " Item name = " + str(search_keyword[i] + str(sky))
+            iteration = f"\nItem no.: {i + 1} --> Item name = {search_keyword[i] + str(sky)}"
             print(iteration)
             print("Evaluating...")
             search_term = search_keyword[i] + sky
-            dir_name = search_term + ("-" + args.color if args.color else "")
+            dir_name = f"{search_term}{f'-{args.color}' if args.color else ''}"
 
             # make a search keyword  directory
             try:
@@ -297,23 +297,21 @@ def bulk_download(search_keyword,suffix_keywords,limit,main_directory,delay_time
                 pass
 
             params = build_url_parameters()
-            # color_param = ("&tbs=ic:specific,isc:" + args.color) if args.color else ""
+            # color_param = (f"&tbs=ic:specific,isc:{args.color}") if args.color else ""
             # check the args and choose the URL
             if args.url:
                 url = args.url
             elif args.similar_images:
                 keywordem = similar_images()
-                url = "https://www.google.com/search?q=" + keywordem + "&espv=2&biw=1366&bih=667&site=webhp&source=lnms&tbm=isch&sa=X&ei=XosDVaCXD8TasATItgE&ved=0CAcQ_AUoAg"
+                url = f"https://www.google.com/search?q={keywordem}&espv=2&biw=1366&bih=667&site=webhp&source=lnms&tbm=isch&sa=X&ei=XosDVaCXD8TasATItgE&ved=0CAcQ_AUoAg"
             elif args.specific_site:
-                url = "https://www.google.com/search?q=" + quote(
-                    search_term) + "site:" + args.specific_site + "&espv=2&biw=1366&bih=667&site=webhp&source=lnms&tbm=isch" + params + "&sa=X&ei=XosDVaCXD8TasATItgE&ved=0CAcQ_AUoAg"
+                url = f"https://www.google.com/search?q={quote(search_term)}site:{args.specific_site}&espv=2&biw=1366&bih=667&site=webhp&source=lnms&tbm=isch{params}&sa=X&ei=XosDVaCXD8TasATItgE&ved=0CAcQ_AUoAg"
             else:
-                url = "https://www.google.com/search?q=" + quote(
-                    search_term) + "&espv=2&biw=1366&bih=667&site=webhp&source=lnms&tbm=isch" + params + "&sa=X&ei=XosDVaCXD8TasATItgE&ved=0CAcQ_AUoAg"
+                url = f"https://www.google.com/search?q={quote(search_term)}&espv=2&biw=1366&bih=667&site=webhp&source=lnms&tbm=isch{params}&sa=X&ei=XosDVaCXD8TasATItgE&ved=0CAcQ_AUoAg"
             raw_html = (download_page(url))
             time.sleep(0.1)
             items = items + (_images_get_all_items(raw_html))
-            print("Total Image Links = " + str(len(items)))
+            print(f"Total Image Links = {len(items)}")
 
             #If search does not return anything, do not try to force download
             if len(items) <= 1:
@@ -327,7 +325,7 @@ def bulk_download(search_keyword,suffix_keywords,limit,main_directory,delay_time
             while (k < len(items)):
                 try:
                     image_url = items[k]
-                    #print("\n" + str(image_url))
+                    #print(f"\n{image_url}")
                     req = Request(image_url, headers={
                         "User-Agent": "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.27 Safari/537.17"})
                     try:
@@ -341,50 +339,50 @@ def bulk_download(search_keyword,suffix_keywords,limit,main_directory,delay_time
                         else:
                             if args.format:
                                 output_filename = f"{base_name}.{args.format}"
-                                image_name = image_name + "." + args.format
+                                image_name = f"{image_name}.{args.format}"
                             else:
                                 output_filename = f"{base_name}.jpg"
-                                image_name = image_name + ".jpg"
+                                image_name = f"{image_name}.jpg"
                         with open(output_filename, "wb") as output_file:
                             data = response.read()
                             output_file.write(data)
                             response.close()
 
-                        print("Completed ====> " + str(success_count + 1) + ". " + image_name)
+                        print(f"Completed ====> {success_count + 1}. {image_name}")
                         k = k + 1
                         success_count += 1
                         if success_count == limit:
                             break
                     except UnicodeEncodeError as e:
                         errorCount +=1
-                        print ("UnicodeEncodeError on an image...trying next one..." + " Error: " + str(e))
+                        print (f"UnicodeEncodeError on an image...trying next one... Error: {e}")
                         k = k + 1
 
                 except HTTPError as e:  # If there is any HTTPError
                     errorCount += 1
-                    print("HTTPError on an image...trying next one..." + " Error: " + str(e))
+                    print(f"HTTPError on an image...trying next one... Error: {e}")
                     k = k + 1
 
                 except URLError as e:
                     errorCount += 1
-                    print("URLError on an image...trying next one..." + " Error: " + str(e))
+                    print(f"URLError on an image...trying next one... Error: {e}")
                     k = k + 1
 
                 except ssl.CertificateError as e:
                     errorCount += 1
-                    print("CertificateError on an image...trying next one..." + " Error: " + str(e))
+                    print(f"CertificateError on an image...trying next one... Error: {e}")
                     k = k + 1
 
                 except IOError as e:  # If there is any IOError
                     errorCount += 1
-                    print("IOError on an image...trying next one..." + " Error: " + str(e))
+                    print(f"IOError on an image...trying next one... Error: {e}")
                     k = k + 1
 
                 if args.delay:
                     time.sleep(int(delay_time))
 
             if success_count < limit:
-                print("\n\nUnfortunately all " + str(limit) + " could not be downloaded because some images were not downloadable. " + str(success_count) + " is all we got for this search filter!")
+                print(f"\n\nUnfortunately all {limit} could not be downloaded because some images were not downloadable. {success_count} is all we got for this search filter!")
             i = i + 1
     return errorCount
 
@@ -399,10 +397,10 @@ def main() -> None:
         errorCount = bulk_download(search_keyword,suffix_keywords,limit,main_directory,delay_time)
 
         print("\nEverything downloaded!")
-        print("Total Errors: " + str(errorCount) + "\n")
+        print(f"Total Errors: {errorCount}\n")
         t1 = time.time()  # stop the timer
         total_time = t1 - t0  # Calculating the total time required to crawl, find and download all the links of 60,000 images
-        print("Total time taken: " + str(total_time) + " Seconds")
+        print(f"Total time taken: {total_time} Seconds")
     #--------End of the main program --------#
 
     # In[ ]:

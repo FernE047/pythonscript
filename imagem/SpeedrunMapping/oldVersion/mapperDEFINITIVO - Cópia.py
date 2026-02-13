@@ -33,7 +33,7 @@ def print_elapsed_time(seconds: float) -> None:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(sign + ", ".join(parts))
+    print(f"{sign}{', '.join(parts)}")
 
 
 def open_image_as_rgba(image_path: str) -> Image.Image:
@@ -149,7 +149,7 @@ def main() -> None:
 
     diretorioVideo = "./video"
     origemVideo = "-i ./level.mp4"
-    destinoTemp = diretorioVideo + "/frame%02d.png"
+    destinoTemp = f"{diretorioVideo}/frame%02d.png"
     extraArguments = "-r {0:02d}/1 -ss {1:02d}:{2:02d}:{3:02d}.0 -t 1.03"
     processoArgs = ["ffmpeg", origemVideo, extraArguments, destinoTemp]
     fps = 10
@@ -162,7 +162,7 @@ def main() -> None:
     # iniciadores
     processoArgs[2] = extraArguments.format(fps, 0, 0, 0)
     subprocess.call(" ".join(processoArgs))
-    diretorioFrames = diretorioVideo + "/"
+    diretorioFrames = f"{diretorioVideo}/"
     mapa = openFrame(diretorioFrames + listdir(diretorioVideo)[0])
     tamanho = mapa.size
     posicao = [0, 0]
@@ -189,7 +189,7 @@ def main() -> None:
                             DT = DDP * 2 + 1
                             PY = DT
                             PX = DT
-                            print("novo DDP : " + str(DDP))
+                            print(f"novo DDP : {DDP}")
                             adds = comparaFrames(mapa, frameAtual, posicao)
                         mapa, posicao = ampliaMapa(mapa, frameAtual, posicao, adds)
                         remove(diretorioFrames + frame)

@@ -27,9 +27,9 @@ def main() -> None:
     passos=0
     while(x!=1):
         x=barra(x)
-        print(str(x)+"")
+        print(f"{x}")
         passos+=1
-    print("passos:"+str(passos))
+    print(f"passos:{passos}")
 
 
 if __name__ == "__main__":

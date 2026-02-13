@@ -38,7 +38,7 @@ def main() -> None:
                 titulo+=letra
                 letra=leLetra(titulos)
             print(titulo)
-            newTitulos.write(titulo+"\n")
+            newTitulos.write(f"{titulo}\n")
         except:
             break
     newTitulos.close()

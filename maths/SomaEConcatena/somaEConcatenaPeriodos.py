@@ -54,13 +54,13 @@ def main() -> None:
                 periodo2=pegaPeriodo(termos[-2],termos[-4])
                 if((periodo1=="")or(periodo2=="")):
                     if(modo!="3"):
-                        #print(termo+" não tem periodos")
-                        print(termo)
+                        #print(f"{termo} não tem periodos")
+                        print(f"{termo}")
                 else:
                     if(modo!="2"):
-                        print("\n"+termo+" tem periodos:")
-                        print("periodo 1:"+periodo1)
-                        print("periodo 2:"+periodo2)
+                        print(f"\n{termo} tem periodos:")
+                        print(f"periodo 1: {periodo1}")
+                        print(f"periodo 2: {periodo2}")
                 # print("\n".join(termos))
 
 

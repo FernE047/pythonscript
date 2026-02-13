@@ -354,8 +354,8 @@ def escreveLinhas(
     pontosLinhaFinal = len(linhaFinal)
     if pontosLinhaInicial == pontosLinhaFinal:
         for n in range(pontosLinhaInicial):
-            file.write(str(linhaInicial[n][0]) + "," + str(linhaInicial[n][1]))
-            file.write(" " + str(linhaFinal[n][0]) + "," + str(linhaFinal[n][1]) + "\n")
+            file.write(f"{linhaInicial[n][0]},{linhaInicial[n][1]}")
+            file.write(f" {linhaFinal[n][0]},{linhaFinal[n][1]}\n")
     elif pontosLinhaInicial > pontosLinhaFinal:
         if pontosLinhaInicial - 1 == 0:
             multiplicador = 0.0
@@ -363,14 +363,8 @@ def escreveLinhas(
             multiplicador = (pontosLinhaFinal - 1) / (pontosLinhaInicial - 1)
         for n in range(pontosLinhaInicial):
             pontoFinal = int(n * multiplicador)
-            file.write(str(linhaInicial[n][0]) + "," + str(linhaInicial[n][1]))
-            file.write(
-                " "
-                + str(linhaFinal[pontoFinal][0])
-                + ","
-                + str(linhaFinal[pontoFinal][1])
-                + "\n"
-            )
+            file.write(f"{linhaInicial[n][0]},{linhaInicial[n][1]}")
+            file.write(f" {linhaFinal[pontoFinal][0]},{linhaFinal[pontoFinal][1]}\n")
     else:
         if pontosLinhaFinal - 1 == 0:
             multiplicador = 0.0
@@ -379,11 +373,9 @@ def escreveLinhas(
         for n in range(pontosLinhaFinal):
             pontoInicial = int(n * multiplicador)
             file.write(
-                str(linhaInicial[pontoInicial][0])
-                + ","
-                + str(linhaInicial[pontoInicial][1])
+                f"{linhaInicial[pontoInicial][0]},{linhaInicial[pontoInicial][1]}"
             )
-            file.write(" " + str(linhaFinal[n][0]) + "," + str(linhaFinal[n][1]) + "\n")
+            file.write(f" {linhaFinal[n][0]},{linhaFinal[n][1]}\n")
 
 
 def escreveBlobs(
@@ -431,11 +423,9 @@ def fazFundo(fileConfig: TextIOWrapper) -> None:
             pixel = get_pixel(parteInicial, (x, y))
             if pixel[3] != 0:
                 if get_pixel(parteFinal, (x, y))[3] != 0:
-                    fileConfig.write(
-                        str(x) + "," + str(y) + " " + str(x) + "," + str(y) + "\n"
-                    )
+                    fileConfig.write(f"{x},{y} {x},{y}\n")
                 else:
-                    fileConfig.write(str(x) + "," + str(y) + " fundo\n")
+                    fileConfig.write(f"{x},{y} fundo\n")
 
 
 """
@@ -447,9 +437,9 @@ SECÇÃO DEBUG:
 
 def imprimeBlob(blobs: list[list[list[CoordData]]]) -> None:
     for n, blob in enumerate(blobs):
-        print("\nblob " + str(n) + " : \n")
+        print(f"\nblob {n} : \n")
         for m, camada in enumerate(blob):
-            print("camada " + str(m) + " : \n")
+            print(f"camada {m} : \n")
             for coord in camada:
                 print(coord)
 
@@ -519,10 +509,8 @@ def main() -> None:
                         coordVermelhosInicial, coordVermelhosFinal
                     ):
                         for coord_i, coord_f in zip(coordInicial, coordFinal):
-                            fileConfig.write(str(coord_i[0]) + "," + str(coord_i[1]))
-                            fileConfig.write(
-                                " " + str(coord_f[0]) + "," + str(coord_f[1]) + "\n"
-                            )
+                            fileConfig.write(f"{coord_i[0]},{coord_i[1]}")
+                            fileConfig.write(f" {coord_f[0]},{coord_f[1]}\n")
                 print()
         for colorIndex in range(3):
             for nParte in range(quantiaPartes):

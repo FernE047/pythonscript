@@ -28,7 +28,7 @@ def proximoTermo(termo):
     return(termo)
 
 def fazMensagem(numeroTeste,termos):
-    print("\n"+str(numeroTeste)+" chega a um fim em "+str(len(termos)-1)+" passos")
+    print(f"\n{numeroTeste} chega a um fim em {len(termos)-1} passos")
     print(",".join(termos))
 
 def imprime(termos,numeroTeste,modo,sucesso,passos):
@@ -49,16 +49,16 @@ def imprime(termos,numeroTeste,modo,sucesso,passos):
                     quantia+=1
     else:
         if(modo=="0"):
-            print(str(numeroTeste)+" estorou o limite:")
+            print(f"{numeroTeste} estorou o limite:")
             print(",".join(termos))
             quantia+=1
         elif(modo=="1"):
             if(passos=="1"):
-                print(str(numeroTeste)+":")
+                print(f"{numeroTeste}:")
                 print(",".join(termos))
                 quantia+=1
             else:
-                print(str(numeroTeste))
+                print(f"{numeroTeste}")
                 quantia+=1
 
 
@@ -88,8 +88,8 @@ def main() -> None:
                 imprime(termos,numeroTeste,modo,sucesso,passos)
                 numeroTeste+=1
             except:
-                print(numeroTeste)
-        print("quantidade total "+str(quantia))
+                print(f"{numeroTeste}")
+        print(f"quantidade total {quantia}")
 
 
 if __name__ == "__main__":

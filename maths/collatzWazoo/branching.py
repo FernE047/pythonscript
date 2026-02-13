@@ -7,7 +7,7 @@ def branching(x, y):
         proximosTermos = collatz.aplicaFuncao(x)
         print(proximosTermos)
         if len(proximosTermos) > 1:
-            texto = str(x) + " - " + str(proximosTermos[-1])
+            texto = f"{x} - {proximosTermos[-1]}"
             x = proximosTermos[-2]
         else:
             texto = str(x)

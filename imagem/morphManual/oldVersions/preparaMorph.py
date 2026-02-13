@@ -22,7 +22,7 @@ def get_pixel(image: Image.Image, coord: CoordData) -> tuple[int, ...]:
 
 
 def limpaPasta(pasta: str) -> None:
-    arquivos = [pasta + "/" + a for a in os.listdir(pasta)]
+    arquivos = [f"{pasta}/{a}" for a in os.listdir(pasta)]
     if "./frames/resized" in arquivos:
         arquivos.pop(arquivos.index("./frames/resized"))
     for arquivo in arquivos:
@@ -33,7 +33,7 @@ def salvaLayers(nome: str, pasta: str) -> None:
     fundo = False
     layeredImage = pypdn.read(nome)
     new_im = Image.fromarray(layeredImage.layers[0].image)
-    new_im.save(nome[:-4] + ".png")
+    new_im.save(f"{nome[:-4]}.png")
     new_im.close()
     for n in range(1, len(layeredImage.layers)):
         new_im = Image.fromarray(layeredImage.layers[n].image)
@@ -46,7 +46,7 @@ def salvaLayers(nome: str, pasta: str) -> None:
         if n == 1:
             if get_pixel(new_im, (0, 0)) == (255, 255, 255, 255):
                 fundo = True
-                new_im.save(pasta + "/fundo.png")
+                new_im.save(f"{pasta}/fundo.png")
                 continue
         if fundo:
             n -= 1

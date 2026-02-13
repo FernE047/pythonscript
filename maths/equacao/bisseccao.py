@@ -39,7 +39,7 @@ def entradaDeCoeficientes():
     n=0
     coeficientes=[]
     while True:
-        valor=pegaFloat("digite o coeficiente de x^"+str(n),".")
+        valor=pegaFloat(f"digite o coeficiente de x^{n}",".")
         if(valor=="."):
             return coeficientes
         else:
@@ -62,7 +62,7 @@ def refina(equacao,busca):
     for index in range(len(espacoDeBusca)-1):
         x=espacoDeBusca[index]
         a=equacao(x)
-        print("F("+str(x)+") : "+str(a))
+        print(f"F({x}) : {a}")
         if(a==0):
             listaDeIntervalos.append((a,a))
         else:
@@ -85,7 +85,7 @@ def descobre(equacao,parada,intervalo):
             if(x not in valor.keys()):
                 valor[str(x)]=equacao(x)
         if(abs(diferenca)<parada):
-            print("\nquantia de iterações : "+str(iteracao))
+            print(f"\nquantia de iterações : {iteracao}")
             return(meio)
         if(sinal(a)==sinal(meio)):
             valor.pop(str(a))
@@ -104,7 +104,7 @@ def main() -> None:
     fim=pegaFloat("digite o ponto final de refinamento",".")
     if(fim=="."):
         fim=100
-    quantidade=pegaInteiro("digite quantos pontos pegar entre "+str(inicio)+" e "+str(fim)+" para o refinamento",".")
+    quantidade=pegaInteiro(f"digite quantos pontos pegar entre {inicio} e {fim} para o refinamento",".")
     if(quantidade=="."):
         quantidade=201
     busca=[inicio,fim,quantidade]
@@ -113,7 +113,7 @@ def main() -> None:
     parada=pegaFloat("digite o criterio de parada",".")
     for intervalo in refinamento:
         resultado=descobre(equacao,parada,intervalo)
-        print("resultado : "+str(resultado),end="\n\n")
+        print(f"resultado : {resultado}",end="\n\n")
 
 
 if __name__ == "__main__":
