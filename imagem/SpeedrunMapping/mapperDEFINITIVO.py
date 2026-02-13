@@ -35,8 +35,12 @@ def print_elapsed_time(seconds: float) -> None:
     print(sign + ", ".join(parts))
 
 
-def openFrame(frame):
-    return Image.open(frame)  # .crop((42,78,1039,479))
+def openFrame(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
 
 
 def comparaPixel(pixelA, pixelB):
@@ -162,12 +166,10 @@ def main() -> None:
         print(f"{n} : ")
         print_elapsed_time(duracao * (totalFiles - n))
         mapa.save("mapa.png")
-    frameAtual.close()
     fimTotal = time()
     duracao = fimTotal - inicioTotal
     print_elapsed_time(duracao)
     mapa.save("mapa.png")
-    mapa.close()
 
 
 if __name__ == "__main__":

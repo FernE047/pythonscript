@@ -90,13 +90,20 @@ def passaCorrigindo(
                             imagem.putpixel((x, y), pixelMedio(lista))
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def superCorrigeFrame(nome: str) -> None:
-    imagem = Image.open(nome)
+    imagem = open_image_as_rgba(nome)
     largura, altura = imagem.size
     passaCorrigindo(0, int(largura / 2 + 1), 0, altura, imagem)
     passaCorrigindo(largura - 1, int(largura / 2 - 1), 0, altura, imagem)
     imagem.save(nome)
-    imagem.close()
 
 
 def corrigeAlguns(coords: list[CoordData], imagem: Image.Image) -> None:
@@ -126,7 +133,7 @@ def pixelMedio(lista: list[tuple[int, ...]]) -> tuple[int, ...]:
 
 def corrigeFrame(nome: str) -> None:
     print(nome)
-    imagem = Image.open(nome)
+    imagem = open_image_as_rgba(nome)
     largura, altura = imagem.size
     verificaDepois: list[CoordData] = []
     for y in range(1, altura - 1):
@@ -199,7 +206,6 @@ def corrigeFrame(nome: str) -> None:
                     break
     corrigeAlguns(verificaDepois, imagem)
     imagem.save(nome)
-    imagem.close()
 
 
 def main() -> None:

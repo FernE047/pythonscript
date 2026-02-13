@@ -41,8 +41,16 @@ def tiraEspaçoBranco(texto: str) -> str:
     return texto
 
 
+def open_image_as_rgb(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGB":
+            return image_in_memory.convert("RGB")
+        return image_in_memory
+
+
 def applyTolerancia(img, tolerancia):
-    imagem = Image.open(img)
+    imagem = open_image_as_rgb(img)
     width, height = imagem.size
     imagemNew = imagem.copy()
     for x in range(width):

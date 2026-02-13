@@ -1,6 +1,14 @@
 from PIL import Image
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def main() -> None:
     vermelho = (255, 0, 0, 255)
     azul = (0, 0, 255, 255)
@@ -9,7 +17,7 @@ def main() -> None:
 
     for numeroCurva in range(0, 11):
         nome = "curva" + str(numeroCurva) + ".png"
-        img = Image.open(nome)
+        img = open_image_as_rgba(nome)
         larg, alt = img.size
         cont = 0
         area = larg * alt

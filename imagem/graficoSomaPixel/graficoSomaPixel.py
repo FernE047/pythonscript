@@ -15,8 +15,16 @@ LOGGING_OUTPUT_THRESHOLD = 10
 SCALING_FACTOR = 10
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def generate_brightness_histogram(img: str, scaling_attempt: int = INITIAL_ATTEMPT) -> Image.Image:
-    imagem = Image.open(img)
+    imagem = open_image_as_rgba(img)
     width, height = imagem.size
     tamanho = width * height
     print(tamanho)

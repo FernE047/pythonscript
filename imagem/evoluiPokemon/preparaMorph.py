@@ -50,6 +50,14 @@ def clear_folder(folder: str) -> None:
         send2trash.send2trash(file)
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def save_layers(image_name: str) -> None:
     index = get_user_integer(
         f"choose a pokemon between 0 and {POKEMON_COUNT}",
@@ -57,9 +65,8 @@ def save_layers(image_name: str) -> None:
         max_value=POKEMON_COUNT,
     )
     pokemon_image = get_image(index)
-    image = Image.open(pokemon_image)
+    image = open_image_as_rgba(pokemon_image)
     image.save(f"./{image_name}.png")
-    image.close()
 
 
 def main() -> None:

@@ -4,6 +4,14 @@ import os
 from PIL import Image
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def count_images_on_folder(image_category: str) -> int:
     folder = f"imagens/{image_category}"
     quantity = 0
@@ -110,7 +118,7 @@ def hogify(inicial, final):
 
 totalDeImagens = count_images_on_folder("PokedexSemFundo")
 nome = "output//pokemon{0:03d}.png"
-imagem = Image.open(get_image("PokedexSemFundo", 1))
+imagem = open_image_as_rgba(get_image("PokedexSemFundo", 1))
 imagemHog = Image.new("RGBA", imagem.size, tuple(4 * [0]))
 makeBlackAndWhite(imagem)
 hogify(imagem, imagemHog)

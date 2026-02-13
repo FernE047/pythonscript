@@ -6,6 +6,14 @@ OUTPUT_IMAGE = "c8.jpg"
 BACKGROUND_COLOR = (255, 255, 255)
 
 
+def open_image_as_rgb(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGB":
+            return image_in_memory.convert("RGB")
+        return image_in_memory
+
+
 def get_pixel(imagem: Image.Image, coord: tuple[int, int]) -> tuple[int, ...]:
     pixel = imagem.getpixel(coord)
     if pixel is None:
@@ -26,8 +34,8 @@ def get_average_pixel(
 
 
 def main() -> None:
-    image_a = Image.open(IMAGE_A)
-    image_b = Image.open(IMAGE_B)
+    image_a = open_image_as_rgb(IMAGE_A)
+    image_b = open_image_as_rgb(IMAGE_B)
     width_a, height_a = image_a.size
     width_b, height_b = image_b.size
     width = min(width_a, width_b)

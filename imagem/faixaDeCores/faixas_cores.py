@@ -2,10 +2,18 @@ from PIL import Image
 import os
 
 
+def open_image_as_rgb(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGB":
+            return image_in_memory.convert("RGB")
+        return image_in_memory
+
+
 def main() -> None:
     os.chdir("faixas")
     for index in range(1, 11):
-        input_image = Image.open(f"a{index}.jpg")
+        input_image = open_image_as_rgb(f"a{index}.jpg")
         size = input_image.size
         width, height = input_image.size
         base_image = Image.new("RGB", size, "white")

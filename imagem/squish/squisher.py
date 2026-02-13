@@ -1,8 +1,16 @@
 from PIL import Image
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def main() -> None:
-    imagem = Image.open("input.png")
+    imagem = open_image_as_rgba("input.png")
     tamanho = imagem.size
     squished = Image.new("RGBA",tamanho,(255,255,255,255))
     xPosition = 0

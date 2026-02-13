@@ -34,14 +34,21 @@ def print_elapsed_time(seconds: float) -> None:
     print(sign + ", ".join(parts))
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
 
 def main() -> None:
     start = time.time()
     nome = os.path.join("jap", "1.png")
     print("\n" + nome)
-    imagem = Image.open(nome)
-    largura, altura = imagem.size()
-    # phrase = ocr.image_to_string(Image.open(nome), lang="jp")
+    imagem = open_image_as_rgba(nome)
+    largura, altura = imagem.size
+    # phrase = ocr.image_to_string(imagem, lang="jp")
     # print(phrase)
     # final=time.time()
     # print("demorou ")

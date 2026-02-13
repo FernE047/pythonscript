@@ -12,6 +12,14 @@ def get_image_from_folder(image_category: str) -> list[str]:
     return images
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def main() -> None:
     print("digite um assunto")
     assunto = input()
@@ -21,7 +29,7 @@ def main() -> None:
     print("\nqual imagem? 0 a " + str(len(imagens)))
     numImagem = int(input())
     img = imagens[numImagem]
-    imagem = Image.open(img)
+    imagem = open_image_as_rgba(img)
     largura, altura = imagem.size
     paleta = []
     for x in range(largura):

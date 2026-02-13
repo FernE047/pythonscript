@@ -30,10 +30,18 @@ def euclidean_distance_between_pixels(
     return sqrt(total_squared_distance)
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def main() -> None:
     for input_index in range(1, INPUT_IMAGE_COUNT + 1):
         input_name = f"A{input_index:03d}0.jpg"
-        imagem = Image.open(input_name)
+        imagem = open_image_as_rgba(input_name)
         width, height = imagem.size
         print(f"\nimage {input_name} size: {imagem.size}\n")
         for output_index in range(1, OUTPUT_IMAGE_COUNT + 1):
@@ -59,9 +67,7 @@ def main() -> None:
                             break
             output_name = f"A{input_index:03d}{output_index:01d}.png"
             output_image.save(output_name)
-            output_image.close()
             print(f"{output_name} was created")
-        imagem.close()
 
 
 if __name__ == "__main__":

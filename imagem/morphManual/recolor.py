@@ -6,10 +6,18 @@ TARGET_IMAGE = "./final.png"
 CONFIG_FOLDER = "./partes/config/"
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def main() -> None:
 
-    source_image = Image.open(SOURCE_IMAGE)
-    target_image = Image.open(TARGET_IMAGE)
+    source_image = open_image_as_rgba(SOURCE_IMAGE)
+    target_image = open_image_as_rgba(TARGET_IMAGE)
     print("recoloring...")
 
     source_recolor = source_image.copy()
@@ -36,8 +44,6 @@ def main() -> None:
     target_recolor_name = TARGET_IMAGE.replace(".png", "_colored.png")
     source_recolor.save(source_recolor_name)
     target_recolor.save(target_recolor_name)
-    for image in (source_recolor, target_recolor, source_image, target_image):
-        image.close()
     print("R E C O L O R E D   :D")
 
 

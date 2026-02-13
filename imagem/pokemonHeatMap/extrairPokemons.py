@@ -2,6 +2,12 @@ import os
 from PIL import Image
 
 
+def open_image(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        return image_in_memory
+
+
 def main() -> None:
     diretorio = os.getcwd()
     base = os.path.join(diretorio, "imagensBase")
@@ -10,7 +16,7 @@ def main() -> None:
     imageNumber = 0
     for imagemCaminho in imagensCaminho:
         print(imagemCaminho)
-        imagem = Image.open(imagemCaminho)
+        imagem = open_image(imagemCaminho)
         largura, altura = imagem.size
         for y in range(int(altura / 103)):
             for x in range(int(largura / 96)):

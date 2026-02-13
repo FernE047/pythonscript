@@ -1,17 +1,25 @@
 from PIL import Image
 import os
 
-#this program was made when I used python 3.6, I didn't knew ide at the time and relied on python idle
-#hence the max size that fits into idle is 165
+# this program was made when I used python 3.6, I didn't knew ide at the time and relied on python idle
+# hence the max size that fits into idle is 165
 
 MAX_RGB_BRIGHTNESS = 256
 LEVELS = " `.,+%@#"
 DIVISOR = MAX_RGB_BRIGHTNESS // len(LEVELS)
 ACCEPTED_IMAGE_FORMATS = (".png", ".jpg", ".jpeg", ".bmp", ".gif")
-MAX_SIZE = 165 # max size that fits into python idle
-MIN_SIZE = 75 # min size that fits into python idle for decent quality
-TERMINAL_SIZE = 60 # if you want to display in terminal
-WHATSAPP_SIZE = 26 # if you want to display in whatsapp
+MAX_SIZE = 165  # max size that fits into python idle
+MIN_SIZE = 75  # min size that fits into python idle for decent quality
+TERMINAL_SIZE = 60  # if you want to display in terminal
+WHATSAPP_SIZE = 26  # if you want to display in whatsapp
+
+
+def open_image_as_rgb(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGB":
+            return image_in_memory.convert("RGB")
+        return image_in_memory
 
 
 def get_image_from_folder() -> list[str]:
@@ -73,7 +81,7 @@ def main() -> None:
     width_output = set_display_width()
     for image in image_paths:
         print("\n" + image + "\n")
-        image_colored = Image.open(image)
+        image_colored = open_image_as_rgb(image)
         image_black_white = image_colored.convert("L")
         image_output = resize_image_to_width(width_output, image_black_white)
         width, height = image_output.size

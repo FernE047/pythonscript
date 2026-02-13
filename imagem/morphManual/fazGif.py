@@ -19,8 +19,14 @@ def colocaImagemNoGif(
     writer.append_data(imagem)  # type:ignore
 
 
+def open_image(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        return image_in_memory
+
+
 def resize(image_file_path: str) -> None:
-    image = Image.open(image_file_path)
+    image = open_image(image_file_path)
     image_name, extension = os.path.splitext(image_file_path)
     image_file_path = f"{image_name}_resize{extension}"
     width, height = image.size
@@ -31,7 +37,6 @@ def resize(image_file_path: str) -> None:
         image.resize(resize_size, resample=RESAMPLING_MODE).save(image_file_path)
     else:
         image.save(image_file_path)
-    image.close()
 
 
 def main() -> None:

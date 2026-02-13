@@ -33,8 +33,17 @@ def print_elapsed_time(seconds: float) -> None:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
     print(sign + ", ".join(parts))
 
+
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def openFrame(frame):
-    return Image.open(frame).crop((40,70,1039,479))
+    return open_image_as_rgba(frame).crop((40,70,1039,479))
 
 def comparaPixel(pixelA,pixelB):
     total = 1
@@ -152,7 +161,6 @@ def main() -> None:
         mapa,posicao = ampliaMapa(mapa,frameAtual,posicao,adds)
         ultimoFrame,_ = ampliaMapa(ultimoFrame,frameAtual,[0,0],adds)
         ultimoFrame.save(f"results/frame{n:04d}.png")
-        ultimoFrame.close()
         ultimoFrame = frameAtual
         fim = time()
         duracao = fim-inicio
@@ -163,8 +171,6 @@ def main() -> None:
         print_elapsed_time(duracao*(framesTotais-n))
         mapa.save("mapa.png")
     mapa.save("mapa.png")
-    frameAtual.close()
-    ultimoFrame.close()
     mapa.save("mapa.png")
     fimTotal = time()
     duracao = fimTotal-inicioTotal

@@ -36,8 +36,14 @@ def print_elapsed_time(seconds: float) -> None:
 from PIL import Image
 
 
+def open_image(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        return image_in_memory
+
+
 def descobre(nome):
-    imagem = Image.open(nome)
+    imagem = open_image(nome)
     larg, alt = imagem.size
     for x in range(larg):
         for y in range(alt):
@@ -51,7 +57,7 @@ def main() -> None:
     start = time.time()
     nome = os.path.join("jap", "1.png")
     print("\n" + nome)
-    imagem = Image.open(nome)
+    imagem = open_image(nome)
     imagemCut = imagem.crop((34, 909, 671, 1072))
     imagemCut.save("cut.png")
     # phrase = ocr.image_to_string(imagemCut, lang="jp")

@@ -13,6 +13,14 @@ MAX_BRIGHTNESS_TOTAL = MAX_BRIGHTNESS * COLOR_CHANNELS
 CoordData = tuple[int, int]
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def get_pixel(imagem: Image.Image, coord: tuple[int, int]) -> tuple[int, ...]:
     pixel = imagem.getpixel(coord)
     if pixel is None:
@@ -24,7 +32,7 @@ def get_pixel(imagem: Image.Image, coord: tuple[int, int]) -> tuple[int, ...]:
 
 
 def main() -> None:
-    source_image = Image.open(INPUT_IMAGE)
+    source_image = open_image_as_rgba(INPUT_IMAGE)
     width, height = source_image.size
     new_width = width + SAFETY_OFFSET
     new_height = height + SAFETY_OFFSET

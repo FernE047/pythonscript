@@ -115,8 +115,16 @@ def possible_directions(coord: CoordData, image: Image.Image) -> list[Direction]
     return valid_directions
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def main() -> None:
-    labyrinth = Image.open(INPUT_MAZE)
+    labyrinth = open_image_as_rgba(INPUT_MAZE)
     width, height = labyrinth.size
     target_position = (
         width - DISTANCE_BETWEEN_FREE_CELLS,
@@ -193,7 +201,6 @@ def main() -> None:
     name = f"{image_name}_solved{extension}"
     print(name)
     labyrinth.save(name)
-    labyrinth.close()
 
 
 if __name__ == "__main__":

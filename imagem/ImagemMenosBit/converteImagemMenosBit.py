@@ -7,10 +7,18 @@ DEFAULT_COLOR = (0, 0, 0)
 COLOR_CHANNELS = 3
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def main() -> None:
     for input_index in range(IMAGE_COUNT):
         input_name = f"A{input_index:03d}.png"
-        image = Image.open(input_name)
+        image = open_image_as_rgba(input_name)
         size = image.size
         width, height = size
         print(f"\nimage {input_name} size: {size}\n")
@@ -37,9 +45,7 @@ def main() -> None:
                     output_image.putpixel(coord, tuple(output_pixel))
             output_name = f"A{input_index:03d}{bit:01d}.png"
             output_image.save(output_name)
-            output_image.close()
             print(f"finalizado {output_name}\n")
-        image.close()
 
 
 if __name__ == "__main__":

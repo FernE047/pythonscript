@@ -28,11 +28,19 @@ def detectCorners(image: Image.Image) -> tuple[int, int, int, int]:
     return (low_x, high_x, low_y, high_y)
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def main() -> None:
     for index in range(762):
         filename = f"pokedex/pokemon{index:03d}.png"
         print(filename)
-        image = Image.open(filename)
+        image = open_image_as_rgba(filename)
         width, height = image.size  # type: ignore
         # not used currently, but may be used in the future.
         low_x, high_x, low_y, high_y = detectCorners(image)

@@ -7,9 +7,17 @@ TARGET_IMAGE_COLORED = "./target_colored.png"
 CONFIG_FILE = "./config.txt"
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def main() -> None:
-    source_image = Image.open(SOURCE_IMAGE)
-    target_image = Image.open(TARGET_IMAGE)
+    source_image = open_image_as_rgba(SOURCE_IMAGE)
+    target_image = open_image_as_rgba(TARGET_IMAGE)
     print("recolorindo...")
     source_image_colored = source_image.copy()
     target_image_colored = target_image.copy()
@@ -35,10 +43,6 @@ def main() -> None:
         target_image_colored.putpixel(coord_target, pixel_source)
     source_image_colored.save(SOURCE_IMAGE_COLORED)
     target_image_colored.save(TARGET_IMAGE_COLORED)
-    source_image_colored.close()
-    target_image_colored.close()
-    source_image.close()
-    target_image.close()
     print("R E C O L O R I D O   :D")
 
 

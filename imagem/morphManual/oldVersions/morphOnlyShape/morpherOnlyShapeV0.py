@@ -18,8 +18,16 @@ def get_pixel(image: Image.Image, coord: CoordData) -> tuple[int, ...]:
     return pixel
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def main() -> None:
-    imagemInicial = Image.open("./inicial.png")
+    imagemInicial = open_image_as_rgba("./inicial.png")
     imagemFinal = Image.new("RGBA", imagemInicial.size, (0, 0, 0, 0))
     with open("./config.txt", "r", encoding="utf-8") as file:
         linha = file.readline()
@@ -34,8 +42,6 @@ def main() -> None:
             imagemFinal.putpixel(coordFinal, cor)
             linha = file.readline()
         imagemFinal.save("./final.png")
-    imagemInicial.close()
-    imagemFinal.close()
 
 
 if __name__ == "__main__":

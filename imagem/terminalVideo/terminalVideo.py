@@ -3,11 +3,18 @@ import os
 
 diretorio="./video"
 
+
+def open_image(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        return image_in_memory
+
+
 def imagemToText(imagem):
     global showAltura
     global niveis
     global showLargura
-    imagemColor=Image.open(imagem)
+    imagemColor=open_image(imagem)
     imagemBW=imagemColor.convert("L")
     largura,altura=imagemBW.size
     if(showAltura==0):

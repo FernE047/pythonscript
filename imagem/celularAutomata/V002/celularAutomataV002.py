@@ -56,8 +56,14 @@ def is_pixel_black(pixel: float | tuple[int, ...] | None) -> bool:
     return False
 
 
+def open_image(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        return image_in_memory
+
+
 def main() -> None:
-    current_frame = Image.open("frame_000.png")
+    current_frame = open_image("frame_000.png")
     has_black_pixels = True
     frame_index = 0
     while has_black_pixels:
@@ -79,11 +85,8 @@ def main() -> None:
         filename = f"frame_{frame_index:03d}.png"
         print(filename)
         next_frame.save(filename)
-        next_frame.close()
-        current_frame.close()
-        current_frame = Image.open(filename)
+        current_frame = open_image(filename)
         frame_index += 1
-    current_frame.close()
 
 
 if __name__ == "__main__":

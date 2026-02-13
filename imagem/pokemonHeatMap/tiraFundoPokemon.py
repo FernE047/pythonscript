@@ -2,6 +2,14 @@ import os
 from PIL import Image
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def main() -> None:
     diretorio = os.getcwd()
     base = os.path.join(diretorio, "pokemon", "pokedexFeijao")
@@ -10,7 +18,7 @@ def main() -> None:
     imageNumber = 0
     for imagemCaminho in imagensCaminho:
         print(imagemCaminho)
-        pokemon = Image.open(imagemCaminho)
+        pokemon = open_image_as_rgba(imagemCaminho)
         largura, altura = pokemon.size
         corTransparente = pokemon.getpixel((0, 0))
         for y in range(96):

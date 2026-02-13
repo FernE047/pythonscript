@@ -5,6 +5,14 @@ from PIL import Image
 BLACK = (0, 0, 0, 255)
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def get_images_from_folder(folder: str) -> list[str]:
     images = os.listdir(folder)
     images_path = [os.path.join(folder, image) for image in images]
@@ -14,7 +22,7 @@ def get_images_from_folder(folder: str) -> list[str]:
 def get_images_average_size(images_path: list[str]) -> int:
     length_total = 0
     for image_path in images_path:
-        image = Image.open(image_path)
+        image = open_image_as_rgba(image_path)
         length, _ = image.size
         length_total += length
     return int(length_total / len(images_path))
@@ -41,7 +49,7 @@ def main() -> None:
             z_heat.append(0)
     for image_path in images_path:
         print(image_path)
-        image = Image.open(image_path)
+        image = open_image_as_rgba(image_path)
         length, _ = image.size
         if length <= average_length:
             average_length = length

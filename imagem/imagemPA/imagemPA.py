@@ -19,7 +19,7 @@ def get_user_image() -> Image.Image:
     while True:
         user_input = input("Enter the image name (with extension): ")
         try:
-            imagem = Image.open(user_input)
+            imagem = open_image_as_rgba(user_input)
             return imagem
         except Exception as _:
             print("Invalid file, please try again")
@@ -33,6 +33,14 @@ def get_pixel(imagem: Image.Image, coord: tuple[int, int]) -> tuple[int, ...]:
         pixel_int = int(pixel)
         return (pixel_int, pixel_int, pixel_int, MAX_BRIGHTNESS)
     return pixel
+
+
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
 
 
 def processaImagemPorImagem(

@@ -15,8 +15,16 @@ PRINTING_THRESHOLD = 50
 LINE_WIDTH = 1
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def create_base_image() -> Image.Image:
-    image_source = Image.open(SOURCE_IMAGE_PATH)
+    image_source = open_image_as_rgba(SOURCE_IMAGE_PATH)
     size = image_source.size
     width, height = size
     width += EVEN_SAFETY_OFFSET if width % 2 == 0 else ODD_SAFETY_OFFSET

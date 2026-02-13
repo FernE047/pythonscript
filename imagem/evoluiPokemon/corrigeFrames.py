@@ -24,6 +24,14 @@ OPAQUE_ALPHA_VALUE = 255
 TRANSPARENT_ALPHA_VALUE = 0
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def apply_direction(coord: CoordData, direction: Direction) -> CoordData:
     x, y = coord
     if direction == Direction.DOWN_RIGHT:
@@ -212,7 +220,7 @@ def fix_trapped_pixels(
 def corrigeFrame(index: int) -> None:
     print(f"Fixing Frame : {index}")
     filename = f"{FRAMES_FOLDER}/frame{index:03d}.png"
-    image = Image.open(filename)
+    image = open_image_as_rgba(filename)
     transparent_pixels = get_border_transparent_pixels(image)
     find_all_transparent_pixels(image, transparent_pixels)
     all_transparent_pixels: list[CoordData] = []
@@ -221,7 +229,6 @@ def corrigeFrame(index: int) -> None:
             all_transparent_pixels.append(coord)
     fix_trapped_pixels(image, all_transparent_pixels)
     image.save(filename)
-    image.close()
     print(f"\tFrame fixed : {index}")
 
 

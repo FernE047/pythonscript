@@ -42,6 +42,11 @@ def tiraEspaçoBranco(texto: str) -> str:
     return texto
 
 
+def open_image(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        return image_in_memory
+
 
 def main() -> None:
     start = time.time()
@@ -51,7 +56,7 @@ def main() -> None:
     imagens = [os.path.join(pasta, arquivo) for arquivo in os.listdir(pasta)]
     for imagem in imagens:
         print("\n" + imagem)
-        phrase = ocr.image_to_string(Image.open(imagem), lang="por")
+        phrase = ocr.image_to_string(open_image(imagem), lang="por")
         phraseBonita = tiraEspaçoBranco(phrase)
         print(str(len(phrase)))
         print(str(len(phraseBonita)) + "\n")

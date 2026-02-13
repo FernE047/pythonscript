@@ -1,11 +1,23 @@
-from PIL import Image,ImageGrab
+from PIL import Image, ImageGrab
+
+
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
 
 
 def main() -> None:
     im = ImageGrab.grabclipboard()
+    if im is None:
+        raise Exception("No image in clipboard")
+    if isinstance(im, list):
+        raise Exception("Clipboard contains multiple items, expected an image")
     im.save("screen.png")
     im.close()
-    img = Image.open("screen.png")
+    img = open_image_as_rgba("screen.png")
     print("0 - 9X9")
     print("1 - 16X16")
     print("2 - 16X30")

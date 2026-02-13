@@ -8,6 +8,14 @@ MAX_COLOR_CHANNELS = 4
 ALLOWED_FILE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".bmp", ".gif")
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def get_image_from_folder(folder: str) -> list[str]:
     images: list[str] = []
     if not os.path.exists(folder):
@@ -68,7 +76,7 @@ def get_largest_image_size(image_names: list[str]) -> tuple[int, int]:
     max_width = 0
     max_height = 0
     for image_name in image_names:
-        size = Image.open(image_name).size
+        size = open_image_as_rgba(image_name).size
         if size[0] >= max_width:
             max_width = size[0]
         if size[1] >= max_height:
@@ -103,7 +111,7 @@ def main() -> None:
                 divisor = 0
                 for image_name in image_names:
                     current_image = Image.new("RGBA", size, BACKGROUND_COLOR)
-                    image = Image.open(image_name).convert("RGBA")
+                    image = open_image_as_rgba(image_name)
                     current_image.paste(image, (0, 0))
                     pixel = current_image.getpixel((x, y))
                     if pixel is None:

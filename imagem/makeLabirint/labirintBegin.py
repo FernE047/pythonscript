@@ -35,8 +35,16 @@ def apply_direction(coord: CoordData, direction: Direction) -> CoordData:
         return (x - 1, y)
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def main() -> None:
-    labyrinth_image = Image.open(INPUT_FILE)
+    labyrinth_image = open_image_as_rgba(INPUT_FILE)
     largura, altura = labyrinth_image.size
     for x in range(1, largura - 1, 2):
         for y in range(1, altura - 1, 2):
@@ -55,7 +63,6 @@ def main() -> None:
     image_name, extension = os.path.splitext(INPUT_FILE)
     output_name = f"{image_name}_{file_count:03d}{extension}"
     labyrinth_image.save(output_name)
-    labyrinth_image.close()
 
 
 if __name__ == "__main__":

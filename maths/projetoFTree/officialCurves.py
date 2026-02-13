@@ -48,6 +48,13 @@ def captarSalvar(nome, img):
     return ((left, up), (right, down))
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
 
 def main() -> None:
     newTamanho = 11
@@ -59,7 +66,7 @@ def main() -> None:
     captarSalvar("curva0.png", curvaNova)
     for numeroCurva in range(0, 10):
         nome = "curva" + str(numeroCurva) + ".png"
-        curvaAtual = Image.open(nome)
+        curvaAtual = open_image_as_rgba(nome)
         larg, alt = curvaAtual.size
         newTamanho = newTamanho * 2 - 1
         meio = int(newTamanho / 2 + 1)

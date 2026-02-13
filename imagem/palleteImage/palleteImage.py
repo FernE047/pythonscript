@@ -56,9 +56,17 @@ def get_image(image_sub_folder: str) -> str:
     return ""
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def fetch_palette(image_name: str) -> PaletteData:
     print("fetching palette, please wait, it can take a while")
-    image = Image.open(image_name).convert("RGBA")
+    image = open_image_as_rgba(image_name)
     width, height = image.size
     palette: PaletteData = set()
     for x in range(width):
@@ -73,7 +81,7 @@ def fetch_palettes(images: list[str]) -> PaletteData:
     palette: PaletteData = set()
     for image_name in images:
         print(image_name)
-        image = Image.open(image_name).convert("RGBA")
+        image = open_image_as_rgba(image_name)
         width, height = image.size
         for x in range(width):
             for y in range(height):
@@ -85,7 +93,7 @@ def fetch_palettes(images: list[str]) -> PaletteData:
 def apply_color_palette(
     nome: str, color_palette: PaletteData, image_path: str
 ) -> Image.Image:
-    image = Image.open(image_path).convert("RGBA")
+    image = open_image_as_rgba(image_path)
     width, height = image.size
     color_mapped_image = image.copy()
     print(width)

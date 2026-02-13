@@ -6,7 +6,7 @@
 - [x] Replace file handling with context managers (with open(...) as f:)
 - [ ] Translate everything to English (search imagem for examples)
 - [x] Replace full paths with relative paths (search // or C:\ for examples)
-- [ ] remove Image.open(...) and replace with context manager in all scripts
+- [x] remove Image.open(...) and replace with context manager in all scripts
 - [ ] shelve.open(...) with context manager in all scripts too :o
 - [ ] AND PYPDN and MULTIPROCESSING POOL :v
 - [ ] Start using pathlib for path handling

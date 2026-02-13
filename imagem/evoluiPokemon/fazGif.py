@@ -22,17 +22,22 @@ def get_frames_from_folder(folder_path: str) -> list[str]:
     return frames
 
 
+def open_image(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        return image_in_memory
+
+
 def main() -> None:
     frames = get_frames_from_folder(FRAMES_FOLDER)
     frames.remove(RESIZED_FOLDER)
     for filename in frames:
-        image = Image.open(filename)
+        image = open_image(filename)
         name_without_path, extension = os.path.basename(filename).split(".")
         filename = f"{RESIZED_FOLDER}/{name_without_path}_resize.{extension}"
         width, height = image.size
         resize_size = (width * RESIZE_FACTOR, height * RESIZE_FACTOR)
         image.resize(resize_size, resample=RESAMPLING_MODE).save(filename)
-        image.close()
     file_amount = len(os.listdir(RESIZED_FOLDER))
     gif_name = f"./Animation{file_amount:03d}.gif"
     with imageio.get_writer(gif_name, mode="I") as writer:  # type: ignore

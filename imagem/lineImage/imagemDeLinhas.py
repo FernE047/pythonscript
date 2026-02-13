@@ -166,8 +166,16 @@ def draw_line(
     return image
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def main() -> None:
-    image = Image.open(INPUT_IMAGE)
+    image = open_image_as_rgba(INPUT_IMAGE)
     nails = place_nails_in_image(image)
     width, height = image.size
     output_width, output_height = dimension_by_nails(nails)

@@ -58,9 +58,17 @@ def interpolate_tuples(tuple_source: R, tuple_target: R, frame_index: int) -> R:
     return cast(R, tuple(interpolated_values))
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def inrerpolate_frames(index: int) -> None:
-    source_image = Image.open(SOURCE_IMAGE)
-    target_image = Image.open(TARGET_IMAGE)
+    source_image = open_image_as_rgba(SOURCE_IMAGE)
+    target_image = open_image_as_rgba(TARGET_IMAGE)
     print(f"generating Frame : {index}")
     frame = Image.new("RGBA", target_image.size, BACKGROUND_COLOR)
     for filename in os.listdir(CONFIG_FOLDER):
@@ -82,16 +90,12 @@ def inrerpolate_frames(index: int) -> None:
             frame.putpixel(output_coord, output_pixel)
     print(f"\tFrame Finished : {index}")
     save_frame(frame, index)
-    source_image.close()
-    target_image.close()
-    frame.close()
 
 
 def move_image(image_name: str, frame_index: int) -> None:
-    image = Image.open(image_name)
+    image = open_image_as_rgba(image_name)
     print(f"\n {image_name} size: {image.size}\n")
     save_frame(image, frame_index)
-    image.close()
 
 
 def create_first_and_last_frames() -> None:

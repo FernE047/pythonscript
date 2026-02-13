@@ -242,8 +242,16 @@ def leMapa(mapa):
     return elementos
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def main() -> None:
-    imagem = Image.open("input.png")
+    imagem = open_image_as_rgba("input.png")
     elementos = leMapa(imagem)
     a = 0
     while True:
@@ -255,7 +263,6 @@ def main() -> None:
         a += 1
         if(imagem.getpixel(elementos[0].coord) not in ((255,0,0,255),(255,0,0))):
             break
-    imagem.close()
 
 
 if __name__ == "__main__":

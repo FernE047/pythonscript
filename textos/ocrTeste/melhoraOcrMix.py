@@ -5,9 +5,17 @@ import cv2
 from PIL import Image
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def main() -> None:
     # tipando a leitura para os canais de ordem RGB
-    imagem = Image.open("picture0.jpg").convert("RGB")
+    imagem = open_image_as_rgba("picture0.jpg")
 
     # convertendo em um array editável de numpy[x, y, CANALS]
     npimagem = np.asarray(imagem).astype(np.uint8)

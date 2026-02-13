@@ -13,6 +13,14 @@ CoordData = tuple[int, int]
 PixelData = tuple[int, ...] | float
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def interpolate_color(
     pixel_source: PixelData, pixel_target: PixelData, index: int
 ) -> PixelData:
@@ -63,8 +71,8 @@ def makeFrame(frame_index: int) -> None:
         except ValueError:
             raise ValueError(f"Invalid coordinate format: {coord_str}")
 
-    image_source = Image.open(SOURCE_IMAGE)
-    image_target = Image.open(TARGET_IMAGE)
+    image_source = open_image_as_rgba(SOURCE_IMAGE)
+    image_target = open_image_as_rgba(TARGET_IMAGE)
     print(f"Generating Frame : {frame_index}")
     frame = Image.new("RGBA", image_target.size, TRANSPARENT_WHITE)
     with open(CONFIG_FILE, "r", encoding="utf-8") as file:
@@ -98,15 +106,11 @@ def makeFrame(frame_index: int) -> None:
         frame.putpixel(interpolated_coord, interpolated_color)
     print(f"\tFrame Completed : {frame_index}")
     frame.save(f"{FRAMES_FOLDER}/frame{frame_index + 1:03d}.png")
-    image_source.close()
-    image_target.close()
-    frame.close()
 
 
 def move_image(image_name: str, image_rename: str) -> None:
-    image = Image.open(image_name)
+    image = open_image_as_rgba(image_name)
     image.save(f"{FRAMES_FOLDER}/{image_rename}")
-    image.close()
 
 
 def create_first_and_last_frames() -> None:

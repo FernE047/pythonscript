@@ -85,6 +85,14 @@ def get_pixel_alpha(pixel: float | tuple[int, ...] | None) -> int:
     return OPAQUE_ALPHA_VALUE
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 class Line:
     def __init__(
         self, coordinates: list[CoordData] | None = None, is_circular: bool = False
@@ -487,12 +495,10 @@ class Area:
 
 def main() -> None:
     print("Fazendo Analise : ")
-    initial_image = Image.open(FIRST_IMAGE_PATH)
+    initial_image = open_image_as_rgba(FIRST_IMAGE_PATH)
     initial_area = Area(initial_image)
-    initial_image.close()
-    last_image = Image.open(LAST_IMAGE_PATH)
+    last_image = open_image_as_rgba(LAST_IMAGE_PATH)
     last_area = Area(last_image)
-    last_image.close()
     with open(CONFIG_FILE_PATH, "w", encoding="utf-8") as config_file:
         initial_area.write_region_data(last_area, config_file)
         print("\nAnalise Terminada : ")

@@ -8,6 +8,14 @@ CoordData = tuple[int, int]
 # this code is legacy, I am only changing type hints and linter errors. it doesn't make sense to refactor it, since I already have a better version of it, and I don't want to break it by changing it too much
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def get_pixel(image: Image.Image, coord: CoordData) -> tuple[int, ...]:
     pixel = image.getpixel(coord)
     if pixel is None:
@@ -415,8 +423,8 @@ SECÇÃO Fundo:
 
 
 def fazFundo(fileConfig: TextIOWrapper) -> None:
-    parteInicial = Image.open("partesIniciais/fundo.png")
-    parteFinal = Image.open("partesFinais/fundo.png")
+    parteInicial = open_image_as_rgba("partesIniciais/fundo.png")
+    parteFinal = open_image_as_rgba("partesFinais/fundo.png")
     largura, altura = parteInicial.size
     for y in range(altura):
         for x in range(largura):
@@ -428,8 +436,6 @@ def fazFundo(fileConfig: TextIOWrapper) -> None:
                     )
                 else:
                     fileConfig.write(str(x) + "," + str(y) + " fundo\n")
-    parteInicial.close()
-    parteFinal.close()
 
 
 """
@@ -467,8 +473,8 @@ def main() -> None:
             fazFundo(file)
         for nParte in range(quantiaPartes):
             print(nParte)
-            parteInicial = Image.open(nomeInicial.format(nParte))
-            parteFinal = Image.open(nomeFinal.format(nParte))
+            parteInicial = open_image_as_rgba(nomeInicial.format(nParte))
+            parteFinal = open_image_as_rgba(nomeFinal.format(nParte))
             with open(nomeConfig.format(nParte), "w", encoding="utf-8") as fileConfig:
                 hasRGB = hasColor(parteInicial)
                 coordVermelhosInicial: list[list[CoordData]] = []
@@ -518,8 +524,6 @@ def main() -> None:
                                 " " + str(coord_f[0]) + "," + str(coord_f[1]) + "\n"
                             )
                 print()
-            parteInicial.close()
-            parteFinal.close()
         for colorIndex in range(3):
             for nParte in range(quantiaPartes):
                 with open(

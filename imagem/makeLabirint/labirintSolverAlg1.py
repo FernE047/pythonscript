@@ -76,8 +76,16 @@ def labyrinth_solver(
         path.pop()
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def main() -> None:
-    labyrinth = Image.open(INPUT_MAZE)
+    labyrinth = open_image_as_rgba(INPUT_MAZE)
     path = [Direction.DOWN]
     # starts with DOWN, because we skip the opposite of the last direction, and the opposite of DOWN is UP, which is never the first direction to try
     labyrinth_solver(labyrinth, INITIAL_POSITION, path)
@@ -85,7 +93,6 @@ def main() -> None:
     name = f"{image_name}_solved{extension}"
     print(name)
     labyrinth.save(name)
-    labyrinth.close()
 
 
 if __name__ == "__main__":

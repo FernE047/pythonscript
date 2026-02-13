@@ -2,6 +2,14 @@ import os
 from PIL import Image
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def main() -> None:
     diretorio = os.getcwd()
     base = os.path.join(diretorio, "pokemon", "pokedexSemFundo")
@@ -11,7 +19,7 @@ def main() -> None:
     heatMap = Image.new("RGBA", (96, 96), (0, 255, 255, 255))
     for imagemCaminho in imagensCaminho:
         print(imagemCaminho)
-        pokemon = Image.open(imagemCaminho)
+        pokemon = open_image_as_rgba(imagemCaminho)
         for y in range(96):
             for x in range(96):
                 if pokemon.getpixel((x, y)) != (0, 0, 0, 0):

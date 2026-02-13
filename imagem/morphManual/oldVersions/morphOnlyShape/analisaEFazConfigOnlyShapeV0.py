@@ -18,6 +18,14 @@ def get_pixel(image: Image.Image, coord: CoordData) -> tuple[int, ...]:
     return pixel
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 """
 
 SECÇÃO DE DIREÇÃO:
@@ -278,13 +286,11 @@ SECÇÃO MAIN:
 
 
 def main() -> None:
-    parteInicial = Image.open("./inicial.png")
+    parteInicial = open_image_as_rgba("./inicial.png")
     with open("./config.txt", "w", encoding="utf-8") as fileConfig:
         blobInicial = procuraBlobs(parteInicial)
         parteFinal = fazForma(parteInicial)
         blobFinal = procuraBlobs(parteFinal)
-        parteInicial.close()
-        parteFinal.close()
         escreveBlobs(blobInicial, blobFinal, fileConfig)
 
 

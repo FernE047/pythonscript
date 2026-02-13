@@ -47,8 +47,16 @@ def print_elapsed_time(seconds: float) -> None:
     print(sign + ", ".join(parts))
 
 
+def open_image_as_rgb(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGB":
+            return image_in_memory.convert("RGB")
+        return image_in_memory
+
+
 def melhora(img):
-    imagem = Image.open(img).convert("RGB")
+    imagem = open_image_as_rgb(img)
     npimagem = np.asarray(imagem).astype(np.uint8)
     npimagem[:, :, 0] = 0
     npimagem[:, :, 2] = 0

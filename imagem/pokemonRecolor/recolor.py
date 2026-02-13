@@ -4,12 +4,20 @@ from colorsys import hsv_to_rgb
 from os import mkdir
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def main() -> None:
     nomeOpen = "pokedexSemFundo\\pokemon{0:03d}.png"
     pasta = "pokedexRecolorPokemons\\pokemon{0:03d}"
     nomeSave = "pokedexRecolorPokemons\\pokemon{0:03d}\\pokemon{0:03d}{1:02d}.png"
     for a in range(762):
-        imagem = Image.open(nomeOpen.format(a))
+        imagem = open_image_as_rgba(nomeOpen.format(a))
         altura, largura = imagem.size
         mkdir(pasta.format(a))
         for b in range(12):
@@ -29,8 +37,6 @@ def main() -> None:
                     novoPixelRGB = tuple([int(n) for n in novoPixelRGB])
                     imagemTransform.putpixel((y, x), novoPixelRGB)
             imagemTransform.save(nomeSave.format(a, b))
-            imagemTransform.close()
-        imagem.close()
 
 
 if __name__ == "__main__":

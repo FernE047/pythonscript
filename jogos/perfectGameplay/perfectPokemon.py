@@ -319,6 +319,15 @@ class Inimigo():
         self.genero = scanGeneroInimigo()
         self.vida   = scanVidaInimigo()
 
+
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def scanNomeInimigo(inimigo):
     tela=pyautogui.screenshot()
     x=60
@@ -335,7 +344,7 @@ def scanNomeInimigo(inimigo):
                         imagem.putpixel((xLetra,yLetra),(0,0,0,255))
             for nomeArq in range(1,38):
                 try:
-                    comparada=Image.open("./alfabeto1/"+str(nomeArq)+".png")
+                    comparada=open_image_as_rgba("./alfabeto1/"+str(nomeArq)+".png")
                 except:
                     comparada=False
                 teste=False

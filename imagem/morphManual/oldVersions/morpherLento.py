@@ -83,7 +83,7 @@ def interpolate_tuples(tuple_source: R, tuple_target: R, frame_index: int) -> R:
     return cast(R, tuple(interpolated_values))
 
 
-def verificaTamanho():
+def verificaTamanho() -> int:
     with open("config.txt", "r", encoding="utf-8") as file:
         linha = file.readline()
         quantia = 0
@@ -93,12 +93,20 @@ def verificaTamanho():
     return quantia
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def main() -> None:
     inicio = time()
     nomeFrame = "pokemon002{0:02d}.png"
     quantiaFrames = FINAL_FRAME
-    imagemInicial = Image.open("pokemon000.png")
-    imagemFinal = Image.open("pokemon001.png")
+    imagemInicial = open_image_as_rgba("pokemon000.png")
+    imagemFinal = open_image_as_rgba("pokemon001.png")
     imagemInicial.save(nomeFrame.format(0))
     imagemFinal.save(nomeFrame.format(quantiaFrames + 1))
     print("\n tamanho: " + str(imagemInicial.size), end="\n\n")
@@ -122,12 +130,11 @@ def main() -> None:
             coordInicial = coords[0]
             pixelInicial = get_pixel(imagemInicial, coordInicial)
             for n in range(quantiaFrames):
-                frame = Image.open(nomeFrame.format(n + 1))
+                frame = open_image_as_rgba(nomeFrame.format(n + 1))
                 novaCoord = interpolate_tuples(coordInicial, coordFinal, n + 1)
                 novaCor = interpolate_tuples(pixelInicial, pixelFinal, n + 1)
                 frame.putpixel(novaCoord, novaCor)
                 frame.save(nomeFrame.format(n + 1))
-                frame.close()
             linha = file.readline()
             if firstTime:
                 fim = time()
@@ -141,8 +148,6 @@ def main() -> None:
             imagem = imageio.imread(nomeFrame.format(n))  # type: ignore
             writer.append_data(imagem)  # type: ignore
     fimDef = time()
-    imagemInicial.close()
-    imagemFinal.close()
     print("\nfinalizado")
     print_elapsed_time(fimDef - inicioDef)
 

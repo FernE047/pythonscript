@@ -12,6 +12,14 @@ SOURCE_FOLDER = "./partes/iniciais"
 TARGET_FOLDER = "./partes/finais"
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def get_pixel(imagem: Image.Image, coord: CoordData) -> tuple[int, ...]:
     pixel = imagem.getpixel(coord)
     if pixel is None:
@@ -24,10 +32,10 @@ def get_pixel(imagem: Image.Image, coord: CoordData) -> tuple[int, ...]:
 
 def generate_background(image_name: str) -> Image.Image:
     print("back iniciado")
-    image = Image.open(f"./{image_name}.png")
+    image = open_image_as_rgba(f"./{image_name}.png")
     directory = SOURCE_FOLDER if image_name == "source" else TARGET_FOLDER
     for partsName in [f"{directory}/{fileName}" for fileName in os.listdir(directory)]:
-        parte = Image.open(partsName)
+        parte = open_image_as_rgba(partsName)
         width, height = parte.size
         is_first_occurrence = True
         for x in range(width):
@@ -56,7 +64,7 @@ def main() -> None:
     frames.pop()
     frames.pop()
     for frame_index, frame_name in enumerate(frames):
-        frame = Image.open(frame_name)
+        frame = open_image_as_rgba(frame_name)
         width, height = background_source.size
         for x in range(width):
             for y in range(height):
@@ -72,7 +80,6 @@ def main() -> None:
                 frame.putpixel(coord, interpolated_pixel)
         print(frame_index)
         frame.save(frame_name)
-        frame.close()
 
 
 if __name__ == "__main__":

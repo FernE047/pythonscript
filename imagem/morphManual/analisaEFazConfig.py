@@ -81,6 +81,14 @@ def apply_direction(coord: CoordData | None, direction: Direction) -> CoordData:
         return (x + 1, y)
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 class Line:
     def __init__(
         self, coordinates: list[CoordData] | None = None, is_cyclic: bool = False
@@ -635,7 +643,7 @@ class ImagePart:
     blue_coord: CoordData
 
     def __init__(self, nome: str) -> None:
-        image = Image.open(nome)
+        image = open_image_as_rgba(nome)
         self.search_colors(image)
         if self.has_red:
             self.area = AreaRed(image)
@@ -645,7 +653,6 @@ class ImagePart:
             self.area = Area(image, starting_line=line)
         else:
             self.area = Area(image)
-        image.close()
 
     def search_colors(self, image: Image.Image) -> None:
         width, height = image.size

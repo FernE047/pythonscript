@@ -2,10 +2,17 @@ import os
 from typing import List, cast
 from PIL import Image
 import copy
-from PIL.ImageFile import ImageFile
 
 
-def calculate_usable_dimensions(img: ImageFile) -> tuple[int, int]:
+def open_image_as_rgb(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGB":
+            return image_in_memory.convert("RGB")
+        return image_in_memory
+
+
+def calculate_usable_dimensions(img: Image.Image) -> tuple[int, int]:
     width, height = img.size
     if width % 2 == 1:
         width -= 1
@@ -14,7 +21,7 @@ def calculate_usable_dimensions(img: ImageFile) -> tuple[int, int]:
     return (width, height)
 
 
-def is_image_hidable(img_to_hide: ImageFile, img_source: ImageFile) -> bool:
+def is_image_hidable(img_to_hide: Image.Image, img_source: Image.Image) -> bool:
     width_src, height_src = calculate_usable_dimensions(img_source)
     width_hide, height_hide = img_to_hide.size
     if (height_hide <= height_src / 2) and (width_hide <= width_src / 2):
@@ -23,14 +30,16 @@ def is_image_hidable(img_to_hide: ImageFile, img_source: ImageFile) -> bool:
     return False
 
 
-def open_image_by_name(message: str) -> ImageFile:
+def open_image_by_name(message: str) -> Image.Image:
     while True:
         try:
             print(message)
             user_input = input()
+            image_name = user_input
             if user_input.find("/") == -1:
-                return Image.open(os.path.join("./images", user_input))
-            return Image.open(user_input)
+                image_name = os.path.join("images", user_input)
+            return open_image_as_rgb(image_name)
+
         except Exception as _:
             print("invalid name")
 
@@ -46,7 +55,7 @@ def viraDec(binary_input: str) -> int:
         return 3
 
 
-def hide_image(img_to_hide: ImageFile, img_source: ImageFile) -> ImageFile:
+def hide_image(img_to_hide: Image.Image, img_source: Image.Image) -> Image.Image:
     img_stego = copy.deepcopy(img_source)
     width_hide, height_hide = img_to_hide.size
     for y in range(height_hide):

@@ -34,9 +34,17 @@ def interpolate_tuples(tuple_source: R, tuple_target: R, frame_index: int) -> R:
     return cast(R, tuple(interpolated_values))
 
 
+def open_image_as_rgba(image_path: str) -> Image.Image:
+    with Image.open(image_path) as image:
+        image_in_memory = image.copy()
+        if image.mode != "RGBA":
+            return image_in_memory.convert("RGBA")
+        return image_in_memory
+
+
 def makeFrame(n: int) -> None:
-    imagemInicial = Image.open("./inicial.png")
-    imagemFinal = Image.open("./final.png")
+    imagemInicial = open_image_as_rgba("./inicial.png")
+    imagemFinal = open_image_as_rgba("./final.png")
     print(n)
     frame = Image.new("RGBA", imagemFinal.size, (255, 255, 255, 0))
     with open("./config.txt", "r", encoding="utf-8") as file:
@@ -59,15 +67,12 @@ def makeFrame(n: int) -> None:
                 frame.putpixel(novaCoord, novaCor)
             linha = file.readline()
         frame.save(f"./frames/frame{n + 1:03d}.png")
-        imagemInicial.close()
-        imagemFinal.close()
-        frame.close()
 
 
 def main() -> None:
     nomeFrame = "./frames/frame{0:03d}.png"
-    imagemInicial = Image.open("./inicial.png")
-    imagemFinal = Image.open("./final.png")
+    imagemInicial = open_image_as_rgba("./inicial.png")
+    imagemFinal = open_image_as_rgba("./final.png")
     imagemInicial.save(nomeFrame.format(0))
     imagemFinal.save(nomeFrame.format(FINAL_FRAME + 1))
     print("\n tamanho: " + str(imagemInicial.size), end="\n\n")
