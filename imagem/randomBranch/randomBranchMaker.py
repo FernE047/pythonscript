@@ -1,95 +1,99 @@
 import shelve
-
 from PIL import Image
 from numpy.random import shuffle
+from enum import Enum
 
-#    3
-#   333
-#   3 3
-# 22   00
-# 22  X  00
-# 22   00
-#   1 1
-#   111
-#    1
+# this code generates a random spiral image with a random number of branches
+
+BLACK = (0, 0, 0, 255)
+WHITE = (255, 255, 255, 255)
+RED = (255, 0, 0, 255)
+MIN_BRANCH = 2
+DATABASE_PATH = "./numero"
 
 
-def minimoEMaximo(lista, horizontal):
-    if horizontal:
-        quarto = 0
+class Direction(Enum):
+    RIGHT = 0
+    DOWN = 1
+    LEFT = 2
+    UP = 3
+
+
+def calculate_min_max(values: list[int], is_horizontal: bool) -> tuple[int, int]:
+    if is_horizontal:
+        offset_value = 0
     else:
-        quarto = 1
-    pos = 0
-    menor = 0
-    maior = 0
-    for a in range(quarto, len(lista), 2):
-        if a % 2:
-            b = a - 1
+        offset_value = 1
+    current_position = 0
+    minimum_position = 0
+    maximum_position = 0
+    for index in range(offset_value, len(values), 2):
+        if index % 2:
+            adjusted_index = index - 1
         else:
-            b = a
-        if b % 4 == 0:
-            pos += lista[a]
+            adjusted_index = index
+        if adjusted_index % 4 == 0:
+            current_position += values[adjusted_index]
         else:
-            pos -= lista[a]
-        if pos < menor:
-            menor = pos
-        if pos > maior:
-            maior = pos
-    return (menor, maior)
-
+            current_position -= values[adjusted_index]
+        if current_position < minimum_position:
+            minimum_position = current_position
+        if current_position > maximum_position:
+            maximum_position = current_position
+    return (minimum_position, maximum_position)
 
 
 def main() -> None:
-    preto = (0, 0, 0, 255)
-    branco = (255, 255, 255, 255)
-    vermelho = (255, 0, 0, 255)
-    minimo = 2
     while True:
         try:
-            print("digite o passo maximo da imagem")
-            maximo = int(input())
+            print("enter the maximum number of branches")
+            max_branches = int(input())
             break
-        except:
-            print("digite um numero")
-    with shelve.open("./numero") as BD:
-        imagemNome = BD["imagemNome"]
-        bracos = [a for a in range(minimo, maximo + 1)]
-        shuffle(bracos)
-        print(bracos)
-        largura = minimoEMaximo(bracos, True)
-        altura = minimoEMaximo(bracos, False)
-        inicial = (-largura[0], -altura[0])
-        largura = largura[1] - largura[0] + 1
-        altura = altura[1] - altura[0] + 1
-        print(altura)
-        print(largura)
-        imagemNova = Image.new("RGBA", (largura, altura), branco)
-        print(f"altura :  {altura}")
-        print(f"largura : {largura}")
-        print(f"inicial : {inicial}")
-        imagemNova.putpixel(inicial, vermelho)
-        posicao = list(inicial)
-        for n, elemento in enumerate(bracos):
-            direcao = n % 4
-            if direcao == 0:
-                for a in range(elemento):
-                    posicao[0] += 1
-                    imagemNova.putpixel(tuple(posicao), preto)
-            elif direcao == 1:
-                for a in range(elemento):
-                    posicao[1] += 1
-                    imagemNova.putpixel(tuple(posicao), preto)
-            elif direcao == 2:
-                for a in range(elemento):
-                    posicao[0] -= 1
-                    imagemNova.putpixel(tuple(posicao), preto)
+        except ValueError:
+            print("invalid number, try again")
+    with shelve.open(DATABASE_PATH) as database:
+        if "image_index" not in database:
+            database["image_index"] = 0
+        image_index = database["image_index"]
+        branch_lengths = [
+            branch_length for branch_length in range(MIN_BRANCH, max_branches + 1)
+        ]
+        shuffle(branch_lengths)
+        print(branch_lengths)
+        width_min_max = calculate_min_max(branch_lengths, True)
+        height_min_max = calculate_min_max(branch_lengths, False)
+        initial_position = (-width_min_max[0], -height_min_max[0])
+        width = width_min_max[1] - width_min_max[0] + 1
+        height = height_min_max[1] - height_min_max[0] + 1
+        print(height)
+        print(width)
+        spiral = Image.new("RGBA", (width, height), WHITE)
+        print(f"altura :  {height}")
+        print(f"largura : {width}")
+        print(f"inicial : {initial_position}")
+        spiral.putpixel(initial_position, RED)
+        current_position = list(initial_position)
+        for branch_index, branch_length in enumerate(branch_lengths):
+            direction = Direction(branch_index % 4)
+            if direction == Direction.RIGHT:
+                for _ in range(branch_length):
+                    current_position[0] += 1
+                    spiral.putpixel((current_position[0], current_position[1]), BLACK)
+            elif direction == Direction.DOWN:
+                for _ in range(branch_length):
+                    current_position[1] += 1
+                    spiral.putpixel((current_position[0], current_position[1]), BLACK)
+            elif direction == Direction.LEFT:
+                for _ in range(branch_length):
+                    current_position[0] -= 1
+                    spiral.putpixel((current_position[0], current_position[1]), BLACK)
             else:
-                for a in range(elemento):
-                    posicao[1] -= 1
-                    imagemNova.putpixel(tuple(posicao), preto)
-        imagemNova.save(f"./imagem{imagemNome}.png")
-        imagemNome += 1
-        BD["imagemNome"] = imagemNome
+                for _ in range(branch_length):
+                    current_position[1] -= 1
+                    spiral.putpixel((current_position[0], current_position[1]), BLACK)
+        image_index += 1
+        spiral.save(f"./imagem{image_index}.png")
+        database["image_index"] = image_index
 
 
 if __name__ == "__main__":
