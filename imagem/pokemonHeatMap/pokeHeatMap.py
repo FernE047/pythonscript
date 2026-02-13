@@ -1,6 +1,18 @@
 import os
 from PIL import Image
 
+IMAGE_FOLDER = "./pokemon/pokedexSemFundo"
+OUTPUT_IMAGE = "./heatMap.png"
+TRANSPARENT = (0, 0, 0, 0)
+BACKGROUND_COLOR = (0, 255, 255, 255)  # color: cyan
+SPRITE_RESOLUTION = 96
+SPRITE_SIZE = (SPRITE_RESOLUTION, SPRITE_RESOLUTION)
+MAX_BRIGHTNESS = 255
+MIN_BRIGHTNESS = 0
+RED_CHANNEL = 0
+GREEN_CHANNEL = 1
+BLUE_CHANNEL = 2
+
 
 def open_image_as_rgba(image_path: str) -> Image.Image:
     with Image.open(image_path) as image:
@@ -11,26 +23,40 @@ def open_image_as_rgba(image_path: str) -> Image.Image:
 
 
 def main() -> None:
-    diretorio = os.getcwd()
-    base = os.path.join(diretorio, "pokemon", "pokedexSemFundo")
-    imagens = os.listdir(base)
-    imagensCaminho = [os.path.join(base, imagem) for imagem in imagens]
-    imageNumber = 0
-    heatMap = Image.new("RGBA", (96, 96), (0, 255, 255, 255))
+    imagens = os.listdir(IMAGE_FOLDER)
+    imagensCaminho = [os.path.join(IMAGE_FOLDER, imagem) for imagem in imagens]
+    heatMap = Image.new("RGBA", SPRITE_SIZE, BACKGROUND_COLOR)
     for imagemCaminho in imagensCaminho:
         print(imagemCaminho)
         pokemon = open_image_as_rgba(imagemCaminho)
-        for y in range(96):
-            for x in range(96):
-                if pokemon.getpixel((x, y)) != (0, 0, 0, 0):
-                    cor = heatMap.getpixel((x, y))
-                    if cor[2] > 0:
-                        heatMap.putpixel((x, y), (0, 255, cor[2] - 1, 255))
-                    elif cor[0] < 255:
-                        heatMap.putpixel((x, y), (cor[0] + 1, 255, 0, 255))
-                    elif cor[1] > 0:
-                        heatMap.putpixel((x, y), (255, cor[1] - 1, 0, 255))
-    heatMap.save(os.path.join(diretorio, "heatMap.png"))
+        for y in range(SPRITE_RESOLUTION):
+            for x in range(SPRITE_RESOLUTION):
+                coord = (x, y)
+                if pokemon.getpixel(coord) == TRANSPARENT:
+                    continue
+                color = heatMap.getpixel(coord)
+                if color is None:
+                    raise ValueError("Pixel not found")
+                if isinstance(color, float):
+                    raise ValueError("Image is not in RGB mode")
+                if isinstance(color, int):
+                    raise ValueError("Image is not in RGB mode")
+                if color[BLUE_CHANNEL] > MIN_BRIGHTNESS:
+                    blue = color[BLUE_CHANNEL] - 1
+                    heatMap.putpixel(
+                        coord, (MIN_BRIGHTNESS, MAX_BRIGHTNESS, blue, MAX_BRIGHTNESS)
+                    )
+                elif color[RED_CHANNEL] < MAX_BRIGHTNESS:
+                    red = color[RED_CHANNEL] + 1
+                    heatMap.putpixel(
+                        coord, (red, MAX_BRIGHTNESS, MIN_BRIGHTNESS, MAX_BRIGHTNESS)
+                    )
+                elif color[GREEN_CHANNEL] > MIN_BRIGHTNESS:
+                    green = color[GREEN_CHANNEL] - 1
+                    heatMap.putpixel(
+                        coord, (MAX_BRIGHTNESS, green, MIN_BRIGHTNESS, MAX_BRIGHTNESS)
+                    )
+    heatMap.save(OUTPUT_IMAGE)
 
 
 if __name__ == "__main__":
