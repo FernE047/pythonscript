@@ -5,6 +5,7 @@ import shelve
 IMAGE_FOLDER = "./pokemon/pokedexSemFundo"
 TRANSPARENT = (0, 0, 0, 0)
 SPRITE_RESOLUTION = 96
+DATABASE_LOCATION = "./dadosPreProcessados"
 
 
 def open_image_as_rgba(image_path: str) -> Image.Image:
@@ -34,10 +35,10 @@ def main() -> None:
             for y in range(SPRITE_RESOLUTION):
                 if pokemon.getpixel((x, y)) != TRANSPARENT:
                     z_heat[block_x + y] += 1
-    with shelve.open("./dadosPreProcessados") as BD:
-        BD["x"] = x_heat
-        BD["y"] = y_heat
-        BD["z"] = z_heat
+    with shelve.open(DATABASE_LOCATION) as database:
+        database["x"] = x_heat
+        database["y"] = y_heat
+        database["z"] = z_heat
 
 
 if __name__ == "__main__":
