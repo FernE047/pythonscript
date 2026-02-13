@@ -12,7 +12,7 @@ def main() -> None:
                 word += duracaoConteudo[letraPos - 10 + retorno]
             if word == "aria-label=":
                 letraPos += 2
-                while duracaoConteudo[letraPos] != """:
+                while duracaoConteudo[letraPos] != '"':
                     duracao += duracaoConteudo[letraPos]
                     letraPos += 1
                 print(duracao)

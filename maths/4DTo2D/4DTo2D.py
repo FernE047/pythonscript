@@ -2,7 +2,7 @@ from PIL import Image
 import os
 
 
-def ehNumero"t"x"o":""""""""""""""""
+def ehNumero(texto: str) -> bool:
     numero = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
     if not texto:
         return False
@@ -17,7 +17,7 @@ def leCoords(coord):
     numero = ""
     for carac in coord:
         if ehNumero(carac):
-            numero += c"r"c
+            numero += carac
         else:
             if (carac != ",") or (not (ehNumero(numero))):
                 return False
@@ -35,7 +35,7 @@ def leCoords(coord):
 def main() -> None:
     coordenadas = []
     coordenada = ""
-    while coordenada != 0:
+    while coordenada != "0":
         coordenada = input()
         realCoord = leCoords(coordenada)
         if realCoord:

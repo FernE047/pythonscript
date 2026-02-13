@@ -6,7 +6,7 @@ def leLetra(arq):
 def lePalavra(arq):
     palavra=""
     letra=leLetra(arq)
-    while(letra not in [" ","\n","\t","""]):
+    while(letra not in [" ","\n","\t",'"']):
         palavra+=letra
         letra=leLetra(arq)
     return(palavra)
@@ -34,7 +34,7 @@ def main() -> None:
             proximaOcorrencia(titulos,"href=")
             titulo=""
             letra=leLetra(titulos)
-            while((letra)and(letra!=""")):
+            while((letra)and(letra!='"')):
                 titulo+=letra
                 letra=leLetra(titulos)
             print(titulo)

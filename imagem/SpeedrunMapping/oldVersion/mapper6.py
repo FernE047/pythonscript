@@ -171,7 +171,7 @@ def main() -> None:
             print(f"{n} : ")
             print_elapsed_time(duracao)
             print_elapsed_time(duracao*(framesTotais-n))
-            print(adds)"""
+            print(adds)
     except:
         print(n)
         print("deu erro")

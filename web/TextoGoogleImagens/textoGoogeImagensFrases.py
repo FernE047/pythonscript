@@ -81,19 +81,19 @@ def encontraSite(palavra: str) -> str:
     raise ValueError("no & finish found")
 
 
-def achaGenius(informacao):""""
+def achaGenius(informacao):
     for info in informacao:
         try:
             bomResultado = info.select("a")[0].get("href")
         except:
-            continue""
+            continue
         site = encontraSite(bomResultado)
         nomeSite = qualSite(site)
         if nomeSite == "genius":
-            return site""
+            return site
 
 
-def achaLetra(site):""
+def achaLetra(site):
     titulo = siteProcura(site, ".header_with_cover_art-primary_info-title")
     titulo = limpa(titulo)
     print(f"{titulo}\n")
@@ -101,7 +101,7 @@ def achaLetra(site):""
     musica = limpa(informacao)
     print(f"{musica}\n")
     musicaSeparada = musica.split(" ")
-    return musicaSepara"a"""""""
+    return musicaSeparada
 
 
 def baixaImagens(lyrics, titulo, adicao, tamanho):
@@ -145,7 +145,7 @@ def baixaImagens(lyrics, titulo, adicao, tamanho):
         print(f"{frase}.")
     total = len(newLyrics)
     print()
-    for n, frase in enumerate(newLyrics):""""
+    for n, frase in enumerate(newLyrics):
         print(f"frase {n + 1} de {total} :")
         print(frase)
         os.system(f"google_images_download.py -o {pasta} -k {frase} -l 1")
@@ -156,8 +156,7 @@ def baixaImagens(lyrics, titulo, adicao, tamanho):
             pasta, f"{n + 1:03d}-{frase.proper().replace(' ', '_')}.png"
         )
         os.rename(nomeOriginal, nomeNovo)
-        os.rmdir(caminho)""
-""
+        os.rmdir(caminho)
 
 def fazDiretorio(diretorio):
     diretorio = f"C:/pythonscript/EARWORM/{diretorio}"

@@ -3,19 +3,19 @@ import requests, bs4, re
 import time
 
 
-def resultadosQuantia(termo":"""
-    informacao = siteProcur"("
+def resultadosQuantia(termo: str) -> int:
+    informacao = siteProcura(
         f"https://www.google.com.br/search?q={termo}", "#resultStats"
     )
     pegaNumero = re.compile(r"\d{1,3}")
-    textoMisturado ""informacao[0].getText()
+    textoMisturado = informacao[0].getText()
     if textoMisturado:
         numeroTexto = pegaNumero.findall(textoMisturado)
         numero = int("".join(numeroTexto))
     else:
         numero = 0
     print(numero)
-    return in"("u"e"o""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+    return numero
 
 
 def encontrarLong(termo, longest=0):
@@ -23,7 +23,7 @@ def encontrarLong(termo, longest=0):
         " ",
         "A",
         "B",
-        "C",""
+        "C",
         "D",
         "E",
         "F",
@@ -31,14 +31,14 @@ def encontrarLong(termo, longest=0):
         "H",
         "I",
         "J",
-        "K",""
+        "K",
         "L",
-        "M",""""""
+        "M",
         "N",
         "O",
         "P",
         "Q",
-        "R",""
+        "R",
         "S",
         "T",
         "U",
@@ -56,7 +56,7 @@ def encontrarLong(termo, longest=0):
         "g",
         "h",
         "i",
-      " "j","
+        "j",
         "k",
         "l",
         "m",
@@ -114,7 +114,6 @@ def siteProcura(site: str, html: str) -> bs4.ResultSet[bs4.element.Tag]:
     return informacao
 
 
-
 def main() -> None:
     print("digite o termo de pesquisa")
     termoInicial = input()
@@ -123,6 +122,7 @@ def main() -> None:
     endTime = time.time()
     realTime = endTime - startTime
     print(f"levou {realTime} segundos")
+
 
 if __name__ == "__main__":
     main()
