@@ -13,9 +13,9 @@ def open_image_as_rgba(image_path: str) -> Image.Image:
 
 
 def main() -> None:
-    nomeOpen = "pokedexSemFundo\\pokemon{0:03d}.png"
-    pasta = "pokedexRecolorPokemons\\pokemon{0:03d}"
-    nomeSave = "pokedexRecolorPokemons\\pokemon{0:03d}\\pokemon{0:03d}{1:02d}.png"
+    nomeOpen = "pokedexSemFundo/pokemon{0:03d}.png"
+    pasta = "pokedexRecolorPokemons/pokemon{0:03d}"
+    nomeSave = "pokedexRecolorPokemons/pokemon{0:03d}/pokemon{0:03d}{1:02d}.png"
     for a in range(762):
         imagem = open_image_as_rgba(nomeOpen.format(a))
         altura, largura = imagem.size

@@ -259,7 +259,7 @@ def main() -> None:
             print("b")
             print(elemento.type)
             elemento.nextTurn(elementos,imagem)
-        imagem.save("anima\\frame"+str(a)+".png")
+        imagem.save("anima/frame"+str(a)+".png")
         a += 1
         if(imagem.getpixel(elementos[0].coord) not in ((255,0,0,255),(255,0,0))):
             break

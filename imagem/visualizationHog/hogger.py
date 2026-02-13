@@ -117,7 +117,7 @@ def hogify(inicial, final):
 
 
 totalDeImagens = count_images_on_folder("PokedexSemFundo")
-nome = "output//pokemon{0:03d}.png"
+nome = "output/pokemon{0:03d}.png"
 imagem = open_image_as_rgba(get_image("PokedexSemFundo", 1))
 imagemHog = Image.new("RGBA", imagem.size, tuple(4 * [0]))
 makeBlackAndWhite(imagem)

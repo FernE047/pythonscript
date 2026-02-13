@@ -296,7 +296,7 @@ def main() -> None:
             for filename in filenames:
                 print(f"{filename}\n")
                 with open(
-                    f"sudokus//{filename}", "r", encoding="utf-8"
+                    f"sudokus/{filename}", "r", encoding="utf-8"
                 ) as sudoku_board_raw:
                     board = create_sudoku_board(sudoku_board_raw.read())
                 solve_single_board(board, time_manager)

@@ -49,20 +49,20 @@ def rename_file(source_filename: str, destination_filename: str) -> None:
 
 def update_chain_file(keywords: list[str], chain_size: int, is_title: bool) -> None:
     if is_title:
-        directory = f"chainTitle//{chain_size}"
+        directory = f"chainTitle/{chain_size}"
     else:
-        directory = f"chainStory//{chain_size}"
+        directory = f"chainStory/{chain_size}"
     update_keyword_frequencies(keywords, directory)
-    rename_file(f"{directory}//c.txt", f"{directory}//chain.txt")
+    rename_file(f"{directory}/c.txt", f"{directory}/chain.txt")
 
 
 def update_keyword_frequencies(keywords: list[str], directory: str) -> None:
-    with open(f"{directory}//c.txt", "w", encoding="utf-8") as file_write:
+    with open(f"{directory}/c.txt", "w", encoding="utf-8") as file_write:
         if "chain.txt" not in os.listdir(directory):
             for keyword in keywords:
                 file_write.write(keyword + " 1\n")
             return
-        with open(f"{directory}//chain.txt", "r", encoding="utf-8") as file_read:
+        with open(f"{directory}/chain.txt", "r", encoding="utf-8") as file_read:
             lines = file_read.readlines()
         for line in lines:
             words = line.split()
@@ -110,7 +110,7 @@ def main() -> None:
             processed_file_count += 1
             start_time = time()
             print(name)
-            with open(f"stories//{name}", "r", encoding="utf-8") as file:
+            with open(f"stories/{name}", "r", encoding="utf-8") as file:
                 title_and_story_parts = file.readline().split(" : ")
                 if title_and_story_parts[:-1]:
                     title = " : ".join(title_and_story_parts[:-1])

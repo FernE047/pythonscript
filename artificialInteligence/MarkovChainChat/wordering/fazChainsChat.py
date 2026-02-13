@@ -14,15 +14,15 @@ def rename_file(source_filename: str, destination_filename: str) -> None:
 
 def update_chain_file(index: int, keywords: list[str]) -> None:
     update_keyword_count(index, keywords)
-    rename_file("chain//c.txt", f"chain//{index:03d}.txt")
+    rename_file("chain/c.txt", f"chain/{index:03d}.txt")
 
 
 def update_keyword_count(index: int, keywords: list[str]) -> None:
-    with open("chain//c.txt", "w", encoding="utf-8") as file_write:
+    with open("chain/c.txt", "w", encoding="utf-8") as file_write:
         if f"{index:03d}.txt" not in os.listdir("chain"):
             file_write.write(" ".join(keywords) + " 1\n")
             return
-        with open(f"chain//{index:03d}.txt", "r", encoding="utf-8") as file_read:
+        with open(f"chain/{index:03d}.txt", "r", encoding="utf-8") as file_read:
             lines = file_read.readlines()
         keyword_exists = False
         for line in lines:

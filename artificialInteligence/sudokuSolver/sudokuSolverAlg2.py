@@ -254,7 +254,7 @@ class SudokuBoard:
 def create_sudoku_board(mode: Literal[1, 2]) -> SudokuBoard:
     if mode == 2:
         filename = input("what is the sudoku file name (without .txt)? ")
-        with open(f"sudokus//{filename}.txt", "r", encoding="utf-8") as sudoku_raw_file:
+        with open(f"sudokus/{filename}.txt", "r", encoding="utf-8") as sudoku_raw_file:
             sudoku_board = SudokuBoard(sudoku_raw_file.read())
         return sudoku_board
     sudoku_board = SudokuBoard()
@@ -356,7 +356,7 @@ def main() -> None:
         filenames = os.listdir("sudokus")
         for filename in filenames:
             print(f"{filename}\n")
-            with open(f"sudokus//{filename}") as sudoku_board_raw:
+            with open(f"sudokus/{filename}") as sudoku_board_raw:
                 board = SudokuBoard(sudoku_board_raw.read())
                 solve_single_board(board)
         time_manager.stop()

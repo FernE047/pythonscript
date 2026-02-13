@@ -11,7 +11,7 @@ def open_image_as_rgb(image_path: str) -> Image.Image:
 
 
 def main() -> None:
-    nome = "PAPPDF\\PDFJaFeitos\\pasadeira Croche Candy\\2016-12-07-10-11-54.jpg"
+    nome = "PAPPDF/PDFJaFeitos/pasadeira Croche Candy/2016-12-07-10-11-54.jpg"
     print(nome)
     imagem = open_image_as_rgb(nome)
     width, height = imagem.size
