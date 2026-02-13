@@ -1,6 +1,11 @@
 import os
 from PIL import Image
 
+IMAGE_FOLDER = "./pokemon/pokedex_curated"
+TRANSPARENT = (0, 0, 0, 0)
+SPRITE_RESOLUTION = 96
+FIRST_PIXEL = (0, 0)
+
 
 def open_image_as_rgba(image_path: str) -> Image.Image:
     with Image.open(image_path) as image:
@@ -11,26 +16,18 @@ def open_image_as_rgba(image_path: str) -> Image.Image:
 
 
 def main() -> None:
-    diretorio = os.getcwd()
-    base = os.path.join(diretorio, "pokemon", "pokedexFeijao")
-    imagens = os.listdir(base)
-    imagensCaminho = [os.path.join(base, imagem) for imagem in imagens]
-    imageNumber = 0
-    for imagemCaminho in imagensCaminho:
-        print(imagemCaminho)
-        pokemon = open_image_as_rgba(imagemCaminho)
-        largura, altura = pokemon.size
-        corTransparente = pokemon.getpixel((0, 0))
-        for y in range(96):
-            for x in range(96):
-                if pokemon.getpixel((x, y)) == corTransparente:
-                    pokemon.putpixel((x, y), (0, 0, 0, 0))
-        pokemon.save(
-            os.path.join(
-                diretorio, "pokemon", "pokedexSemFundo", f"pokemon{imageNumber:03d}.png"
-            )
-        )
-        imageNumber += 1
+    images = os.listdir(IMAGE_FOLDER)
+    image_names = [os.path.join(IMAGE_FOLDER, image) for image in images]
+    for image_number, image_name in enumerate(image_names):
+        print(image_name)
+        pokemon = open_image_as_rgba(image_name)
+        background_color = pokemon.getpixel(FIRST_PIXEL)
+        for y in range(SPRITE_RESOLUTION):
+            for x in range(SPRITE_RESOLUTION):
+                coord = (x, y)
+                if pokemon.getpixel(coord) == background_color:
+                    pokemon.putpixel(coord, TRANSPARENT)
+        pokemon.save(f"./pokemon/pokedexSemFundo/pokemon_{image_number:03d}.png")
 
 
 if __name__ == "__main__":

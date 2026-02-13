@@ -2,6 +2,10 @@ import os
 from PIL import Image
 import shelve
 
+IMAGE_FOLDER = "./pokemon/pokedexSemFundo"
+TRANSPARENT = (0, 0, 0, 0)
+SPRITE_RESOLUTION = 96
+
 
 def open_image_as_rgba(image_path: str) -> Image.Image:
     with Image.open(image_path) as image:
@@ -12,30 +16,28 @@ def open_image_as_rgba(image_path: str) -> Image.Image:
 
 
 def main() -> None:
-    diretorio = os.getcwd()
-    base = os.path.join(diretorio, "pokemon", "pokedexSemFundo")
-    imagens = os.listdir(base)
-    imagensCaminho = [os.path.join(base, imagem) for imagem in imagens]
-    imageNumber = 0
-    xHeat = []
-    yHeat = []
-    zHeat = []
-    for xIndex in range(96):
-        for yIndex in range(96):
-            xHeat.append(xIndex)
-            yHeat.append(yIndex)
-            zHeat.append(0)
-    for imagemCaminho in imagensCaminho:
-        print(imagemCaminho)
-        pokemon = open_image_as_rgba(imagemCaminho)
-        for y in range(96):
-            for x in range(96):
-                if pokemon.getpixel((x, y)) != (0, 0, 0, 0):
-                    zHeat[96 * x + y] += 1
-    with shelve.open(os.path.join(diretorio, "dadosPreProcessados")) as BD:
-        BD["x"] = xHeat
-        BD["y"] = yHeat
-        BD["z"] = zHeat
+    images = os.listdir(IMAGE_FOLDER)
+    image_names = [os.path.join(IMAGE_FOLDER, image) for image in images]
+    x_heat: list[int] = []
+    y_heat: list[int] = []
+    z_heat: list[int] = []
+    for x in range(SPRITE_RESOLUTION):
+        for y in range(SPRITE_RESOLUTION):
+            x_heat.append(x)
+            y_heat.append(y)
+            z_heat.append(0)
+    for image_path in image_names:
+        print(image_path)
+        pokemon = open_image_as_rgba(image_path)
+        for x in range(SPRITE_RESOLUTION):
+            block_x = SPRITE_RESOLUTION * x
+            for y in range(SPRITE_RESOLUTION):
+                if pokemon.getpixel((x, y)) != TRANSPARENT:
+                    z_heat[block_x + y] += 1
+    with shelve.open("./dadosPreProcessados") as BD:
+        BD["x"] = x_heat
+        BD["y"] = y_heat
+        BD["z"] = z_heat
 
 
 if __name__ == "__main__":
