@@ -3,8 +3,10 @@
 - [x] Create a TODO.md file (meta task lmao)
 - [x] Remove all self-made modules and replace them with in-file implementations
 - [x] Add if `__name__ == "__main__":` guards
+- [x] Replace file handling with context managers (with open(...) as f:)
 - [ ] Translate everything to English (search imagem for examples)
 - [x] Replace full paths with relative paths (search // or C:\ for examples)
+- [ ] remove Image.open(...) and replace with context manager in all scripts
 - [ ] Start using pathlib for path handling
 - [ ] Fix all linter errors and warnings (19k+)
 - [ ] Add type annotations everywhere
