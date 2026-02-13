@@ -1,5 +1,4 @@
 from typing import Literal, overload
-from regex import F
 from send2trash import send2trash
 import random
 import os
