@@ -441,13 +441,12 @@ class Funcao:
         return funcaoUtil
 
     def salva(self, indice:int) -> None:
-        BD = shelve.open("collatzRegras")
-        lista:list[tuple[list[int],str]] = []
-        for tipo in self.getTipos():
-            for regra in self.getRegras([tipo]):
-                lista.append((regra.pura(), tipo))
-        BD[f"collatz{indice}"] = lista
-        BD.close()
+        with shelve.open("collatzRegras") as BD:
+            lista:list[tuple[list[int],str]] = []
+            for tipo in self.getTipos():
+                for regra in self.getRegras([tipo]):
+                    lista.append((regra.pura(), tipo))
+            BD[f"collatz{indice}"] = lista
 
     def apresentacao(self)-> str:
         texto = ""
@@ -474,13 +473,12 @@ class Funcao:
 
 
 def Collatz(indice:int) -> Funcao:
-    BD = shelve.open("collatzRegras")
-    collatz = Funcao()
-    for regraSimples in BD[f"collatz{indice}"]:
-        argumento = regraSimples[0]
-        tipoArg = regraSimples[1]
-        collatz.addRegra(argumento, tipo=tipoArg)
-    BD.close()
+    with shelve.open("collatzRegras") as BD:
+        collatz = Funcao()
+        for regraSimples in BD[f"collatz{indice}"]:
+            argumento = regraSimples[0]
+            tipoArg = regraSimples[1]
+            collatz.addRegra(argumento, tipo=tipoArg)
     return collatz.copia()
 
 

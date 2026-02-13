@@ -152,8 +152,6 @@ def limpaBD():
     BD["pokemons"]=[]
     BD["jogadorPokemons"]=[0,"","","","",""]
     BD["jogadorItens"]=[]
-    BD.close()
-    BD = shelve.open("./bd")
 
 def colocaPokemon(slot,pokemon):
     global BD
@@ -433,30 +431,30 @@ def main() -> None:
     botaoA="x"
     botaoB="z"
     teclas=[enter,botaoA,botaoB,cima,baixo,esquerda,direita]
-    BD = shelve.open("./bd")
-    limpaBD()
-    try:
-        comeco=time.time()
-        abrir()
-        inicio()
-        #load()
-        setaVermelha(1,vermelho=(248,0,0))
-        esperePor((400,440),(72,64,80))
-        inimigo=Inimigo()
-        print("batalhando com "+inimigo.nome)
-        print("level "+str(inimigo.level))
-        print("vida: "+str(inimigo.vida)+"%")
-        atualizaEmBatalha(0)
-        fim=time.time()
-        tempo=fim-comeco
-        print("completo em:")
-        print_elapsed_time(tempo)
-    except KeyboardInterrupt:
-        fim=time.time()
-        tempo=fim-comeco
-        print("completo em:")
-        print_elapsed_time(tempo)
-        print("\nDone.")
+    with shelve.open("./bd") as BD:
+        limpaBD()
+        try:
+            comeco=time.time()
+            abrir()
+            inicio()
+            #load()
+            setaVermelha(1,vermelho=(248,0,0))
+            esperePor((400,440),(72,64,80))
+            inimigo=Inimigo()
+            print("batalhando com "+inimigo.nome)
+            print("level "+str(inimigo.level))
+            print("vida: "+str(inimigo.vida)+"%")
+            atualizaEmBatalha(0)
+            fim=time.time()
+            tempo=fim-comeco
+            print("completo em:")
+            print_elapsed_time(tempo)
+        except KeyboardInterrupt:
+            fim=time.time()
+            tempo=fim-comeco
+            print("completo em:")
+            print_elapsed_time(tempo)
+            print("\nDone.")
 
 
 if __name__ == "__main__":

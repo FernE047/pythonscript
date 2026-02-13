@@ -51,46 +51,45 @@ def main() -> None:
             break
         except:
             print("digite um numero")
-    BD = shelve.open("./numero")
-    imagemNome = BD["imagemNome"]
-    bracos = [a for a in range(minimo, maximo + 1)]
-    shuffle(bracos)
-    print(bracos)
-    largura = minimoEMaximo(bracos, True)
-    altura = minimoEMaximo(bracos, False)
-    inicial = (-largura[0], -altura[0])
-    largura = largura[1] - largura[0] + 1
-    altura = altura[1] - altura[0] + 1
-    print(altura)
-    print(largura)
-    imagemNova = Image.new("RGBA", (largura, altura), branco)
-    print("altura :  " + str(altura))
-    print("largura : " + str(largura))
-    print("inicial : " + str(inicial))
-    imagemNova.putpixel(inicial, vermelho)
-    posicao = list(inicial)
-    for n, elemento in enumerate(bracos):
-        direcao = n % 4
-        if direcao == 0:
-            for a in range(elemento):
-                posicao[0] += 1
-                imagemNova.putpixel(tuple(posicao), preto)
-        elif direcao == 1:
-            for a in range(elemento):
-                posicao[1] += 1
-                imagemNova.putpixel(tuple(posicao), preto)
-        elif direcao == 2:
-            for a in range(elemento):
-                posicao[0] -= 1
-                imagemNova.putpixel(tuple(posicao), preto)
-        else:
-            for a in range(elemento):
-                posicao[1] -= 1
-                imagemNova.putpixel(tuple(posicao), preto)
-    imagemNova.save("./imagem" + str(imagemNome) + ".png")
-    imagemNome += 1
-    BD["imagemNome"] = imagemNome
-    BD.close()
+    with shelve.open("./numero") as BD:
+        imagemNome = BD["imagemNome"]
+        bracos = [a for a in range(minimo, maximo + 1)]
+        shuffle(bracos)
+        print(bracos)
+        largura = minimoEMaximo(bracos, True)
+        altura = minimoEMaximo(bracos, False)
+        inicial = (-largura[0], -altura[0])
+        largura = largura[1] - largura[0] + 1
+        altura = altura[1] - altura[0] + 1
+        print(altura)
+        print(largura)
+        imagemNova = Image.new("RGBA", (largura, altura), branco)
+        print("altura :  " + str(altura))
+        print("largura : " + str(largura))
+        print("inicial : " + str(inicial))
+        imagemNova.putpixel(inicial, vermelho)
+        posicao = list(inicial)
+        for n, elemento in enumerate(bracos):
+            direcao = n % 4
+            if direcao == 0:
+                for a in range(elemento):
+                    posicao[0] += 1
+                    imagemNova.putpixel(tuple(posicao), preto)
+            elif direcao == 1:
+                for a in range(elemento):
+                    posicao[1] += 1
+                    imagemNova.putpixel(tuple(posicao), preto)
+            elif direcao == 2:
+                for a in range(elemento):
+                    posicao[0] -= 1
+                    imagemNova.putpixel(tuple(posicao), preto)
+            else:
+                for a in range(elemento):
+                    posicao[1] -= 1
+                    imagemNova.putpixel(tuple(posicao), preto)
+        imagemNova.save("./imagem" + str(imagemNome) + ".png")
+        imagemNome += 1
+        BD["imagemNome"] = imagemNome
 
 
 if __name__ == "__main__":

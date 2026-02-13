@@ -76,8 +76,8 @@ def main() -> None:
     imagemInicial.save(nomeFrame.format(0))
     imagemFinal.save(nomeFrame.format(FINAL_FRAME + 1))
     print("\n tamanho: " + str(imagemInicial.size), end="\n\n")
-    p = multiprocessing.Pool(cpu_count())
-    p.map(makeFrame, range(FINAL_FRAME))
+    with multiprocessing.Pool(cpu_count()) as cpu_pool:
+        cpu_pool.map(makeFrame, range(FINAL_FRAME))
 
 
 if __name__ == "__main__":

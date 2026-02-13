@@ -133,77 +133,75 @@ def debugImprime(dados, numero):
 
 
 def main() -> None:
-    BD = shelve.open("BDPokemonNoDetails")
-    serebiiSite = "https://www.serebii.net/pokedex-sm/{0:03d}.shtml"
-    TOTAL = 809
-    try:
-        for a in range(799, TOTAL + 1):
-            inicio = time()
-            siteDestino = serebiiSite.format(a)
-            siteBagunca = requests.get(siteDestino)
-            while siteBagunca.status_code != requests.codes.ok:
+    with shelve.open("BDPokemonNoDetails") as BD:
+        serebiiSite = "https://www.serebii.net/pokedex-sm/{0:03d}.shtml"
+        TOTAL = 809
+        try:
+            for a in range(799, TOTAL + 1):
+                inicio = time()
+                siteDestino = serebiiSite.format(a)
                 siteBagunca = requests.get(siteDestino)
-            siteSoup = bs4.BeautifulSoup(siteBagunca.text, features="html.parser")
-            siteBagunca = None
-            informacaoBruta = siteSoup.select(".fooinfo")
-            informacaoTipo = siteSoup.select(".cen")
-            informacaoTipo = [informacaoTipo[a] for a in [0, -2, -1]]
-            mega = [informacaoTipo[-1].select("img"), informacaoTipo[-2].select("img")]
-            tipo = procuraTipo(informacaoTipo[0], False)
-            informacao = limpaInfo(informacaoBruta[1:10])
-            pokemonDados = capturaDados(informacao)
-            pokemonDados["tipo"] = tipo
-            if a < 150:
-                alolan = informacao[2].find("/") != -1
-            else:
-                alolan = False
-            BD[f"{a:03d}"] = pokemonDados
-            debugImprime(pokemonDados, a)
-            if alolan:
-                pokemonDados = capturaDados(informacao, alolan=alolan)
-                informacaoTipo = siteSoup.select(".cen")[0]
-                tipo = procuraTipo(informacaoTipo, True)
-                pokemonDados["name"] = "Alolan " + pokemonDados["name"]
+                while siteBagunca.status_code != requests.codes.ok:
+                    siteBagunca = requests.get(siteDestino)
+                siteSoup = bs4.BeautifulSoup(siteBagunca.text, features="html.parser")
+                siteBagunca = None
+                informacaoBruta = siteSoup.select(".fooinfo")
+                informacaoTipo = siteSoup.select(".cen")
+                informacaoTipo = [informacaoTipo[a] for a in [0, -2, -1]]
+                mega = [informacaoTipo[-1].select("img"), informacaoTipo[-2].select("img")]
+                tipo = procuraTipo(informacaoTipo[0], False)
+                informacao = limpaInfo(informacaoBruta[1:10])
+                pokemonDados = capturaDados(informacao)
                 pokemonDados["tipo"] = tipo
-                pokemonDados["alola"] = alolan
-                BD[f"{a:03d}Alolan"] = pokemonDados
+                if a < 150:
+                    alolan = informacao[2].find("/") != -1
+                else:
+                    alolan = False
+                BD[f"{a:03d}"] = pokemonDados
                 debugImprime(pokemonDados, a)
-            else:
-                if (mega[0]) or (mega[1]):
-                    if (a != 383) and (a != 382) and (a != 800):
-                        add = "Mega"
-                    elif a == 800:
-                        add = "Ultra"
-                        mega[1] = []
-                    else:
-                        add = "Primal"
-                    nome = add + " " + pokemonDados["name"]
-                    indexMega = procuraMegaIndex(informacaoBruta, nome)
-                    if (len(indexMega) % 2) and (len(indexMega) > 1):
-                        indexMega.pop(0)
-                    elif (a > 300) and (len(indexMega) % 2 == 0):
-                        indexMega.pop(0)
-                    for index in range(2):
-                        imgTag = mega[index]
-                        if imgTag:
-                            informacao = informacaoBruta[
-                                indexMega[index] : indexMega[index] + 9
-                            ]
-                            informacao = limpaInfo(informacao)
-                            pokemonDados = capturaDados(informacao)
-                            tipo = procuraTipo(imgTag, False, mega=True)
-                            pokemonDados["tipo"] = tipo
-                            pokemonDados["mega"] = True
-                            BD[f"{a:03d}{add}"] = pokemonDados
-                            debugImprime(pokemonDados, a)
-            duracao = time() - inicio
-            print_elapsed_time(duracao)
-            print("falta = ")
-            print_elapsed_time(duracao * (TOTAL - a))
-        BD.close()
-    except Exception as e:
-        print(e)
-        BD.close()
+                if alolan:
+                    pokemonDados = capturaDados(informacao, alolan=alolan)
+                    informacaoTipo = siteSoup.select(".cen")[0]
+                    tipo = procuraTipo(informacaoTipo, True)
+                    pokemonDados["name"] = "Alolan " + pokemonDados["name"]
+                    pokemonDados["tipo"] = tipo
+                    pokemonDados["alola"] = alolan
+                    BD[f"{a:03d}Alolan"] = pokemonDados
+                    debugImprime(pokemonDados, a)
+                else:
+                    if (mega[0]) or (mega[1]):
+                        if (a != 383) and (a != 382) and (a != 800):
+                            add = "Mega"
+                        elif a == 800:
+                            add = "Ultra"
+                            mega[1] = []
+                        else:
+                            add = "Primal"
+                        nome = add + " " + pokemonDados["name"]
+                        indexMega = procuraMegaIndex(informacaoBruta, nome)
+                        if (len(indexMega) % 2) and (len(indexMega) > 1):
+                            indexMega.pop(0)
+                        elif (a > 300) and (len(indexMega) % 2 == 0):
+                            indexMega.pop(0)
+                        for index in range(2):
+                            imgTag = mega[index]
+                            if imgTag:
+                                informacao = informacaoBruta[
+                                    indexMega[index] : indexMega[index] + 9
+                                ]
+                                informacao = limpaInfo(informacao)
+                                pokemonDados = capturaDados(informacao)
+                                tipo = procuraTipo(imgTag, False, mega=True)
+                                pokemonDados["tipo"] = tipo
+                                pokemonDados["mega"] = True
+                                BD[f"{a:03d}{add}"] = pokemonDados
+                                debugImprime(pokemonDados, a)
+                duracao = time() - inicio
+                print_elapsed_time(duracao)
+                print("falta = ")
+                print_elapsed_time(duracao * (TOTAL - a))
+        except Exception as e:
+            print(e)
 
 
 if __name__ == "__main__":

@@ -11,11 +11,10 @@ def convert_to_pdf(filepath: str) -> None:
     try:
         word = client.DispatchEx("Word.Application")
         target_path = filepath.replace(".docx", ".pdf")
-        word_doc = word.Documents.Open(filepath)
-        word_doc.SaveAs(target_path, FileFormat=PDF_FILE_FORMAT)
-        word_doc.Close()
+        with word.Documents.Open(filepath) as word_doc:
+            word_doc.SaveAs(target_path, FileFormat=PDF_FILE_FORMAT)
     except Exception as e:
-        raise e
+        raise e 
     finally:
         word.Quit()
 

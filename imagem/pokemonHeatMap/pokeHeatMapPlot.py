@@ -7,11 +7,10 @@ import os
 
 
 def main() -> None:
-    BD=shelve.open(os.path.join(os.getcwd(),"dadosPreProcessados"))
-    xHeat=BD["x"]
-    yHeat=BD["y"]
-    zHeat=BD["z"]
-    BD.close()
+    with shelve.open(os.path.join(os.getcwd(), "dadosPreProcessados")) as database:
+        xHeat=database["x"]
+        yHeat=database["y"]
+        zHeat=database["z"]
 
     """plt.figure()
     ax = plt.gca()

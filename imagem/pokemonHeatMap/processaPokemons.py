@@ -32,11 +32,10 @@ def main() -> None:
             for x in range(96):
                 if pokemon.getpixel((x, y)) != (0, 0, 0, 0):
                     zHeat[96 * x + y] += 1
-    BD = shelve.open(os.path.join(diretorio, "dadosPreProcessados"))
-    BD["x"] = xHeat
-    BD["y"] = yHeat
-    BD["z"] = zHeat
-    BD.close()
+    with shelve.open(os.path.join(diretorio, "dadosPreProcessados")) as BD:
+        BD["x"] = xHeat
+        BD["y"] = yHeat
+        BD["z"] = zHeat
 
 
 if __name__ == "__main__":

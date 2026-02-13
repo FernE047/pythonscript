@@ -701,8 +701,8 @@ def configPart(part_index: int) -> None:
 
 def main() -> None:
     total_parts = len(os.listdir(TARGET_FOLDER))
-    p = multiprocessing.Pool(os.cpu_count())
-    p.map(configPart, range(total_parts))
+    with multiprocessing.Pool(os.cpu_count()) as cpu_pool:
+        cpu_pool.map(configPart, range(total_parts))
 
 
 if __name__ == "__main__":

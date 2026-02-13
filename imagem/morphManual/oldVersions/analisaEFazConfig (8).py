@@ -293,7 +293,11 @@ def ordenaLinhaInd(linha: list[CoordData]) -> list[CoordData]:
     return maiorLinha
 
 
-def ordenaLinhaIt(linhaDesordenada: list[CoordData], anteriores: list[CoordData]|None = None, inicio: CoordData|None = None) -> list[CoordData]:
+def ordenaLinhaIt(
+    linhaDesordenada: list[CoordData],
+    anteriores: list[CoordData] | None = None,
+    inicio: CoordData | None = None,
+) -> list[CoordData]:
     if inicio is None:
         inicio = linhaDesordenada[0]
     if anteriores is None:
@@ -342,7 +346,9 @@ ferramentas para auxiliar a escrita de linhas e blob
 """
 
 
-def escreveLinhas(linhaInicial: list[CoordData], linhaFinal: list[CoordData], file:TextIOWrapper) -> None:
+def escreveLinhas(
+    linhaInicial: list[CoordData], linhaFinal: list[CoordData], file: TextIOWrapper
+) -> None:
     pontosLinhaInicial = len(linhaInicial)
     pontosLinhaFinal = len(linhaFinal)
     if pontosLinhaInicial == pontosLinhaFinal:
@@ -379,7 +385,11 @@ def escreveLinhas(linhaInicial: list[CoordData], linhaFinal: list[CoordData], fi
             file.write(" " + str(linhaFinal[n][0]) + "," + str(linhaFinal[n][1]) + "\n")
 
 
-def escreveBlobs(blobInicial: list[list[CoordData]], blobFinal: list[list[CoordData]], file: TextIOWrapper) -> None:
+def escreveBlobs(
+    blobInicial: list[list[CoordData]],
+    blobFinal: list[list[CoordData]],
+    file: TextIOWrapper,
+) -> None:
     pontosBlobInicial = len(blobInicial)
     pontosBlobFinal = len(blobFinal)
     if pontosBlobInicial == pontosBlobFinal:
@@ -410,7 +420,9 @@ SECÇÃO Fundo:
 """
 
 
-def fazFundo(fileConfig: TextIOWrapper, parteInicial: Image.Image, parteFinal: Image.Image) -> None:  # REMAKE
+def fazFundo(
+    fileConfig: TextIOWrapper, parteInicial: Image.Image, parteFinal: Image.Image
+) -> None:  # REMAKE
     pass
 
 
@@ -439,7 +451,7 @@ SECÇÃO MAIN:
 """
 
 
-def configPart(data:tuple[int, Image.Image, Image.Image]) -> None:
+def configPart(data: tuple[int, Image.Image, Image.Image]) -> None:
     n, imagemInicial, imagemFinal = data
     print("Fazendo Parte : " + str(n))
     parteInicial = Image.fromarray(imagemInicial)
@@ -482,14 +494,18 @@ def main() -> None:
     Image.fromarray(imagemInicial.layers[0].image).save("inicial.png")
     Image.fromarray(imagemFinal.layers[0].image).save("final.png")
     quantiaPartes = len(imagemInicial.layers)
-    p = multiprocessing.Pool(os.cpu_count())
-    p.map(
-        configPart,
-        [
-            (a, Image.fromarray(imagemInicial.layers[a].image), Image.fromarray(imagemFinal.layers[a].image))
-            for a in range(1, quantiaPartes)
-        ],
-    )
+    with multiprocessing.Pool(os.cpu_count()) as cpu_pool:
+        cpu_pool.map(
+            configPart,
+            [
+                (
+                    a,
+                    Image.fromarray(imagemInicial.layers[a].image),
+                    Image.fromarray(imagemFinal.layers[a].image),
+                )
+                for a in range(1, quantiaPartes)
+            ],
+        )
 
 
 if __name__ == "__main__":

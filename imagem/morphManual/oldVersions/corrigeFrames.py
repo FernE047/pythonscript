@@ -212,8 +212,8 @@ def main() -> None:
     frames = ["./frames/" + a for a in os.listdir("./frames")]
     frames.pop(0)
     frames.pop()
-    p = multiprocessing.Pool(os.cpu_count())
-    p.map(corrigeFrame, frames)
+    with multiprocessing.Pool(os.cpu_count()) as cpu_pool:
+        cpu_pool.map(superCorrigeFrame, frames)
 
 
 if __name__ == "__main__":

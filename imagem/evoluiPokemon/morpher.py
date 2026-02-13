@@ -120,8 +120,8 @@ def create_first_and_last_frames() -> None:
 
 def main() -> None:
     create_first_and_last_frames()
-    cpu_pool = multiprocessing.Pool(os.cpu_count())
-    cpu_pool.map(makeFrame, range(FRAMES_TOTAL))
+    with multiprocessing.Pool(os.cpu_count()) as cpu_pool:
+        cpu_pool.map(makeFrame, range(FRAMES_TOTAL))
 
 
 if __name__ == "__main__":

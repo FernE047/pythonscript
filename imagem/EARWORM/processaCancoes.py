@@ -61,12 +61,11 @@ def main() -> None:
                     continue
                 z_heat[average_length * x + y] += 1
 
-    database = shelve.open(os.path.join(diretory, "dadosPreProcessados"))
-    database["x"] = x_heat
-    database["y"] = y_heat
-    database["z"] = z_heat
-    database["maximum"] = max(z_heat)
-    database.close()
+    with shelve.open(os.path.join(diretory, "dadosPreProcessados")) as database:
+        database["x"] = x_heat
+        database["y"] = y_heat
+        database["z"] = z_heat
+        database["maximum"] = max(z_heat)
 
 
 if __name__ == "__main__":

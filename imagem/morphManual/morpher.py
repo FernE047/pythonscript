@@ -111,8 +111,8 @@ def save_frame(frame: Image.Image, index: int) -> None:
 
 def main() -> None:
     create_first_and_last_frames()
-    p = multiprocessing.Pool(os.cpu_count())
-    p.map(inrerpolate_frames, range(1, FINAL_FRAME))
+    with multiprocessing.Pool(os.cpu_count()) as cpu_pool:
+        cpu_pool.map(inrerpolate_frames, range(1, FINAL_FRAME))
 
 
 if __name__ == "__main__":

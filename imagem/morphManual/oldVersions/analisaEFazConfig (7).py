@@ -25,6 +25,7 @@ def get_pixel(image: Image.Image, coord: CoordData) -> tuple[int, ...]:
         raise ValueError("Image is not in RGBA mode")
     return pixel
 
+
 """
 
 SECÇÃO UTILITARIOS DO MAIN:
@@ -33,40 +34,43 @@ ferramentas utilizadas pelo main
 
 """
 
+
 def hasColor(imagem: Image.Image) -> tuple[bool, bool, Literal[False] | CoordData]:
-    largura,altura = imagem.size
+    largura, altura = imagem.size
     hasGreen = False
     hasRed = False
     hasBlue: Literal[False] | CoordData = False
     for x in range(largura):
         for y in range(altura):
-            pixel = get_pixel(imagem,(x,y))
-            if(pixel[3] == 0):
+            pixel = get_pixel(imagem, (x, y))
+            if pixel[3] == 0:
                 continue
-            if(pixel[1] != 0):
+            if pixel[1] != 0:
                 hasGreen = True
                 if hasBlue or hasRed:
-                    return(hasRed,hasGreen,hasBlue)
+                    return (hasRed, hasGreen, hasBlue)
                 else:
                     continue
-            if(pixel[2] != 0):
-                if(pixel[2] == 200):
-                    hasBlue = (x,y)
+            if pixel[2] != 0:
+                if pixel[2] == 200:
+                    hasBlue = (x, y)
                     if hasGreen:
-                        return(hasRed,hasGreen,hasBlue)
+                        return (hasRed, hasGreen, hasBlue)
                 continue
-            if(pixel[0] != 0):
+            if pixel[0] != 0:
                 hasRed = True
                 if hasGreen:
-                    return(hasRed,hasGreen,hasBlue)
-    return(hasRed,hasGreen,hasBlue)
+                    return (hasRed, hasGreen, hasBlue)
+    return (hasRed, hasGreen, hasBlue)
+
 
 def limpaPasta(pasta: str) -> None:
-    arquivos = [pasta+"/"+a for a in os.listdir(pasta)]
-    if("./frames/resized" in arquivos):
+    arquivos = [pasta + "/" + a for a in os.listdir(pasta)]
+    if "./frames/resized" in arquivos:
         arquivos.pop(arquivos.index("./frames/resized"))
     for arquivo in arquivos:
         os.remove(arquivo)
+
 
 """
 
@@ -76,24 +80,26 @@ pontos únicos
 
 """
 
+
 def procuraCor(imagem: Image.Image, indexColor: int) -> list[list[CoordData]]:
-    largura,altura = imagem.size
+    largura, altura = imagem.size
     listaDeCores: list[int] = []
     coordenadasDasCores: list[list[CoordData]] = []
     for x in range(largura):
         for y in range(altura):
-            pixel = get_pixel(imagem,(x,y))
-            if(pixel[3]==0):
+            pixel = get_pixel(imagem, (x, y))
+            if pixel[3] == 0:
                 continue
             cor = pixel[indexColor]
-            if(cor != 0):
-                if(cor not in listaDeCores):
+            if cor != 0:
+                if cor not in listaDeCores:
                     listaDeCores.append(cor)
-                    coordenadasDasCores.append([(x,y)])
+                    coordenadasDasCores.append([(x, y)])
                 else:
                     corIndex = listaDeCores.index(cor)
-                    coordenadasDasCores[corIndex].append((x,y))
+                    coordenadasDasCores[corIndex].append((x, y))
     return coordenadasDasCores
+
 
 """
 
@@ -139,6 +145,7 @@ def apply_direction(coord: CoordData | None, direction: Direction) -> CoordData:
     if direction == Direction.RIGHT:
         return (x + 1, y)
 
+
 """
 
 SECÇÃO AZUL:
@@ -147,18 +154,24 @@ linhas que se iniciam no tom 255 e continuam no tom 254
 
 """
 
+
 def procuraUmAzul(imagem: Image.Image, tom: int) -> CoordData:
-    largura,altura = imagem.size
+    largura, altura = imagem.size
     for x in range(largura):
         for y in range(altura):
-            pixel = get_pixel(imagem,(x,y))
+            pixel = get_pixel(imagem, (x, y))
             if pixel[3] == 0:
                 continue
             if pixel[2] == tom:
-                return(x,y)
-    return(-1,-1)
+                return (x, y)
+    return (-1, -1)
 
-def procuraLinhaAzul(imagem: Image.Image, anteriores: list[CoordData] | None = None, inicio: CoordData | None = None) -> list[CoordData]:
+
+def procuraLinhaAzul(
+    imagem: Image.Image,
+    anteriores: list[CoordData] | None = None,
+    inicio: CoordData | None = None,
+) -> list[CoordData]:
     if anteriores is None:
         if inicio is None:
             anteriores = [procuraUmAzul(imagem, 200)]
@@ -170,10 +183,10 @@ def procuraLinhaAzul(imagem: Image.Image, anteriores: list[CoordData] | None = N
     while True:
         pontos: list[CoordData] = []
         for d in Direction:
-            pontoAtual = apply_direction(pontoInicial,d)
+            pontoAtual = apply_direction(pontoInicial, d)
             if pontoAtual not in linha:
                 try:
-                    pixel = get_pixel(imagem,pontoAtual)
+                    pixel = get_pixel(imagem, pontoAtual)
                     if pixel[3] == 0:
                         continue
                     if pixel[2] == 255:
@@ -188,10 +201,12 @@ def procuraLinhaAzul(imagem: Image.Image, anteriores: list[CoordData] | None = N
         else:
             linhaMaxima = linha.copy()
             for ponto in pontos:
-                novaLinha = procuraLinhaAzul(imagem, anteriores = linha + [ponto])
-                if len(novaLinha)> len(linhaMaxima):
+                novaLinha = procuraLinhaAzul(imagem, anteriores=linha + [ponto])
+                if len(novaLinha) > len(linhaMaxima):
                     linhaMaxima = novaLinha.copy()
             return linhaMaxima
+
+
 """
 
 SECÇÃO VERDE:
@@ -201,6 +216,7 @@ cada Blob possui camadas que são conjuntos de coordenadas
 
 """
 
+
 def procuraContornoVerde(imagem: Image.Image) -> list[CoordData]:  # obsolete
     contorno: list[CoordData] = []
     largura, altura = imagem.size
@@ -208,32 +224,33 @@ def procuraContornoVerde(imagem: Image.Image) -> list[CoordData]:  # obsolete
     for y in range(altura):
         ultimoElemento = False
         for x in range(largura):
-            elementoAtual = get_pixel(imagem,(x,y))[1]==255
-            if((not ultimoElemento) and elementoAtual):
-                if((x,y) not in contorno):
-                    contorno.append((x,y))
-            if((not elementoAtual) and ultimoElemento):
-                if((x-1,y) not in contorno):
-                    contorno.append((x-1,y))
+            elementoAtual = get_pixel(imagem, (x, y))[1] == 255
+            if (not ultimoElemento) and elementoAtual:
+                if (x, y) not in contorno:
+                    contorno.append((x, y))
+            if (not elementoAtual) and ultimoElemento:
+                if (x - 1, y) not in contorno:
+                    contorno.append((x - 1, y))
             ultimoElemento = elementoAtual
         if elementoAtual:
-            if((largura-1,y) not in contorno):
-                contorno.append((largura-1,y))
+            if (largura - 1, y) not in contorno:
+                contorno.append((largura - 1, y))
     for x in range(largura):
         ultimoElemento = False
         for y in range(altura):
-            elementoAtual = get_pixel(imagem,(x,y))[1]==255
-            if((not ultimoElemento) and elementoAtual):
-                if((x,y) not in contorno):
-                    contorno.append((x,y))
-            if((not elementoAtual) and ultimoElemento):
-                if((x,y-1) not in contorno):
-                    contorno.append((x,y-1))
+            elementoAtual = get_pixel(imagem, (x, y))[1] == 255
+            if (not ultimoElemento) and elementoAtual:
+                if (x, y) not in contorno:
+                    contorno.append((x, y))
+            if (not elementoAtual) and ultimoElemento:
+                if (x, y - 1) not in contorno:
+                    contorno.append((x, y - 1))
             ultimoElemento = elementoAtual
         if elementoAtual:
-            if((x,altura-1) not in contorno):
-                contorno.append((x,altura-1))
+            if (x, altura - 1) not in contorno:
+                contorno.append((x, altura - 1))
     return contorno
+
 
 def isCoordInBlob(coordTeste: CoordData, blob: list[list[CoordData]]) -> bool:
     for camada in blob:
@@ -242,26 +259,28 @@ def isCoordInBlob(coordTeste: CoordData, blob: list[list[CoordData]]) -> bool:
                 return True
     return False
 
+
 def procuraBlob(imagem: Image.Image, blob: list[list[CoordData]]) -> None:
     linhaAtual: list[CoordData] = []
     linhaAnterior = blob[-1]
     for coord in linhaAnterior:
         for direcao in DOWN_DIRECTIONS:
-            coordenada = apply_direction(coord,direcao)
+            coordenada = apply_direction(coord, direcao)
             try:
-                pixel = get_pixel(imagem,coordenada)
+                pixel = get_pixel(imagem, coordenada)
             except Exception:
                 continue
-            if pixel[3] != 0 :
-                if pixel[1] == 255 :
+            if pixel[3] != 0:
+                if pixel[1] == 255:
                     if coordenada not in linhaAtual:
-                        if not isCoordInBlob(coordenada,blob):
+                        if not isCoordInBlob(coordenada, blob):
                             linhaAtual.append(coordenada)
-    if(len(linhaAtual)>0):
+    if len(linhaAtual) > 0:
         linhaAtual = ordenaLinha(linhaAtual)
         if linhaAtual not in blob:
             blob.append(linhaAtual)
-            procuraBlob(imagem,blob)
+            procuraBlob(imagem, blob)
+
 
 def divideLinha(linha: list[CoordData]) -> list[list[CoordData]]:
     linhas: list[list[CoordData]] = []
@@ -269,7 +288,7 @@ def divideLinha(linha: list[CoordData]) -> list[list[CoordData]]:
         pontoAppend = False
         for linha in linhas:
             for novoPonto in linha:
-                if distancia(ponto,novoPonto) <= 2**(1/2)+0.01:
+                if distancia(ponto, novoPonto) <= 2 ** (1 / 2) + 0.01:
                     pontoAppend = True
                     break
             if pontoAppend:
@@ -278,7 +297,8 @@ def divideLinha(linha: list[CoordData]) -> list[list[CoordData]]:
         if not pontoAppend:
             linhas.append([ponto])
     return linhas
-    
+
+
 def ordenaLinha(linhaOriginal: list[CoordData]) -> list[CoordData]:
     linhaTotal: list[CoordData] = []
     linhas = divideLinha(linhaOriginal)
@@ -286,19 +306,25 @@ def ordenaLinha(linhaOriginal: list[CoordData]) -> list[CoordData]:
         linhaTotal += ordenaLinhaInd(linha)
     return linhaTotal
 
+
 def ordenaLinhaInd(linha: list[CoordData]) -> list[CoordData]:
     tamanho = len(linha)
-    for tamanhoPossivel in range(tamanho,-1,-1):
+    for tamanhoPossivel in range(tamanho, -1, -1):
         for n in range(tamanho):
             linhaTeste = linha.copy()
             primeiroPonto = linha[n]
-            linhaTeste = ordenaLinhaIt(linhaTeste,inicio = primeiroPonto)
+            linhaTeste = ordenaLinhaIt(linhaTeste, inicio=primeiroPonto)
             if len(linhaTeste) == tamanhoPossivel:
                 return linhaTeste
     error_message = f"não foi possível ordenar a linha, analise: {linha}"
     raise ValueError(error_message)
 
-def ordenaLinhaIt(linhaDesordenada: list[CoordData], anteriores: list[CoordData]|None = None, inicio: CoordData|None = None) -> list[CoordData]:
+
+def ordenaLinhaIt(
+    linhaDesordenada: list[CoordData],
+    anteriores: list[CoordData] | None = None,
+    inicio: CoordData | None = None,
+) -> list[CoordData]:
     if inicio is None:
         if anteriores is None:
             inicio = linhaDesordenada[0]
@@ -312,7 +338,7 @@ def ordenaLinhaIt(linhaDesordenada: list[CoordData], anteriores: list[CoordData]
     while True:
         pontos: list[CoordData] = []
         for d in Direction:
-            pontoAtual = apply_direction(pontoInicial,d)
+            pontoAtual = apply_direction(pontoInicial, d)
             if pontoAtual in linhaDesordenada:
                 if pontoAtual not in linhaOrdenada:
                     pontos.append(pontoAtual)
@@ -324,17 +350,21 @@ def ordenaLinhaIt(linhaDesordenada: list[CoordData], anteriores: list[CoordData]
         else:
             linhaMaxima = linhaOrdenada.copy()
             for ponto in pontos:
-                novaLinha = ordenaLinhaIt(linhaDesordenada, anteriores = linhaOrdenada + [ponto])
+                novaLinha = ordenaLinhaIt(
+                    linhaDesordenada, anteriores=linhaOrdenada + [ponto]
+                )
                 if len(novaLinha) > len(linhaMaxima):
                     linhaMaxima = novaLinha.copy()
             return linhaMaxima
 
+
 def distancia(pontoA: CoordData, pontoB: CoordData) -> float:
     soma = 0
-    for coord_a,coord_b in zip(pontoA, pontoB):
-        soma += abs(coord_a - coord_b)**2
-    return soma**(1/2)
-    
+    for coord_a, coord_b in zip(pontoA, pontoB):
+        soma += abs(coord_a - coord_b) ** 2
+    return soma ** (1 / 2)
+
+
 """
 
 SECÇÃO ESCRITA:
@@ -343,54 +373,73 @@ ferramentas para auxiliar a escrita de linhas e blob
 
 """
 
-def escreveLinhas(linhaInicial: list[CoordData], linhaFinal: list[CoordData], file: TextIOWrapper) -> None:
+
+def escreveLinhas(
+    linhaInicial: list[CoordData], linhaFinal: list[CoordData], file: TextIOWrapper
+) -> None:
     pontosLinhaInicial = len(linhaInicial)
     pontosLinhaFinal = len(linhaFinal)
-    if(pontosLinhaInicial == pontosLinhaFinal):
+    if pontosLinhaInicial == pontosLinhaFinal:
         for n in range(pontosLinhaInicial):
-            file.write(str(linhaInicial[n][0])+","+str(linhaInicial[n][1]))
-            file.write(" "+str(linhaFinal[n][0])+","+str(linhaFinal[n][1])+"\n")
-    elif(pontosLinhaInicial>pontosLinhaFinal):
-        if(pontosLinhaInicial-1==0):
+            file.write(str(linhaInicial[n][0]) + "," + str(linhaInicial[n][1]))
+            file.write(" " + str(linhaFinal[n][0]) + "," + str(linhaFinal[n][1]) + "\n")
+    elif pontosLinhaInicial > pontosLinhaFinal:
+        if pontosLinhaInicial - 1 == 0:
             multiplicador = 0.0
         else:
-            multiplicador = (pontosLinhaFinal-1)/(pontosLinhaInicial-1)
+            multiplicador = (pontosLinhaFinal - 1) / (pontosLinhaInicial - 1)
         for n in range(pontosLinhaInicial):
-            pontoFinal = int(n*multiplicador)
-            file.write(str(linhaInicial[n][0])+","+str(linhaInicial[n][1]))
-            file.write(" "+str(linhaFinal[pontoFinal][0])+","+str(linhaFinal[pontoFinal][1])+"\n")
+            pontoFinal = int(n * multiplicador)
+            file.write(str(linhaInicial[n][0]) + "," + str(linhaInicial[n][1]))
+            file.write(
+                " "
+                + str(linhaFinal[pontoFinal][0])
+                + ","
+                + str(linhaFinal[pontoFinal][1])
+                + "\n"
+            )
     else:
-        if(pontosLinhaFinal-1==0):
+        if pontosLinhaFinal - 1 == 0:
             multiplicador = 0.0
         else:
-            multiplicador = (pontosLinhaInicial-1)/(pontosLinhaFinal-1)
+            multiplicador = (pontosLinhaInicial - 1) / (pontosLinhaFinal - 1)
         for n in range(pontosLinhaFinal):
-            pontoInicial = int(n*multiplicador)
-            file.write(str(linhaInicial[pontoInicial][0])+","+str(linhaInicial[pontoInicial][1]))
-            file.write(" "+str(linhaFinal[n][0])+","+str(linhaFinal[n][1])+"\n")
+            pontoInicial = int(n * multiplicador)
+            file.write(
+                str(linhaInicial[pontoInicial][0])
+                + ","
+                + str(linhaInicial[pontoInicial][1])
+            )
+            file.write(" " + str(linhaFinal[n][0]) + "," + str(linhaFinal[n][1]) + "\n")
 
-def escreveBlobs(blobInicial: list[list[CoordData]], blobFinal: list[list[CoordData]], file: TextIOWrapper) -> None:
+
+def escreveBlobs(
+    blobInicial: list[list[CoordData]],
+    blobFinal: list[list[CoordData]],
+    file: TextIOWrapper,
+) -> None:
     pontosBlobInicial = len(blobInicial)
     pontosBlobFinal = len(blobFinal)
-    if(pontosBlobInicial == pontosBlobFinal):
+    if pontosBlobInicial == pontosBlobFinal:
         for n in range(pontosBlobInicial):
-            escreveLinhas(blobInicial[n],blobFinal[n],file)
-    elif(pontosBlobInicial>pontosBlobFinal):
-        if(pontosBlobInicial-1 == 0):
+            escreveLinhas(blobInicial[n], blobFinal[n], file)
+    elif pontosBlobInicial > pontosBlobFinal:
+        if pontosBlobInicial - 1 == 0:
             multiplicador = 0.0
         else:
-            multiplicador = (pontosBlobFinal-1)/(pontosBlobInicial-1)
+            multiplicador = (pontosBlobFinal - 1) / (pontosBlobInicial - 1)
         for n in range(pontosBlobInicial):
-            camadaFinal = int(n*multiplicador)
-            escreveLinhas(blobInicial[n],blobFinal[camadaFinal],file)
+            camadaFinal = int(n * multiplicador)
+            escreveLinhas(blobInicial[n], blobFinal[camadaFinal], file)
     else:
-        if(pontosBlobFinal-1 == 0):
+        if pontosBlobFinal - 1 == 0:
             multiplicador = 0.0
         else:
-            multiplicador = (pontosBlobInicial-1)/(pontosBlobFinal-1)
+            multiplicador = (pontosBlobInicial - 1) / (pontosBlobFinal - 1)
         for n in range(pontosBlobFinal):
-            camadaInicial = int(n*multiplicador)
-            escreveLinhas(blobInicial[camadaInicial],blobFinal[n],file)
+            camadaInicial = int(n * multiplicador)
+            escreveLinhas(blobInicial[camadaInicial], blobFinal[n], file)
+
 
 """
 
@@ -398,7 +447,10 @@ SECÇÃO Fundo:
 
 """
 
-def fazFundo(fileConfig: TextIOWrapper, parteInicial: Image.Image, parteFinal: Image.Image) -> None: #REMAKE
+
+def fazFundo(
+    fileConfig: TextIOWrapper, parteInicial: Image.Image, parteFinal: Image.Image
+) -> None:  # REMAKE
     pass
     """largura,altura = parteInicial.size
     for y in range(altura):
@@ -411,8 +463,7 @@ def fazFundo(fileConfig: TextIOWrapper, parteInicial: Image.Image, parteFinal: I
                     fileConfig.write(str(x)+","+str(y)+" fundo\n")
     parteInicial.close()
     parteFinal.close()"""
-                    
-                
+
 
 """
 
@@ -420,13 +471,15 @@ SECÇÃO DEBUG:
 
 """
 
+
 def imprimeBlob(blobs: list[list[CoordData]]) -> None:
-    for n,blob in enumerate(blobs):
-        print("\nblob "+str(n)+" : \n")
-        for m,camada in enumerate(blob):
-            print("camada "+str(m)+" : \n")
+    for n, blob in enumerate(blobs):
+        print("\nblob " + str(n) + " : \n")
+        for m, camada in enumerate(blob):
+            print("camada " + str(m) + " : \n")
             for coord in camada:
                 print(coord)
+
 
 """
 
@@ -434,12 +487,15 @@ SECÇÃO MAIN:
 
 """
 
+
 def configPart(data: tuple[int, Image.Image, Image.Image]) -> None:
     n, parteInicial, parteFinal = data
     print(n)
-    with open(f"partesConfig/parte{n:02d}Config.txt","w", encoding="utf-8") as fileConfig:
+    with open(
+        f"partesConfig/parte{n:02d}Config.txt", "w", encoding="utf-8"
+    ) as fileConfig:
         if n == 1:
-            fazFundo(fileConfig,parteInicial,parteFinal)
+            fazFundo(fileConfig, parteInicial, parteFinal)
         else:
             hasRGB = hasColor(parteInicial)
             print(hasRGB)
@@ -447,33 +503,37 @@ def configPart(data: tuple[int, Image.Image, Image.Image]) -> None:
             coordVermelhosFinal: list[list[CoordData]] = []
             linhaAzulInicial: list[CoordData] = []
             linhaAzulFinal: list[CoordData] = []
-            if(hasRGB[0]):
-                coordVermelhosInicial = procuraCor(parteInicial,0)
-                coordVermelhosFinal = procuraCor(parteFinal,0)
-            if(hasRGB[2]):
-                linhaAzulInicial = procuraLinhaAzul(parteInicial,inicio = hasRGB[2])
+            if hasRGB[0]:
+                coordVermelhosInicial = procuraCor(parteInicial, 0)
+                coordVermelhosFinal = procuraCor(parteFinal, 0)
+            if hasRGB[2]:
+                linhaAzulInicial = procuraLinhaAzul(parteInicial, inicio=hasRGB[2])
                 linhaAzulFinal = procuraLinhaAzul(parteFinal)
                 if not hasRGB[2]:
-                    escreveLinhas(linhaAzulInicial,linhaAzulFinal,fileConfig)
-            if(hasRGB[1]):
-                if(hasRGB[2]):
+                    escreveLinhas(linhaAzulInicial, linhaAzulFinal, fileConfig)
+            if hasRGB[1]:
+                if hasRGB[2]:
                     blobsInicial = [linhaAzulInicial]
                     blobsFinal = [linhaAzulFinal]
-                elif(hasRGB[0]):
+                elif hasRGB[0]:
                     blobsInicial = [[a[0] for a in coordVermelhosInicial]]
                     blobsFinal = [[a[0] for a in coordVermelhosFinal]]
                 else:
                     blobsInicial = [procuraContornoVerde(parteInicial)]
                     blobsFinal = [procuraContornoVerde(parteFinal)]
-                procuraBlob(parteInicial,blobsInicial)
-                procuraBlob(parteFinal,blobsFinal)
-                escreveBlobs(blobsInicial,blobsFinal,fileConfig)
-            if(hasRGB[0]):
-                pass #TODO: discover why this was here, maybe the for below was supposed to be here?
-            for coordInicial, coordFinal in zip(coordVermelhosInicial, coordVermelhosFinal):
+                procuraBlob(parteInicial, blobsInicial)
+                procuraBlob(parteFinal, blobsFinal)
+                escreveBlobs(blobsInicial, blobsFinal, fileConfig)
+            if hasRGB[0]:
+                pass  # TODO: discover why this was here, maybe the for below was supposed to be here?
+            for coordInicial, coordFinal in zip(
+                coordVermelhosInicial, coordVermelhosFinal
+            ):
                 for coord_i, coord_f in zip(coordInicial, coordFinal):
-                    fileConfig.write(str(coord_i[0])+","+str(coord_i[1]))
-                    fileConfig.write(" "+str(coord_f[0])+","+str(coord_f[1])+"\n")
+                    fileConfig.write(str(coord_i[0]) + "," + str(coord_i[1]))
+                    fileConfig.write(
+                        " " + str(coord_f[0]) + "," + str(coord_f[1]) + "\n"
+                    )
             print()
     parteInicial.close()
     parteFinal.close()
@@ -488,8 +548,19 @@ def main() -> None:
     Image.fromarray(imagemInicial.layers[0].image).save("inicial.png")
     Image.fromarray(imagemFinal.layers[0].image).save("final.png")
     quantiaPartes = len(imagemInicial.layers)
-    p = multiprocessing.Pool(os.cpu_count())
-    p.map(configPart,[(a,Image.fromarray(imagemInicial.layers[a].image),Image.fromarray(imagemFinal.layers[a].image)) for a in range(1,quantiaPartes)])
+    with multiprocessing.Pool(os.cpu_count()) as cpu_pool:
+        cpu_pool.map(
+            configPart,
+            [
+                (
+                    a,
+                    Image.fromarray(imagemInicial.layers[a].image),
+                    Image.fromarray(imagemFinal.layers[a].image),
+                )
+                for a in range(1, quantiaPartes)
+            ],
+        )
+
 
 if __name__ == "__main__":
     main()

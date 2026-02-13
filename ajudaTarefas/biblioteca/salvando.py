@@ -2,11 +2,10 @@ import shelve
 
 
 def main() -> None:
-    shelf_file = shelve.open("mydata")
-    book = shelf_file["livro"]
-    for category in book:
-        print(category)
-    shelf_file.close()
+    with shelve.open("mydata") as shelf_file:
+        book = shelf_file["livro"]
+        for category in book:
+            print(category)
 
 
 if __name__ == "__main__":

@@ -7,8 +7,8 @@
 - [ ] Translate everything to English (search imagem for examples)
 - [x] Replace full paths with relative paths (search // or C:\ for examples)
 - [x] remove Image.open(...) and replace with context manager in all scripts
-- [ ] shelve.open(...) with context manager in all scripts too :o
-- [ ] AND PYPDN and MULTIPROCESSING POOL :v
+- [x] shelve.open(...) with context manager in all scripts too :o
+- [x] and MULTIPROCESSING POOL :v
 - [ ] Start using pathlib for path handling
 - [ ] Fix all linter errors and warnings (19k+)
 - [ ] Add type annotations everywhere

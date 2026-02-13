@@ -234,8 +234,8 @@ def corrigeFrame(index: int) -> None:
 
 def main() -> None:
     quantiaFrames = len(os.listdir(FRAMES_FOLDER))
-    cpu_pool = multiprocessing.Pool(os.cpu_count())
-    cpu_pool.map(corrigeFrame, range(1, quantiaFrames - 1))
+    with multiprocessing.Pool(os.cpu_count()) as cpu_pool:
+        cpu_pool.map(corrigeFrame, range(1, quantiaFrames - 1))
 
 
 if __name__ == "__main__":

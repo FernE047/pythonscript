@@ -186,6 +186,7 @@ def search_books(
             else:
                 if book[column] != "":
                     found_books.append((index, book_index))
+        database.close()
     return found_books
 
 
