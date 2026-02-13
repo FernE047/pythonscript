@@ -1,8 +1,9 @@
 from internet import siteProcura
 from time import time
 import shelve
-import requests, bs4, re
+import requests
 import bs4
+import re
 
 
 def print_elapsed_time(seconds: float) -> None:

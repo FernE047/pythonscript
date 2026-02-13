@@ -1,4 +1,6 @@
-import requests, bs4, re
+import requests
+import bs4
+import re
 import random
 
 

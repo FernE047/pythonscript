@@ -33,7 +33,8 @@
 # THE SOFTWARE.
 
 from random import randrange as rand
-import pygame, sys
+import pygame
+import sys
 
 # The configuration
 config = {

@@ -1,5 +1,7 @@
 #! python3.
-import requests, bs4, re
+import requests
+import bs4
+import re
 
 def resultadosQuantia(termo):
     pesquisa=requests.get(f"https://www.google.com.br/search?q={termo}")

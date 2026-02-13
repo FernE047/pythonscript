@@ -1,4 +1,5 @@
-import random, time
+import random
+import time
 def apresentar(player):
     soma=0
     mensagem=""

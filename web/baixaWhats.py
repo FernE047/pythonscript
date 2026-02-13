@@ -1,4 +1,5 @@
-import pyautogui, time
+import pyautogui
+import time
 
 #baixa do whatsapp web
 
