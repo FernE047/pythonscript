@@ -1,13 +1,14 @@
 import subprocess
 
+SOURCE_VIDEO = "./input.mp4"
+OUTPUT_TEMPLATE = "./video/frame_%03d.png"
+FPS = 10
+
 
 def main() -> None:
-    origemVideo = "-i ./level.mp4"
-    destinoTemp = "./video/frame%02d.png"
-    fps = 10
-    extraArguments = f"-r {fps}/1"
-    processoArgs = ["ffmpeg", origemVideo, extraArguments, destinoTemp]
-    subprocess.call(" ".join(processoArgs))
+    subprocess.call(
+        f"ffmpeg -i {SOURCE_VIDEO} -r {FPS}/1 {OUTPUT_TEMPLATE}", shell=True
+    )
 
 
 if __name__ == "__main__":
