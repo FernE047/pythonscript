@@ -1,9 +1,14 @@
-from send2trash import send2trash
 from os import listdir
 from PIL import Image
 from os import remove
 from time import time
 import subprocess
+
+# this code is legacy, I am only changing type hints and linter errors. it doesn't make sense to refactor it, since I already have a better version of it, and I don't want to break it by changing it too much
+ddp = 20  # DISTANCIADEPROCURA  maior = mais lento e melhor
+dt = ddp * 2 + 1  # DISTANCIATOTAL
+py = dt  # PASSOSY             menor = mais lento e melhor, tem que ser maior que DT
+px = dt  # PASSOSX             menor = mais lento e melhor, tem que ser maior que DT
 
 
 def print_elapsed_time(seconds: float) -> None:
@@ -44,43 +49,49 @@ def open_image_as_rgba(image_path: str) -> Image.Image:
         return image_in_memory
 
 
-def openFrame(frame):
+def openFrame(frame: str) -> Image.Image:
     return open_image_as_rgba(frame)  # .crop((42,78,1039,479))
 
 
-def comparaPixel(pixelA, pixelB):
-    total = 1
+def comparaPixel(pixelA: tuple[int, ...], pixelB: tuple[int, ...]) -> float:
+    total = 1.0
     for i in range(3):
         total *= 1 - abs(pixelA[i] - pixelB[i]) / 255
     return total
 
 
-def encontraIndice(aprovados, totais):
-    maxValue = 0
-    maxIndice = [DDP, DDP]
-    for x in range(DT):
-        for y in range(DT):
+def encontraIndice(aprovados: list[list[float]], totais: list[list[int]]) -> list[int]:
+    global ddp, dt, py, px
+    maxValue = 0.0
+    maxIndice = [ddp, ddp]
+    for x in range(dt):
+        for y in range(dt):
             value = aprovados[x][y] / totais[x][y]
             if value >= maxValue:
                 maxValue = value
-                maxIndice = [x - DDP, y - DDP]
+                maxIndice = [x - ddp, y - ddp]
     return maxIndice
 
 
-def comparaFrames(mapa, frameB, posicao):
-    aprovados = [[0 for a in range(DT)] for b in range(DT)]
-    totais = [[0 for a in range(DT)] for b in range(DT)]
-    for y in range(0, frameB.size[1], PY):
-        for x in range(0, frameB.size[0], PX):
+def comparaFrames(
+    mapa: Image.Image, frameB: Image.Image, posicao: list[int]
+) -> list[int]:
+    global ddp, dt, py, px
+    aprovados = [[0.0 for _ in range(dt)] for _ in range(dt)]
+    totais = [[0 for _ in range(dt)] for _ in range(dt)]
+    for y in range(0, frameB.size[1], py):
+        for x in range(0, frameB.size[0], px):
             pixelA = frameB.getpixel((x, y))
+            if pixelA is None or isinstance(pixelA, int) or isinstance(pixelA, float):
+                continue
             if pixelA[2] == max(pixelA):
                 continue
-            for yAdd in range(-DDP, DDP + 1):
+            for yAdd in range(-ddp, ddp + 1):
                 if posicao[1] + y + yAdd < 0:
                     continue
                 if posicao[1] + y + yAdd >= mapa.size[1]:
                     break
-                for xAdd in range(-DDP, DDP + 1):
+                for xAdd in range(-ddp, ddp + 1):
                     if posicao[0] + x + xAdd < 0:
                         continue
                     if posicao[0] + x + xAdd >= mapa.size[0]:
@@ -88,16 +99,24 @@ def comparaFrames(mapa, frameB, posicao):
                     pixelB = mapa.getpixel(
                         (posicao[0] + x + xAdd, posicao[1] + y + yAdd)
                     )
+                    if (
+                        pixelB is None
+                        or isinstance(pixelB, int)
+                        or isinstance(pixelB, float)
+                    ):
+                        continue
                     if pixelB[2] != max(pixelB):
-                        aprovados[xAdd + DDP][yAdd + DDP] += comparaPixel(
+                        aprovados[xAdd + ddp][yAdd + ddp] += comparaPixel(
                             pixelA, pixelB
                         )
-                        totais[xAdd + DDP][yAdd + DDP] += 1
+                        totais[xAdd + ddp][yAdd + ddp] += 1
     indice = encontraIndice(aprovados, totais)
     return indice
 
 
-def ampliaMapa(mapa, ampliacao, posicao, adds):
+def ampliaMapa(
+    mapa: Image.Image, ampliacao: Image.Image, posicao: list[int], adds: list[int]
+) -> tuple[Image.Image, list[int]]:
     tamanhoMapa = mapa.size
     tamanhoAmpliacao = ampliacao.size
     novaPosicao = [posicao[a] + adds[a] for a in range(2)]
@@ -108,7 +127,9 @@ def ampliaMapa(mapa, ampliacao, posicao, adds):
                 novoTamanho[a] = tamanhoMapa[a] - novaPosicao[a]
             else:
                 novoTamanho[a] = novaPosicao[a] + tamanhoAmpliacao[a]
-        novoMapa = Image.new("RGBA", tuple(novoTamanho), (255, 255, 255, 0))
+        novoTamanho_tuple = tuple(novoTamanho)
+        assert len(novoTamanho_tuple) == 2
+        novoMapa = Image.new("RGBA", novoTamanho_tuple, (255, 255, 255, 0))
         for a in range(2):
             if novaPosicao[a] < 0:
                 novaPosicao[a] = 0
@@ -118,32 +139,36 @@ def ampliaMapa(mapa, ampliacao, posicao, adds):
                 novissimaPosicao[a] = 0
             else:
                 novissimaPosicao[a] -= adds[a]
-        novoMapa.paste(mapa, tuple(novissimaPosicao))
+        novissimaPosicao_tuple = tuple(novissimaPosicao)
+        assert len(novissimaPosicao_tuple) == 2
+        novoMapa.paste(mapa, novissimaPosicao_tuple)
         ampliacaoTransparent = Image.new("RGBA", novoMapa.size, (255, 255, 255, 0))
-        ampliacaoTransparent.paste(ampliacao, tuple(novaPosicao))
+        novaPosicao_tuple = tuple(novaPosicao)
+        assert len(novaPosicao_tuple) == 2
+        ampliacaoTransparent.paste(ampliacao, novaPosicao_tuple)
         novoMapa = Image.alpha_composite(ampliacaoTransparent, novoMapa)
     else:
         novoTamanho = list(tamanhoMapa).copy()
         for a in range(2):
             if novaPosicao[a] + tamanhoAmpliacao[a] > tamanhoMapa[a]:
                 novoTamanho[a] = novaPosicao[a] + tamanhoAmpliacao[a]
-        novoMapa = Image.new("RGBA", tuple(novoTamanho), (255, 255, 255, 0))
+        novoTamanho_tuple = tuple(novoTamanho)
+        assert len(novoTamanho_tuple) == 2
+        novoMapa = Image.new("RGBA", novoTamanho_tuple, (255, 255, 255, 0))
         novoMapa.paste(mapa, (0, 0))
         ampliacaoTransparent = Image.new("RGBA", novoMapa.size, (255, 255, 255, 0))
-        ampliacaoTransparent.paste(ampliacao, tuple(novaPosicao))
+        novaPosicao_tuple = tuple(novaPosicao)
+        assert len(novaPosicao_tuple) == 2
+        ampliacaoTransparent.paste(ampliacao, novaPosicao_tuple)
         novoMapa = Image.alpha_composite(ampliacaoTransparent, novoMapa)
     return novoMapa, novaPosicao
-
 
 
 def main() -> None:
     # Constantes e Variaveis Importantes
 
+    global ddp, dt, py, px
     inicioTotal = time()
-    DDP = 20  # DISTANCIADEPROCURA  maior = mais lento e melhor
-    DT = DDP * 2 + 1  # DISTANCIATOTAL
-    PY = DT  # PASSOSY             menor = mais lento e melhor, tem que ser maior que DT
-    PX = DT  # PASSOSX             menor = mais lento e melhor, tem que ser maior que DT
 
     # Argumentos do FFMPEG
 
@@ -164,9 +189,12 @@ def main() -> None:
     subprocess.call(" ".join(processoArgs))
     diretorioFrames = f"{diretorioVideo}/"
     mapa = openFrame(diretorioFrames + listdir(diretorioVideo)[0])
-    tamanho = mapa.size
     posicao = [0, 0]
     inicio = time()
+    n = 0
+    hora = 0.0
+    minuto = 0.0
+    segundo = 0.0
     try:
         for hora in range(horas + 1):
             if hora == horas:
@@ -184,12 +212,12 @@ def main() -> None:
                     for n, frame in enumerate(listdir(diretorioVideo)):
                         frameAtual = openFrame(diretorioFrames + frame)
                         adds = comparaFrames(mapa, frameAtual, posicao)
-                        while max([abs(a) for a in adds]) == DDP:
-                            DDP = max([abs(a) for a in adds]) + 1
-                            DT = DDP * 2 + 1
-                            PY = DT
-                            PX = DT
-                            print(f"novo DDP : {DDP}")
+                        while max([abs(a) for a in adds]) == ddp:
+                            ddp = max([abs(a) for a in adds]) + 1
+                            dt = ddp * 2 + 1
+                            py = dt
+                            px = dt
+                            print(f"novo DDP : {ddp}")
                             adds = comparaFrames(mapa, frameAtual, posicao)
                         mapa, posicao = ampliaMapa(mapa, frameAtual, posicao, adds)
                         remove(diretorioFrames + frame)
@@ -200,19 +228,20 @@ def main() -> None:
                     inicio = time()
                     mapa.save("mapa.png")
                     print_elapsed_time(
-                            duracao
-                            * (
-                                horas * 3600
-                                + minutos * 60
-                                + segundos
-                                - hora * 3600
-                                - minuto * 60
-                                - segundo
-                            )
+                        duracao
+                        * (
+                            horas * 3600
+                            + minutos * 60
+                            + segundos
+                            - hora * 3600
+                            - minuto * 60
+                            - segundo
                         )
-    except:
+                    )
+    except Exception as e:
         print(posicao)
         print(f"{hora:02d}:{minuto:02d}:{segundo:02d}.{n:02d}")
+        print(f"Erro: {e}")
     fimTotal = time()
     duracao = fimTotal - inicioTotal
     print_elapsed_time(duracao)
