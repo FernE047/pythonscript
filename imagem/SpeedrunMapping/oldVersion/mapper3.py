@@ -1,11 +1,14 @@
-import subprocess
+from PIL import Image
 import numpy as np
 import matplotlib.image as im
-import matplotlib.pyplot as plt
-from PIL import Image
 from os import listdir
 from time import time
 
+# this code is legacy, I am only changing type hints and linter errors. it doesn't make sense to refactor it, since I already have a better version of it, and I don't want to break it by changing it too much
+
+ddp = 20 #DISTANCIADEPROCURA  maior = mais lento e melhor
+dt = ddp*2+1 #DISTANCIATOTAL
+inicio = 0.0
 
 def print_elapsed_time(seconds: float) -> None:
     if seconds < 0:
@@ -36,27 +39,29 @@ def print_elapsed_time(seconds: float) -> None:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
     print(f"{sign}{', '.join(parts)}")
 
-def openFrame(frame):
+def openFrame(frame: str) -> np.ndarray:
     return im.imread(frame)[42:1039,78:479,:]
 
-def comparaPixel(pixelA,pixelB):
-    total = 1
+def comparaPixel(pixelA: np.ndarray, pixelB: np.ndarray) -> float:
+    total = 1.0
     for i in range(3):
         total *= 1-abs(pixelA[i]-pixelB[i])/255
     return total
 
-def comparaFrames(mapa,frameB,posicao):
+def comparaFrames(mapa: np.ndarray, frameB: np.ndarray, posicao: list[int]) -> list[int]:
+    global ddp, dt
+    global inicio
     inicio = time()
     tamanho = frameB.shape
-    aprovados = np.zeros(DT,DT)
-    totais = np.zeros(DT,DT)
-    for y in range(0,tamanho[1],DT):#PY):
-        for x in range(0,tamanho[0],DT):#PX):
+    aprovados = np.zeros((dt, dt))
+    totais = np.zeros((dt, dt))
+    for y in range(0,tamanho[1],dt):#PY):
+        for x in range(0,tamanho[0],dt):#PX):
             pixelA = mapa[posicao[0]+x,posicao[1]+y]
             if pixelA[2] == max(pixelA):
                 continue
-            for yAdd in range(-DDP,DDP+1):
-                for xAdd in range(-DDP,DDP+1):
+            for yAdd in range(-ddp,ddp+1):
+                for xAdd in range(-ddp,ddp+1):
                     if x+xAdd < 0:
                         continue
                     if x+xAdd >= tamanho[0]:
@@ -68,26 +73,26 @@ def comparaFrames(mapa,frameB,posicao):
                     pixelB = frameB[x+xAdd,y+yAdd]
                     if pixelB[2] == max(pixelB):
                         continue
-                    aprovados[xAdd+DDP][yAdd+DDP] += comparaPixel(pixelA,pixelB)
-                    totais[xAdd+DDP][yAdd+DDP] += 1
+                    aprovados[xAdd+ddp][yAdd+ddp] += comparaPixel(pixelA,pixelB)
+                    totais[xAdd+ddp][yAdd+ddp] += 1
                 if y+yAdd >= tamanho[1]:
                     break
     fim = time()
-    probabilidades = [[aprovados[x][y]/totais[x][y] for y in range(DT)] for x in range(DT)]
-    firstIndice = [max(probabilidades[x]) for x in range(DT)]
+    probabilidades = [[aprovados[x][y]/totais[x][y] for y in range(dt)] for x in range(dt)]
+    firstIndice = [max(probabilidades[x]) for x in range(dt)]
     maximo = max(firstIndice)
-    teste = sum([probabilidades[x].count(maximo) for x in range(DT)])
+    teste = sum([probabilidades[x].count(maximo) for x in range(dt)])
     if teste >= 2:
         print(f"aconteceu {teste}")
     indiceX = firstIndice.index(maximo)
-    yAdd = probabilidades[indiceX].index(maximo)-DDP
-    xAdd = indiceX - DDP
+    yAdd = probabilidades[indiceX].index(maximo)-ddp
+    xAdd = indiceX - ddp
     duracao = fim-inicio
     print(f"{posicao} : ")
     print_elapsed_time(duracao)
     return [-xAdd,-yAdd]
 
-def ampliaMapa(mapa,ampliacao,posicao,adds):
+def ampliaMapa(mapa: np.ndarray, ampliacao: np.ndarray, posicao: list[int], adds: list[int]) -> tuple[np.ndarray, list[int]]:
     tamanhoMapa = mapa.shape[:-1]
     tamanhoAmpliacao = ampliacao.shape[:-1]
     novaPosicao = [posicao[a]+adds[a] for a in range(2)]
@@ -123,10 +128,8 @@ def ampliaMapa(mapa,ampliacao,posicao,adds):
 
 
 def main() -> None:
-    DDP = 20 #DISTANCIADEPROCURA  maior = mais lento e melhor
-    DT = DDP*2+1 #DISTANCIATOTAL
-    #PY = DT #PASSOSY             menor = mais lento e melhor
-    #PX = DT #PASSOSX             menor = mais lento e melhor
+    global ddp, dt
+    global inicio
 
     #Argumentos do FFMPEG
     diretorioVideo = "./video"
@@ -143,7 +146,6 @@ def main() -> None:
     diretorioFrames = f"{diretorioVideo}/frame{{0:04d}}.png"
 
     mapa = openFrame(diretorioFrames.format(1))
-    tamanho = mapa.shape[:-1]
     posicao = [0,0]
     framesTotais = len(listdir(diretorioVideo))
     inicio = time()
@@ -151,27 +153,16 @@ def main() -> None:
     for n in range(90,framesTotais):
         frameAtual = openFrame(diretorioFrames.format(n))
         adds = comparaFrames(mapa,frameAtual,posicao)
-        while max([abs(a) for a in adds]) == DDP:
-            DDP = max([abs(a) for a in adds]) + 1
-            DT = DDP*2+1
+        while max([abs(a) for a in adds]) == ddp:
+            ddp = max([abs(a) for a in adds]) + 1
+            dt = ddp*2+1
             adds = comparaFrames(mapa,frameAtual,posicao)
         mapa,posicao = ampliaMapa(mapa,frameAtual,posicao,adds)
-        """fim = time()
-        duracao = fim-inicio
-        inicio = time()
-        print()
-        print(f"{n} : ")
-        print_elapsed_time(duracao)
-        print_elapsed_time(duracao*(framesTotais-n))
-        print(adds)"""
-        mapa.savefig("mapa.png")
-    #except:
-    #    print("deu erro")
-    #    pass
+        Image.fromarray(mapa).save("mapa.png")
     fimTotal = time()
     duracao = fimTotal-inicioTotal
     print_elapsed_time(duracao)
-    mapa.savefig("mapa.png")
+    Image.fromarray(mapa).save("mapa.png")
 
 
 if __name__ == "__main__":
