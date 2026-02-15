@@ -26,10 +26,10 @@ def open_image(image_path: str) -> Image.Image:
         return image_in_memory
 
 
-def frame_to_text(imagem: str) -> None:
+def frame_to_text(image: str) -> None:
     display_height = DISPLAY_HEIGHT_DEFAULT
     display_width = DISPLAY_WIDTH_DEFAULT
-    color_image = open_image(imagem)
+    color_image = open_image(image)
     grayscale_image = color_image.convert("L")
     width, height = grayscale_image.size
     if display_height == 0:
@@ -46,7 +46,7 @@ def frame_to_text(imagem: str) -> None:
             step = pixel // BRIGHTNESS_STEP
             grayscale_value = step * BRIGHTNESS_STEP - 1
             display_image.putpixel((x, y), grayscale_value)
-    display_image.save(imagem)
+    display_image.save(image)
 
 
 def main() -> None:
