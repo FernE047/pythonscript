@@ -5,6 +5,8 @@ LEVEL_COUNT = 8
 MAX_BRIGHTNESS = 256
 BRIGHTNESS_STEP = MAX_BRIGHTNESS // LEVEL_COUNT
 FRAMES_FOLDER = "./video"
+DISPLAY_HEIGHT_DEFAULT = 0
+DISPLAY_WIDTH_DEFAULT = 80
 
 CoordData = tuple[int, int]
 
@@ -25,8 +27,8 @@ def open_image(image_path: str) -> Image.Image:
 
 
 def frame_to_text(imagem: str) -> None:
-    display_height = 0
-    display_width = 80
+    display_height = DISPLAY_HEIGHT_DEFAULT
+    display_width = DISPLAY_WIDTH_DEFAULT
     color_image = open_image(imagem)
     grayscale_image = color_image.convert("L")
     width, height = grayscale_image.size
