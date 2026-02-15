@@ -1,20 +1,21 @@
 import os
 import shutil
 
+FRAMES_FOLDER = "./video"  # complete
+VIDEO_NAME = "example"
+OUTPUT_FOLDER = "./video2"
+
 
 def main() -> None:
-    nome = input()
-    os.system(f"ffmpeg -i {nome}.mp4 thumb%06d.jpg -hide_banner")
-    print("baixado")
-    directory = "./video"  # complete
-    frames = [
-        os.path.join(directory, frame) for frame in os.listdir(os.path.join(directory))
-    ]
+    os.system(f"ffmpeg -i {VIDEO_NAME}.mp4 thumb_%06d.jpg -hide_banner")
+    print("Done, moving files...")
+    frames_raw = os.listdir(FRAMES_FOLDER)
+    frames = [f"{FRAMES_FOLDER}/{frame}" for frame in frames_raw]
     for frame in frames:
-        if frame[1][-4:] == ".jpg":
-            shutil.move(
-                frame, os.path.join("C:/", "pythonscript", "terminalVideo", "./video2")
-            )
+        _, extension = os.path.splitext(frame)
+        if extension != ".jpg":
+            continue
+        shutil.move(frame, OUTPUT_FOLDER)
 
 
 if __name__ == "__main__":
