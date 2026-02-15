@@ -1,3 +1,6 @@
+#type: ignore
+
+# pypdn and matplotlib doesn't have type hints, so I will ignore type hints in this file
 import pypdn
 import matplotlib.pyplot as plt
 from PIL import Image
