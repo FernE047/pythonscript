@@ -1,3 +1,9 @@
+# this script calculates the time it takes to produce a certain amount of products in the game "Cookie Clicker" based on the number of producers, production rate, and cost of production.
+PRODUCER_COUNT = 1
+PRODUCTION_RATE_PER_MIN = 0.001
+PRODUCTION_COST = 1000
+
+
 def print_elapsed_time(seconds: float) -> None:
     if seconds < 0:
         seconds = -seconds
@@ -27,45 +33,62 @@ def print_elapsed_time(seconds: float) -> None:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
     print(f"{sign}{', '.join(parts)}")
 
-def tempoDemoraProducao(quantidadeProdutora,quantidadeProduzida,precoProducao,producaoPrecisa):
-    quantidadePorSegundo=quantidadeProduzida*quantidadeProdutora/60
-    tempo=0
-    while(quantidadePorSegundo<producaoPrecisa):
-        tempoAtual=precoProducao/quantidadePorSegundo
-        tempo+=tempoAtual
-        quantidadeProdutora+=1
-        quantidadePorSegundo=quantidadeProduzida*quantidadeProdutora/60
-    return tempo
 
-def tempoDemoraFabricas(quantidadeProdutora,quantidadeProduzida,precoProducao,quantidadePrecisa):
-    quantidadePorSegundo=quantidadeProduzida*quantidadeProdutora/60
-    tempo=0
-    while(quantidadeProdutora<quantidadePrecisa):
-        tempoAtual=precoProducao/quantidadePorSegundo
-        tempo+=tempoAtual
-        quantidadeProdutora+=1
-        quantidadePorSegundo=quantidadeProduzida*quantidadeProdutora/60
-    return tempo
+def calculate_production_time(
+    producer_count: int,
+    production_rate_per_min: float,
+    production_cost: float,
+    production_needed: float,
+) -> float:
+    output_per_second = production_rate_per_min * producer_count / 60
+    elapsed_time = 0.0
+    while output_per_second < production_needed:
+        current_time = production_cost / output_per_second
+        elapsed_time += current_time
+        producer_count += 1
+        output_per_second = production_rate_per_min * producer_count / 60
+    return elapsed_time
 
-def tempoDemoraProduto(quantidadeProdutora,quantidadeProduzida,precoProducao,produtoPrecisa):
-    quantidadePorSegundo=quantidadeProduzida*quantidadeProdutora/60
-    produto=0
-    tempo=0
-    while(produto<produtoPrecisa):
-        tempoAtual=precoProducao/quantidadePorSegundo
-        tempo+=tempoAtual
-        produto+=precoProducao
-        quantidadeProdutora+=1
-        quantidadePorSegundo=quantidadeProduzida*quantidadeProdutora/60
-    return tempo    
+
+def calculate_factory_delay(
+    producer_count: int,
+    production_rate_per_min: float,
+    production_cost: float,
+    production_needed: float,
+) -> float:
+    output_per_second = production_rate_per_min * producer_count / 60
+    elapsed_time = 0.0
+    while producer_count < production_needed:
+        current_time = production_cost / output_per_second
+        elapsed_time += current_time
+        producer_count += 1
+        output_per_second = production_rate_per_min * producer_count / 60
+    return elapsed_time
+
+
+def calculate_product_delay(
+    producer_count: int,
+    production_rate_per_min: float,
+    production_cost: float,
+    production_needed: float,
+) -> float:
+    output_per_second = production_rate_per_min * producer_count / 60
+    product = 0.0
+    elapsed_time = 0.0
+    while product < production_needed:
+        current_time = production_cost / output_per_second
+        elapsed_time += current_time
+        product += production_cost
+        producer_count += 1
+        output_per_second = production_rate_per_min * producer_count / 60
+    return elapsed_time
 
 
 def main() -> None:
-    quantidadeProdutora=1
-    quantidadeProduzida=1
-    precoProducao=1000
-    tempo=tempoDemoraProducao(1,0.001,1000,1000)
-    print(f"\nquantidadeProdutora : {quantidadeProdutora}\n")
+    tempo = calculate_production_time(
+        PRODUCER_COUNT, PRODUCTION_RATE_PER_MIN, PRODUCTION_COST, PRODUCTION_COST * 10
+    )
+    print(f"\nPRODUCER_COUNT : {PRODUCER_COUNT}\n")
     print_elapsed_time(tempo)
 
 
