@@ -8,7 +8,7 @@ DEFAULT_STRATEGIES = [
     "mirror_y",
     "mirror_diagonal",
     "mirror_diagonal_x",
-    "spin_180_clockwise ",
+    "spin_180_clockwise",
 ]
 MINIMUM_ROUNDS = 1
 MAXIMUM_BOARD_SIZE = 10
