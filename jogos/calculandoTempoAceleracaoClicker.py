@@ -85,11 +85,11 @@ def calculate_product_delay(
 
 
 def main() -> None:
-    tempo = calculate_production_time(
+    elapsed_time = calculate_production_time(
         PRODUCER_COUNT, PRODUCTION_RATE_PER_MIN, PRODUCTION_COST, PRODUCTION_COST * 10
     )
     print(f"\nPRODUCER_COUNT : {PRODUCER_COUNT}\n")
-    print_elapsed_time(tempo)
+    print_elapsed_time(elapsed_time)
 
 
 if __name__ == "__main__":
