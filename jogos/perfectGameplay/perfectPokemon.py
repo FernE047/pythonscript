@@ -1,10 +1,188 @@
-#! python3
-# perfectPokemon.py - plays pokemon
+from typing import Any
 from PIL import Image
 import pyautogui
 import time
 import random
-import shelve
+
+# this code is too dependant on global Coordinates and Colors. I started doing it, but I give up.
+
+# Constants
+
+DEFAULT_WAIT = 1 / 2
+STEP_WAIT_DURATION = 1 / 300
+WALK_TIME_DURATION = 1 / 3
+PRINT_DEBUG = True
+SCREEN_START_X = 65
+SCREEN_END_X = 705
+SCREEN_STEP_X = 10
+RED_ARROW_Y_1 = 434
+RED_ARROW_Y_2 = 482
+MENU_CHECK_Y_DEFAULT = 495
+
+# Keys
+
+KEY_UP = "i"
+KEY_DOWN = "k"
+KEY_LEFT = "j"
+KEY_RIGHT = "l"
+KEY_ENTER = "w"
+KEY_A = "x"
+KEY_B = "z"
+
+CoordData = tuple[int, int]
+ColorData = tuple[int, int, int]
+StepData = tuple[str, int] | None
+WalkData = list[StepData]
+
+# Colors
+
+SPEACH_BUBBLE_COLOR = (224, 8, 8)
+BATTLE_RED_ARROW_COLOR = (248, 0, 0)
+MENU_COLOR = (96, 96, 96)
+UNKNOWN_COLOR_01 = (248, 240, 40)
+ACTIVE_COLOR = (248, 208, 176)
+
+# Coordinates
+
+EMULATOR_POSITION = (350, 750)
+RECENT_ROMS_POSITION = (81, 41)
+POKEMON_ROM_POSITION = (150, 320)
+CLOSE_BUTTON_POSITION = (900, 600)
+UNKNOWN_COORDINATES_01 = (554, 170)
+ACTIVE_COORDINATE = (367, 276)
+UNKNOWN_COORDINATES_02 = (67, 104)
+
+
+def print(*args: Any, **kwargs: Any) -> None:
+    if PRINT_DEBUG:
+        __builtins__.print(*args, **kwargs)
+
+
+class AttackMove:
+    # boilerplate
+    def __init__(self, name: str, power: int, accuracy: int, pp: int) -> None:
+        self.name = name
+        self.power = power
+        self.accuracy = accuracy
+        self.pp = pp
+
+
+class Pokemon:
+    def __init__(
+        self,
+        name: str = "",
+        gender: str = "f",
+        level: int = 0,
+        nature: str = "",
+        pokemon_type: str = "",
+        health_points: int = 0,
+        special_attack: int = 0,
+        special_defense: int = 0,
+        attack: int = 0,
+        defense: int = 9,
+        speed: int = 0,
+        experience_points: int = 0,
+        experience_for_next_level: int = 0,
+        attack_moves: list[AttackMove | None] | None = None,
+    ) -> None:
+        self.name = name
+        self.gender = gender
+        self.nature = nature
+        self.level = level
+        self.pokemon_type = pokemon_type
+        self.health_points = health_points
+        self.special_attack = special_attack
+        self.special_defense = special_defense
+        self.attack = attack
+        self.defense = defense
+        self.speed = speed
+        self.experience_points = experience_points
+        self.experience_for_next_level = experience_for_next_level
+        if attack_moves is None:
+            attack_moves = [None, None, None, None]
+        self.attack_moves = attack_moves
+
+
+class Database:
+    def __init__(self) -> None:
+        self.attack_moves: list[AttackMove] = []
+        self.pokemons: list[Pokemon] = []
+        self.player_pokemons: list[Pokemon | None] = [None] * 6
+        self.jogadorItens: list[str] = []
+
+    def clean_database(self) -> None:
+        self.attack_moves = []
+        self.pokemons = []
+        self.player_pokemons = [None] * 6
+        self.jogadorItens = []
+
+    def colocaPokemon(self, slot: int, pokemon: Pokemon) -> None:
+        self.player_pokemons[slot] = self.search_pokemon_index_by_name(pokemon.name)
+
+    def search_pokemon_index_by_name(self, name: str) -> Pokemon | None:
+        for pokemon in self.pokemons:
+            if name == pokemon.name:
+                return pokemon
+        return None
+
+    def delete_pokemon(self, slot: int) -> None:
+        self.player_pokemons[slot] = None
+
+    def append_pokemon(self, pokemon_to_add: Pokemon) -> None:
+        self.pokemons.append(pokemon_to_add)
+
+    def update_pokemon(
+        self,
+        pokemon_index: int,
+        gender: str = "",
+        level: int = 0,
+        nature: str = "",
+        pokemon_type: str = "",
+        health_points: int = 0,
+        special_attack: int = 0,
+        special_defense: int = 0,
+        attack: int = 0,
+        defense: int = 9,
+        speed: int = 0,
+        experience_points: int = 0,
+        experience_for_next_level: int = 0,
+        attack_moves: list[AttackMove | None] | None = None,
+    ) -> None:
+        pokemon = self.pokemons[pokemon_index]
+        if level != pokemon.level:
+            pokemon.level = level
+        if gender != pokemon.gender:
+            pokemon.gender = gender
+        if nature != pokemon.nature:
+            pokemon.nature = nature
+        if pokemon_type != pokemon.pokemon_type:
+            pokemon.pokemon_type = pokemon_type
+        if health_points != pokemon.health_points:
+            pokemon.health_points = health_points
+        if special_attack != pokemon.special_attack:
+            pokemon.special_attack = special_attack
+        if special_defense != pokemon.special_defense:
+            pokemon.special_defense = special_defense
+        if attack != pokemon.attack:
+            pokemon.attack = attack
+        if defense != pokemon.defense:
+            pokemon.defense = defense
+        if speed != pokemon.speed:
+            pokemon.speed = speed
+        if experience_points != pokemon.experience_points:
+            pokemon.experience_points = experience_points
+        if experience_for_next_level != pokemon.experience_for_next_level:
+            pokemon.experience_for_next_level = experience_for_next_level
+        if attack_moves is not None:
+            pokemon.attack_moves = attack_moves
+
+    def get_attack_details(self, check_attack: str) -> AttackMove:
+        for attack_move in self.attack_moves:
+            if attack_move.name == check_attack:
+                return attack_move
+        new_attack = AttackMove(name=check_attack, power=0, accuracy=0, pp=0)
+        self.attack_moves.append(new_attack)
+        return new_attack
 
 
 def print_elapsed_time(seconds: float) -> None:
@@ -36,286 +214,310 @@ def print_elapsed_time(seconds: float) -> None:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
     print(f"{sign}{', '.join(parts)}")
 
-#menus
-    
-def save():
-    pyautogui.click(20,40)
-    espere()
-    pyautogui.click(90,230)
-    espere()
-    pyautogui.click(330,260)
-    espere()
-    print("savo")
 
-def load():
-    pyautogui.click(20,40)
-    espere()
-    pyautogui.click(90,210)
-    espere()
-    pyautogui.click(330,260)
-    espere()
-    print("carregado")
-    
-def abrir():
-    pyautogui.click(350,750)
-    espere()
-    pyautogui.click(81,41)
-    espere()
-    pyautogui.click(150,320)
+# menus
 
-def fim():
-    pyautogui.click(350,750)
-    pyautogui.click(900,600)
 
-#procedimento de cutscenes
-    
-def inicio():
-    global cores
-    global teclas
-    global BD
-    espere(6)
-    apertePor(enter)
-    esperePor((554,170),(248,240,40))
-    espere(2)
-    apertePor(enter)
-    ultimaConversa((67,104))
-    conversaCompleta(12,(85,195))
-    ultimaConversa((326,474))
-    esperePor((600,70),(16,112,224))
-    for x in range(7):
-        apertePor(botaoA)
-    apertePor(enter)
-    ultimaConversa((85,120))
-    setaVermelha(11)
-    esperePor((467,330),(248,248,248)) #caminhao
-    andePassos(direita,3)
-    conversaCompleta(5,(289,494))
-    espere()
-    ultimaConversa((446,2))
-    espere()
-    conversaCompleta(4,(401,2))
-    espere()
-    andePassos(cima,5)
-    transicao()
-    andePassos(esquerda,2)
-    andePassos(cima,1)
-    apertePor(botaoA)
-    conversaCompleta(1,(464,437))
-    esperePor((100,100),(72,176,184))
-    apertePor(botaoA)
-    apertePor(cima)
-    apertePor(botaoA)
-    conversaCompleta(4,(607,2))
-    espere(2)
-    andePassos(direita,2)
-    andePassos(cima,1)
-    ultimaConversa((359,2))
-    ultimaConversa((365,2))
-    ultimaConversa((650,2))
-    conversaCompleta(1,(175,2))
-    conversaCompleta(2,(540,2))
-    espere(2)
-    caminhada([[direita,4],[baixo,4],0,[direita,9],[cima,1]])
-    conversaCompleta(5,(570,445))
-    andePassos(cima,6)
-    transicao()
-    caminhada([[baixo,2],[direita,3]])
-    apertePor(botaoA)
-    conversaCompleta(11,(506,447))
-    espere(2)
-    caminhada([[esquerda,3],[cima,3],0,[baixo,6],0,[esquerda,3],[cima,8]])
-    conversaCompleta(3,(158,2))
-    andePassos(cima,2)
-    ultimaConversa((206,447))
-    conversaCompleta(1,(362,2))
-    caminhada([[esquerda,4],[cima,1]])
-    apertePor(botaoA)
-    espere(1)
-    inicial=random.randint(0, 2)
+def click(coord: tuple[int, int], wait_time: float = DEFAULT_WAIT) -> None:
+    pyautogui.click(coord)
+    if wait_time:
+        wait(wait_time)
+
+
+def launch_game() -> None:
+    click(EMULATOR_POSITION)
+    click(RECENT_ROMS_POSITION)
+    click(POKEMON_ROM_POSITION)
+
+
+def close_emulator() -> None:
+    click(EMULATOR_POSITION)
+    click(CLOSE_BUTTON_POSITION)
+
+
+# procedimento de cutscenes
+
+
+def play_intro_cutscene(database: Database) -> None:
+    wait(6)
+    press_key(KEY_ENTER)
+    wait_color_at_position(UNKNOWN_COORDINATES_01, UNKNOWN_COLOR_01)
+    wait(2)
+    press_key(KEY_ENTER)
+    skip_conversations(UNKNOWN_COORDINATES_02)
+    skip_full_dialogue(12, (85, 195))
+    skip_conversations((326, 474))
+    wait_color_at_position((600, 70), (16, 112, 224))
+    for _ in range(7):
+        press_key(KEY_A)
+    press_key(KEY_ENTER)
+    skip_conversations((85, 120))
+    talk_counting_red_arrows(11)
+    wait_color_at_position((467, 330), (248, 248, 248))  # caminhao
+    move_in_direction(KEY_RIGHT, 3)
+    skip_full_dialogue(5, (289, 494))
+    wait()
+    skip_conversations((446, 2))
+    wait()
+    skip_full_dialogue(4, (401, 2))
+    wait()
+    move_in_direction(KEY_UP, 5)
+    scene_transition()
+    move_in_direction(KEY_LEFT, 2)
+    move_in_direction(KEY_UP, 1)
+    press_key(KEY_A)
+    skip_full_dialogue(1, (464, 437))
+    wait_color_at_position((100, 100), (72, 176, 184))
+    press_key(KEY_A)
+    press_key(KEY_UP)
+    press_key(KEY_A)
+    skip_full_dialogue(4, (607, 2))
+    wait(2)
+    move_in_direction(KEY_RIGHT, 2)
+    move_in_direction(KEY_UP, 1)
+    skip_conversations((359, 2))
+    skip_conversations((365, 2))
+    skip_conversations((650, 2))
+    skip_full_dialogue(1, (175, 2))
+    skip_full_dialogue(2, (540, 2))
+    wait(2)
+    walk_path(
+        [
+            (KEY_RIGHT, 4),
+            (KEY_DOWN, 4),
+            None,
+            (KEY_RIGHT, 9),
+            (KEY_UP, 1),
+        ]
+    )
+    skip_full_dialogue(5, (570, 445))
+    move_in_direction(KEY_UP, 6)
+    scene_transition()
+    walk_path([(KEY_DOWN, 2), (KEY_RIGHT, 3)])
+    press_key(KEY_A)
+    skip_full_dialogue(11, (506, 447))
+    wait(2)
+    walk_path(
+        [
+            (KEY_LEFT, 3),
+            (KEY_UP, 3),
+            None,
+            (KEY_DOWN, 6),
+            None,
+            (KEY_LEFT, 3),
+            (KEY_UP, 8),
+        ]
+    )
+    skip_full_dialogue(3, (158, 2))
+    move_in_direction(KEY_UP, 2)
+    skip_conversations((206, 447))
+    skip_full_dialogue(1, (362, 2))
+    walk_path([(KEY_LEFT, 4), (KEY_UP, 1)])
+    press_key(KEY_A)
+    wait(1)
+    inicial = random.randint(0, 2)
     print(str(inicial))
-    if(inicial==1):
-        apertePor(direita)
-        novoPokemon(nome="mudkip",level=5)
-    elif(inicial==2):
-        apertePor(esquerda)
-        novoPokemon(nome="treecko",level=5)
+    if inicial == 1:
+        press_key(KEY_RIGHT)
+        starter_pokemon = Pokemon(name="mudkip", level=5)
+    elif inicial == 2:
+        press_key(KEY_LEFT)
+        starter_pokemon = Pokemon(name="treecko", level=5)
     else:
-        novoPokemon(nome="torchic",level=5)
-    espere()
-    apertePor(botaoA)
-    apertePor(botaoA)
-#BD
+        starter_pokemon = Pokemon(name="torchic", level=5)
+    database.append_pokemon(starter_pokemon)
+    wait()
+    press_key(KEY_A)
+    press_key(KEY_A)
 
-def limpaBD():
-    global BD
-    BD["ataques"]=[]
-    BD["pokemons"]=[]
-    BD["jogadorPokemons"]=[0,"","","","",""]
-    BD["jogadorItens"]=[]
 
-def colocaPokemon(slot,pokemon):
-    global BD
-    BD["jogadorPokemons"][slot]=procuraPokemon(pokemon)
+# esperas
 
-def procuraPokemon(nome):
-    global BD
-    pokemons=BD["pokemons"]
-    for indice in range(len(pokemons)):
-        if nome==pokemons[indice]["nome"]:
-            return(indice)
 
-def tiraPokemon(slot):
-    global BD
-    BD["jogadorPokemons"][slot]=0
+def wait(wait_time: float = DEFAULT_WAIT) -> None:
+    print(f"waiting {wait_time} seconds")
+    time.sleep(wait_time)
 
-def novoPokemon(nome="",genero="f",level=0,nature="",typePKM="",HP=0,SPATK=0,SPDEF=0,attack=0,defense=9,speed=0,exp=0,nextExp=0,ataques=[]):
-    global BD
-    BD["pokemons"].append({"nome":nome,"genero":genero,"nature":nature,"level":level,"type":typePKM,"HP":HP,"SPATK":SPATK,"SPDEF":SPDEF,"attack":attack,"defense":defense,"speed":speed,"exp":exp,"nextExp":nextExp,"ataques":ataques})
 
-def atualizaPokemon(indice,genero="",level=0,nature="",typePKM="",HP=0,SPATK=0,SPDEF=0,attack=0,defense=9,speed=0,exp=0,nextExp=0,ataques=[]):
-    global BD
-    pokemons=BD["pokemons"]
-    if(level):
-        pokemons[indice]["level"]=level
-    if(genero):
-        pokemons[indice]["genero"]=genero
-    if(nature):
-        pokemons[indice]["nature"]=nature
-    if(typePKM):
-        pokemons[indice]["typePKM"]=typePKM
-    if(HP):
-        pokemons[indice]["HP"]=HP
-    if(SPATK):
-        pokemons[indice]["SPATK"]=SPATK
-    if(SPDEF):
-        pokemons[indice]["SPDEF"]=SPDEF
-    if(attack):
-        pokemons[indice]["attack"]=attack
-    if(defense):
-        pokemons[indice]["defense"]=defense
-    if(speed):
-        pokemons[indice]["speed"]=speed
-    if(exp):
-        pokemons[indice]["exp"]=exp
-    if(nextExp):
-        pokemons[indice]["nextExp"]=nextExp
-    if(ataques):
-        pokemons[indice]["ataques"]=ataques
-    BD["pokemons"]=pokemons
-
-def verificaAtaque(ataqueVerifica):
-    global BD
-    ataques=BD["ataques"]
-    for ataque in ataques:
-        if ataque[0]==ataqueVerifica:
-            return(ataque)
-    ataques.append()
-
-#esperas
-
-def espere(secs=1/2,mensagem=True):
-    if(mensagem):
-        print(f"esperando {secs} segundos")
-    time.sleep(secs)
-        
-def esperePor(coordenadas,cor,pressed=0):
-    print(f"esperando cor {cor} nas coordenadas {coordenadas}")
-    if(pressed):
+def wait_color_at_position(
+    coordinates: CoordData, color: ColorData, pressed: str | None = None
+) -> None:
+    print(f"waiting {color} at coordinates {coordinates}")
+    if pressed is not None:
         pyautogui.keyDown(pressed)
     while True:
-        time.sleep(1/15)
-        tela=pyautogui.screenshot()
-        if(tela.getpixel(coordenadas)==cor):
+        wait()
+        screen = pyautogui.screenshot()
+        if screen.getpixel(coordinates) == color:
             print("color found")
-            if(pressed):
+            if pressed is not None:
                 pyautogui.keyUp(pressed)
-            return()
+            return None
 
-def transicao():
+
+def scene_transition() -> None:
     while True:
-        time.sleep(1/15)
-        tela=pyautogui.screenshot()
-        if(tela.getpixel((367,276))==(248, 208, 176)):
-            print("transicionado")
-            time.sleep(1)
-            return()
+        wait()
+        screen = pyautogui.screenshot()
+        if screen.getpixel(ACTIVE_COORDINATE) == ACTIVE_COLOR:
+            print("transition detected")
+            wait(1)
+            return None
 
-#conversas
 
-def setaVermelha(step,vermelho=(224,8,8)):
-    print("conversando")
-    for x in range(step):
-        pyautogui.keyDown("x")
-        while True:
-            sair=False
-            tela=pyautogui.screenshot()
-            for xCoord in range(65,705,10):
-                if(tela.getpixel((xCoord,434))==vermelho):
-                    pyautogui.keyUp("x")
-                    apertePor("x",mensagem=False)
-                    print(f"\ttecla x apertada {x+1} vezes")
-                    sair=True
-                    break
-                elif(tela.getpixel((xCoord,482))==vermelho):
-                    pyautogui.keyUp("x")
-                    apertePor("x",mensagem=False)
-                    print(f"\ttecla x apertada {x+1} vezes")
-                    sair=True
-                    break
-            if(sair):
-                break
+# conversas
+
+
+def talk_counting_red_arrows(
+    arrow_count: int, target_color: ColorData = SPEACH_BUBBLE_COLOR
+) -> None:
+    print("talking started")
+    for arrow_index in range(arrow_count):
+        with pyautogui.hold(KEY_A):
+            scan_for_color(target_color)
+        press_key(KEY_A)
+        print(f"\ttecla {KEY_A} apertada {arrow_index + 1} vezes")
     print("talking done")
-    return()
 
-def ultimaConversa(coordenadas):
-    global cores
-    if(coordenadas[1]==2):
-        coordenadas=list(coordenadas)
-        coordenadas[1]=495
-        coordenadas=tuple(coordenadas)
-    esperePor(coordenadas,cinzaMenu)
-    apertePor("x")
 
-def conversaCompleta(setas,coordenadas):
-    setaVermelha(setas)
-    ultimaConversa(coordenadas)
+def scan_for_color(target_color: ColorData) -> None:
+    while True:
+        tela = pyautogui.screenshot()
+        for x in range(SCREEN_START_X, SCREEN_END_X, SCREEN_STEP_X):
+            if tela.getpixel((x, RED_ARROW_Y_1)) == target_color:
+                return None
+            elif tela.getpixel((x, RED_ARROW_Y_2)) == target_color:
+                return None
 
-#andar e apertar
 
-def apertePor(tecla,tempo=1/15,mensagem=True):
-    if(mensagem):
-        print(f"tecla {tecla} apertada")
-    pyautogui.keyDown(tecla)
-    time.sleep(tempo)
-    pyautogui.keyUp(tecla)
+def skip_conversations(coord: CoordData) -> None:
+    if coord[1] == 2:
+        coord = (coord[0], MENU_CHECK_Y_DEFAULT)
+    wait_color_at_position(coord, MENU_COLOR)
+    press_key(KEY_A)
 
-def andePassos(direction,steps=1):
-    print(f"andando para {direction}")
-    for a in range(steps):
-        apertePor(direction,tempo=1/300,mensagem=False)
-        print(f"\t{a+1} passos")
-        time.sleep(1/3)
-    print("andando terminado")
 
-def caminhada(lista):
-    for passos in lista:
-        if(passos==0):
-            transicao()
+def skip_full_dialogue(dialogue_arrow_count: int, coord: CoordData) -> None:
+    talk_counting_red_arrows(dialogue_arrow_count)
+    skip_conversations(coord)
+
+
+# andar e apertar
+
+
+def press_key(key_to_press: str, hold_time: float = DEFAULT_WAIT) -> None:
+    if PRINT_DEBUG:
+        print(f"key {key_to_press} pressed for {hold_time} seconds'")
+    with pyautogui.hold(key_to_press):
+        time.sleep(hold_time)
+
+
+def move_in_direction(direction: str, steps: int = 1) -> None:
+    print(f"walking to {direction}")
+    for step_index in range(steps):
+        press_key(direction, hold_time=STEP_WAIT_DURATION)
+        print(f"\t{step_index + 1} steps")
+        time.sleep(WALK_TIME_DURATION)
+    print("walking done")
+
+
+def walk_path(path_commands: WalkData) -> None:
+    for step in path_commands:
+        if step is None:
+            scene_transition()
             continue
-        andePassos(passos[0],passos[1])
-    return()
+        move_in_direction(step[0], step[1])
 
-#batalhas
 
-def decifraFonte(numero):
-    valores=("A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","0","1","2","3","4","5","6","7","8","9","L")
-    return(valores[numero-1])
-    
-class Inimigo():
+# batalhas
+
+
+def decrypt_font_character(numero: int) -> str:
+    valores = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789L"
+    return valores[numero - 1]
+
+
+class Opponent:
     def __init__(self):
-        scanNomeInimigo(self)
-        self.genero = scanGeneroInimigo()
-        self.vida   = scanVidaInimigo()
+        self.name = ""
+        self.level = 0
+        self.scanNomeInimigo()
+        self.gender = self.scanGeneroInimigo()
+        self.health_points = self.scanVidaInimigo()
+
+    def scanNomeInimigo(self):
+        screen = pyautogui.screenshot()
+        x = 60
+        opponent_name = ""
+        target_color = (64, 64, 64)
+        while True:
+            pixel = screen.getpixel((x, 114))
+            if x == 315:
+                break
+            elif pixel != target_color:
+                x += 1
+                continue
+            image = Image.new("RGBA", (10, 19), (255, 255, 255, 255))
+            for letter_x in range(10):
+                for letter_y in range(19):
+                    pixel = screen.getpixel((letter_x + x, letter_y + 114))
+                    if pixel == target_color:
+                        image.putpixel((letter_x, letter_y), (0, 0, 0, 255))
+            is_same_letter = False
+            letter_index = 0
+            for current_letter_index in range(1, 38):
+                try:
+                    image_to_compare = open_image_as_rgba(f"./alfabeto1/{current_letter_index}.png")
+                except Exception:
+                    image_to_compare = False
+                if image_to_compare:
+                    is_same_letter = True
+                    for letter_x in range(10):
+                        for letter_y in range(19):
+                            if image.getpixel(
+                                (letter_x, letter_y)
+                            ) != image_to_compare.getpixel((letter_x, letter_y)):
+                                is_same_letter = False
+                if is_same_letter:
+                    letter_index = current_letter_index
+                    break
+            if not (is_same_letter):
+                #saves the letter for future comparisons, asking the user to input the correct letter index
+                print(opponent_name)
+                print("qual o numero dessa letra?")
+                letter_index = int(input())
+                image.save(f"./alfabeto1/{letter_index}.png")
+            opponent_name += decrypt_font_character(letter_index)
+            x += 10
+        for letra in range(len(opponent_name) - 1, 0, -1):
+            if opponent_name[letra] == "L":
+                self.name = opponent_name[:letra]
+                self.level = int(opponent_name[letra + 1 :])
+        return opponent_name
+
+    def scanGeneroInimigo(self):
+        tela = pyautogui.screenshot()
+        for x in range(50, 320):
+            pixel = tela.getpixel((x, 120))
+            if pixel == (114, 203, 224):
+                return "m"
+            elif pixel == (0, 0, 0):
+                return "f"
+        return "f"
+
+    def scanVidaInimigo(self):
+        tela = pyautogui.screenshot()
+        cores = [(88, 208, 128), (200, 168, 8), (168, 64, 72)]
+        vida = 0
+        for x in range(164, 306):
+            pixel = tela.getpixel((x, 150))
+            if pixel in cores:
+                vida += 1
+        porcentagem = int(vida * 100 / 142)
+        return porcentagem
+
+    def atualizaVida(self):
+        self.health_points = self.scanVidaInimigo()
 
 
 def open_image_as_rgba(image_path: str) -> Image.Image:
@@ -326,135 +528,66 @@ def open_image_as_rgba(image_path: str) -> Image.Image:
         return image_in_memory
 
 
-def scanNomeInimigo(inimigo):
-    tela=pyautogui.screenshot()
-    x=60
-    nome=""
-    cor=(64,64,64)
-    while True:
-        pixel=tela.getpixel((x,114))
-        if(pixel==cor):
-            imagem=Image.new("RGBA",(10,19),(255,255,255,255))
-            for xLetra in range(10):
-                for yLetra in range(19):
-                    pixel=tela.getpixel((xLetra+x,yLetra+114))
-                    if(pixel==cor):
-                        imagem.putpixel((xLetra,yLetra),(0,0,0,255))
-            for nomeArq in range(1,38):
-                try:
-                    comparada=open_image_as_rgba(f"./alfabeto1/{nomeArq}.png")
-                except:
-                    comparada=False
-                teste=False
-                if(comparada):
-                    teste=True
-                    for xLetra in range(10):
-                        for yLetra in range(19):
-                            if(imagem.getpixel((xLetra,yLetra))!=comparada.getpixel((xLetra,yLetra))):
-                                teste=False
-                if teste:
-                    break
-            if not(teste):
-                print(nome)
-                print("qual o numero dessa letra?")
-                nomeArq=int(input())
-                imagem.save(f"./alfabeto1/{nomeArq}.png")
-            nome+=decifraFonte(nomeArq)
-            x+=10
-        elif(x==315):
-            break
-        else:
-            x+=1
-    for letra in range(len(nome)-1,0,-1):
-        if nome[letra]=="L":
-            inimigo.nome=nome[:letra]
-            inimigo.level=int(nome[letra+1:])
-    return(nome)
+def batalha() -> None:
+    talk_counting_red_arrows(1, target_color=BATTLE_RED_ARROW_COLOR)
+    wait_color_at_position((400, 440), (72, 64, 80))
+    opponent = Opponent()
+    assert (
+        opponent is not None
+    )  # here just to make sure the class is being used. linter issues
 
-def scanGeneroInimigo():
-    tela=pyautogui.screenshot()
-    for x in range(50,320):
-        pixel=tela.getpixel((x,120))
-        if(pixel==(114,203,224)):
-            return("m")
-        elif(pixel==(0,0,0)):
-            return("f")
-    return("f")
 
-def scanVidaInimigo():
-    tela=pyautogui.screenshot()
-    cores=[(88,208,128),(200,168,8),(168,64,72)]
-    vida=0
-    for x in range(164,306):
-        pixel=tela.getpixel((x,150))
-        if(pixel in cores):
-            vida+=1
-    porcentagem=int(vida*100/142)
-    return(porcentagem)
-
-def atualizaVida(self):
-    self.vida   = scanVidaInimigo()
-    
-def batalha():
-    setaVermelha(1,vermelho=(248,0,0))
-    esperePor((400,440),(72,64,80))
-    inimigo=Inimigo()
-
-def atualizaEmBatalha(slot):
+def battle_update(database: Database, slot: int) -> None:
     global teclas
-    apertePor(baixo)
-    apertePor(botaoA)
-    espere(1)
-    apertePor(botaoA)
-    apertePor(botaoA)
-    pokemon=lerInfo(slot)
+    press_key(KEY_DOWN)
+    press_key(KEY_A)
+    wait(1)
+    press_key(KEY_A)
+    press_key(KEY_A)
+    pokemon = fetch_pokemon_data(database, slot)
+    assert (
+        pokemon is not None
+    )  # here just to make sure the function is being used. linter issues
 
-def lerInfo(slot):
-    global BD
-    pokemons=BD["pokemons"]
-    indice=BD["jogadorPokemons"][slot]
-    tela=pyautogui.screenshot()
-    
-    return(slot)
+
+def fetch_pokemon_data(database: Database, slot: int) -> int:
+    pokemons = database.pokemons
+    indice = database.player_pokemons[slot]
+    tela = pyautogui.screenshot()
+    assert (
+        pokemons,
+        indice,
+        tela,
+    ) is not None  # here just to make sure the variables are being used. linter issues
+    # TODO: stopped coding here
+    return slot
 
 
 def main() -> None:
-    vermelhoFala=(224,8,8)
-    cinzaMenu=(96,96,96)
-    cores=[vermelhoFala,cinzaMenu]
-    ataqueGlobal=[]
-    cima="i"
-    baixo="k"
-    esquerda="j"
-    direita="l"
-    enter="w"
-    botaoA="x"
-    botaoB="z"
-    teclas=[enter,botaoA,botaoB,cima,baixo,esquerda,direita]
-    with shelve.open("./bd") as BD:
-        limpaBD()
-        try:
-            comeco=time.time()
-            abrir()
-            inicio()
-            #load()
-            setaVermelha(1,vermelho=(248,0,0))
-            esperePor((400,440),(72,64,80))
-            inimigo=Inimigo()
-            print(f"batalhando com {inimigo.nome}")
-            print(f"level {inimigo.level}")
-            print(f"vida: {inimigo.vida}%")
-            atualizaEmBatalha(0)
-            fim=time.time()
-            tempo=fim-comeco
-            print("completo em:")
-            print_elapsed_time(tempo)
-        except KeyboardInterrupt:
-            fim=time.time()
-            tempo=fim-comeco
-            print("completo em:")
-            print_elapsed_time(tempo)
-            print("\nDone.")
+    start_time = time.time()
+    database = Database()
+    database.clean_database()
+    try:
+        launch_game()
+        play_intro_cutscene(database)
+        talk_counting_red_arrows(1, target_color=BATTLE_RED_ARROW_COLOR)
+        wait_color_at_position((400, 440), (72, 64, 80))
+        opponent = Opponent()
+        print(f"batalhando com {opponent.name}")
+        print(f"level {opponent.level}")
+        print(f"vida: {opponent.health_points}%")
+        battle_update(database, 0)
+        close_emulator()
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print("Success\n Elapsed time:")
+        print_elapsed_time(elapsed_time)
+    except KeyboardInterrupt:
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print("Interrupted. Elapsed time:")
+        print_elapsed_time(elapsed_time)
+        print("\nDone.")
 
 
 if __name__ == "__main__":
