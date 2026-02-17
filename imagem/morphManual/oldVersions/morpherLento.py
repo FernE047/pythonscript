@@ -1,7 +1,8 @@
 from typing import TypeVar, cast
 from PIL import Image
 import imageio
-#imageio doesn't have type hints, so all type ignore on this file is from imageio
+
+# imageio doesn't have type hints, so all type ignore on this file is from imageio
 from time import time
 
 CoordData = tuple[int, int]
@@ -109,7 +110,7 @@ def main() -> None:
     imagemFinal = open_image_as_rgba("pokemon001.png")
     imagemInicial.save(nomeFrame.format(0))
     imagemFinal.save(nomeFrame.format(quantiaFrames + 1))
-    print(f"\n tamanho: {imagemInicial.size}", end="\n\n")
+    print(f"\n tamanho: {imagemInicial.size}\n")
     for a in range(quantiaFrames):
         frame = Image.new("RGBA", imagemFinal.size, (255, 255, 255, 0))
         frame.save(nomeFrame.format(a + 1))

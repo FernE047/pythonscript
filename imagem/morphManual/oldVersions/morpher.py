@@ -65,7 +65,7 @@ def main() -> None:
     imagemFinal = open_image_as_rgba("final.png")
     imagemInicial.save(nomeFrame.format(0))
     imagemFinal.save(nomeFrame.format(quantiaFrames + 1))
-    print(f"\n tamanho: {imagemInicial.size}", end="\n\n")
+    print(f"\n tamanho: {imagemInicial.size}\n")
     for n in range(quantiaFrames):
         print(n)
         frame = Image.new("RGBA", imagemFinal.size, (255, 255, 255, 0))

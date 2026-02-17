@@ -24,7 +24,7 @@ def main() -> None:
     for a in range(5):
         c = makeBranch(a)
         print(f"collatz {a}:\n")
-        print(c(1), end="\n\n")
+        print(f"{c(1)}\n")
 
 
 if __name__ == "__main__":

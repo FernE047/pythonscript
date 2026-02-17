@@ -3,6 +3,7 @@ from random import randint
 EMPTY_CHAR = "¨"
 GENERATED_STORIES = 10
 
+
 def generate_word(index: int, is_title: bool, previous_word: str = "") -> str:
     if is_title:
         chain_directory = "chainTitle/0"
@@ -45,7 +46,7 @@ def generate_text(is_title: bool) -> str:
 
 def main() -> None:
     for _ in range(GENERATED_STORIES):
-        print(f"{generate_text(True)} : {generate_text(False)}", end="\n\n")
+        print(f"{generate_text(True)} : {generate_text(False)}\n")
 
 
 if __name__ == "__main__":

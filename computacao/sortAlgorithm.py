@@ -106,7 +106,7 @@ def main() -> None:
     lista = [index for index in range(MAX_SIZE)]
     shuffle(lista)
     if DEBUG_PRINTING:
-        print(lista, end="\n\n")
+        print(f"{lista}\n")
     insertion_sort(lista, counters, enable_logging=False)
     if DEBUG_PRINTING:
         print(f"\n{lista}")

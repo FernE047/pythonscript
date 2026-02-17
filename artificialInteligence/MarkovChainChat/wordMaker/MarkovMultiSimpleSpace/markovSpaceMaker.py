@@ -107,7 +107,8 @@ def main() -> None:
         for index in range(word_quantity):
             print_debug(index)
             generated_words.append(generate_word(filename, index))
-        print(" ".join(generated_words), end="\n")
+        text = " ".join(generated_words)
+        print(text)
 
 
 if __name__ == "__main__":
