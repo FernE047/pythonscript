@@ -7,10 +7,6 @@ NOT_FOUND = -1
 EXIT_COMMAND = "exit"
 
 
-def ehNumero(texto: str) -> bool:
-    return texto.isnumeric()
-
-
 def parseCoordinates(coord_txt: str) -> tuple[int, ...] | Literal[False]:
     if not coord_txt:
         return False
