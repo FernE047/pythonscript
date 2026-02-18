@@ -1,6 +1,10 @@
 import random
 from time import time
 
+
+PARTICIPANTS_TOTAL = 100
+HALF_PARTICIPANTS = PARTICIPANTS_TOTAL // 2
+
 # code results:
 
 # media total :    0.0005307446075174813 segundos
@@ -47,10 +51,6 @@ def print_data(individual_failure_counts: list[int], total: int) -> None:
     print()
     print(f"total : {total}")
     print()
-
-
-PARTICIPANTS_TOTAL = 100
-HALF_PARTICIPANTS = PARTICIPANTS_TOTAL // 2
 
 
 def main() -> None:

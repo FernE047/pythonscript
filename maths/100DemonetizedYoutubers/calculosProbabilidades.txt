@@ -1,3 +1,7 @@
+problema:
+
+100 participantes em uma lista aleatória de 100 IDs. Cada participante, na sua vez, pode fazer até 50 tentativas escolhendo posições sem repetir dentro da lista atual. Se ele encontrar o próprio ID, ele ‘se remove’ da lista (pop). Se alguém não encontrar em 50, a rodada inteira falha. Qual a chance de uma rodada dar 100% certo?
+
 (1-x)^res=1-porc/100
 1-porc/100=x^res
 log(1-x,1-porc/100)=res
