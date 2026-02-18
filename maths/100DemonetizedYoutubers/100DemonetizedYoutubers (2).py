@@ -34,7 +34,7 @@ def evaluate_guess(
 def calculate_probability(number: int) -> float:
     if number == 0:
         return 0
-    return number * 100 / PARTICIPANTS_TOTAL
+    return number * 100 / SIMULATIONS_TOTAL
 
 
 def main() -> None:
@@ -57,9 +57,9 @@ def main() -> None:
             print(f"{completion_rate}%")
     for participant_index, probability in enumerate(individual_failure_counts):
         if probability != 0:
-            percentage = int(calculate_probability(probability))
-            print(f"Participant {participant_index} : {percentage}%")
-    print(f"Total : {calculate_probability(simulation_count):02d}%")
+            percentage = calculate_probability(probability)
+            print(f"Participant {participant_index} : {percentage:0.2f}%")
+    print(f"Total : {calculate_probability(simulation_count):0.2f}%")
 
 
 if __name__ == "__main__":

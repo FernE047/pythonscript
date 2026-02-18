@@ -1,6 +1,11 @@
 import random
 from time import time
 
+# code results:
+
+# media total :    0.0005307446075174813 segundos
+# expectativa 100k : 53.07446075174813 segundos
+
 
 def print_elapsed_time(seconds: float) -> None:
     if seconds < 0:
@@ -32,63 +37,65 @@ def print_elapsed_time(seconds: float) -> None:
     print(f"{sign}{', '.join(parts)}")
 
 
-def imprimDados(probIndividual, total):
+def print_data(individual_failure_counts: list[int], total: int) -> None:
     print(f"\ntotal : {total}\n\ncoletivo")
-    for participante, prob in enumerate(probIndividual):
-        if prob != ":":
-            print(f"participante {participante} : {prob * 100 / total:.20f}%")
+    for participant, failure_probability in enumerate(individual_failure_counts):
+        print(f"participant {participant} : {failure_probability * 100 / total:.20f}%")
     print("\nindividual")
-    for participante, quant in enumerate(probIndividual):
-        if quant !="0:":
-            print(f"participante {participante} : {quant}")
+    for participant, quant in enumerate(individual_failure_counts):
+        print(f"participant {participant} : {quant}")
     print()
     print(f"total : {total}")
     print()
 
 
+PARTICIPANTS_TOTAL = 100
+HALF_PARTICIPANTS = PARTICIPANTS_TOTAL // 2
+
 
 def main() -> None:
-    total = 0
-    participante = 1
-    probIndividual = [0 for a in range(100)]
-    inicioDefinitivo = time()
-    comeco = time()
+    simulation_count = 0
+    individual_failure_counts = [0 for _ in range(PARTICIPANTS_TOTAL)]
+    start_time = time()
     try:
         while True:
-            total += 1
-            for participante in range(100):
-                ehCerto = False
-                chutes = random.sample(range(participante, 100), 50)
-                for tentativa in range(50):
-                    chute = chutes[tentativa]
-                    if chute == participante:
-                        ehCerto = True
-                        break
-                if not (ehCerto):
-                    probIndividual[participante] += 1
-                    break
+            simulation_count += 1
+            ehCerto = evaluate_guess(individual_failure_counts)
             if ehCerto:
-                print("temos um ganhador")
+                print("We have a winner !")
                 break
-        fim = time()
-        imprimDados(probIndividual, total)
-        duracao = fim - comeco
-        print("execução total : ")
-        print_elapsed_time(duracao)
-        print("media total :    ")
-        print_elapsed_time((duracao) / total)
-    except:
-        fim = time()
-        imprimDados(probIndividual, total)
-        duracao = fim - comeco
-        print("execução total : ")
-        print_elapsed_time(duracao)
-        print("media total :    ")
-        print_elapsed_time((duracao) / total)
-        print("expectativa 100k : ")
-        print_elapsed_time(((duracao) / total) * 100000)
-    # media total :    0.0005307446075174813 segundos
-    # expectativa 100k : 53.07446075174813 segundos
+    except KeyboardInterrupt:
+        pass
+    end_time = time()
+    print_data(individual_failure_counts, simulation_count)
+    duration = end_time - start_time
+    print("total execution time : ")
+    print_elapsed_time(duration)
+    print("average time :    ")
+    print_elapsed_time(duration / simulation_count)
+    print("expected time for 100k : ")
+    print_elapsed_time((duration / simulation_count) * 100000)
+
+
+def evaluate_guess(individual_failure_counts: list[int]) -> bool:
+    for participant in range(PARTICIPANTS_TOTAL):
+        if check_participant_guess(participant):
+            continue
+        individual_failure_counts[participant] += 1
+        return False
+    return True
+
+
+def check_participant_guess(participant: int) -> bool:
+    selected_guesses = random.sample(
+        range(participant, PARTICIPANTS_TOTAL), HALF_PARTICIPANTS
+    )
+    for tentativa in range(HALF_PARTICIPANTS):
+        guess = selected_guesses[tentativa]
+        if guess == participant:
+            return True
+    return False
+
 
 if __name__ == "__main__":
     main()
