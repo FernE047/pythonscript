@@ -1,46 +1,41 @@
-from PIL import Image
-import os
+from typing import Literal
+
+# this code was supposed to be a 4D to 2D projection, but it is currently only a 4D coordinates parser, that can be used for the projection later on
+
+TOTAL_DIMENSIONS = 4
+NOT_FOUND = -1
+EXIT_COMMAND = "exit"
 
 
 def ehNumero(texto: str) -> bool:
-    numero = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
-    if not texto:
+    return texto.isnumeric()
+
+
+def parseCoordinates(coord_txt: str) -> tuple[int, ...] | Literal[False]:
+    if not coord_txt:
         return False
-    for carac in texto:
-        if carac not in numero:
+    if coord_txt.find(",") == NOT_FOUND:
+        return False
+    elements = coord_txt.split(",")
+    if len(elements) != TOTAL_DIMENSIONS:
+        return False
+    for element in elements:
+        if not element.isnumeric():
             return False
-    return True
-
-
-def leCoords(coord):
-    trueCoord = []
-    numero = ""
-    for carac in coord:
-        if ehNumero(carac):
-            numero += carac
-        else:
-            if (carac != ",") or (not (ehNumero(numero))):
-                return False
-            else:
-                trueCoord.append(int(numero))
-                numero = ""
-    if not (ehNumero(numero)):
-        return False
-    else:
-        trueCoord.append(int(numero))
-        return trueCoord
-
+    return tuple(int(element) for element in elements)
 
 
 def main() -> None:
-    coordenadas = []
-    coordenada = ""
-    while coordenada != "0":
-        coordenada = input()
-        realCoord = leCoords(coordenada)
-        if realCoord:
-            coordenadas.append(realCoord)
-        print(coordenadas)
+    coordinates_list: list[tuple[int, ...]] = []
+    while True:
+        user_input = input()
+        if user_input.lower() == EXIT_COMMAND:
+            break
+        coordinate = parseCoordinates(user_input)
+        if coordinate:
+            coordinates_list.append(coordinate)
+        print(coordinates_list)
+
 
 if __name__ == "__main__":
     main()
