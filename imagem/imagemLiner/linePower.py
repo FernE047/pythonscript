@@ -50,36 +50,36 @@ def main() -> None:
         for y in range(height):
             for x in range(width):
                 current_pixel = get_pixel(image, (x, y))
-                cummulative_distance: list[float] = []
+                cumulative_distance: list[float] = []
                 if x > 0:
                     coord = (x - 1, y)
                     neighbor_pixel = get_pixel(image, coord)
                     distance = euclidean_distance_between_pixels(
                         neighbor_pixel, current_pixel
                     )
-                    cummulative_distance.append(distance)
+                    cumulative_distance.append(distance)
                 if x < width - 1:
                     coord = (x + 1, y)
                     neighbor_pixel = get_pixel(image, coord)
                     distance = euclidean_distance_between_pixels(
                         neighbor_pixel, current_pixel
                     )
-                    cummulative_distance.append(distance)
+                    cumulative_distance.append(distance)
                 if y > 0:
                     coord = (x, y - 1)
                     neighbor_pixel = get_pixel(image, coord)
                     distance = euclidean_distance_between_pixels(
                         neighbor_pixel, current_pixel
                     )
-                    cummulative_distance.append(distance)
+                    cumulative_distance.append(distance)
                 if y < height - 1:
                     coord = (x, y + 1)
                     neighbor_pixel = get_pixel(image, coord)
                     distance = euclidean_distance_between_pixels(
                         neighbor_pixel, current_pixel
                     )
-                    cummulative_distance.append(distance)
-                average_distance = sum(cummulative_distance) / len(cummulative_distance)
+                    cumulative_distance.append(distance)
+                average_distance = sum(cumulative_distance) / len(cumulative_distance)
                 distance_normalized = average_distance / MAX_DISTANCE_BETWEEN_PIXELS
                 color = int((1 - distance_normalized) * MAX_BRIGHTNESS)
                 pixel_color = (color, color, color, MAX_BRIGHTNESS)
