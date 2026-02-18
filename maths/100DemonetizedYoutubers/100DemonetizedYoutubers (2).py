@@ -2,6 +2,7 @@ import random
 
 COMPLETION_RATE_DEFAULT = 0
 PARTICIPANTS_TOTAL = 100
+SIMULATIONS_TOTAL = 100000
 
 
 def check_participant_guess(
@@ -29,10 +30,12 @@ def evaluate_guess(
         return False
     return True
 
+
 def calculate_probability(number: int) -> float:
     if number == 0:
         return 0
     return number * 100 / PARTICIPANTS_TOTAL
+
 
 def main() -> None:
     simulation_count = 0
@@ -40,7 +43,7 @@ def main() -> None:
     individual_failure_counts = [0 for _ in range(PARTICIPANTS_TOTAL)]
     shuffled_participant_ids = [a for a in range(PARTICIPANTS_TOTAL)]
     random.shuffle(shuffled_participant_ids)
-    for round_index in range(PARTICIPANTS_TOTAL):
+    for round_index in range(SIMULATIONS_TOTAL):
         random_participants = [a for a in shuffled_participant_ids]
         is_correct_guess = evaluate_guess(
             individual_failure_counts, random_participants
