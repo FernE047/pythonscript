@@ -1,7 +1,3 @@
-#! python3.
-
-# calcula fatorial com debug
-
 import logging
 
 logging.basicConfig(

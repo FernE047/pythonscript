@@ -1,4 +1,3 @@
-#! python3.
 def collatz(numero):
     print(str(numero))
     if (numero != 1) and (numero % 2):
