@@ -2,40 +2,41 @@ import random
 
 
 def main() -> None:
-    soma=0
-    total=100
-    porcentagem=0
-    probIndividual=[0 for a in range(100)]
-    canaisOrigem=[a for a in range(100)]
-    random.shuffle(canaisOrigem)
-    for jogo in range(total):
-        canais=[a for a in canaisOrigem]
-        for participante in range(100):
-            ehCerto=False
-            memoria=[]
-            for tentativa in range(50):
-                chute=random.randint(0,len(canais)-1)
-                while(chute in memoria):
-                    chute=random.randint(0,len(canais)-1)
-                memoria.append(chute)
-                if(canais[chute]==participante):
-                    ehCerto=True
-                    canais.pop(chute)
+    simulation_count = 0
+    participants_total = 100
+    completion_rate = 0
+    individual_failure_counts = [0 for _ in range(participants_total)]
+    shuffled_participant_ids = [a for a in range(participants_total)]
+    random.shuffle(shuffled_participant_ids)
+    for round_index in range(participants_total):
+        random_participants = [a for a in shuffled_participant_ids]
+        is_correct_guess = False
+        for participant_index in range(participants_total):
+            is_correct_guess = False
+            previous_guesses: list[int] = []
+            for _ in range(participants_total // 2):
+                guess = random.randint(0, len(random_participants) - 1)
+                while guess in previous_guesses:
+                    guess = random.randint(0, len(random_participants) - 1)
+                previous_guesses.append(guess)
+                if random_participants[guess] == participant_index:
+                    is_correct_guess = True
+                    random_participants.pop(guess)
                     break
-            if(not(ehCerto)):
-                probIndividual[participante]+=1
+            if not (is_correct_guess):
+                individual_failure_counts[participant_index] += 1
                 break
-        if(ehCerto):
-            soma+=1
+        if is_correct_guess:
+            simulation_count += 1
             print("temos um ganhador")
-        porcentagemAtual=int(jogo*100/total)
-        if(porcentagemAtual!=porcentagem):
-            porcentagem=porcentagemAtual
-            print(f"{porcentagem}%")
-    for participante,prob in enumerate(probIndividual):
-        if(prob!=0):
-            print(f"participante {participante} : {prob*100/total}%")
-    print(f"total : {soma*100/total}%")
+        porcentagemAtual = int(round_index * 100 / participants_total)
+        if porcentagemAtual != completion_rate:
+            completion_rate = porcentagemAtual
+            print(f"{completion_rate}%")
+    for participant_index, prob in enumerate(individual_failure_counts):
+        if prob != 0:
+            print(f"participante {participant_index} : {prob * 100 / participants_total}%")
+    print(f"total : {simulation_count * 100 / participants_total}%")
 
 
 if __name__ == "__main__":
