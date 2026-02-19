@@ -1,11 +1,10 @@
 def main() -> None:
-    termo = 0
-    for semente in range(1, 10**4 + 1):
-        termoantigo = termo
-        termo = 0
-        for modular in range(1, semente + 1):
-            termo += semente % modular
-        print(f"{semente}:{termo}")
+    current_term = 0
+    for seed in range(1, 10**4 + 1):
+        current_term = 0
+        for modulus in range(1, seed + 1):
+            current_term += seed % modulus
+        print(f"{seed}:{current_term}")
 
 
 if __name__ == "__main__":

@@ -1,35 +1,40 @@
+def even_procedure(seed: int, iteration_count: int, current_term: int) -> int:
+    if not current_term % 2:
+        print(str(int(current_term)))
+        while (current_term % 2) == 0:
+            current_term //= 2
+            print(f"V\n{int(current_term)}")
+        return current_term
+    for _ in range(1, iteration_count):
+        current_term = 4 * current_term + 1
+    for _ in range(1, iteration_count + 1):
+        print(str(int(current_term)), end="")
+        if (current_term % 6) == 1:
+            print(f" < {int((4 * current_term - 1) // 3)}", end="")
+        elif (current_term % 6) == 5:
+            print(f" < {int((2 * current_term - 1) // 3)}", end="")
+        print("\nV")
+        if current_term != seed:
+            current_term = (current_term - 1) // 4
+    return current_term
+
+
 def main() -> None:
-    semente=1
-    while(semente!=0):
-        quant=1
-        while((semente%8)==5):
-            semente=(semente-1)/4
-            quant+=1
-        termo=semente
-        if quant<10:
-            quant=10
-        if(termo%2):
-            for a in range(1,quant):
-                termo=4*termo+1
-            for a in range(1,quant+1):
-                print(str(int(termo)),end="")
-                if((termo%6)==1):
-                    print(f" < {int((4*termo-1)/3)}",end="")
-                elif((termo%6)==5):
-                    print(f" < {int((2*termo-1)/3)}",end="")
-                print("\nV")
-                if(termo!=semente):
-                    termo=(termo-1)/4
-        else:
-            print(str(int(termo)))
-            while((termo%2)==0):
-                termo/=2
-                print(f"V\n{int(termo)}")
-        if((semente%4)==3):
-            print(str(int((3*semente+1)/2)))
-        elif((semente%8)==1):
-            print(str(int((3*semente+1)/4)))
-        semente=int(input())
+    seed = 1
+    while seed != 0:
+        iteration_count = 1
+        while (seed % 8) == 5:
+            seed = (seed - 1) // 4
+            iteration_count += 1
+        current_term = seed
+        if iteration_count < 10:
+            iteration_count = 10
+        current_term = even_procedure(seed, iteration_count, current_term)
+        if (seed % 4) == 3:
+            print(str(int((3 * seed + 1) // 2)))
+        elif (seed % 8) == 1:
+            print(str(int((3 * seed + 1) // 4)))
+        seed = int(input())
 
 
 if __name__ == "__main__":

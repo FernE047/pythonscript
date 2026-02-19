@@ -1,68 +1,71 @@
-def collatz(termo, grau):
-    passos = 0
-    if grau == 0:
-        while termo != 1:
-            if (termo % 2) == 0:
-                termo /= 2
-            else:
-                termo = 3 * termo + 1
-            passos += 1
-    elif grau == 1:
-        while termo != 1:
-            if (termo % 2) == 0:
-                termo /= 2
-            elif (termo % 4) == 3:
-                termo = (3 * termo + 1) / 2
-            elif (termo % 8) == 1:
-                termo = (3 * termo + 1) / 2
-            else:
-                termo = (termo - 1) / 4
-            passos += 1
-    elif grau == 2:
-        while termo != 1:
-            if termo % 2 == 0:
-                termo /= 2
-            elif termo % 8 == 5:
-                termo = (termo - 1) / 4
-            elif termo % 8 == 7:
-                termo = (3 * termo + 1) / 2
-            elif termo % 16 == 3:
-                termo = (termo - 1) / 2
-            elif termo % 16 == 9:
-                termo = (3 * termo + 1) / 4
-            elif termo % 16 == 11:
-                termo = (3 * termo + 1) / 2
-            elif termo % 32 == 1:
-                termo = (3 * termo + 1) / 4
-            elif termo % 64 == 17:
-                termo = (3 * termo - 3) / 16
-            elif termo % 128 == 49:
-                termo = (3 * termo - 3) / 16
-            elif termo % 128 == 113:
-                termo = (termo - 17) / 32
-            passos += 1
-    return passos
+def collat_0(number: int) -> int:
+    if number % 2 == 0:
+        return number // 2
+    return 3 * number + 1
 
+
+def collatz_1(number: int) -> int:
+    if number % 2 == 0:
+        return number // 2
+    if number % 4 == 3:
+        return (3 * number + 1) // 2
+    if number % 8 == 1:
+        return (3 * number + 1) // 2
+    return (number - 1) // 4
+
+
+def collatz_2(number: int) -> int:
+    if number % 2 == 0:
+        return number // 2
+    if number % 8 == 5:
+        return (number - 1) // 4
+    if number % 8 == 7:
+        return (3 * number + 1) // 2
+    if number % 16 == 3:
+        return (number - 1) // 2
+    if number % 16 == 9:
+        return (3 * number + 1) // 4
+    if number % 16 == 11:
+        return (3 * number + 1) // 2
+    if number % 32 == 1:
+        return (3 * number + 1) // 4
+    if number % 64 == 17:
+        return (3 * number - 3) // 16
+    if number % 128 == 49:
+        return (3 * number - 3) // 16
+    if number % 128 == 113:
+        return (number - 17) // 32
+    raise ValueError("Invalid number for collatz_2")
+
+
+def collatz(number: int, level: int) -> int:
+    functions = [collat_0, collatz_1, collatz_2]
+    steps = 0
+    while number != 1:
+        number = functions[level](number)
+        steps += 1
+    return steps
 
 
 def main() -> None:
     limite = 0
+    starting_value = 1
     while limite == 0:
-        print("digite inicial e o limite separado por enter")
-        inicial = int(input())
-        if inicial <= 0:
+        print("enter a starting value and a limit (0 to exit):")
+        starting_value = int(input())
+        if starting_value <= 0:
             continue
         limite = int(input()) + 1
-    if inicial > limite - 1:  # inverte valores
-        limite += inicial
+    if starting_value > limite - 1:  # inverte valores
+        limite += starting_value
         print(str(limite))
-        inicial = limite - inicial - 1
-        print(str(inicial))
-        limite -= inicial
+        starting_value = limite - starting_value - 1
+        print(str(starting_value))
+        limite -= starting_value
         print(str(limite))
-    for fruto in range(inicial, limite):
-        passos = [collatz(fruto, i) for i in range(3)]
-        print(f"{fruto:5d}:{passos[0]:4d},{passos[1]:4d},{passos[2]:4d}")
+    for value in range(starting_value, limite):
+        steps = [collatz(value, level) for level in range(3)]
+        print(f"{value:5d}:{steps[0]:4d},{steps[1]:4d},{steps[2]:4d}")
 
 
 if __name__ == "__main__":
