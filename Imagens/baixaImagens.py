@@ -4,6 +4,7 @@
 # f:jpg, gif, png, bmp, svg, webp, ico
 # l:limit of photos download
 import os
+import subprocess
 
 
 def main() -> None:
@@ -13,7 +14,7 @@ def main() -> None:
         print("algum argumento adicional?")
         argumento = input()
         if nome:
-            os.system(f'google_images_download.py -o "C:/pythonscript/Imagens" -k "{nome}" {argumento}')
+            subprocess.run(f'google_images_download.py -o "C:/pythonscript/Imagens" -k "{nome}" {argumento}', shell=True)
         else:
             break
         print("baixado")

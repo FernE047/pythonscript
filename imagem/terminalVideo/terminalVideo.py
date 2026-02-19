@@ -1,3 +1,5 @@
+import subprocess
+
 from PIL import Image
 import os
 
@@ -62,7 +64,7 @@ def main() -> None:
     for frame in frames:
         frame_text = frame_to_text(frame)
         backspace_count = len(frame_text)
-        os.system(CLEAR_COMMAND)
+        subprocess.run(CLEAR_COMMAND, shell=True)
         backspaces = backspace_count * "\b"
         print(f"{frame_text}{backspaces}", end="", flush=True)
 

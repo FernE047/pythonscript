@@ -1,5 +1,6 @@
 import os
 import shutil
+import subprocess
 
 FRAMES_FOLDER = "./video"  # complete
 VIDEO_NAME = "example.mp4"
@@ -10,7 +11,7 @@ FRAMES_TEMPLATE = f"thumb_%06d{EXTENSION_USED}"
 
 
 def main() -> None:
-    os.system(f"{FFMPEG_PATH} -i {VIDEO_NAME} {FRAMES_TEMPLATE} -hide_banner")
+    subprocess.run([FFMPEG_PATH, "-i", VIDEO_NAME, FRAMES_TEMPLATE, "-hide_banner"])
     print("Done, moving files...")
     frames_raw = os.listdir(FRAMES_FOLDER)
     frames = [f"{FRAMES_FOLDER}/{frame}" for frame in frames_raw]
