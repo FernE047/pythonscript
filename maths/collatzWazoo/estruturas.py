@@ -1,54 +1,54 @@
-from io import TextIOWrapper
 import shelve
 from math import log
 
 
-class Formato:
-    def __init__(self, divisor: list[int] | int, resto: int = 0) -> None:
+class ModulusRule:
+    def __init__(self, divisor: list[int] | int, remainder: int = 0) -> None:
         if isinstance(divisor, list):
-            self.setDivisor(divisor[0])
-            self.setResto(divisor[1])
+            self.set_divisor(divisor[0])
+            self.set_remainder(divisor[1])
         else:
-            self.setDivisor(divisor)
-            self.setResto(resto)
-        self.varApresentacao = "k"
+            self.set_divisor(divisor)
+            self.set_remainder(remainder)
+        self.display_value = "k"
 
-    def numeroTeste(self, numero: int) -> bool:
-        return (numero % self.divisor) == self.resto
+    def test_number(self, value_to_test: int) -> bool:
+        return (value_to_test % self.divisor) == self.remainder
 
-    def numeroValor(self, numero: int) -> int | None:
-        if self.numeroTeste(numero):
-            return (numero - self.resto) // self.divisor
-        else:
-            return None
+    def calculate_value(self, value_to_test: int) -> int | None:
+        if self.test_number(value_to_test):
+            return (value_to_test - self.remainder) // self.divisor
+        return None
 
-    def valor(self, k: int) -> int:
-        return self.divisor * k + self.resto
+    def compute_result(self, k: int) -> int:
+        return self.divisor * k + self.remainder
 
-    def aplica(self, outroFormato: "Formato") -> "Formato":
-        newDivisor = self.divisor * outroFormato.divisor
-        newResto = self.divisor * outroFormato.resto + self.resto
-        return Formato(newDivisor, newResto)
+    def apply_modulus_rule(self, other: "ModulusRule") -> "ModulusRule":
+        new_divisor = self.divisor * other.divisor
+        new_remainder = self.divisor * other.remainder + self.remainder
+        return ModulusRule(new_divisor, new_remainder)
 
-    def aplicado(self, outroFormato: "Formato") -> "Formato":
-        return outroFormato.aplica(self)
+    def apply_modulus_to_self(self, other: "ModulusRule") -> "ModulusRule":
+        return other.apply_modulus_rule(self)
 
-    def setVarApresentacao(self, letra: str) -> None:
-        self.varApresentacao = str(letra)
+    def set_display_value(self, letra: str) -> None:
+        self.display_value = str(letra)
+
+#TODO: stopped here
 
     def textoSimples(self, k: str) -> str:
         texto = f"{self.divisor}*{k}"
-        if self.resto:
-            texto += f"+{self.resto}"
+        if self.remainder:
+            texto += f"+{self.remainder}"
         return texto
 
     def textoComposto(self, k: int) -> str:
         texto = f"{self.divisor * k}"
-        if self.resto:
-            texto += f"+{self.resto}"
+        if self.remainder:
+            texto += f"+{self.remainder}"
         return texto
 
-    def setDivisor(self, novoDivisor: int) -> None:
+    def set_divisor(self, novoDivisor: int) -> None:
         if novoDivisor == 0:
             self.divisor = 1
         else:
@@ -56,19 +56,19 @@ class Formato:
 
     def resolvePara(
         self,
-        formato2: "Formato",
+        formato2: "ModulusRule",
         formula: "Formula",
-        saida: str | TextIOWrapper = "padrao",
-    ) -> "Formato | None":
+        saida: str = "padrao",
+    ) -> "ModulusRule | None":
         texto = "x=y?\n"
         a = formula.a
         b = formula.b
         c = formula.c
         texto += f"({a}x+{b})/{c}=y\n"
         e0 = self.divisor
-        d0 = self.resto
+        d0 = self.remainder
         e1 = formato2.divisor
-        d1 = formato2.resto
+        d1 = formato2.remainder
         texto += f"{a}({e0}k+{d0})+{b}={c}({e1}n+{d1})\n"
         e2 = a * e0
         d2 = a * d0 + b
@@ -102,10 +102,7 @@ class Formato:
                     break
             if not (right):
                 texto += "contradiz\n\n"
-                if saida == "padrao":
-                    print(texto)
-                else:
-                    saida.write(texto)  # type: ignore
+                saida += texto
                 return None
         if e6 != 1:
             texto += f"{e6}k={e8}n+{d8}\n"
@@ -121,26 +118,23 @@ class Formato:
         e10 = e0 * e9
         d10 = e0 * d9 + d0
         texto += f"x={e10}n+{d10}\n\n"
-        if saida == "padrao":
-            print(texto)
-        else:
-            saida.write(texto)  # type: ignore
-        return Formato(e10, d10)
+        saida += texto
+        return ModulusRule(e10, d10)
 
-    def setResto(self, novoResto: int) -> None:
-        self.resto = self.testaResto(novoResto)
+    def set_remainder(self, novoResto: int) -> None:
+        self.remainder = self.testaResto(novoResto)
 
     def testaResto(self, novoResto: int) -> int:
         return int(novoResto) % self.divisor
 
-    def copia(self) -> "Formato":
-        return Formato(self.divisor, self.resto)
+    def copia(self) -> "ModulusRule":
+        return ModulusRule(self.divisor, self.remainder)
 
     def puro(self) -> list[int]:
-        return [self.divisor, self.resto]
+        return [self.divisor, self.remainder]
 
     def __str__(self) -> str:
-        return self.textoSimples(self.varApresentacao)
+        return self.textoSimples(self.display_value)
 
 
 class Formula:
@@ -214,10 +208,10 @@ class Formula:
         newB = self.a * outraFormula.b + self.b * outraFormula.c
         return Formula(newA, newB, newC)
 
-    def outFormato(self, inFormato: "Formato") -> "Formato":
+    def outFormato(self, inFormato: "ModulusRule") -> "ModulusRule":
         saidaFormato = inFormato.copia()
-        saidaFormato.setDivisor((inFormato.divisor * self.a) // self.c)
-        saidaFormato.setResto((inFormato.resto * self.a + self.b) // self.c)
+        saidaFormato.set_divisor((inFormato.divisor * self.a) // self.c)
+        saidaFormato.set_remainder((inFormato.remainder * self.a + self.b) // self.c)
         return saidaFormato
 
     def simplifica(self) -> None:
@@ -239,7 +233,7 @@ class Formula:
 class Regra:
     def __init__(
         self,
-        formato: Formato | list[int] | None = None,
+        formato: ModulusRule | list[int] | None = None,
         formula: Formula | None = None,
         tipo: str = "ativa",
     ) -> None:
@@ -261,14 +255,14 @@ class Regra:
         else:
             self.formula = formula
 
-    def setFormato(self, formato: Formato | list[int] | None) -> None:
+    def setFormato(self, formato: ModulusRule | list[int] | None) -> None:
         if formato:
             if isinstance(formato, list):
-                self.formato = Formato(formato)
+                self.formato = ModulusRule(formato)
             else:
                 self.formato = formato
         else:
-            self.formato = Formato(1)
+            self.formato = ModulusRule(1)
 
     def setTipo(self, novoTipo: str) -> None:
         self.tipo = novoTipo
@@ -276,7 +270,7 @@ class Regra:
     def getFormula(self) -> Formula:
         return self.formula.copia()
 
-    def getFormato(self) -> Formato:
+    def getFormato(self) -> ModulusRule:
         a = self.formato
         return a.copia()
 
@@ -287,7 +281,7 @@ class Regra:
         return self.getFormula().valor(numero)
 
     def testaRegra(self, numero: int) -> bool:
-        return self.getFormato().numeroTeste(numero)
+        return self.getFormato().test_number(numero)
 
     def inversa(self) -> "Regra":
         formulaRegra = self.getFormula()
@@ -299,9 +293,7 @@ class Regra:
     def copia(self) -> "Regra":
         return Regra(self.getFormato(), self.getFormula(), self.getTipo())
 
-    def resolvePara(
-        self, regra: "Regra", saida: str | TextIOWrapper = "padrao"
-    ) -> Formato | None:
+    def resolvePara(self, regra: "Regra", saida: str) -> ModulusRule | None:
         formulaArg = self.getFormula()
         formatoArg = regra.getFormato()
         return self.getFormato().resolvePara(formatoArg, formulaArg, saida=saida)
@@ -313,7 +305,7 @@ class Regra:
         return f"{str(self.getFormato()):20} : {str(self.getFormula()):20}"
 
 
-class Funcao:
+class Collatz_Function:
     def __init__(self, listaRegras: list[Regra] | None = None) -> None:
         self.regras: list[Regra] = []
         self.regraQuant = 0
@@ -348,7 +340,7 @@ class Funcao:
             return None
         return self.regras[index]
 
-    def getRegras(self, tiposDados: list[str] | None = None) -> list[Regra]:
+    def get_rules(self, tiposDados: list[str] | None = None) -> list[Regra]:
         tiposDados = tiposDados if tiposDados else []
         lista: list[Regra] = []
         for regra in self.regras:
@@ -383,17 +375,17 @@ class Funcao:
     def formatosRestantes(self) -> None:
         pass  # TODO: implement this
 
-    def copia(self) -> "Funcao":
+    def copia(self) -> "Collatz_Function":
         lista: list[Regra] = []
         for regra in self.regras:
             lista.append(regra.copia())
-        return Funcao(lista)
+        return Collatz_Function(lista)
 
-    def inversa(self) -> "Funcao":
+    def inversa(self) -> "Collatz_Function":
         lista: list[Regra] = []
         for regra in self.regras:
             lista.append(regra.inversa())
-        return Funcao(lista)
+        return Collatz_Function(lista)
 
     def passos(self, x: int) -> list[int]:
         lista: list[int] = []
@@ -411,7 +403,7 @@ class Funcao:
     def passosLoop(self, x: int) -> int:
         return len(self.passos(x)) - 1
 
-    def valoresEmPassos(self, passos:int) -> list[int]:
+    def valoresEmPassos(self, passos: int) -> list[int]:
         funcaoInversa = self.inversa()
         novaLista = [1]
         for _ in range(passos - 1):
@@ -421,42 +413,44 @@ class Funcao:
                 novaLista += funcaoInversa.aplicaFuncao(elemento)
         return sorted(novaLista)
 
-    def valoresEmPassosComLimites(self, passos: int, limite:int, inicio:int=1) -> list[int]:
+    def valoresEmPassosComLimites(
+        self, passos: int, limite: int, inicio: int = 1
+    ) -> list[int]:
         lista: list[int] = []
         for a in range(inicio, limite + 1):
             if self.passosLoop(a) <= passos:
                 lista.append(a)
         return lista
 
-    def estruturaReal(self) -> "Funcao":
-        funcaoReal = Funcao(self.getRegras(["principal", "ativa"]))
+    def estruturaReal(self) -> "Collatz_Function":
+        funcaoReal = Collatz_Function(self.get_rules(["principal", "ativa"]))
         return funcaoReal
 
-    def estruturaUtil(self) -> "Funcao":
-        funcaoUtil = Funcao(self.getRegras(["passiva"]))
+    def estruturaUtil(self) -> "Collatz_Function":
+        funcaoUtil = Collatz_Function(self.get_rules(["passiva"]))
         return funcaoUtil
 
-    def estruturaUtilFutura(self) -> "Funcao":
-        funcaoUtil = Funcao(self.getRegras(["principal", "passiva"]))
+    def estruturaUtilFutura(self) -> "Collatz_Function":
+        funcaoUtil = Collatz_Function(self.get_rules(["principal", "passiva"]))
         return funcaoUtil
 
-    def salva(self, indice:int) -> None:
+    def salva(self, indice: int) -> None:
         with shelve.open("collatzRegras") as BD:
-            lista:list[tuple[list[int],str]] = []
+            lista: list[tuple[list[int], str]] = []
             for tipo in self.getTipos():
-                for regra in self.getRegras([tipo]):
+                for regra in self.get_rules([tipo]):
                     lista.append((regra.pura(), tipo))
             BD[f"collatz{indice}"] = lista
 
-    def apresentacao(self)-> str:
+    def apresentacao(self) -> str:
         texto = ""
         index = 0
         for tipo in self.getTipos():
             texto += f"\n{tipo}\n\n"
-            for regra in self.getRegras([tipo]):
+            for regra in self.get_rules([tipo]):
                 texto += f"{index:03d} : "
                 formato = regra.getFormato()
-                texto += f"2^{int(log(formato.divisor, 2)):02d}k+{formato.resto}"
+                texto += f"2^{int(log(formato.divisor, 2)):02d}k+{formato.remainder}"
                 texto += f"{index} : {str(regra)}\n"
                 index += 1
         return texto
@@ -466,15 +460,15 @@ class Funcao:
         index = 0
         for tipo in self.getTipos():
             texto += f"\n{tipo}\n\n"
-            for regra in self.getRegras([tipo]):
+            for regra in self.get_rules([tipo]):
                 texto += f"{index:02d} : {str(regra)}\n"
                 index += 1
         return texto
 
 
-def Collatz(indice:int) -> Funcao:
+def Collatz(indice: int) -> Collatz_Function:
     with shelve.open("collatzRegras") as BD:
-        collatz = Funcao()
+        collatz = Collatz_Function()
         for regraSimples in BD[f"collatz{indice}"]:
             argumento = regraSimples[0]
             tipoArg = regraSimples[1]
@@ -482,7 +476,7 @@ def Collatz(indice:int) -> Funcao:
     return collatz.copia()
 
 
-def mdcC(lista:list[int]) -> int:
+def mdcC(lista: list[int]) -> int:
     novaLista: list[int] = []
     for elemento in lista:
         if elemento < 0:
@@ -499,7 +493,7 @@ def mdcC(lista:list[int]) -> int:
     return 1
 
 
-def mdc(lista:list[int]) -> int:
+def mdc(lista: list[int]) -> int:
     novaLista: list[int] = []
     for elemento in lista:
         if elemento < 0:
@@ -529,8 +523,6 @@ def mdc(lista:list[int]) -> int:
             n3 -= 1
             break
     return (2**n2) * (3**n3)
-
-
 
 
 def main() -> None:
