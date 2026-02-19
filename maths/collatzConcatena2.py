@@ -1,37 +1,34 @@
-def collatzConcatena2(j):
-    if((j%2)==1):
-        j=int(str(j)*2)+1
-    else:
-        j=int(j/2)
-    return(j)
+def concatenation_collatz(j: int) -> int:
+    if j % 2 == 1:
+        return int(str(j) * 2) + 1
+    return int(j // 2)
 
 
 
 def main() -> None:
-    precedentes=[]
-    print("esse programa concatena numero impar 2 vezes")
-    print("numero par divide por 2")
-    print("até que chegue a 1")
-    print("digite a semente")
-    numero=int(input())
-    print("digite 1 para printar tudo")
-    impressao=input()
-    print(str(numero))
-    while(numero!=1):
-        numero=collatzConcatena2(numero)
-        if(impressao=="1"):
-            print(str(numero))
-        if(numero%2):
-            if(impressao!="1"):
-                print(str(numero))
-            if(numero not in precedentes):
-                precedentes.append(numero)
-            else:
+    previous_numbers: list[int] = []
+    print("this program will print the collatz sequence of a number but instead of multiplying by 3 and adding 1, it will concatenate the number with itself and add 1")
+    print("even numbers are divided by 2")
+    print("until it reaches 1")
+    print("enter the seed number")
+    current_number = int(input())
+    print("enter 1 to print all numbers")
+    should_print_all = input()
+    print(str(current_number))
+    while current_number != 1:
+        current_number = concatenation_collatz(current_number)
+        if should_print_all == "1":
+            print(str(current_number))
+        if current_number % 2:
+            if should_print_all != "1":
+                print(str(current_number))
+            if current_number in previous_numbers:
                 break
-    if(numero==1):
-        print("fim esperado")
+            previous_numbers.append(current_number)
+    if current_number == 1:
+        print("expected end")
     else:
-        print("repetiu")
+        print("repeated number, expected end")
 
 
 if __name__ == "__main__":
