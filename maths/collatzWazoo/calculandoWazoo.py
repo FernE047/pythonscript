@@ -1,5 +1,5 @@
 from estruturas import Collatz
-from estruturas import Funcao
+from estruturas import Collatz_Function
 from estruturas import Regra
 from time import time
 
@@ -31,69 +31,71 @@ def print_elapsed_time(seconds: float) -> None:
     add(s, "second", "seconds")
     if ms or not parts:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    return f"{sign}{', '.join(parts)}"
+    print(f"{sign}{', '.join(parts)}")
 
 
 def main() -> None:
-    inicial=5   #min=2
-    final=6
-    collatzFuturo=Collatz(inicial)
-    tempos=[]
-    for a in range(inicial,final):
-        inicio=time()
-        with open(f"collatz{a}de{a+1}.txt","w", encoding= "utf-8") as saida:
-            collatzAtual = collatzFuturo
-            collatzFuturo = Funcao()
-            saida.write(f"{collatzAtual}\n")
-            regrasPrincipais = collatzAtual.getRegras(["principal"])
-            regrasAtivas = collatzAtual.getRegras(["ativa"])
-            regrasPassivas = collatzAtual.getRegras(["passiva"])
-            for regra in regrasPassivas:
-                collatzFuturo.addRegra(regra.copia())
-            for regra in regrasPrincipais:
-                regraNova=regra.copia()
-                regraNova.setTipo("passiva")
-                collatzFuturo.addRegra(regraNova)
-            for regra1 in regrasAtivas:
-                for regra2 in collatzAtual.estruturaReal().getRegras():
-                    saida.write("passo 1 :\n\n\n")
-                    newFormato=regra1.resolvePara(regra2,saida=saida)
-                    saida.write("\n")
-                    if(newFormato):
-                        newFormula=regra1.getFormula().copia()
-                        if(regra2.getTipo()=="ativa"):
-                            newRegra=Regra(newFormato,newFormula,"ativa")
-                            collatzFuturo.addRegra(newRegra)
-                        else:
-                            for regra3 in regrasAtivas:
-                                texto="\n".join(["",str(regra1),str(regra2),str(regra3),""])
-                                formula1=regra1.getFormula().copia()
-                                formula2=regra2.getFormula().copia()
-                                formula3=regra3.getFormula().inversa().copia()
-                                texto+="\n".join([str(formula1),str(formula2),str(formula3),""])
-                                formula4=formula3.aplica(formula2.aplica(formula1))
-                                texto+=f"{formula4}\n"
-                                formatoDestino=regra3.getFormato()
-                                texto+="\n".join([str(formula4),str(newFormato),str(formatoDestino),""])
-                                saida.write(texto)
-                                newFormato2=newFormato.resolvePara(formatoDestino,formula4,saida=saida)
-                                saida.write(f"teste : {newFormato2}\n")
-                                if(newFormato2):
-                                    newRegra=Regra(newFormato2,formula4,"principal")
-                                    collatzFuturo.addRegra(newRegra)
-        fim=time()
-        print(f"collatz {a+1} : ")
-        print(collatzFuturo)
-        collatzFuturo.salva(a+1)
-        tempos.append(fim-inicio)
-        print_elapsed_time(tempos[-1])
+    from_collatz = 5  # min=2
+    to_collatz = 6
+    next_collatz = Collatz(from_collatz)
+    execution_times: list[float] = []
+    for collatz_level in range(from_collatz, to_collatz):
+        start_time = time()
+        current_collatz = next_collatz
+        next_collatz = Collatz_Function()
+        text_proof = f"{current_collatz}\n"
+        core_rules = current_collatz.get_rules(["principal"])
+        generative_rules = current_collatz.get_rules(["ativa"])
+        passive_rules = current_collatz.get_rules(["passiva"])
+        for rule in passive_rules:
+            next_collatz.addRegra(rule.copia())
+        for rule in core_rules:
+            new_rule = rule.copia()
+            new_rule.setTipo("passiva")
+            next_collatz.addRegra(new_rule)
+        for rule_1 in generative_rules:
+            for rule_2 in current_collatz.estruturaReal().get_rules():
+                text_proof += "passo 1 :\n\n\n"
+                new_formato = rule_1.resolvePara(rule_2, text_proof)
+                text_proof += "\n"
+                if new_formato is None:
+                    continue
+                new_formula = rule_1.getFormula().copia()
+                if rule_2.getTipo() == "ativa":
+                    new_rule = Regra(new_formato, new_formula, "ativa")
+                    next_collatz.addRegra(new_rule)
+                    continue
+                for rule_3 in generative_rules:
+                    text_proof = f"\n{rule_1}\n{rule_2}\n{rule_3}\n"
+                    formula_1 = rule_1.getFormula().copia()
+                    formula_2 = rule_2.getFormula().copia()
+                    formula_3 = rule_3.getFormula().inversa().copia()
+                    text_proof += f"{formula_1}\n{formula_2}\n{formula_3}\n"
+                    formula_4 = formula_3.aplica(formula_2.aplica(formula_1))
+                    text_proof += f"{formula_4}\n"
+                    target_format = rule_3.getFormato()
+                    text_proof += f"{formula_4}\n{new_formato}\n{target_format}\n"
+                    new_formato_2 = new_formato.resolvePara(
+                        target_format, formula_4, text_proof
+                    )
+                    text_proof += f"teste : {new_formato_2}\n"
+                    if new_formato_2 is None:
+                        continue
+                    new_rule = Regra(new_formato_2, formula_4, "principal")
+                    next_collatz.addRegra(new_rule)
+        filename = f"collatz{collatz_level}de{collatz_level + 1}.txt"
+        with open(filename, "w", encoding="utf-8") as proof_file:
+            proof_file.write(text_proof)
+        end_time = time()
+        print(f"collatz {collatz_level + 1} : ")
+        print(next_collatz)
+        next_collatz.salva(collatz_level + 1)
+        execution_times.append(end_time - start_time)
+        print_elapsed_time(execution_times[-1])
         print("\n")
-    if(len(tempos)>1):
-        somaTempos=0
-        for tempo in tempos:
-            somaTempos+=tempo
+    if len(execution_times) > 1:
         print("total : ")
-        print_elapsed_time(somaTempos)
+        print_elapsed_time(sum(execution_times))
 
 
 if __name__ == "__main__":
