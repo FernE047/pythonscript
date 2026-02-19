@@ -1,4 +1,4 @@
-from numpy.random import shuffle
+from random import shuffle
 from time import time
 
 
