@@ -31,101 +31,101 @@ class ModulusRule:
     def apply_modulus_to_self(self, other: "ModulusRule") -> "ModulusRule":
         return other.apply_modulus_rule(self)
 
-    def set_display_value(self, letra: str) -> None:
-        self.display_value = str(letra)
+    def set_display_value(self, display_character: str) -> None:
+        self.display_value = str(display_character)
 
-#TODO: stopped here
-
-    def textoSimples(self, k: str) -> str:
-        texto = f"{self.divisor}*{k}"
+    def create_simple_text(self, display_character: str) -> str:
+        formatted_expression = f"{self.divisor}*{display_character}"
         if self.remainder:
-            texto += f"+{self.remainder}"
-        return texto
+            formatted_expression += f"+{self.remainder}"
+        return formatted_expression
 
-    def textoComposto(self, k: int) -> str:
-        texto = f"{self.divisor * k}"
+    def create_composite_text(self, factor: int) -> str:
+        formatted_expression = f"{self.divisor * factor}"
         if self.remainder:
-            texto += f"+{self.remainder}"
-        return texto
+            formatted_expression += f"+{self.remainder}"
+        return formatted_expression
 
-    def set_divisor(self, novoDivisor: int) -> None:
-        if novoDivisor == 0:
+    def set_divisor(self, new_divisor: int) -> None:
+        if new_divisor == 0:
             self.divisor = 1
         else:
-            self.divisor = int(novoDivisor)
+            self.divisor = int(new_divisor)
 
-    def resolvePara(
+    def solve(
         self,
-        formato2: "ModulusRule",
-        formula: "Formula",
-        saida: str = "padrao",
-    ) -> "ModulusRule | None":
-        texto = "x=y?\n"
-        a = formula.a
-        b = formula.b
-        c = formula.c
-        texto += f"({a}x+{b})/{c}=y\n"
-        e0 = self.divisor
-        d0 = self.remainder
-        e1 = formato2.divisor
-        d1 = formato2.remainder
-        texto += f"{a}({e0}k+{d0})+{b}={c}({e1}n+{d1})\n"
-        e2 = a * e0
-        d2 = a * d0 + b
-        e3 = c * e1
-        d3 = c * d1
-        texto += f"{e2}k+{d2}={e3}n+{d3}\n"
-        d4 = (d3 - d2) % e3
-        texto += f"{e2}k={e3}n+{d4}\n"
-        j = mdc([e2, e3, d4])
-        texto += f"j = mdc({e2},{e3},{d4}) = {j}\n"
-        e6 = e2 // j
-        e5 = e3 // j
-        d5 = d4 // j
-        e8 = 1
-        d8 = 1
-        e9 = 1
-        d9 = 1
-        texto += f"{e6}k={e5}n+{d5}\n"
-        if (e5 % e6 == 0) and (d5 % e6 == 0):
-            e8 = e5 // e6
-            d8 = d5 // e6
+        modulus_rule_a: "ModulusRule",
+        formula_a: "Formula",
+        output_proof: str,
+    ) -> "tuple[str, ModulusRule | None]":
+        text = "x=y?\n"
+        factor_a = formula_a.a
+        ofsset_a = formula_a.b
+        divisor_a = formula_a.c
+        text += f"({factor_a}x+{ofsset_a})/{divisor_a}=y\n"
+        modulus_divisor_a = modulus_rule_a.divisor
+        modulus_remainder_a = modulus_rule_a.remainder
+        text += f"{factor_a}({self.divisor}k+{self.remainder})+{ofsset_a}={divisor_a}({modulus_divisor_a}n+{modulus_remainder_a})\n"
+        factor_b = factor_a * self.divisor
+        offset_b = factor_a * self.remainder + ofsset_a
+        factor_c = divisor_a * modulus_divisor_a
+        offset_c = divisor_a * modulus_remainder_a
+        text += f"{factor_b}k+{offset_b}={factor_c}n+{offset_c}\n"
+        derived_offset = (offset_c - offset_b) % factor_c
+        text += f"{factor_b}k={factor_c}n+{derived_offset}\n"
+        greatest_common_divisor = get_greatest_2_and_3_factors(
+            [factor_b, factor_c, derived_offset]
+        )
+        text += f"j = mdc({factor_b},{factor_c},{derived_offset}) = {greatest_common_divisor}\n"
+        factor_d = factor_b // greatest_common_divisor
+        factor_e = factor_c // greatest_common_divisor
+        offset_e = derived_offset // greatest_common_divisor
+        factor_f = 1
+        offset_f = 1
+        factor_final = 1
+        offset_final = 1
+        text += f"{factor_d}k={factor_e}n+{offset_e}\n"
+        if (factor_e % factor_d == 0) and (offset_e % factor_d == 0):
+            factor_f = factor_e // factor_d
+            offset_f = offset_e // factor_d
         else:
-            e7 = e6
-            right = False
+            e7 = factor_d
+            is_satisfied = False
             for d7 in range(e7):
-                e8 = e7 * e5
-                d8 = e5 * d7 + d5
-                if (e8 % e6 == 0) and (d8 % e6 == 0):
-                    texto += f"{e6}k={e5}({e7}m+{d7})+{d5}\n"
-                    right = True
+                factor_f = e7 * factor_e
+                offset_f = factor_e * d7 + offset_e
+                if (factor_f % factor_d == 0) and (offset_f % factor_d == 0):
+                    text += f"{factor_d}k={factor_e}({e7}m+{d7})+{offset_e}\n"
+                    is_satisfied = True
                     break
-            if not (right):
-                texto += "contradiz\n\n"
-                saida += texto
-                return None
-        if e6 != 1:
-            texto += f"{e6}k={e8}n+{d8}\n"
-            if (e8 % e6 == 0) and (d8 % e6 == 0):
-                e9 = e8 // e6
-                d9 = d8 // e6
-                e6 = 1
-                texto += f"{e6}k={e9}n+{d9}\n"
+            if not (is_satisfied):
+                text += "contradiz\n\n"
+                output_proof += text
+                return (output_proof, None)
+        if factor_d != 1:
+            text += f"{factor_d}k={factor_f}n+{offset_f}\n"
+            if (factor_f % factor_d == 0) and (offset_f % factor_d == 0):
+                factor_final = factor_f // factor_d
+                offset_final = offset_f // factor_d
+                factor_d = 1
+                text += f"{factor_d}k={factor_final}n+{offset_final}\n"
         else:
-            e9 = e8
-            d9 = d8
-        texto += f"x={e0}({e9}n+{d9})+{d0}\n"
-        e10 = e0 * e9
-        d10 = e0 * d9 + d0
-        texto += f"x={e10}n+{d10}\n\n"
-        saida += texto
-        return ModulusRule(e10, d10)
+            factor_final = factor_f
+            offset_final = offset_f
+        text += f"x={self.divisor}({factor_final}n+{offset_final})+{self.remainder}\n"
+        e10 = self.divisor * factor_final
+        d10 = self.divisor * offset_final + self.remainder
+        text += f"x={e10}n+{d10}\n\n"
+        output_proof += text
+        return (output_proof, ModulusRule(e10, d10))
 
-    def set_remainder(self, novoResto: int) -> None:
-        self.remainder = self.testaResto(novoResto)
+    def set_remainder(self, new_remainder: int) -> None:
+        self.remainder = self.testaResto(new_remainder)
 
-    def testaResto(self, novoResto: int) -> int:
-        return int(novoResto) % self.divisor
+#TODO: stopped coding here
+
+    def testaResto(self, new_remainder: int) -> int:
+        return int(new_remainder) % self.divisor
 
     def copia(self) -> "ModulusRule":
         return ModulusRule(self.divisor, self.remainder)
@@ -134,7 +134,7 @@ class ModulusRule:
         return [self.divisor, self.remainder]
 
     def __str__(self) -> str:
-        return self.textoSimples(self.display_value)
+        return self.create_simple_text(self.display_value)
 
 
 class Formula:
@@ -174,30 +174,30 @@ class Formula:
     def setVarApresentacao(self, letra: str) -> None:
         self.varApresentacao = str(letra)
 
-    def textoSimples(self, x: str) -> str:
-        texto = str(x)
+    def textSimples(self, x: str) -> str:
+        text = str(x)
         if self.b != 0:
             if self.b > 0:
-                texto += f"+{self.b}"
+                text += f"+{self.b}"
             else:
-                texto += f"{self.b}"
+                text += f"{self.b}"
             if self.c != 1:
-                texto += f")/{self.c}"
+                text += f")/{self.c}"
                 if self.a != 1:
-                    return f"({self.a}{texto}"
+                    return f"({self.a}{text}"
                 else:
-                    return f"({texto}"
+                    return f"({text}"
             else:
                 if self.a != 1:
-                    return f"{self.a}{texto}"
+                    return f"{self.a}{text}"
                 else:
-                    return texto
+                    return text
         else:
             if self.c != 1:
-                texto += f"/{self.c}"
+                text += f"/{self.c}"
             if self.a != 1:
-                texto = f"{self.a}{texto}"
-            return texto
+                text = f"{self.a}{text}"
+            return text
 
     def inversa(self) -> "Formula":
         return Formula(self.c, -self.b, self.a)
@@ -215,7 +215,7 @@ class Formula:
         return saidaFormato
 
     def simplifica(self) -> None:
-        j = mdc([self.a, self.b, self.c])
+        j = get_greatest_2_and_3_factors([self.a, self.b, self.c])
         self.a = self.a // j
         self.b = self.b // j
         self.c = self.c // j
@@ -227,7 +227,7 @@ class Formula:
         return [self.a, self.b, self.c]
 
     def __str__(self) -> str:
-        return self.textoSimples(self.varApresentacao)
+        return self.textSimples(self.varApresentacao)
 
 
 class Regra:
@@ -293,10 +293,14 @@ class Regra:
     def copia(self) -> "Regra":
         return Regra(self.getFormato(), self.getFormula(), self.getTipo())
 
-    def resolvePara(self, regra: "Regra", saida: str) -> ModulusRule | None:
+    def solve(
+        self, regra: "Regra", output_proof: str
+    ) -> tuple[str, ModulusRule | None]:
         formulaArg = self.getFormula()
         formatoArg = regra.getFormato()
-        return self.getFormato().resolvePara(formatoArg, formulaArg, saida=saida)
+        return self.getFormato().solve(
+            formatoArg, formulaArg, output_proof=output_proof
+        )
 
     def pura(self) -> list[int]:
         return self.getFormato().puro() + self.getFormula().pura()
@@ -443,27 +447,27 @@ class Collatz_Function:
             BD[f"collatz{indice}"] = lista
 
     def apresentacao(self) -> str:
-        texto = ""
+        text = ""
         index = 0
         for tipo in self.getTipos():
-            texto += f"\n{tipo}\n\n"
+            text += f"\n{tipo}\n\n"
             for regra in self.get_rules([tipo]):
-                texto += f"{index:03d} : "
+                text += f"{index:03d} : "
                 formato = regra.getFormato()
-                texto += f"2^{int(log(formato.divisor, 2)):02d}k+{formato.remainder}"
-                texto += f"{index} : {str(regra)}\n"
+                text += f"2^{int(log(formato.divisor, 2)):02d}k+{formato.remainder}"
+                text += f"{index} : {str(regra)}\n"
                 index += 1
-        return texto
+        return text
 
     def __str__(self):
-        texto = ""
+        text = ""
         index = 0
         for tipo in self.getTipos():
-            texto += f"\n{tipo}\n\n"
+            text += f"\n{tipo}\n\n"
             for regra in self.get_rules([tipo]):
-                texto += f"{index:02d} : {str(regra)}\n"
+                text += f"{index:02d} : {str(regra)}\n"
                 index += 1
-        return texto
+        return text
 
 
 def Collatz(indice: int) -> Collatz_Function:
@@ -476,53 +480,34 @@ def Collatz(indice: int) -> Collatz_Function:
     return collatz.copia()
 
 
-def mdcC(lista: list[int]) -> int:
-    novaLista: list[int] = []
-    for elemento in lista:
+def get_greatest_2_and_3_factors(input_values: list[int]) -> int:
+    absolute_values: list[int] = []
+    for elemento in input_values:
         if elemento < 0:
-            novaLista.append(-elemento)
+            absolute_values.append(-elemento)
         elif elemento > 0:
-            novaLista.append(elemento)
-    for d in range(min(novaLista), 0, -1):
-        cont = False
-        for elemento in novaLista:
-            if elemento % d != 0:
-                cont = True
-        if not (cont):
-            return d
-    return 1
-
-
-def mdc(lista: list[int]) -> int:
-    novaLista: list[int] = []
-    for elemento in lista:
-        if elemento < 0:
-            novaLista.append(-elemento)
-        elif elemento > 0:
-            novaLista.append(elemento)
-    n2 = 0
-    n3 = 0
+            absolute_values.append(elemento)
+    two_factor_exponent = 0
+    three_factor_exponent = 0
     while True:
-        cont = False
-        for elemento in novaLista:
-            if elemento % (2**n2) != 0:
-                cont = True
-        if not (cont):
-            n2 += 1
-        else:
-            n2 -= 1
+        is_divisible = False
+        for elemento in absolute_values:
+            if elemento % (2**two_factor_exponent) != 0:
+                is_divisible = True
+        if is_divisible:
+            two_factor_exponent -= 1
             break
+        two_factor_exponent += 1
     while True:
-        cont = False
-        for elemento in novaLista:
-            if elemento % (3**n3) != 0:
-                cont = True
-        if not (cont):
-            n3 += 1
-        else:
-            n3 -= 1
+        is_divisible = False
+        for elemento in absolute_values:
+            if elemento % (3**three_factor_exponent) != 0:
+                is_divisible = True
+        if is_divisible:
+            three_factor_exponent -= 1
             break
-    return (2**n2) * (3**n3)
+        three_factor_exponent += 1
+    return (2**two_factor_exponent) * (3**three_factor_exponent)
 
 
 def main() -> None:

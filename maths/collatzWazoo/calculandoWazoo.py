@@ -56,8 +56,8 @@ def main() -> None:
         for rule_1 in generative_rules:
             for rule_2 in current_collatz.estruturaReal().get_rules():
                 text_proof += "passo 1 :\n\n\n"
-                new_formato = rule_1.resolvePara(rule_2, text_proof)
-                text_proof += "\n"
+                new_proof_part, new_formato = rule_1.solve(rule_2, text_proof)
+                text_proof += f"{new_proof_part}\n"
                 if new_formato is None:
                     continue
                 new_formula = rule_1.getFormula().copia()
@@ -75,10 +75,10 @@ def main() -> None:
                     text_proof += f"{formula_4}\n"
                     target_format = rule_3.getFormato()
                     text_proof += f"{formula_4}\n{new_formato}\n{target_format}\n"
-                    new_formato_2 = new_formato.resolvePara(
+                    new_proof_part_2, new_formato_2 = new_formato.solve(
                         target_format, formula_4, text_proof
                     )
-                    text_proof += f"teste : {new_formato_2}\n"
+                    text_proof += f"teste : {new_proof_part_2}\n"
                     if new_formato_2 is None:
                         continue
                     new_rule = Regra(new_formato_2, formula_4, "principal")
