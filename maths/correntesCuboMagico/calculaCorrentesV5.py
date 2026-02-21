@@ -2,6 +2,8 @@ import math
 from time import time
 import gc
 
+MAX_ITERATIONS = 1000
+
 
 def print_elapsed_time(seconds: float) -> None:
     if seconds < 0:
@@ -32,68 +34,73 @@ def print_elapsed_time(seconds: float) -> None:
         parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
     print(f"{sign}{', '.join(parts)}")
 
-def geraLista(listaInicial,x):
-    y = len(listaInicial)
-    if y <= 1:
-        return(listaInicial)
-    divisor = math.factorial(y-1)
-    elemento = listaInicial.pop(x // divisor)
-    return [elemento] + geraLista(listaInicial,x % divisor)
 
-def analisaAsListas(n):
-    limite=1000
-    categorias = {}
-    first = 0
-    inicio = time()
-    lista = [a for a in range(n)]
-    for a in range(math.factorial(n)):
-        categoria = achaCategoria(geraLista(lista.copy(),a))
-        if categoria in categorias:
-            categorias[categoria] += 1
+def create_permutation_list(initial_list: list[int], index: int) -> list[int]:
+    list_length = len(initial_list)
+    if list_length <= 1:
+        return initial_list
+    divisor = math.factorial(list_length - 1)
+    selected_element = initial_list.pop(index // divisor)
+    final_list = [selected_element]
+    final_list.extend(create_permutation_list(initial_list, index % divisor))
+    return final_list
+
+
+def analyze_categories(num_permutations: int) -> dict[str, int]:
+    categories: dict[str, int] = {}
+    iteration_count = 0
+    start_time = time()
+    lista = [permutation_index for permutation_index in range(num_permutations)]
+    for index in range(math.factorial(num_permutations)):
+        category = determine_category(create_permutation_list(lista.copy(), index))
+        if category in categories:
+            categories[category] += 1
         else:
-            categorias[categoria] = 1
-        if first<=limite:
-            if first == limite:
-                fim = time()
-                duracao = fim-inicio
-                print(f"{limite} execucoes deu : ")
-                print_elapsed_time(duracao)
-                print("Previsao de Execucao Total  : ")
-                print_elapsed_time(duracao*(math.factorial(n)/limite))
-                first = limite+1
-            else:
-                first += 1
-    return categorias
+            categories[category] = 1
+        if iteration_count < MAX_ITERATIONS:
+            iteration_count += 1
+            continue
+        end_time = time()
+        elapsed_time = end_time - start_time
+        print(f"{MAX_ITERATIONS} executions took : ")
+        print_elapsed_time(elapsed_time)
+        print("Estimated Total Execution Time : ")
+        prediction = elapsed_time * (math.factorial(num_permutations) / MAX_ITERATIONS)
+        print_elapsed_time(prediction)
+        iteration_count = MAX_ITERATIONS + 1
+        break
+    return categories
 
-def achaCategoria(lista):
-    situacoes = [False for n in lista]
-    tamanhos = [0 for n in lista]
-    while False in situacoes:
-        indiceCorrente = situacoes.index(False)
-        elemento = lista[indiceCorrente]
-        tamanho = 0
-        situacoes[indiceCorrente] = True
-        while elemento != indiceCorrente:
-            situacoes[elemento] = True
-            elemento = lista[elemento]
-            tamanho += 1
-        tamanhos[tamanho] += 1
-    categoria = []
-    for indice in range(1,len(lista)):
-        if tamanhos[indice] != 0:
-            categoria += [str(indice+1) for a in range(tamanhos[indice])]
-    return " ".join(categoria)
+
+def determine_category(permutation_list: list[int]) -> str:
+    visited_status = [False for _ in permutation_list]
+    cycle_sizes = [0 for _ in permutation_list]
+    while False in visited_status:
+        current_index = visited_status.index(False)
+        current_element = permutation_list[current_index]
+        cycle_length = 0
+        visited_status[current_index] = True
+        while current_element != current_index:
+            visited_status[current_element] = True
+            current_element = permutation_list[current_element]
+            cycle_length += 1
+        cycle_sizes[cycle_length] += 1
+    category_list: list[str] = []
+    for index in range(1, len(permutation_list)):
+        if cycle_sizes[index] != 0:
+            category_list += [str(index + 1) for _ in range(cycle_sizes[index])]
+    return " ".join(category_list)
 
 
 def main() -> None:
-    inicio = time()
+    start_time = time()
     try:
-        dic = analisaAsListas(12)
-        for cat in dic:
-            print(f"{cat:8s} : {dic[cat]}")
-        print("execucao Total  : ")
-        print_elapsed_time(time()-inicio)
-    except:
+        category_analysis = analyze_categories(12)
+        for category in category_analysis:
+            print(f"{category:8s} : {category_analysis[category]}")
+        print("Total Execution Time : ")
+        print_elapsed_time(time() - start_time)
+    except KeyboardInterrupt:
         print(gc.collect())
 
 
