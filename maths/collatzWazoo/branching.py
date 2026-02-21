@@ -3,23 +3,23 @@ from typing import Callable
 from estruturas import load_collatz
 
 
-def branching(x: int, y: int) -> None:
-    collatz = load_collatz(y).get_opposite()
+def branching(current_value: int, collatz_level: int) -> None:
+    collatz = load_collatz(collatz_level).get_opposite()
     for _ in range(10):
-        proximosTermos = collatz.apply(x)
-        print(proximosTermos)
-        if len(proximosTermos) > 1:
-            texto = f"{x} - {proximosTermos[-1]}"
-            x = proximosTermos[-2]
+        next_terms = collatz.apply(current_value)
+        print(next_terms)
+        if len(next_terms) > 1:
+            formatted_output = f"{current_value} - {next_terms[-1]}"
+            current_value = next_terms[-2]
         else:
-            texto = str(x)
-            x = proximosTermos[0]
-        print(texto)
+            formatted_output = str(current_value)
+            current_value = next_terms[0]
+        print(formatted_output)
 
 
-def makeBranch(z: int) -> Callable[[int], None]:
-    def branch(x: int) -> None:
-        return branching(x, z)
+def makeBranch(collatz_level: int) -> Callable[[int], None]:
+    def branch(value: int) -> None:
+        return branching(value, collatz_level)
     return branch
 
 
