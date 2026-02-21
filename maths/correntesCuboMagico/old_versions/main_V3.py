@@ -1,6 +1,7 @@
 import math
 from time import time
 
+# this code is legacy, I am only changing type hints and linter errors. it doesn't make sense to refactor it, since I already have a better version of it, and I don't want to break it by changing it too much
 
 def print_elapsed_time(seconds: float) -> None:
     if seconds < 0:
@@ -32,7 +33,7 @@ def print_elapsed_time(seconds: float) -> None:
     print(f"{sign}{', '.join(parts)}")
 
 
-def geraLista(listaInicial, x):
+def geraLista(listaInicial: list[int], x: int) -> list[int]:
     y = len(listaInicial)
     if y <= 1:
         return listaInicial
@@ -41,29 +42,29 @@ def geraLista(listaInicial, x):
     return [elemento] + geraLista(listaInicial, x % divisor)
 
 
-def categorizaCorrentes(correntes, total):
-    tamanhos = [0 for a in range(total)]
+def categorizaCorrentes(correntes: list[list[int]], total: int) -> str:
+    tamanhos = [0 for _ in range(total)]
     for corrente in correntes:
         tamanhos[len(corrente) - 1] += 1
     categoria = ""
     for indice in range(1, total):
         if categoria and tamanhos[indice]:
             categoria += " "
-        categoria += " ".join([str(indice + 1) for a in range(tamanhos[indice])])
+        categoria += " ".join([str(indice + 1) for _ in range(tamanhos[indice])])
     if not categoria:
         categoria = "0"
     return categoria
 
 
-def analisaAsListas(n):
+def analisaAsListas(n: int) -> dict[str, int]:
     limite = 1000
-    categorias = {}
+    categorias: dict[str, int] = {}
     first = 0
     inicio = time()
     for a in range(math.factorial(n)):
         lista = [a for a in range(n)]
         listaNova = geraLista(lista, a)
-        categoria, correntes = achaTodasCorrentes(listaNova)
+        categoria, _ = achaTodasCorrentes(listaNova)
         if categoria in categorias:
             categorias[categoria] += 1
         else:
@@ -82,11 +83,11 @@ def analisaAsListas(n):
     return categorias
 
 
-def achaTodasCorrentes(lista):
-    situacoes = [False for n in lista]
-    correntes = []
-    tamanhos = {}
-    indicesTamanhos = []
+def achaTodasCorrentes(lista: list[int]) -> tuple[str, list[list[int]]]:
+    situacoes = [False for _ in lista]
+    correntes: list[list[int]] = []
+    tamanhos: dict[int, int] = {}
+    indicesTamanhos: list[int] = []
     while False in situacoes:
         indiceCorrente = situacoes.index(False)
         elemento = lista[indiceCorrente]
@@ -104,10 +105,10 @@ def achaTodasCorrentes(lista):
                 tamanhos[tamanho] = 1
                 indicesTamanhos.append(tamanho)
         correntes.append(corrente)
-    categoria = []
+    categoria: list[str] = []
     indicesTamanhos.sort()
     for indice in indicesTamanhos:
-        categoria += [str(indice) for a in range(tamanhos[indice])]
+        categoria += [str(indice) for _ in range(tamanhos[indice])]
     return (" ".join(categoria), correntes)
 
 

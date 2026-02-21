@@ -1,6 +1,7 @@
 import math
 from time import time
 
+# this code is legacy, I am only changing type hints and linter errors. it doesn't make sense to refactor it, since I already have a better version of it, and I don't want to break it by changing it too much
 
 def print_elapsed_time(seconds: float) -> None:
     if seconds < 0:
@@ -32,7 +33,7 @@ def print_elapsed_time(seconds: float) -> None:
     print(f"{sign}{', '.join(parts)}")
 
 
-def geraLista(listaInicial, x):
+def geraLista(listaInicial: list[int], x: int) -> list[int]:
     y = len(listaInicial)
     if y <= 1:
         return listaInicial
@@ -41,9 +42,9 @@ def geraLista(listaInicial, x):
     return [elemento] + geraLista(listaInicial, x % divisor)
 
 
-def analisaAsListas(n):
+def analisaAsListas(n: int) -> dict[str, int]:
     limite = 1000
-    categorias = {}
+    categorias: dict[str, int] = {}
     first = 0
     inicio = time()
     lista = [a for a in range(n)]
@@ -67,9 +68,9 @@ def analisaAsListas(n):
     return categorias
 
 
-def achaCategoria(lista):
-    situacoes = [False for n in lista]
-    tamanhos = {}
+def achaCategoria(lista: list[int]) -> str:
+    situacoes = [False for _ in lista]
+    tamanhos: dict[int, int] = {}
     while False in situacoes:
         indiceCorrente = situacoes.index(False)
         elemento = lista[indiceCorrente]
@@ -84,10 +85,10 @@ def achaCategoria(lista):
                 tamanhos[tamanho] += 1
             else:
                 tamanhos[tamanho] = 1
-    categoria = []
-    tamanhos = sorted(tamanhos.items(), key=lambda kv: kv[1])
-    for indice, valor in tamanhos:
-        categoria += [str(indice) for a in range(valor)]
+    categoria: list[str] = []
+    list_tamanhos = sorted(tamanhos.items(), key=lambda kv: kv[1])
+    for indice, valor in list_tamanhos:
+        categoria += [str(indice) for _ in range(valor)]
     return " ".join(categoria)
 
 
