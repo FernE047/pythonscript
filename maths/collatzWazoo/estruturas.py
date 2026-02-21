@@ -1,5 +1,8 @@
 import shelve
 from math import log
+from typing import Literal
+
+EquationTypeOptions = Literal["core", "generative", "passive"]
 
 
 class ModulusRule:
@@ -55,13 +58,13 @@ class ModulusRule:
     def solve(
         self,
         modulus_rule_a: "ModulusRule",
-        formula_a: "Formula",
+        formula_a: "MathExpression",
         output_proof: str,
     ) -> "tuple[str, ModulusRule | None]":
         text = "x=y?\n"
-        factor_a = formula_a.a
-        ofsset_a = formula_a.b
-        divisor_a = formula_a.c
+        factor_a = formula_a.factor
+        ofsset_a = formula_a.offset
+        divisor_a = formula_a.divisor
         text += f"({factor_a}x+{ofsset_a})/{divisor_a}=y\n"
         modulus_divisor_a = modulus_rule_a.divisor
         modulus_remainder_a = modulus_rule_a.remainder
@@ -89,13 +92,13 @@ class ModulusRule:
             factor_f = factor_e // factor_d
             offset_f = offset_e // factor_d
         else:
-            e7 = factor_d
+            factor_helper = factor_d
             is_satisfied = False
-            for d7 in range(e7):
-                factor_f = e7 * factor_e
-                offset_f = factor_e * d7 + offset_e
+            for offset_helper in range(factor_helper):
+                factor_f = factor_helper * factor_e
+                offset_f = factor_e * offset_helper + offset_e
                 if (factor_f % factor_d == 0) and (offset_f % factor_d == 0):
-                    text += f"{factor_d}k={factor_e}({e7}m+{d7})+{offset_e}\n"
+                    text += f"{factor_d}k={factor_e}({factor_helper}m+{offset_helper})+{offset_e}\n"
                     is_satisfied = True
                     break
             if not (is_satisfied):
@@ -113,371 +116,383 @@ class ModulusRule:
             factor_final = factor_f
             offset_final = offset_f
         text += f"x={self.divisor}({factor_final}n+{offset_final})+{self.remainder}\n"
-        e10 = self.divisor * factor_final
-        d10 = self.divisor * offset_final + self.remainder
-        text += f"x={e10}n+{d10}\n\n"
+        factor_rule = self.divisor * factor_final
+        offset_rule = self.divisor * offset_final + self.remainder
+        text += f"x={factor_rule}n+{offset_rule}\n\n"
         output_proof += text
-        return (output_proof, ModulusRule(e10, d10))
+        return (output_proof, ModulusRule(factor_rule, offset_rule))
 
     def set_remainder(self, new_remainder: int) -> None:
-        self.remainder = self.testaResto(new_remainder)
+        self.remainder = self.calculate_remainder(new_remainder)
 
-#TODO: stopped coding here
-
-    def testaResto(self, new_remainder: int) -> int:
+    def calculate_remainder(self, new_remainder: int) -> int:
         return int(new_remainder) % self.divisor
 
-    def copia(self) -> "ModulusRule":
+    def copy(self) -> "ModulusRule":
         return ModulusRule(self.divisor, self.remainder)
 
-    def puro(self) -> list[int]:
+    def to_raw(self) -> list[int]:
         return [self.divisor, self.remainder]
 
     def __str__(self) -> str:
         return self.create_simple_text(self.display_value)
 
 
-class Formula:
-    a: int
-    b: int
-    c: int
+class MathExpression:
+    factor: int
+    offset: int
+    divisor: int
 
     def __init__(
-        self, a: list[int] | int = 1, b: list[int] | int = 0, c: list[int] | int = 1
+        self,
+        factor: list[int] | int = 1,
+        offset: list[int] | int = 0,
+        divisor: list[int] | int = 1,
     ) -> None:
-        if isinstance(a, list):
-            self.a = a[0]
+        if isinstance(factor, list):
+            self.factor = factor[0]
         else:
-            self.a = a
-        if isinstance(b, list):
-            self.b = b[0]
+            self.factor = factor
+        if isinstance(offset, list):
+            self.offset = offset[0]
         else:
-            self.b = b
-        if isinstance(c, list):
-            self.c = c[0]
+            self.offset = offset
+        if isinstance(divisor, list):
+            self.divisor = divisor[0]
         else:
-            self.c = c
-        self.varApresentacao = "x"
+            self.divisor = divisor
+        self.display_variable = "x"
 
-    def numeroTeste(self, numero: int) -> bool:
-        return ((self.a * numero + self.b) % self.c) == 0
+    def check_divisibility(self, number: int) -> bool:
+        return ((self.factor * number + self.offset) % self.divisor) == 0
 
-    def numeroValor(self, numero: int) -> int | None:
-        if self.numeroTeste(numero):
-            return (self.a * numero + self.b) // self.c
+    def calculate_value(self, number: int) -> int | None:
+        if self.check_divisibility(number):
+            return (self.factor * number + self.offset) // self.divisor
         else:
             return None
 
-    def valor(self, x: int) -> float:
-        return (self.a * x + self.b) / self.c
+    def evaluate_expression(self, number: int) -> float:
+        return (self.factor * number + self.offset) / self.divisor
 
-    def setVarApresentacao(self, letra: str) -> None:
-        self.varApresentacao = str(letra)
+    def set_display_var(self, display_char: str) -> None:
+        self.display_variable = display_char
 
-    def textSimples(self, x: str) -> str:
-        text = str(x)
-        if self.b != 0:
-            if self.b > 0:
-                text += f"+{self.b}"
-            else:
-                text += f"{self.b}"
-            if self.c != 1:
-                text += f")/{self.c}"
-                if self.a != 1:
-                    return f"({self.a}{text}"
-                else:
-                    return f"({text}"
-            else:
-                if self.a != 1:
-                    return f"{self.a}{text}"
-                else:
-                    return text
+    def inverse_expression(self) -> "MathExpression":
+        return MathExpression(self.divisor, -self.offset, self.factor)
+
+    def combine_expressions(self, other: "MathExpression") -> "MathExpression":
+        new_factor = self.factor * other.factor
+        new_divisor = self.divisor * other.divisor
+        new_offset = self.factor * other.offset + self.offset * other.divisor
+        return MathExpression(new_factor, new_offset, new_divisor)
+
+    def combine_with_modulus_rule(
+        self, modulus_rule_input: "ModulusRule"
+    ) -> "ModulusRule":
+        new_rule = modulus_rule_input.copy()
+        new_rule.set_divisor((modulus_rule_input.divisor * self.factor) // self.divisor)
+        new_rule.set_remainder(
+            (modulus_rule_input.remainder * self.factor + self.offset) // self.divisor
+        )
+        return new_rule
+
+    def simplify(self) -> None:
+        reduction_factor = get_greatest_2_and_3_factors(
+            [self.factor, self.offset, self.divisor]
+        )
+        self.factor = self.factor // reduction_factor
+        self.offset = self.offset // reduction_factor
+        self.divisor = self.divisor // reduction_factor
+
+    def copy(self) -> "MathExpression":
+        return MathExpression(self.factor, self.offset, self.divisor)
+
+    def to_raw(self) -> list[int]:
+        return [self.factor, self.offset, self.divisor]
+
+    def __str__(self) -> str:
+        text = self.display_variable
+        if self.offset == 0:
+            if self.divisor != 1:
+                text += f"/{self.divisor}"
+            if self.factor != 1:
+                text = f"{self.factor}{text}"
+            return text
+        if self.offset > 0:
+            text += f"+{self.offset}"
         else:
-            if self.c != 1:
-                text += f"/{self.c}"
-            if self.a != 1:
-                text = f"{self.a}{text}"
+            text += f"{self.offset}"
+        if self.divisor != 1:
+            text += f")/{self.divisor}"
+            if self.factor != 1:
+                return f"({self.factor}{text}"
+            else:
+                return f"({text}"
+        if self.factor != 1:
+            return f"{self.factor}{text}"
+        else:
             return text
 
-    def inversa(self) -> "Formula":
-        return Formula(self.c, -self.b, self.a)
 
-    def aplica(self, outraFormula: "Formula") -> "Formula":
-        newA = self.a * outraFormula.a
-        newC = self.c * outraFormula.c
-        newB = self.a * outraFormula.b + self.b * outraFormula.c
-        return Formula(newA, newB, newC)
+class Rule:
+    equation_type: EquationTypeOptions
 
-    def outFormato(self, inFormato: "ModulusRule") -> "ModulusRule":
-        saidaFormato = inFormato.copia()
-        saidaFormato.set_divisor((inFormato.divisor * self.a) // self.c)
-        saidaFormato.set_remainder((inFormato.remainder * self.a + self.b) // self.c)
-        return saidaFormato
-
-    def simplifica(self) -> None:
-        j = get_greatest_2_and_3_factors([self.a, self.b, self.c])
-        self.a = self.a // j
-        self.b = self.b // j
-        self.c = self.c // j
-
-    def copia(self) -> "Formula":
-        return Formula(self.a, self.b, self.c)
-
-    def pura(self) -> list[int]:
-        return [self.a, self.b, self.c]
-
-    def __str__(self) -> str:
-        return self.textSimples(self.varApresentacao)
-
-
-class Regra:
     def __init__(
         self,
-        formato: ModulusRule | list[int] | None = None,
-        formula: Formula | None = None,
-        tipo: str = "ativa",
+        modulus_rule: ModulusRule | list[int] | None = None,
+        equation: MathExpression | None = None,
+        equation_type: EquationTypeOptions = "generative",
     ) -> None:
-        if formato is None:
-            raise TypeError("formato must be provided")
-        if isinstance(formato, list):
-            self.setFormato(formato[:2])
-            self.setFormula(formato[2:])
+        if modulus_rule is None:
+            raise TypeError("modulus_rule must be provided")
+        if isinstance(modulus_rule, list):
+            self.set_modulus_rule(modulus_rule[:2])
+            self.set_equation(modulus_rule[2:])
         else:
-            self.setFormato(formato)
-            self.setFormula(formula)
-        self.tipo = tipo
+            self.set_modulus_rule(modulus_rule)
+            self.set_equation(equation)
+        self.equation_type = equation_type
 
-    def setFormula(self, formula: Formula | list[int] | None) -> None:
-        if formula is None:
-            self.formula = Formula()
-        elif isinstance(formula, list):
-            self.formula = Formula(formula)
+    def set_equation(self, equation: MathExpression | list[int] | None) -> None:
+        if equation is None:
+            self.equation = MathExpression()
+        elif isinstance(equation, list):
+            self.equation = MathExpression(equation)
         else:
-            self.formula = formula
+            self.equation = equation
 
-    def setFormato(self, formato: ModulusRule | list[int] | None) -> None:
-        if formato:
-            if isinstance(formato, list):
-                self.formato = ModulusRule(formato)
-            else:
-                self.formato = formato
+    def set_modulus_rule(self, modulus_input: ModulusRule | list[int] | None) -> None:
+        if modulus_input is None:
+            self.modulus_rule = ModulusRule(1)
+            return
+        if isinstance(modulus_input, list):
+            self.modulus_rule = ModulusRule(modulus_input)
         else:
-            self.formato = ModulusRule(1)
+            self.modulus_rule = modulus_input
 
-    def setTipo(self, novoTipo: str) -> None:
-        self.tipo = novoTipo
+    def set_equation_type(self, new_type: EquationTypeOptions) -> None:
+        self.equation_type = new_type
 
-    def getFormula(self) -> Formula:
-        return self.formula.copia()
+    def get_equation(self) -> MathExpression:
+        return self.equation.copy()
 
-    def getFormato(self) -> ModulusRule:
-        a = self.formato
-        return a.copia()
+    def get_modulus_rule(self) -> ModulusRule:
+        return self.modulus_rule.copy()
 
-    def getTipo(self) -> str:
-        return self.tipo
+    def get_equation_type(self) -> EquationTypeOptions:
+        return self.equation_type
 
-    def aplicaRegra(self, numero: int) -> float:
-        return self.getFormula().valor(numero)
+    def apply_rule(self, number: int) -> float:
+        return self.get_equation().evaluate_expression(number)
 
-    def testaRegra(self, numero: int) -> bool:
-        return self.getFormato().test_number(numero)
+    def test_rule(self, number: int) -> bool:
+        return self.get_modulus_rule().test_number(number)
 
-    def inversa(self) -> "Regra":
-        formulaRegra = self.getFormula()
-        formatoRegra = self.getFormato()
-        formatoInverso = formulaRegra.outFormato(formatoRegra)
-        formulaInversa = formulaRegra.inversa()
-        return Regra(formatoInverso, formulaInversa, self.tipo)
+    def get_opposite_rule(self) -> "Rule":
+        equation_copy = self.get_equation()
+        modulus_rule_copy = self.get_modulus_rule()
+        inverse_modulus_rule = equation_copy.combine_with_modulus_rule(
+            modulus_rule_copy
+        )
+        inverse_equation = equation_copy.inverse_expression()
+        return Rule(inverse_modulus_rule, inverse_equation, self.equation_type)
 
-    def copia(self) -> "Regra":
-        return Regra(self.getFormato(), self.getFormula(), self.getTipo())
-
-    def solve(
-        self, regra: "Regra", output_proof: str
-    ) -> tuple[str, ModulusRule | None]:
-        formulaArg = self.getFormula()
-        formatoArg = regra.getFormato()
-        return self.getFormato().solve(
-            formatoArg, formulaArg, output_proof=output_proof
+    def copy(self) -> "Rule":
+        return Rule(
+            self.get_modulus_rule(), self.get_equation(), self.get_equation_type()
         )
 
-    def pura(self) -> list[int]:
-        return self.getFormato().puro() + self.getFormula().pura()
+    def solve(self, regra: "Rule", output_proof: str) -> tuple[str, ModulusRule | None]:
+        equation_copy = self.get_equation()
+        modulus_rule_copy = regra.get_modulus_rule()
+        return self.get_modulus_rule().solve(
+            modulus_rule_copy, equation_copy, output_proof=output_proof
+        )
+
+    def to_raw(self) -> list[int]:
+        return self.get_modulus_rule().to_raw() + self.get_equation().to_raw()
 
     def __str__(self) -> str:
-        return f"{str(self.getFormato()):20} : {str(self.getFormula()):20}"
+        return f"{str(self.get_modulus_rule()):20} : {str(self.get_equation()):20}"
 
 
 class Collatz_Function:
-    def __init__(self, listaRegras: list[Regra] | None = None) -> None:
-        self.regras: list[Regra] = []
-        self.regraQuant = 0
-        if listaRegras:
-            for regra in listaRegras:
-                self.addRegra(regra)
+    def __init__(self, rule_list: list[Rule] | None = None) -> None:
+        self.rule: list[Rule] = []
+        self.rule_count = 0
+        if rule_list:
+            for rule in rule_list:
+                self.append_rule(rule)
 
-    def addRegra(
-        self, regra: Regra | list[int] | None, tipo: str | None = None
+    def append_rule(
+        self,
+        rule: Rule | list[int] | None,
+        equation_type: EquationTypeOptions | None = None,
     ) -> None:
-        if regra is None:
+        if rule is None:
             return
-        if isinstance(regra, list):
-            if len(regra) == 0:
-                return
-            if tipo is None:
-                tipo = "normal"
-            self.regras.append(Regra(regra, tipo=tipo))
-        else:
-            if tipo is not None:
-                regra.setTipo(tipo)
-            self.regras.append(regra)
-        self.regraQuant += 1
+        if not isinstance(rule, list):
+            if equation_type is not None:
+                rule.set_equation_type(equation_type)
+            self.rule.append(rule)
+            self.rule_count += 1
+            return
+        if len(rule) == 0:
+            return
+        if equation_type is None:
+            equation_type = "generative"
+        self.rule.append(Rule(rule, equation_type=equation_type))
+        self.rule_count += 1
 
-    def popRegra(self, index: int) -> None:
-        if index < self.regraQuant:
-            self.regras.pop(index)
-            self.regraQuant -= 1
+    def pop_rule(self, index: int) -> None:
+        if index < self.rule_count:
+            self.rule.pop(index)
+            self.rule_count -= 1
 
-    def getRegra(self, index: int) -> Regra | None:
-        if index > self.regraQuant:
+    def get_rule(self, index: int) -> Rule | None:
+        if index >= self.rule_count:
             return None
-        return self.regras[index]
+        return self.rule[index]
 
-    def get_rules(self, tiposDados: list[str] | None = None) -> list[Regra]:
-        tiposDados = tiposDados if tiposDados else []
-        lista: list[Regra] = []
-        for regra in self.regras:
-            if tiposDados:
-                if regra.getTipo() in tiposDados:
-                    lista.append(regra.copia())
-            else:
-                lista.append(regra.copia())
-        return lista
+    def get_rules(
+        self, selected_equation_types: list[EquationTypeOptions] | None = None
+    ) -> list[Rule]:
+        if selected_equation_types is None:
+            selected_equation_types = []
+        rules_list: list[Rule] = []
+        for rule in self.rule:
+            if len(selected_equation_types) == 0:
+                rules_list.append(rule.copy())
+                continue
+            if rule.get_equation_type() in selected_equation_types:
+                rules_list.append(rule.copy())
+        return rules_list
 
-    def getTipos(self) -> list[str]:
-        all_tipos: set[str] = set()
-        for regra in self.regras:
-            tipo = regra.getTipo()
-            all_tipos.add(tipo)
-        return list(all_tipos)
+    def get_equation_type(self) -> list[EquationTypeOptions]:
+        unique_equation_types: set[EquationTypeOptions] = set()
+        for rule in self.rule:
+            tipo = rule.get_equation_type()
+            unique_equation_types.add(tipo)
+        return list(unique_equation_types)
 
-    def aplicaFuncao(self, x: int) -> list[int]:
-        lista: list[int] = []
-        for regra in self.regras:
-            if regra.testaRegra(x):
-                lista.append(int(regra.aplicaRegra(x)))
-        return lista
+    def apply(self, number: int) -> list[int]:
+        valid_results: list[int] = []
+        for rule in self.rule:
+            if rule.test_rule(number):
+                valid_results.append(int(rule.apply_rule(number)))
+        return valid_results
 
-    def regrasAplicadasA(self, x: int) -> list[int]:
-        lista: list[int] = []
-        for index, regra in enumerate(self.regras):
-            if regra.testaRegra(x):
-                lista.append(index)
-        return lista
+    def get_applied_rules(self, number: int) -> list[int]:
+        applied_rule_indexes: list[int] = []
+        for index, rule in enumerate(self.rule):
+            if rule.test_rule(number):
+                applied_rule_indexes.append(index)
+        return applied_rule_indexes
 
-    def formatosRestantes(self) -> None:
-        pass  # TODO: implement this
+    def available_modulus_rules(self) -> None:
+        # TODO: implement this
+        # we just gotta start at 2^1 and test if the modulus values are present in the rules.
+        # the ones that are not present are added only if they are not incompleted by 2^n rules.
+        pass
 
-    def copia(self) -> "Collatz_Function":
-        lista: list[Regra] = []
-        for regra in self.regras:
-            lista.append(regra.copia())
-        return Collatz_Function(lista)
+    def copy(self) -> "Collatz_Function":
+        rules_copy: list[Rule] = []
+        for rule in self.rule:
+            rules_copy.append(rule.copy())
+        return Collatz_Function(rules_copy)
 
-    def inversa(self) -> "Collatz_Function":
-        lista: list[Regra] = []
-        for regra in self.regras:
-            lista.append(regra.inversa())
-        return Collatz_Function(lista)
+    def get_opposite(self) -> "Collatz_Function":
+        opposite_rules: list[Rule] = []
+        for rule in self.rule:
+            opposite_rules.append(rule.get_opposite_rule())
+        return Collatz_Function(opposite_rules)
 
-    def passos(self, x: int) -> list[int]:
-        lista: list[int] = []
-        while x not in lista:
-            aplicacao = self.aplicaFuncao(x)
-            if aplicacao:
-                lista.append(x)
-                x = aplicacao[0]
-            else:
-                lista = []
-                return lista
-        lista.append(x)
-        return lista
+    def collatz_steps(self, number: int) -> list[int]:
+        collatz_sequence: list[int] = []
+        while number not in collatz_sequence:
+            values = self.apply(number)
+            if len(values) == 0:
+                return []
+            collatz_sequence.append(number)
+            number = values[0]
+        collatz_sequence.append(number)
+        return collatz_sequence
 
-    def passosLoop(self, x: int) -> int:
-        return len(self.passos(x)) - 1
+    def get_steps_count(self, number: int) -> int:
+        return len(self.collatz_steps(number)) - 1
 
-    def valoresEmPassos(self, passos: int) -> list[int]:
-        funcaoInversa = self.inversa()
-        novaLista = [1]
-        for _ in range(passos - 1):
-            lista = novaLista
-            novaLista = []
-            for elemento in lista:
-                novaLista += funcaoInversa.aplicaFuncao(elemento)
-        return sorted(novaLista)
+    def generate_steps_values(self, step_count: int) -> list[int]:
+        inverse_function = self.get_opposite()
+        steps_value: list[int] = [1]
+        for _ in range(step_count - 1):
+            current_steps = steps_value
+            steps_value = []
+            for current_value in current_steps:
+                steps_value.extend(inverse_function.apply(current_value))
+        return sorted(steps_value)
 
-    def valoresEmPassosComLimites(
-        self, passos: int, limite: int, inicio: int = 1
+    def generate_steps_values_limited(
+        self, step_count: int, limit: int, start: int = 1
     ) -> list[int]:
-        lista: list[int] = []
-        for a in range(inicio, limite + 1):
-            if self.passosLoop(a) <= passos:
-                lista.append(a)
-        return lista
+        values: list[int] = []
+        for number in range(start, limit + 1):
+            if self.get_steps_count(number) <= step_count:
+                values.append(number)
+        return values
 
-    def estruturaReal(self) -> "Collatz_Function":
-        funcaoReal = Collatz_Function(self.get_rules(["principal", "ativa"]))
-        return funcaoReal
+    def get_structural_function(self) -> "Collatz_Function":
+        collatz_function = Collatz_Function(self.get_rules(["core", "generative"]))
+        return collatz_function
 
-    def estruturaUtil(self) -> "Collatz_Function":
-        funcaoUtil = Collatz_Function(self.get_rules(["passiva"]))
-        return funcaoUtil
+    def get_util_function(self) -> "Collatz_Function":
+        collatz_function = Collatz_Function(self.get_rules(["passive"]))
+        return collatz_function
 
-    def estruturaUtilFutura(self) -> "Collatz_Function":
-        funcaoUtil = Collatz_Function(self.get_rules(["principal", "passiva"]))
-        return funcaoUtil
+    def get_future_util_function(self) -> "Collatz_Function":
+        collatz_function = Collatz_Function(self.get_rules(["core", "passive"]))
+        return collatz_function
 
-    def salva(self, indice: int) -> None:
-        with shelve.open("collatzRegras") as BD:
-            lista: list[tuple[list[int], str]] = []
-            for tipo in self.getTipos():
-                for regra in self.get_rules([tipo]):
-                    lista.append((regra.pura(), tipo))
-            BD[f"collatz{indice}"] = lista
+    def save_collatz_rules(self, index: int) -> None:
+        collatz_rules_list: list[tuple[list[int], str]] = []
+        for equation_type in self.get_equation_type():
+            for rule in self.get_rules([equation_type]):
+                collatz_rules_list.append((rule.to_raw(), equation_type))
+        with shelve.open("collatzRegras") as database:
+            database[f"collatz{index}"] = collatz_rules_list
 
-    def apresentacao(self) -> str:
+    def dysplay(self) -> str:
         text = ""
         index = 0
-        for tipo in self.getTipos():
-            text += f"\n{tipo}\n\n"
-            for regra in self.get_rules([tipo]):
+        for equation_type in self.get_equation_type():
+            text += f"\n{equation_type}\n\n"
+            for rule in self.get_rules([equation_type]):
                 text += f"{index:03d} : "
-                formato = regra.getFormato()
+                formato = rule.get_modulus_rule()
                 text += f"2^{int(log(formato.divisor, 2)):02d}k+{formato.remainder}"
-                text += f"{index} : {str(regra)}\n"
+                text += f"{index} : {str(rule)}\n"
                 index += 1
         return text
 
-    def __str__(self):
+    def __str__(self) -> str:
         text = ""
         index = 0
-        for tipo in self.getTipos():
-            text += f"\n{tipo}\n\n"
-            for regra in self.get_rules([tipo]):
-                text += f"{index:02d} : {str(regra)}\n"
+        for equation_type in self.get_equation_type():
+            text += f"\n{equation_type}\n\n"
+            for rule in self.get_rules([equation_type]):
+                text += f"{index:02d} : {str(rule)}\n"
                 index += 1
         return text
 
 
-def Collatz(indice: int) -> Collatz_Function:
-    with shelve.open("collatzRegras") as BD:
+def load_collatz(index: int) -> Collatz_Function:
+    with shelve.open("collatzRegras") as database:
         collatz = Collatz_Function()
-        for regraSimples in BD[f"collatz{indice}"]:
-            argumento = regraSimples[0]
-            tipoArg = regraSimples[1]
-            collatz.addRegra(argumento, tipo=tipoArg)
-    return collatz.copia()
+        for simple_rule in database[f"collatz{index}"]:
+            argument = simple_rule[0]
+            equation_type = simple_rule[1]
+            collatz.append_rule(argument, equation_type=equation_type)
+    return collatz.copy()
 
 
 def get_greatest_2_and_3_factors(input_values: list[int]) -> int:
@@ -511,9 +526,9 @@ def get_greatest_2_and_3_factors(input_values: list[int]) -> int:
 
 
 def main() -> None:
-    for a in range(7):
-        print(f"\n\ncollatz {a}\n\n")
-        print(Collatz(a))
+    for collatz_number in range(7):
+        print(f"\n\ncollatz {collatz_number}\n\n")
+        print(load_collatz(collatz_number))
 
 
 if __name__ == "__main__":
