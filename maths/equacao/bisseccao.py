@@ -1,127 +1,162 @@
 import numpy as np
-from typing import Literal
+from typing import Callable, Literal, TypedDict
+
+EquationData = Callable[[float], float]
+IntervalData = tuple[float, float]
+
+DEFAULT_INITIAL = -100
+DEFAULT_END = 100
+DEFAULT_POINT_COUNT = 201
+DEFAULT_TERMINATION_THRESHOLD = 0.0001
 
 
-def pegaInteiro(
-    mensagem: str,
+class RangeConfig(TypedDict):
+    start: float
+    end: float
+    total: int
+
+
+def get_integer_input(
+    message: str,
     default: int | Literal["."] | None = None,
-    minimo: int | None = None,
-    maximo: int | None = None,
+    minimum: int | None = None,
+    maximum: int | None = None,
 ) -> int | Literal["."]:
     while True:
-        entrada = input(f"{mensagem} : ")
-        if entrada == "":
+        user_input = input(f"{message} : ")
+        if user_input == "":
             if default is not None:
                 return default
         try:
-            valor = int(entrada)
-            if (minimo is not None) and (valor < minimo):
-                print(f"valor deve ser maior ou igual a {minimo}")
+            value = int(user_input)
+            if (minimum is not None) and (value < minimum):
+                print(f"value must be greater than or equal to {minimum}")
                 continue
-            if (maximo is not None) and (valor > maximo):
-                print(f"valor deve ser menor ou igual a {maximo}")
+            if (maximum is not None) and (value > maximum):
+                print(f"value must be less than or equal to {maximum}")
                 continue
-            return valor
+            return value
         except Exception as _:
-            print("valor inválido, tente novamente")
+            print("invalid value, please try again")
 
 
-def pegaFloat(mensagem: str, valorPadrao: float | Literal["."]) -> float | Literal["."]:
+def get_float_input(
+    message: str, default_value: float | Literal["."]
+) -> float | Literal["."]:
     while True:
-        entrada = input(f"{mensagem} (padrão: {valorPadrao}) : ")
-        if entrada == "":
-            return valorPadrao
+        user_input = input(f"{message} (default: {default_value}) : ")
+        if user_input == "":
+            return default_value
         try:
-            return float(entrada)
+            return float(user_input)
         except Exception as _:
-            print("valor inválido, tente novamente")
+            print("invalid value, please try again")
 
 
-def entradaDeCoeficientes():
+def get_coefficients() -> list[float]:
     n = 0
-    coeficientes = []
+    coefficients: list[float] = []
     while True:
-        valor = pegaFloat(f"digite o coeficiente de x^{n}", ".")
-        if valor == ".":
-            return coeficientes
+        value = get_float_input(f"enter the coefficient for x^{n}", ".")
+        if value == ".":
+            return coefficients
         else:
-            coeficientes.append(valor)
+            coefficients.append(value)
             n += 1
 
 
-def valorEquacao(x, listaCoeficientes):
-    soma = 0
-    for n, coef in enumerate(reversed(listaCoeficientes)):
-        soma += coef * x ** (len(listaCoeficientes) - 1 - n)
-    return soma
+def evaluate_polynomial(x: float, coefficient_list: list[float]) -> float:
+    result = 0.0
+    for index, coefficient in enumerate(reversed(coefficient_list)):
+        power = len(coefficient_list) - 1 - index
+        result += coefficient * x**power
+    return result
 
 
-def umaEquacao(listaCoeficientes):
-    return lambda x: valorEquacao(x, listaCoeficientes)
+def create_equation(coefficient_list: list[float]) -> EquationData:
+    def equation(x: float) -> float:
+        return evaluate_polynomial(x, coefficient_list)
+
+    return equation
 
 
-def refina(equacao, busca):
-    listaDeIntervalos = []
-    sinal = lambda n: n > 0
-    espacoDeBusca = (np.linspace(busca[0], busca[1], busca[2])).tolist()
-    for index in range(len(espacoDeBusca) - 1):
-        x = espacoDeBusca[index]
-        a = equacao(x)
-        print(f"F({x}) : {a}")
-        if a == 0:
-            listaDeIntervalos.append((a, a))
-        else:
-            proximoX = espacoDeBusca[index + 1]
-            b = equacao(proximoX)
-            if sinal(a) != sinal(b):
-                listaDeIntervalos.append((x, proximoX))
-    return listaDeIntervalos
+def check_sign(n: float) -> bool:
+    return n > 0
 
 
-def descobre(equacao, parada, intervalo):
-    valor = {}
-    sinal = lambda n: valor[str(n)] > 0
-    iteracao = 0
-    a, b = intervalo
+def refine_intervals(
+    equation: EquationData, search_range: RangeConfig
+) -> list[IntervalData]:
+    interval_list: list[IntervalData] = []
+    search_space = (
+        np.linspace(search_range["start"], search_range["end"], search_range["total"])
+    ).tolist()
+    for index in range(len(search_space) - 1):
+        current_value = search_space[index]
+        current_equation_value = equation(current_value)
+        print(f"F({current_value}) : {current_equation_value}")
+        if current_equation_value == 0:
+            interval_list.append((current_equation_value, current_equation_value))
+            continue
+        next_value = search_space[index + 1]
+        next_equation_value = equation(next_value)
+        if check_sign(current_equation_value) != check_sign(next_equation_value):
+            interval_list.append((current_value, next_value))
+    return interval_list
+
+
+def find_root(equation: EquationData, parada: float, intervalo: IntervalData) -> float:
+    value_cache: dict[str, float] = {}
+    iteration_count = 0
+    lower_bound, upper_bound = intervalo
     while True:
-        iteracao += 1
-        diferenca = b - a
-        meio = a + diferenca / 2
-        for x in (a, b, meio):
-            if x not in valor.keys():
-                valor[str(x)] = equacao(x)
-        if abs(diferenca) < parada:
-            print(f"\nquantia de iterações : {iteracao}")
-            return meio
-        if sinal(a) == sinal(meio):
-            valor.pop(str(a))
-            a = meio
-        elif sinal(b) == sinal(meio):
-            valor.pop(str(b))
-            b = meio
+        iteration_count += 1
+        difference = upper_bound - lower_bound
+        mid_value = lower_bound + difference / 2
+        for x in (lower_bound, upper_bound, mid_value):
+            if x not in value_cache.keys():
+                value_cache[str(x)] = equation(x)
+        if abs(difference) < parada:
+            print(f"\niteration count : {iteration_count}")
+            return mid_value
+        if check_sign(lower_bound) == check_sign(mid_value):
+            value_cache.pop(str(lower_bound))
+            lower_bound = mid_value
+        elif check_sign(upper_bound) == check_sign(mid_value):
+            value_cache.pop(str(upper_bound))
+            upper_bound = mid_value
 
 
 def main() -> None:
-    coeficientes = entradaDeCoeficientes()
-    equacao = umaEquacao(coeficientes)
-    inicio = pegaFloat("digite o ponto inicial de refinamento", ".")
-    if inicio == ".":
-        inicio = -100
-    fim = pegaFloat("digite o ponto final de refinamento", ".")
-    if fim == ".":
-        fim = 100
-    quantidade = pegaInteiro(
-        f"digite quantos pontos pegar entre {inicio} e {fim} para o refinamento", "."
+    coefficients = get_coefficients()
+    equation = create_equation(coefficients)
+    initial_refinement_point = get_float_input(
+        "enter the initial refinement point", "."
     )
-    if quantidade == ".":
-        quantidade = 201
-    busca = [inicio, fim, quantidade]
-    refinamento = refina(equacao, busca)
-    print(refinamento)
-    parada = pegaFloat("digite o criterio de parada", ".")
-    for intervalo in refinamento:
-        resultado = descobre(equacao, parada, intervalo)
-        print(f"resultado : {resultado}\n")
+    if initial_refinement_point == ".":
+        initial_refinement_point = DEFAULT_INITIAL
+    end_refinement_point = get_float_input("enter the end refinement point", ".")
+    if end_refinement_point == ".":
+        end_refinement_point = DEFAULT_END
+    point_count = get_integer_input(
+        f"enter how many points to take between {initial_refinement_point} and {end_refinement_point} for refinement",
+        ".",
+    )
+    if point_count == ".":
+        point_count = DEFAULT_POINT_COUNT
+    refinement_range: RangeConfig = {
+        "start": initial_refinement_point,
+        "end": end_refinement_point,
+        "total": point_count,
+    }
+    refined_intervals = refine_intervals(equation, refinement_range)
+    print(refined_intervals)
+    termination_threshold = get_float_input("enter the stopping criterion", ".")
+    if termination_threshold == ".":
+        termination_threshold = DEFAULT_TERMINATION_THRESHOLD
+    for intervalo in refined_intervals:
+        resultado = find_root(equation, termination_threshold, intervalo)
+        print(f"result : {resultado}\n")
 
 
 if __name__ == "__main__":
