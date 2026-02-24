@@ -1,4 +1,10 @@
-def imprime(matriz):
+# this code is legacy, I am only changing type hints and linter errors. it doesn't make sense to refactor it, since I already have a better version of it, and I don't want to break it by changing it too much
+
+CoordData = tuple[int, int]
+MatrizData = list[list[CoordData]]
+
+
+def imprime(matriz: MatrizData) -> None:
     global iterations
     print(f"Iteracoes Totais {iterations}")
     if matriz:
@@ -7,7 +13,7 @@ def imprime(matriz):
     else:
         print("nao existe solução")
 
-def verifica(matriz,xLim,yLim,elemento):
+def verifica(matriz: MatrizData, xLim: int, yLim: int, elemento: CoordData) -> bool:
     for x in range(xLim):
         if matriz[yLim][x][0] == elemento[0]:
             return False
@@ -33,8 +39,8 @@ def verifica(matriz,xLim,yLim,elemento):
                 return False
     return True
 
-def possibilidades(matriz,x,y,usados):
-    lista = []
+def possibilidades(matriz: MatrizData, x: int, y: int, usados: list[CoordData]) -> list[CoordData]:
+    lista: list[CoordData] = []
     tamanho = len(matriz)
     for a in range(tamanho):
         for b in range(tamanho):
@@ -43,7 +49,7 @@ def possibilidades(matriz,x,y,usados):
                     lista.append((a,b))
     return lista
 
-def solve(x,y,matriz,usados):
+def solve(x: int, y: int, matriz: MatrizData, usados: list[CoordData]) -> MatrizData | None:
     global iterations
     if iterations%100000==0:
         print(f"{iterations:,}")
@@ -63,17 +69,21 @@ def solve(x,y,matriz,usados):
             return solucao
         usados.pop()
         matriz[y][x] = (0,0)
+    return None
 
+iterations = 0
 
 def main() -> None:
-    iterations = 0
+    global iterations
     tamanho = 5
     largura = tamanho
     altura  = tamanho
     usados = [(a,a) for a in range(largura)]
-    matriz = [usados.copy()]+[[(0,0) for x in range(largura)] for y in range(1,altura)]
-    matriz = solve(0,1,matriz,usados)
-    imprime(matriz)
+    matriz = [usados.copy()]+[[(0,0) for _ in range(largura)] for _ in range(1,altura)]
+    matriz_result = solve(0,1,matriz,usados)
+    if matriz_result is None:
+        return
+    imprime(matriz_result)
 
 
 if __name__ == "__main__":

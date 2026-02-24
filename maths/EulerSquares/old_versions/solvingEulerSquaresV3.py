@@ -1,9 +1,21 @@
-def isInteger(elemento,tamanho):
+# type: ignore
+
+# this code is a mess
+
+# this code is legacy, I am only changing type hints and linter errors. it doesn't make sense to refactor it, since I already have a better version of it, and I don't want to break it by changing it too much
+
+CoordData = tuple[int, int]
+BiggerCoordData = tuple[int, int, int]
+MatrizData = list[list[CoordData]]
+BiggerMatrizData = list[list[list[int]]]
+
+
+def isInteger(elemento: int, tamanho: int) -> bool:
     if elemento in range(tamanho):
         return True
     return False
 
-def imprime():
+def imprime() -> None:
     global matriz
     global iterations
     print(f"Iteracoes Totais {iterations:,}")
@@ -13,9 +25,9 @@ def imprime():
     else:
         print("nao existe solução")
 
-def posicoesAfetadas(matriz,coord):
-    yC,xC = coord
-    lista = []
+def posicoesAfetadas(matriz: MatrizData, coord: CoordData) -> list[CoordData]:
+    yC, xC = coord
+    lista: list[CoordData] = []
     tamanho = len(matriz)
     for x in range(tamanho):
         if x == xC:
@@ -37,9 +49,9 @@ def posicoesAfetadas(matriz,coord):
             lista.append((c,tamanho - c - 1))
     return lista
 
-def posicoesParaAlterar(matriz,coord):
-    yC,xC,i = coord
-    lista = []
+def posicoesParaAlterar(matriz: MatrizData, coord: BiggerCoordData) -> list[CoordData]:
+    yC, xC, i = coord
+    lista: list[CoordData] = []
     tamanho = len(matriz)
     for x in range(tamanho):
         if x == xC:
@@ -69,9 +81,9 @@ def posicoesParaAlterar(matriz,coord):
                 lista.append((c,tamanho - c - 1))
     return lista
 
-def numerosQueAfetam(matriz,coord):
-    yC,xC,i = coord
-    lista = []
+def numerosQueAfetam(matriz: MatrizData, coord: BiggerCoordData) -> list[int]:
+    yC, xC, i = coord
+    lista: list[int] = []
     listaCompleta = [index for index in range(len(matriz))]
     tamanho = len(matriz)
     for x in range(tamanho):
@@ -108,17 +120,16 @@ def numerosQueAfetam(matriz,coord):
             return listaCompleta
     return lista
 
-def possibilidades(matriz,coord):
-    y,x,i = coord
-    impossibilidades = numerosQueAfetam(matriz,coord)
-    lista = []
+def possibilidades(matriz: MatrizData, coord: BiggerCoordData) -> None:
+    impossibilidades = numerosQueAfetam(matriz, coord)
+    lista: list[int] = []
     for numero in range(len(matriz)):
         if numero not in impossibilidades:
             lista.append(numero)
     coloca(matriz,coord,lista)
 
-def coloca(matriz,coord,elemento):
-    y,x,i = coord
+def coloca(matriz: MatrizData, coord: BiggerCoordData, elemento: list[int]) -> None:
+    y, x, i = coord
     tamanho = len(matriz)
     matriz[y][x][i] = elemento
     if isInteger(elemento,tamanho):
@@ -128,18 +139,17 @@ def coloca(matriz,coord,elemento):
                 if elemento in lista:
                     lista.remove(elemento)
 
-def devolve(matriz,coord,elemento):
-    y,x,i = coord
-    tamanho = len(matriz)
-    possibilidades(matriz,coord)
-    for y,x in posicoesParaAlterar(matriz,coord):
-        if elemento not in numerosQueAfetam(matriz,(y,x,i)):
+def devolve(matriz: MatrizData, coord: BiggerCoordData, elemento: int) -> None:
+    y, x, i = coord
+    possibilidades(matriz, coord)
+    for y, x in posicoesParaAlterar(matriz, coord):
+        if elemento not in numerosQueAfetam(matriz, (y, x, i)):
             matriz[y][x][i].append(elemento)
 
-def solve(matriz,coord,usados):
+def solve(matriz: MatrizData, coord: BiggerCoordData, usados: list[list[int]]) -> MatrizData | None:
     global iterations
-    y,x,i = coord
-    if iterations%100000==0:
+    y, x, i = coord
+    if iterations % 100000 == 0:
         imprime()
         print()
     iterations += 1
@@ -166,8 +176,9 @@ def solve(matriz,coord,usados):
         if i == 1:
             usados.remove(elemento)
         devolve(matriz,(y,x,i),possibilidade)
+    return None
 
-def fazMatriz(tamanho,indice):
+def fazMatriz(tamanho: int, indice: int) -> MatrizData:
     global matriz
     matriz = [[[[a for a in range(tamanho)],[a for a in range(tamanho)]] for b in range(tamanho)] for c in range(tamanho)]
     for x in range(tamanho):
@@ -175,13 +186,12 @@ def fazMatriz(tamanho,indice):
             coloca(matriz,(0,x,i),x)
     return matriz
 
+iterations = 0
 
 def main() -> None:
-    iterations = 0
     tamanho = 5
     indice = 2
-    matriz = []
-    fazMatriz(tamanho,indice)
+    matriz = fazMatriz(tamanho,indice)
     usados = [[a,a] for a in range(tamanho)]
     matriz = solve(matriz,(1,0,0),usados)
     imprime()
