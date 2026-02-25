@@ -11,15 +11,17 @@ def find_power_concatenation_pairs(
         return results
     for cursor in range(1, len(target_text)):
         prefix_text = target_text[:cursor]
+        if prefix_text[0] == "0":
+            continue
         prefix_value = int(prefix_text)
         inverse_power = 1 / power
         prefix_base = int(prefix_value**inverse_power)
         if prefix_base**power != prefix_value:
             continue
         suffix_text = target_text[cursor:]
-        suffix_value = int(suffix_text)
-        if str(prefix_value) + str(suffix_value) != target_text:
+        if suffix_text[0] == "0":
             continue
+        suffix_value = int(suffix_text)
         suffix_base = int(suffix_value**inverse_power)
         if suffix_base**power != suffix_value:
             continue
@@ -44,20 +46,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-# TODO: analyze and proof why 2225 family is the only number that can be expressed as the concatenation of two perfect squares in two different ways, where the result is also a perfect square. The results are:
-# 2225 : 4950625
-# 2,975
-# 7,225
-#
-# 22250 : 495062500
-# 2,9750
-# 7,2250
-#
-# 222500 : 49506250000
-# 2,97500
-# 7,22500
-#
-# 2225000 : 4950625000000
-# 2,975000
-# 7,225000
