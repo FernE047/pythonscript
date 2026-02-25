@@ -1,92 +1,92 @@
 from PIL import Image
 import os
 
-def vetorParaImagem(vetor):
-    altura=len(vetor)
-    largura=max([len(a) for a in vetor])
-    print(f"\naltura: {altura}\nlargura: {largura}")
-    for a in range(altura):
-        while(len(vetor[a])<largura):
-            vetor[a].append(0)
-    imagem=Image.new("RGBA",(largura,altura),(255,255,255,255))
-    for y in range(altura):
-        for x in range(largura):
-            if(vetor[y][x]):
-                imagem.putpixel((x,y),(0,0,0,255))
-    return(imagem)
+RANDOM_INDEX_SEED = 29
+MAX_SIZE = 5000
+BACKGROUND_COLOR = (255, 255, 255, 255)
+HIGHLIGHT_COLOR = (0, 0, 0, 255)
 
-def proximoFractal(brick,guide):
-    larguraGuide,alturaGuide=guide.size
-    larguraBrick,alturaBrick=brick.size
-    largura=larguraGuide*larguraBrick
-    altura=alturaGuide*alturaBrick
-    fractal=Image.new("RGBA",(largura,altura),(255,255,255,255))
-    if((largura>5000)or(altura>5000)):
-       return("")
-    for x in range(larguraGuide):
-        for y in range(alturaGuide):
-            if(guide.getpixel((x,y))==(0,0,0,255)):
-               fractal.paste(brick,(x*larguraBrick,y*alturaBrick))
-    return(fractal)
 
-def fazNFractais(vetor,nome):
-    novaPasta=os.path.join(os.getcwd(),nome.proper())
-    os.makedirs(novaPasta)
-    guia=vetorParaImagem(vetor)
-    bloco=guia
-    pastaSalvar=os.path.join(novaPasta,f"{nome.proper()}{1:02d}.png")
-    bloco.save(pastaSalvar)
-    a=2
+def convert_matrix_to_image(matrix: list[list[int]]) -> Image.Image:
+    height = len(matrix)
+    width = max([len(row_index) for row_index in matrix])
+    print(f"\nheight: {height}\nwidth: {width}")
+    for row_index in range(height):
+        while len(matrix[row_index]) < width:
+            matrix[row_index].append(0)
+    output_image = Image.new("RGBA", (width, height), BACKGROUND_COLOR)
+    for y in range(height):
+        for x in range(width):
+            if matrix[y][x]:
+                output_image.putpixel((x, y), HIGHLIGHT_COLOR)
+    return output_image
+
+
+def generate_next_fractal(
+    fractal_pattern: Image.Image, reference: Image.Image
+) -> Image.Image | None:
+    width_reference, height_reference = reference.size
+    width_pattern, height_pattern = fractal_pattern.size
+    width = width_reference * width_pattern
+    height = height_reference * height_pattern
+    fractal = Image.new("RGBA", (width, height), BACKGROUND_COLOR)
+    if (width > MAX_SIZE) or (height > MAX_SIZE):
+        return None
+    for x in range(width_reference):
+        for y in range(height_reference):
+            if reference.getpixel((x, y)) == HIGHLIGHT_COLOR:
+                fractal.paste(fractal_pattern, (x * width_pattern, y * height_pattern))
+    return fractal
+
+
+def generate_fractals(matrix: list[list[int]], name: str) -> None:
+    new_folder = os.path.join(os.getcwd(), name.title())
+    os.makedirs(new_folder)
+    reference_image = convert_matrix_to_image(matrix)
+    fractal_image: Image.Image = reference_image
+    save_path = os.path.join(new_folder, f"{name.title()}_01.png")
+    fractal_image.save(save_path)
+    fractal_index = 2
     while True:
-        bloco=proximoFractal(bloco,guia)
-        if(bloco==""):
-            print(f"feito {a} fractais\n")
-            return()
-        pastaSalvar=os.path.join(novaPasta,f"{nome.proper()}{a:02d}.png")
-        bloco.save(pastaSalvar)
-        a+=1
-
-def ehInt(num):
-    try:
-        num=int(num)
-        return(True)
-    except:
-        return(False)
-        
-
-def leVetores():
-    randomIndex=29
-    vetor=[[]]
-    indice=0
-    print(""0" para nada\n"1" para valor\n"vazio" para nova linha\noutro para salvar\n"apg" no fim para salvar apagando")
-    while True:
-        print(vetor)
-        entrada=input()
-        if(entrada==""):
-            indice+=1
-            vetor.append([])            
-        elif((ehInt(entrada[0]))and(len(entrada)>=2)):
-            vetor[indice]=[int(a) for a in list(entrada)]
-            indice+=1
-            vetor.append([]) 
-        elif(entrada=="0"):
-            vetor[indice].append(0)
-        elif(entrada=="1"):
-            vetor[indice].append(1)            
-        else:
-            if(entrada[-3:]=="apg"):
-                vetor=vetor[:-1]
-                entrada=entrada[:-3]
-            if(entrada=="random"):
-                entrada+=str(randomIndex)
-                randomIndex+=1
-            fazNFractais(vetor,entrada)
-            vetor=[[]]
-            indice=0
+        new_fractal = generate_next_fractal(fractal_image, reference_image)
+        if new_fractal is None:
+            print(f"done {fractal_index} fractals\n")
+            return
+        save_path = os.path.join(new_folder, f"{name.title()}_{fractal_index:02d}.png")
+        new_fractal.save(save_path)
+        fractal_image = new_fractal
+        fractal_index += 1
 
 
 def main() -> None:
-    leVetores()
+    random_index = RANDOM_INDEX_SEED
+    matrix: list[list[int]] = [[]]
+    current_index = 0
+    print(
+        "'0' for nothing\n'1' for value\n'empty' for new line\nother to save\n'apg' at the end to save and delete"
+    )
+    while True:
+        print(matrix)
+        user_input = input()
+        if user_input == "":
+            current_index += 1
+            matrix.append([])
+        elif user_input.isdigit():
+            matrix[current_index] = [int(digit) for digit in list(user_input)]
+            current_index += 1
+            matrix.append([])
+        else:
+            if user_input[-3:] == "apg":
+                matrix = matrix[:-1]
+                user_input = user_input[:-3]
+            if user_input == "random":
+                user_input += str(random_index)
+                random_index += 1
+            generate_fractals(matrix, user_input)
+            matrix = [[]]
+            current_index = 0
+            break
+
 
 if __name__ == "__main__":
     main()
