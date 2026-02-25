@@ -1,5 +1,4 @@
 # this script is to find numbers that can be expressed as the concatenation of two other numbers, where the first number is a perfect square and the second number is also a perfect square AND the number itself is also a perfect square. For example, 49 is 7 squared and can be expressed as 4 concatenated with 9, where 4 is a perfect square and 9 is also a perfect square.
-from math import sqrt
 
 
 def find_power_concatenation_pairs(
@@ -13,18 +12,15 @@ def find_power_concatenation_pairs(
     for cursor in range(1, len(target_text)):
         prefix_text = target_text[:cursor]
         prefix_value = int(prefix_text)
-        prefix_base = int(sqrt(prefix_value))
+        prefix_base = int(prefix_value ** (1 / power))
         if prefix_base**power != prefix_value:
             continue
         suffix_text = target_text[cursor:]
         suffix_value = int(suffix_text)
         if str(prefix_value) + str(suffix_value) != target_text:
             continue
-        suffix_base = int(sqrt(suffix_value))
+        suffix_base = int(suffix_value ** (1 / power))
         if suffix_base**power != suffix_value:
-            continue
-        if suffix_value == 0 or prefix_value == 0:
-            # because it's boring to have 0 as a perfect square and it doesn't add much to the problem, we will skip it
             continue
         results.append((prefix_base, suffix_base))
     return results
@@ -33,8 +29,6 @@ def find_power_concatenation_pairs(
 def calculate_and_print_results(iteration_limit: int, power: int) -> None:
     for iteration in range(iteration_limit):
         results = find_power_concatenation_pairs(iteration, power)
-        if len(results) <= 1:
-            continue
         if not results:
             continue
         print(f"{iteration} : {iteration**power}")
@@ -49,3 +43,20 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+# TODO: analyze and proof why 2225 family is the only number that can be expressed as the concatenation of two perfect squares in two different ways, where the result is also a perfect square. The results are:
+# 2225 : 4950625
+# 2,975
+# 7,225
+#
+# 22250 : 495062500
+# 2,9750
+# 7,2250
+#
+# 222500 : 49506250000
+# 2,97500
+# 7,22500
+#
+# 2225000 : 4950625000000
+# 2,975000
+# 7,225000
