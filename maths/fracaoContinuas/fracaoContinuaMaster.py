@@ -1,68 +1,58 @@
-from typing import Literal, overload
+from typing import Any, Literal, overload
 
-def pegaInteiro(
-    mensagem: str, minimo: int | None = None, maximo: int | None = None
-) -> int:
+IS_DEBUG = False
+ITERATION_LIMIT = 1000
+
+
+def print_debug(*args: Any, **kwargs: Any) -> None:
+    if IS_DEBUG:
+        print(*args, **kwargs)
+
+
+@overload
+def get_user_integer(message: str, can_exit: Literal[False] = False) -> int: ...
+
+
+@overload
+def get_user_integer(message: str, can_exit: Literal[True]) -> int | Literal[""]: ...
+
+
+def get_user_integer(message: str, can_exit: bool = False) -> int | Literal[""]:
     while True:
-        entrada = input(f"{mensagem} : ")
+        user_input = input(f"{message} : ")
+        if can_exit and user_input == "":
+            return ""
         try:
-            valor = int(entrada)
-            if (minimo is not None) and (valor < minimo):
-                print(f"valor deve ser maior ou igual a {minimo}")
-                continue
-            if (maximo is not None) and (valor > maximo):
-                print(f"valor deve ser menor ou igual a {maximo}")
-                continue
-            return valor
+            value = int(user_input)
+            return value
         except Exception as _:
-            print("valor inválido, tente novamente")
+            print("invalid value, please try again")
 
 
-def listaDeInteiros() -> list[int]:
-    lista: list[int] = []
-    print("digite os inteiros da fração continua um por vez")
-    print("quando terminar, digite uma linha vazia")
+def get_user_integers() -> list[int]:
+    user_input_integers: list[int] = []
+    print("enter the integers of the continued fraction one by one")
+    print("when finished, enter an empty line")
     while True:
-        entrada = input("inteiro: ")
-        if entrada == "":
+        value = get_user_integer("integer", can_exit=True)
+        if value == "":
             break
-        try:
-            valor = int(entrada)
-            lista.append(valor)
-        except Exception as _:
-            print("valor inválido, tente novamente")
-    return lista
+        user_input_integers.append(value)
+    return user_input_integers
 
 
-@overload
-def choose_from_options(
-    prompt: str, options: list[str], mode: Literal["text"]
-) -> str: ...
-
-
-@overload
-def choose_from_options(
-    prompt: str, options: list[str], mode: Literal["number"]
-) -> int: ...
-
-
-def choose_from_options(
-    prompt: str, options: list[str], mode: Literal["text", "number"] = "text"
-) -> str | int:
+def choose_from_options(prompt: str, options: list[str]) -> int:
     while True:
         for i, option in enumerate(options):
             print(f"{i} - {option}")
         user_choice = input(prompt)
         try:
-            if mode == "number":
-                return int(user_choice)
-            else:
-                return options[int(user_choice)]
+            return int(user_choice)
         except (ValueError, IndexError):
             user_choice = input("not valid, try again: ")
 
 
-def pegaFloat(mensagem: str) -> float:
+def get_user_float(mensagem: str) -> float:
     while True:
         entrada = input(mensagem)
         try:
@@ -70,86 +60,102 @@ def pegaFloat(mensagem: str) -> float:
         except Exception as _:
             print("valor inválido, tente novamente")
 
-def fractionToNumber(fraction):
-    quant=len(fraction)
-    a=fraction[-1]
-    print(a)
-    print()
-    for n in range(quant-1):
-        print(quant-n-2)
-        print(fraction[quant-n-2])
-        a=fraction[quant-n-2]+1/a
-        print(a)
-        print()
-    return a
 
-def decimalToFraction(numero):
-    iteracao=0
-    fraction=[]
+def fraction_to_number(fraction: list[int]) -> float:
+    fraction_length = len(fraction)
+    current_value = fraction[-1] * 1.0
+    print_debug(f"current value : {current_value}")
+    for n in range(fraction_length - 1):
+        current_index = fraction_length - n - 2
+        current_value = fraction[current_index] + 1 / current_value
+        print_debug(f"current index : {current_index}")
+        print_debug(f"current fraction value : {fraction[current_index]}")
+        print_debug(f"current value : {current_value}\n")
+    return current_value
+
+
+def decimal_to_fraction(float_value: float) -> list[int]:
+    iteration_count = 0
+    fraction: list[int] = []
     while True:
-        iteracao+=1
-        #print()
-        inteiro=int(numero)
-        #print(f"inteiro : {inteiro}")
-        real=numero-inteiro
-        #print(f"real : {real}")
-        fraction.append(inteiro)
-        if(real==0):
-            return(fraction)
+        iteration_count += 1
+        print_debug()
+        integer_part = int(float_value)
+        print_debug(f"integer_part : {integer_part}")
+        fractional_part = float_value - integer_part
+        print_debug(f"fractional_part : {fractional_part}")
+        fraction.append(integer_part)
+        if fractional_part == 0:
+            return fraction
         else:
-            numero=1/real
-            #print(f"invertido : {numero}")
-        if(iteracao==1000):
-            fraction.append(real)
-            return(fraction)
-        
-def fracaoToFraction(numerador,denominador):
-    iteracao=0
-    fraction=[]
+            float_value = 1 / fractional_part
+            print_debug(f"inverted : {float_value}")
+        if iteration_count == ITERATION_LIMIT:
+            fraction.append(int(fractional_part))
+            print_debug("iteration limit reached, stopping")
+            return fraction
+
+
+def fraction_to_continued(numerator: int, denominator: int) -> list[int]:
+    iteration_count = 0
+    fraction: list[int] = []
     while True:
-        iteracao+=1
-        #print()
-        inteiro=int(numerador/denominador)
-        #print(f"inteiro : {inteiro}")
-        velhoNumerador=numerador
-        numerador=denominador
-        #print(f"numerador : {numerador}")
-        denominador=velhoNumerador-inteiro*denominador
-        #print(f"denominador : {denominador}"
-        )
-        fraction.append(inteiro)
-        if(denominador==0):
-            return(fraction)
-        if(numerador==1):
-            fraction.append(denominador)
-            return(fraction)
-        if(iteracao==1000):
-            fraction.append(numerador/denominador)
-            return(fraction)
+        iteration_count += 1
+        print_debug()
+        integer_part = int(numerator / denominator)
+        print_debug(f"integer_part : {integer_part}")
+        previous_numerator = numerator
+        numerator = denominator
+        print_debug(f"numerator : {numerator}")
+        denominator = previous_numerator - integer_part * denominator
+        print_debug(f"denominator : {denominator}")
+        fraction.append(integer_part)
+        if denominator == 0:
+            return fraction
+        if numerator == 1:
+            fraction.append(denominator)
+            return fraction
+        if iteration_count == ITERATION_LIMIT:
+            fraction.append(numerator // denominator)
+            print_debug("iteration limit reached, stopping")
+            return fraction
 
 
 def main() -> None:
     while True:
-        modo=choose_from_options("modo de conversão:",["fração continua para numero","numero para fração continua"],mode="number")
-        if(modo):
-            modo=choose_from_options("tipo do numero",["decimal","fração","raizes quadradas"],mode="number")
-            if(modo==0):
-                valor=pegaFloat("digite um valor decimal")
-                resultado=decimalToFraction(valor)
-            elif(modo==1):
-                numerador=pegaInteiro("digite o numerador")
-                denominador=pegaInteiro("digite o denominador")
-                resultado=fracaoToFraction(numerador,denominador)
-            elif(modo==2):
-                modo=choose_from_options("modo de raiz:",["simples","complexo"],mode="number") + 2
-                raizes=pegaFloat("digite o numero dentro da raiz")
-                if(modo==3):
-                    numerador=pegaInteiro("digite o numero que somará a raiz")
-                    denominador=pegaInteiro("digite o denominador")
-        else:
-            fraction=listaDeInteiros()
-            resultado=fractionToNumber(fraction)
-        print(resultado)
+        user_input = choose_from_options(
+            "conversion type",
+            ["continued fraction to number", "number to continued fraction"],
+        )
+        if user_input == 0:
+            fraction = get_user_integers()
+            float_value = fraction_to_number(fraction)
+            print(float_value)
+            continue
+        user_input = choose_from_options(
+            "number type", ["decimal", "fraction", "square roots"]
+        )
+        if user_input == 0:
+            valor = get_user_float("enter a decimal value")
+            resultado = decimal_to_fraction(valor)
+            print(resultado)
+            continue
+        if user_input == 1:
+            numerator = get_user_integer("enter the numerator")
+            denominator = get_user_integer("enter the denominator")
+            resultado = fraction_to_continued(numerator, denominator)
+            print(resultado)
+            continue
+        user_input = choose_from_options("root mode:", ["simple", "complex"]) + 2
+        root_value = get_user_float("enter the number inside the root")
+        root_value = root_value * 1.0  # just to make sure it's a float
+        if user_input == 3:
+            numerator = get_user_integer(
+                "enter the number that will be added to the root"
+            )
+            denominator = get_user_integer("enter the denominator")
+        raise NotImplementedError("root modes are not implemented yet")
+        # TODO: implementar a função de raiz complexa
 
 
 if __name__ == "__main__":
