@@ -1,78 +1,37 @@
-from time import time
+# this script is to find numbers that can be expressed as the concatenation of two other numbers, where the first number is a perfect square and the second number is also a perfect square AND the number itself is also a perfect square. For example, 49 is 7 squared and can be expressed as 4 concatenated with 9, where 4 is a perfect square and 9 is also a perfect square.
 
-
-def print_elapsed_time(seconds: float) -> None:
-    if seconds < 0:
-        seconds = -seconds
-        sign = "-"
-    else:
-        sign = ""
-    total_ms = int(round(seconds * 1000))
-    ms = total_ms % 1000
-    total_s = total_ms // 1000
-    s = total_s % 60
-    total_min = total_s // 60
-    m = total_min % 60
-    total_h = total_min // 60
-    h = total_h % 24
-    d = total_h // 24
-    parts: list[str] = []
-
-    def add(value: int, singular: str, plural: str) -> None:
-        if value:
-            parts.append(f"{value} {singular if value == 1 else plural}")
-
-    add(d, "day", "days")
-    add(h, "hour", "hours")
-    add(m, "minute", "minutes")
-    add(s, "second", "seconds")
-    if ms or not parts:
-        parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(f"{sign}{', '.join(parts)}")
-
-
-def pos(a, pot):
-    respostas = []
-    a = a**pot
-    for b in range(1, a):
-        bPot = b**pot
-        textB = str(bPot)
-        for c in range(a):
-            cPot = c**pot
-            textC = str(cPot)
-            textNum = textB + textC
-            num = int(textNum)
-            if num > a:
+def find_power_concatenation_pairs(base_value: int, power: int) -> list[tuple[int, int]]:
+    results: list[tuple[int, int]] = []
+    target_value = base_value**power
+    for prefix_base in range(1, target_value):
+        prefix_value = prefix_base**power
+        prefix_text = str(prefix_value)
+        for suffix_base in range(target_value):
+            suffix_value = suffix_base**power
+            suffix_text = str(suffix_value)
+            candidate_text = prefix_text + suffix_text
+            candidate_value = int(candidate_text)
+            if candidate_value > target_value:
                 break
-            if num == a:
-                respostas.append((b, c))
-    return respostas
+            if candidate_value == target_value:
+                results.append((prefix_base, suffix_base))
+    return results
 
 
-def faz(limit, pot):
-    tempoRecorde = 0
-    for t in range(limit):
-        inicio = time()
-        num = pos(t, pot)
-        if num:
-            print(f"{t} : {t**pot}")
-            for resp in num:
-                print(f"{resp[0]},{resp[1]}")
-            print("")
-        fim = time()
-        duracao = fim - inicio
-        if duracao >= tempoRecorde:
-            print(f"{t} :")
-            print_elapsed_time(duracao)
-            tempoRecorde = duracao
-            resto = limit - t
-            print("falta :")
-            print_elapsed_time(duracao * resto)
+def calculate_and_print_results(iteration_limit: int, power: int) -> None:
+    for iteration in range(iteration_limit):
+        results = find_power_concatenation_pairs(iteration, power)
+        if not results:
+            continue
+        print(f"{iteration} : {iteration**power}")
+        for element_0, element_1 in results:
+            print(f"{element_0},{element_1}")
+        print("")
 
 
 
 def main() -> None:
-    faz(10000, 2)
+    calculate_and_print_results(10000, 2)
 
 
 if __name__ == "__main__":
