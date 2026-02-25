@@ -1,32 +1,49 @@
+from typing import Literal, overload
+
 from PIL import Image
 
-vermelho = (255, 0, 0, 255)
-azul = (0, 0, 255, 255)
-preto = (0, 0, 0, 255)
-cores = (vermelho, azul, preto)
+RED = (255, 0, 0, 255)
+BLUE = (0, 0, 255, 255)
+BLACK = (0, 0, 0, 255)
+COLORS = (RED, BLUE, BLACK)
 
 
-def acharCor(img, cor, excluir=False):
-    global preto
-    tamanho = img.size
-    larg, alt = tamanho
-    if excluir:
-        for x in range(larg):
-            for y in range(alt):
-                if img.getpixel((x, y)) == cor:
-                    img.putpixel((x, y), (0, 0, 0, 255))
-        return img
-    else:
-        for x in range(larg):
-            for y in range(alt):
-                if img.getpixel((x, y)) == cor:
-                    return (x, y)
-    return 0
+@overload
+def find_color(
+    image: Image.Image, cor: tuple[int, ...], should_exclude: Literal[True]
+) -> Image.Image: ...
 
 
-def captarSalvar(nome, img):
-    global cores
-    tamanho = img.size
+@overload
+def find_color(
+    image: Image.Image, cor: tuple[int, ...], should_exclude: Literal[False] = False
+) -> tuple[int, int]: ...
+
+
+def find_color(
+    image: Image.Image, cor: tuple[int, ...], should_exclude: bool = False
+) -> Image.Image | tuple[int, int]:
+    global BLACK
+    width, height = image.size
+    if should_exclude:
+        for x in range(width):
+            for y in range(height):
+                if image.getpixel((x, y)) != cor:
+                    continue
+                image.putpixel((x, y), BLACK)
+        return image
+    for x in range(width):
+        for y in range(height):
+            if image.getpixel((x, y)) == cor:
+                return (x, y)
+    return (0, 0)
+
+
+def captarSalvar(
+    name: str, image: Image.Image
+) -> tuple[tuple[int, int], tuple[int, int]]:
+    global COLORS
+    tamanho = image.size
     larg, alt = tamanho
     down = 0
     right = 0
@@ -34,7 +51,7 @@ def captarSalvar(nome, img):
     left = larg
     for x in range(larg):
         for y in range(alt):
-            if img.getpixel((x, y)) in (cores):
+            if image.getpixel((x, y)) in (COLORS):
                 if y < up:
                     up = y
                 if y > down:
@@ -43,8 +60,8 @@ def captarSalvar(nome, img):
                     left = x
                 if x > right:
                     right = x
-    img = img.crop((left, up, right + 1, down + 1))
-    img.save(nome)
+    image = image.crop((left, up, right + 1, down + 1))
+    image.save(name)
     return ((left, up), (right, down))
 
 
@@ -60,17 +77,16 @@ def main() -> None:
     newTamanho = 11
     meio = int(newTamanho / 2 + 1)
     curvaNova = Image.new("RGBA", (newTamanho, newTamanho))
-    curvaNova.putpixel((meio, meio - 1), azul)
-    curvaNova.putpixel((meio, meio), preto)
-    curvaNova.putpixel((meio, meio + 1), vermelho)
+    curvaNova.putpixel((meio, meio - 1), BLUE)
+    curvaNova.putpixel((meio, meio), BLACK)
+    curvaNova.putpixel((meio, meio + 1), RED)
     captarSalvar("curva0.png", curvaNova)
     for numeroCurva in range(0, 10):
         nome = f"curva{numeroCurva}.png"
         curvaAtual = open_image_as_rgba(nome)
-        larg, alt = curvaAtual.size
         newTamanho = newTamanho * 2 - 1
         meio = int(newTamanho / 2 + 1)
-        azulComprimento, azulAltura = acharCor(curvaAtual, azul)
+        azulComprimento, azulAltura = find_color(curvaAtual, BLUE)
         print(f"{(azulAltura, azulComprimento)}")
         carimbo = curvaAtual.copy()
         carimbo = carimbo.convert("RGBA")
@@ -78,22 +94,22 @@ def main() -> None:
         curvaNova.paste(carimbo, (meio, meio))
         carimboRotate = carimbo.rotate(90, expand=True)
         carimboRotate = carimboRotate.convert("RGBA")
-        azulComprimentoRotate, azulAlturaRotate = acharCor(carimboRotate, azul)
+        azulComprimentoRotate, azulAlturaRotate = find_color(carimboRotate, BLUE)
         print(f"{(azulComprimentoRotate, azulAlturaRotate)}")
-        carimbo = acharCor(carimbo, azul, excluir=True)
-        carimboRotate = acharCor(carimboRotate, azul, excluir=True)
-        posicao = acharCor(curvaNova, vermelho)
+        carimbo = find_color(carimbo, BLUE, should_exclude=True)
+        carimboRotate = find_color(carimboRotate, BLUE, should_exclude=True)
+        posicao = find_color(curvaNova, RED)
         curvaNova.paste(
             carimboRotate,
             (posicao[0] - azulComprimentoRotate, posicao[1] - azulAlturaRotate),
             carimboRotate,
         )
-        curvaNova = acharCor(curvaNova, vermelho, excluir=True)
+        curvaNova = find_color(curvaNova, RED, should_exclude=True)
         curvaNova.paste(
             carimbo, (posicao[0] - azulComprimento, posicao[1] - azulAltura), carimbo
         )
-        posicao = acharCor(curvaNova, vermelho)
-        curvaNova = acharCor(curvaNova, vermelho, excluir=True)
+        posicao = find_color(curvaNova, RED)
+        curvaNova = find_color(curvaNova, RED, should_exclude=True)
         curvaNova.paste(
             carimboRotate,
             (posicao[0] - azulComprimentoRotate, posicao[1] - azulAlturaRotate),

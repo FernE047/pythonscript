@@ -1,3 +1,5 @@
+from typing import Literal, overload
+
 from PIL import Image
 
 vermelho = (255, 0, 0, 255)
@@ -7,7 +9,21 @@ cores = (vermelho, azul, preto)
 fracaoPerfeita = 80 / 32
 
 
-def acharCor(img, cor, excluir=False):
+@overload
+def acharCor(
+    img: Image.Image, cor: tuple[int, ...], excluir: Literal[False] = False
+) -> tuple[int, int]: ...
+
+
+@overload
+def acharCor(
+    img: Image.Image, cor: tuple[int, ...], excluir: Literal[True]
+) -> Image.Image: ...
+
+
+def acharCor(
+    img: Image.Image, cor: tuple[int, ...], excluir: bool = False
+) -> Image.Image | tuple[int, int]:
     global preto
     tamanho = img.size
     larg, alt = tamanho
@@ -22,10 +38,10 @@ def acharCor(img, cor, excluir=False):
             for y in range(alt):
                 if img.getpixel((x, y)) == cor:
                     return (x, y)
-    return 0
+    return (0, 0)
 
 
-def captarSalvar(nome, img):
+def captarSalvar(nome: str, img: Image.Image) -> tuple[tuple[int, int], tuple[int, int]]:
     global cores
     tamanho = img.size
     larg, alt = tamanho
@@ -69,7 +85,6 @@ def main() -> None:
     for numeroCurva in range(0, 15):
         nome = f"curva{numeroCurva}.png"
         curvaAtual = open_image_as_rgba(nome)
-        larg, alt = curvaAtual.size
         newTamanho = int(newTamanho * fracaoPerfeita)
         meio = int(newTamanho / 2 + 1)
         carimbo = curvaAtual.copy()
