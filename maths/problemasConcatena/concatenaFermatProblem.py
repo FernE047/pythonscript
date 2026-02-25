@@ -12,14 +12,15 @@ def find_power_concatenation_pairs(
     for cursor in range(1, len(target_text)):
         prefix_text = target_text[:cursor]
         prefix_value = int(prefix_text)
-        prefix_base = int(prefix_value ** (1 / power))
+        inverse_power = 1 / power
+        prefix_base = int(prefix_value**inverse_power)
         if prefix_base**power != prefix_value:
             continue
         suffix_text = target_text[cursor:]
         suffix_value = int(suffix_text)
         if str(prefix_value) + str(suffix_value) != target_text:
             continue
-        suffix_base = int(suffix_value ** (1 / power))
+        suffix_base = int(suffix_value**inverse_power)
         if suffix_base**power != suffix_value:
             continue
         results.append((prefix_base, suffix_base))
