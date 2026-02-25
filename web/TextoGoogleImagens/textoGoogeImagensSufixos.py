@@ -21,6 +21,7 @@ def limpa(sopa: bs4.ResultSet[bs4.element.Tag]) -> str:
     filtrado = "".join(ch for ch in raw if ch in allowed or ch.isspace())
     return tiraEspaco(filtrado)
 
+
 def conecta(site: str) -> requests.Response:
     siteBaguncado = requests.get(site)
     while siteBaguncado.status_code != requests.codes.ok:
@@ -107,7 +108,7 @@ def achaLetra(site):
 
 def baixaImagens(lyrics, titulo, adicao):
     total = len(lyrics)
-    titulo = f"{adicao[0]} {titulo} {adicao[1]}".proper().replace(" ","_")
+    titulo = f"{adicao[0]} {titulo} {adicao[1]}".title().replace(" ", "_")
     pasta = os.path.join("./", titulo)
     palavras = {}
     for number, palavra in enumerate(lyrics):
@@ -131,7 +132,9 @@ def baixaImagens(lyrics, titulo, adicao):
         imagens = os.listdir(os.path.join(pasta, palavra))
         for numero, nome in enumerate(imagens):
             nomeOriginal = os.path.join(os.path.join(pasta, palavra), nome)
-            nomeNovo = os.path.join(pasta, f"{lista[numero] + 1:03d}-{palavra.proper()}.png")
+            nomeNovo = os.path.join(
+                pasta, f"{lista[numero] + 1:03d}-{palavra.title()}.png"
+            )
             os.rename(nomeOriginal, nomeNovo)
         os.rmdir(os.path.join(pasta, palavra))
 
@@ -142,11 +145,8 @@ def fazDiretorio(diretorio):
 
 
 def novoSite(site):
-    informacao = siteProcura(
-        site, ".header_with_cover_art-primary_info-primary_artist"
-    )
+    informacao = siteProcura(site, ".header_with_cover_art-primary_info-primary_artist")
     return informacao[0].get("href")
-
 
 
 def main() -> None:
@@ -187,6 +187,7 @@ def main() -> None:
             print(site)
             lyrics = achaLetra(site)
         baixaImagens(lyrics, titulo, adicao)
+
 
 if __name__ == "__main__":
     main()

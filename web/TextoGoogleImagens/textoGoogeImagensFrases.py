@@ -107,7 +107,7 @@ def achaLetra(site):
 
 
 def baixaImagens(lyrics, titulo, adicao, tamanho):
-    titulo = f"{adicao[0]} {titulo} {str(tamanho)} {adicao[1]}".proper().replace(
+    titulo = f"{adicao[0]} {titulo} {str(tamanho)} {adicao[1]}".title().replace(
         " ", "_"
     )
     pasta = os.path.join("C:/", "pythonscript", "web", "TextoGoogleImagens", titulo)
@@ -155,10 +155,11 @@ def baixaImagens(lyrics, titulo, adicao, tamanho):
         nome = os.listdir(caminho)[0]
         nomeOriginal = os.path.join(caminho, nome)
         nomeNovo = os.path.join(
-            pasta, f"{n + 1:03d}-{frase.proper().replace(' ', '_')}.png"
+            pasta, f"{n + 1:03d}-{frase.title().replace(' ', '_')}.png"
         )
         os.rename(nomeOriginal, nomeNovo)
         os.rmdir(caminho)
+
 
 def fazDiretorio(diretorio):
     diretorio = f"C:/pythonscript/EARWORM/{diretorio}"
@@ -168,7 +169,6 @@ def fazDiretorio(diretorio):
 def novoSite(site):
     informacao = siteProcura(site, ".header_with_cover_art-primary_info-primary_artist")
     return informacao[0].get("href")
-
 
 
 def main() -> None:
@@ -212,6 +212,7 @@ def main() -> None:
         sufixo = input()
         adicao = [prefixo, sufixo]
         baixaImagens(lyrics, titulo, adicao, tamanho)
+
 
 if __name__ == "__main__":
     main()
