@@ -17,8 +17,8 @@ def generate_next_term(term: str) -> str:
     if len(term) <= 1:
         return term
     digits = list(term)
-    for digit1, digit2 in zip(digits[:-1], digits[1:]):
-        sum_digits = int(digit1) + int(digit2)
+    for digit_1, digit_2 in zip(digits[:-1], digits[1:]):
+        sum_digits = int(digit_1) + int(digit_2)
         double_digit = str(sum_digits)
         result.append(double_digit)
     if not (result):
@@ -27,7 +27,7 @@ def generate_next_term(term: str) -> str:
     return term
 
 
-def fazMensagem(test_number: int, terms_list: list[str]) -> None:
+def display_message(test_number: int, terms_list: list[str]) -> None:
     print(f"\n{test_number} reaches an end in {len(terms_list) - 1} steps")
     print(",".join(terms_list))
 
@@ -43,7 +43,7 @@ def print_results(terms_list: list[str], test_number: int, mode: str, is_success
         if mode == "4":
             if str(test_number) != terms_list[-1]:
                 return result_count
-        fazMensagem(test_number, terms_list)
+        display_message(test_number, terms_list)
         result_count += 1
         return result_count
     if mode == "0":
