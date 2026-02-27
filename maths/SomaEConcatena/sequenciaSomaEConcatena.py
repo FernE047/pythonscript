@@ -68,11 +68,10 @@ def main() -> None:
         user_input = input()
         if user_input == "5":
             break
+        steps = 0
         if user_input == "3":
             print("How many steps?")
             steps = int(input())
-        else:
-            steps = 0
         if user_input == "1":
             print("With terms or without? [1/0]")
             steps = input()
