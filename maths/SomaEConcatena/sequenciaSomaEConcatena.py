@@ -1,95 +1,94 @@
-def chegaAFim(termo,limite):
-    termos=[termo]
-    while(len(termo)<limite):
-        termo=proximoTermo(termo)
-        if(termo in termos):
-            termos.append(termo)
-            break
-        else:
-            termos.append(termo)
-    if(len(termo)>limite):
-        return([False,termos])
-    else:
-        return([True,termos])
+ITERATION_LIMIT = 100
 
-def proximoTermo(termo):
-    resultado=[]
-    if(len(termo)<=1):
-        return(termo)
-    for indice in range(len(termo)-1):
-        digito1=termo[indice]
-        digito2=termo[indice+1]
-        soma=int(digito1)+int(digito2)
-        bidigito=str(soma)
-        resultado.append(bidigito)
-    if(not(resultado)):
-        resultado=[termo]
-    termo="".join(resultado)
-    return(termo)
 
-def fazMensagem(numeroTeste,termos):
-    print(f"\n{numeroTeste} chega a um fim em {len(termos)-1} passos")
-    print(",".join(termos))
+def validate_sequence_termination(current_term: str) -> tuple[bool, list[str]]:
+    terms_list: list[str] = [current_term]
+    while True:
+        current_term = generate_next_term(current_term)
+        terms_list.append(current_term)
+        if current_term in terms_list[:-1]:
+            return (True, terms_list)
+        if len(current_term) > ITERATION_LIMIT:
+            return (False, terms_list)
 
-def imprime(termos,numeroTeste,modo,sucesso,passos):
-    global quantia
-    if(sucesso):
-        if(modo!="1"):
-            if(modo=="3"):
-                if(len(termos)-1==passos):
-                    fazMensagem(numeroTeste,termos)
-                    quantia+=1
-            else:
-                if(modo=="4"):
-                    if(str(numeroTeste)==termos[-1]):
-                        fazMensagem(numeroTeste,termos)
-                        quantia+=1
-                else:
-                    fazMensagem(numeroTeste,termos)
-                    quantia+=1
-    else:
-        if(modo=="0"):
-            print(f"{numeroTeste} estorou o limite:")
-            print(",".join(termos))
-            quantia+=1
-        elif(modo=="1"):
-            if(passos=="1"):
-                print(f"{numeroTeste}:")
-                print(",".join(termos))
-                quantia+=1
-            else:
-                print(f"{numeroTeste}")
-                quantia+=1
+
+def generate_next_term(term: str) -> str:
+    result: list[str] = []
+    if len(term) <= 1:
+        return term
+    digits = list(term)
+    for digit1, digit2 in zip(digits[:-1], digits[1:]):
+        sum_digits = int(digit1) + int(digit2)
+        double_digit = str(sum_digits)
+        result.append(double_digit)
+    if not (result):
+        result = [term]
+    term = "".join(result)
+    return term
+
+
+def fazMensagem(test_number: int, terms_list: list[str]) -> None:
+    print(f"\n{test_number} reaches an end in {len(terms_list) - 1} steps")
+    print(",".join(terms_list))
+
+
+def print_results(terms_list: list[str], test_number: int, mode: str, is_successful: bool, steps: int|str) -> int:
+    result_count = 0
+    if is_successful:
+        if mode == "1":
+            return result_count
+        if mode == "3":
+            if len(terms_list) - 1 != steps:
+                return result_count
+        if mode == "4":
+            if str(test_number) != terms_list[-1]:
+                return result_count
+        fazMensagem(test_number, terms_list)
+        result_count += 1
+        return result_count
+    if mode == "0":
+        print(f"{test_number} exceeded the limit:")
+        print(",".join(terms_list))
+        result_count += 1
+    if mode == "1":
+        print(f"{test_number}")
+        if steps == "1":
+            print(",".join(terms_list))
+        result_count += 1
+    return result_count
 
 
 def main() -> None:
-    limite=100
-    quantia=0
+    steps: int|str
+    result_count = 0
     while True:
-        print("qual será o modo?")
-        print("0 - tudo\n1 - apenas estouros\n2 - sem estouros\n3 - apenas passos\n4 - final esperado\n5 - finalização")
-        modo=input()
-        if(modo=="5"):
+        print(
+            "Choose an option:\n0 - all\n1 - only overflows\n2 - no overflows\n3 - only steps\n4 - expected final\n5 - exit"
+        )
+        user_input = input()
+        if user_input == "5":
             break
-        if(modo=="3"):
-            print("quantos passos?")
-            passos=int(input())
+        if user_input == "3":
+            print("How many steps?")
+            steps = int(input())
         else:
-            passos=0
-        if(modo=="1"):
-            print("com termos ou sem? [1/0]")
-            passos=input()
-        print("procurar até quanto?")
-        final=int(input())
-        for numeroTeste in range(final+1):
+            steps = 0
+        if user_input == "1":
+            print("With terms or without? [1/0]")
+            steps = input()
+        print("Search up to what number?")
+        search_limit = int(input())
+        for current_number in range(search_limit + 1):
             try:
-                termo=str(numeroTeste)
-                sucesso,termos=chegaAFim(termo,limite)
-                imprime(termos,numeroTeste,modo,sucesso,passos)
-                numeroTeste+=1
-            except:
-                print(f"{numeroTeste}")
-        print(f"quantidade total {quantia}")
+                current_term = str(current_number)
+                is_successful, terms_list = validate_sequence_termination(current_term)
+                result_count += print_results(
+                    terms_list, current_number, user_input, is_successful, steps
+                )
+                current_number += 1
+            except Exception:
+                print(f"{current_number}")
+        print(f"Total quantity : {result_count}")
 
 
 if __name__ == "__main__":
