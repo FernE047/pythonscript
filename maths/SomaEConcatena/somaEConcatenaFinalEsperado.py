@@ -1,52 +1,54 @@
-def chegaAFim(termo,limite):
-    termos=[termo]
-    while(len(termo)<limite):
-        termo=proximoTermo(termo)
-        if(termo in termos):
-            termos.append(termo)
-            break
-        else:
-            termos.append(termo)
-    if(len(termo)>=limite):
-        return([False,termos])
-    else:
-        return([True,termos])
+ITERATION_LIMIT = 100
 
-def proximoTermo(termo):
-    resultado=[]
-    if(len(termo)<=1):
-        return(termo)
-    for indice in range(len(termo)-1):
-        digito1=termo[indice]
-        digito2=termo[indice+1]
-        soma=int(digito1)+int(digito2)
-        bidigito=str(soma)
-        resultado.append(bidigito)
-    if(not(resultado)):
-        resultado=[str(numeroTeste)]
-    termo="".join(resultado)
-    return(termo)
 
-def fazMensagem(numeroTeste,termos):
-    print(f"\n{numeroTeste} chega a um fim em {len(termos)-1} passos")
-    print(",".join(termos))
+def validate_sequence_termination(
+    number_test: int, term: str, limit: int
+) -> tuple[bool, list[str]]:
+    terms_list = [term]
+    while True:
+        term = generate_next_term(number_test, term)
+        terms_list.append(term)
+        if term in terms_list[:-1]:
+            return (True, terms_list)
+        if len(term) >= limit:
+            return (False, terms_list)
+
+
+def generate_next_term(number_test: int, term: str) -> str:
+    result: list[str] = []
+    if len(term) <= 1:
+        return term
+    digits = list(term)
+    for digit_1, digit_2 in zip(digits[:-1], digits[1:]):
+        sum_of_digits = int(digit_1) + int(digit_2)
+        digit_sum = str(sum_of_digits)
+        result.append(digit_sum)
+    if not (result):
+        return str(number_test)
+    return "".join(result)
+
+
+def print_result(test_number: int, results_list: list[str]) -> None:
+    print(f"\n{test_number} succeeded in {len(results_list) - 1} steps")
+    print(", ".join(results_list))
 
 
 def main() -> None:
-    limite=100
+    iteration_limit = ITERATION_LIMIT
     while True:
-        modo="4"
-        numeroTeste=0
+        test_number = 0
         while True:
             try:
-                termo=str(numeroTeste)
-                sucesso,termos=chegaAFim(termo,limite)
-                if(str(numeroTeste)==termos[-1]):
-                    print(f"\n{numeroTeste} chega a um fim em {len(termos)-1} passos")
-                    print(",".join(termos))
-                numeroTeste+=1
-            except:
-                print(f"{numeroTeste}")
+                current_term = str(test_number)
+                _, result_terms = validate_sequence_termination(
+                    test_number, current_term, iteration_limit
+                )
+                if str(test_number) == result_terms[-1]:
+                    print_result(test_number, result_terms)
+                test_number += 1
+            except KeyboardInterrupt:
+                print(f"execution stopped at {test_number}")
+                return
 
 
 if __name__ == "__main__":
