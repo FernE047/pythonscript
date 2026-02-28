@@ -23,7 +23,7 @@ def generate_next_term(number_test: int, term: str) -> str:
         sum_of_digits = int(digit_1) + int(digit_2)
         digit_sum = str(sum_of_digits)
         result.append(digit_sum)
-    if not (result):
+    if not result:
         return str(number_test)
     return "".join(result)
 

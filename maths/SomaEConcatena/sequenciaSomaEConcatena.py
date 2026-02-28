@@ -21,7 +21,7 @@ def generate_next_term(term: str) -> str:
         sum_digits = int(digit_1) + int(digit_2)
         double_digit = str(sum_digits)
         result.append(double_digit)
-    if not (result):
+    if not result:
         result = [term]
     term = "".join(result)
     return term
