@@ -37,46 +37,50 @@ def main() -> None:
     start_time = time.time()
     end_time = time.time()
     real_time = end_time - start_time
-    level_board = 0  # limite:270 2 cores
+    level_board = 0  # limit:270 2 cores
     while True:
         start_time = time.time()
         shared_board = 8 * level_board + 8
         total_board = 9 * level_board + 9
         total = [1, 0, 0, 0, 0]
-        filas = [0, 0, 0, 0, 0]
-        for pecasFora in range(4):
-            for pecasDentro in range(1, 5 - pecasFora):
-                filas[pecasFora] = compute_repetitions(level_board + 1, pecasDentro)
+        pieces_in_rows = [0, 0, 0, 0, 0]
+        for pieces_outside in range(4):
+            for pieces_inside in range(1, 5 - pieces_outside):
+                pieces_in_rows[pieces_outside] = compute_repetitions(
+                    level_board + 1, pieces_inside
+                )
         shared_minus: list[int] = []
-        for espacosOcupados in range(shared_board + 1):
+        for occupied_spaces in range(shared_board + 1):
             shared_minus.append(0)
-            for pecas in range(1, 5):
-                shared_minus[espacosOcupados] += compute_repetitions(
-                    total_board - espacosOcupados, pecas
+            for pieces in range(1, 5):
+                shared_minus[occupied_spaces] += compute_repetitions(
+                    total_board - occupied_spaces, pieces
                 )
 
         # 1 color calculus
 
-        for pecas in range(1, 5):
-            total[1] += compute_repetitions(total_board, pecas)
+        for pieces in range(1, 5):
+            total[1] += compute_repetitions(total_board, pieces)
 
         # 2 color calculus
 
-        for ocuppied in range(5):
-            for pecas in range(ocuppied, 5):
-                mult = 1
-                mult *= space_piece(ocuppied, pecas)
-                mult *= compute_combinations(shared_board, pecas)
-                mult *= shared_minus[ocuppied]
-                mult *= filas[4 - ocuppied] + 1
-                total[2] += mult
+        for occupied in range(5):
+            for pieces in range(occupied, 5):
+                color_combination_multiplier = 1
+                color_combination_multiplier *= space_piece(occupied, pieces)
+                color_combination_multiplier *= compute_combinations(
+                    shared_board, pieces
+                )
+                color_combination_multiplier *= shared_minus[occupied]
+                color_combination_multiplier *= pieces_in_rows[4 - occupied] + 1
+                total[2] += color_combination_multiplier
 
         # 3 color calculus
 
-        # Apresentação
+        # Presentation
         print(f"\nlevel: {level_board}")
-        for elemento in total:
-            print(f"{elemento}")
+        for element in total:
+            print(f"{element}")
         end_time = time.time()
         real_time = end_time - start_time
         print(f"{real_time} seconds")
