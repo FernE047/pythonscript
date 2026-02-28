@@ -1,62 +1,56 @@
 from random import randint
-from time import time
 
-def proximo(numero):
-    global POT
-    global tamanhoSeed
-    proximo=numero**POT
-    proximoLista=list(str(proximo))
-    while(len(proximoLista)>tamanhoSeed):
-        proximoLista.pop()
-    return(int("".join(proximoLista)))
-    
+POWER = 5
+SEED_SIZE = 4
+PERCENTAGE_THRESHOLD = 1
 
-def imprime(num):
-    global tamanhoSeed
-    global indice
-    formato=f"{0:0{tamanhoSeed}d}"
-    print(f"{formato.format(indice)} : {num}")
 
-def chance(casos):
-    global repeticao
-    LIMITE=1
-    retorno=False
-    valores=[0 for a in range(casos)]
-    for elemento in repeticao:
-        valores[elemento%casos]+=1
+def calculate_next_seed(current_seed: int) -> int:
+    next_seed = current_seed**POWER
+    next_list = list(str(next_seed))
+    while len(next_list) > SEED_SIZE:
+        next_list.pop()
+    return int("".join(next_list))
+
+
+def print_details(num: int, indice: int) -> None:
+    print(f"{indice:0{SEED_SIZE}d} : {num}")
+
+
+def evaluate_probability(seed_index: int, seed_history: list[int]) -> bool:
+    frequency_count = [0 for _ in range(seed_index)]
+    for seed_number in seed_history:
+        frequency_count[seed_number % seed_index] += 1
     print("")
-    print(f"chance de {casos} : ")
-    for valor,quant in enumerate(valores):
-        if(quant!=0):
-            porc=quant*100/len(repeticao)
-            print(f"{valor} : {porc}%")
-            if(porc<=LIMITE):
-                retorno=True
-    return(retorno)
+    print(f"{seed_index} probability : ")
+    for index, quantity in enumerate(frequency_count):
+        if quantity != 0:
+            percentage = quantity * 100 / len(seed_history)
+            print(f"{index} : {percentage}%")
+            if percentage <= PERCENTAGE_THRESHOLD:
+                return True
+    return False
 
 
 def main() -> None:
-    POT=5
-    tamanhoSeed=4
-    seed=randint(10**(tamanhoSeed-1),10**tamanhoSeed-1)
-    indice=0
-    imprime(seed)
-    num=proximo(seed)
-    indice+=1
-    imprime(num)
-    repeticao=[seed,num]
+    initial_seed = randint(10 ** (SEED_SIZE - 1), 10**SEED_SIZE - 1)
+    index = 0
+    print_details(initial_seed, index)
+    current_seed = calculate_next_seed(initial_seed)
+    index += 1
+    print_details(current_seed, index)
+    seed_history = [initial_seed, current_seed]
     while True:
-        indice+=1
-        num=proximo(num)
-        imprime(num)
-        if(num in repeticao):
+        index += 1
+        current_seed = calculate_next_seed(current_seed)
+        print_details(current_seed, index)
+        if current_seed in seed_history:
             break
         else:
-            repeticao.append(num)
-    for a in range(1,len(repeticao)):
-        if(chance(a)):
+            seed_history.append(current_seed)
+    for seed_index in range(1, len(seed_history)):
+        if evaluate_probability(seed_index, seed_history):
             break
-        
 
 
 if __name__ == "__main__":
