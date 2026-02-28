@@ -1,23 +1,28 @@
 import os
+from typing import Generator
 
-def walkTree(diretorio=""):
-    if diretorio == "":
-        diretorio = os.getcwd()
-    files = os.listdir(diretorio)
+# this script will search for all .py files in the current directory and its subdirectories, and print their paths and the total count of .py files found.
+
+
+def traverse_directory(directory_path: str = "") -> Generator[str]:
+    if directory_path == "":
+        directory_path = os.getcwd()
+    files = os.listdir(directory_path)
     for folder in files:
-        if os.path.isdir(f"{diretorio}/{folder}"):
-            for arquivo in walkTree(f"{diretorio}/{folder}"):
-                yield arquivo
-        else:
-            yield f"{diretorio}/{folder}"
+        current_path = f"{directory_path}/{folder}"
+        if not os.path.isdir(current_path):
+            yield current_path
+            continue
+        for file_path in traverse_directory(current_path):
+            yield file_path
 
 
 def main() -> None:
-    files = []
-    for arquivo in walkTree():
-        if arquivo.find(".py")!= -1:
-            files.append(arquivo)
-            print(arquivo)
+    files: list[str] = []
+    for file_path in traverse_directory():
+        if file_path.find(".py") != -1:
+            files.append(file_path)
+            print(file_path)
     print(len(files))
 
 
