@@ -1,99 +1,100 @@
+# it gives option for bigger android patterns, but right now it only works for 3x3, because we only implemented one middle slot rules
 
-def qualGrau(board):
-    grau=0
-    for n in board:
-        if(n):
-            grau+=1
-    return grau
+ALLOW_PRINT = False
+TOTAL_SLOTS = 9
+SLOTS_PER_LINE = 3
+MINIMAL_CONFIGURATION_DEGREE = 4
+MIDDLE_SLOTS = (4,)
+EDGE_SLOTS = (1, 3, 5, 7)
+CORNER_SLOTS = (0, 2, 6, 8)
+EMPTY_SLOT = 0
+HORIZONTAL_SYMMETRY = (2, 0, 8, 6)
+VERTICAL_SYMMETRY = (6, 8, 0, 2)
+OBSTACLES = ((1, 3), (1, 5), (7, 3), (7, 5))
+CORNER_SYMMETRY_MAP = {0: 0, 2: 1, 6: 2, 8: 3}
 
-def copiaLista(lista):
-    listaNova=[]
-    for n in lista:
-        listaNova.append(n)
-    return listaNova
 
-def identificaCanto(canto):
-    if(canto==0):
-        return 0
-    elif(canto==2):
-        return 1
-    elif(canto==6):
-        return 2
-    elif(canto==8):
-        return 3
+def calculate_configuration_degree(configuration_grid: list[int]) -> int:
+    configuration_degree = 0
+    for cell_value in configuration_grid:
+        if cell_value != 0:
+            configuration_degree += 1
+    return configuration_degree
 
-def imprimeBoard(board):
-    for n in range(9):
-        print(str(board[n]),end="")
-        if (n%3==2):
-            print("")
 
-def possivel(board,ultimo,proximo):
-    if(board[proximo]):
+def is_corner(corner_index: int) -> int:
+    return CORNER_SYMMETRY_MAP.get(corner_index, -1)
+
+
+def render_board(configuration_grid: list[int]) -> None:
+    board = ""
+    for index, cell_value in enumerate(configuration_grid):
+        board += str(cell_value)
+        if index % SLOTS_PER_LINE == SLOTS_PER_LINE - 1:
+            board += "\n"
+    print(board)
+
+
+def is_move_valid(
+    configuration_grid: list[int], last_move: int, proposed_move: int
+) -> bool:
+    if configuration_grid[proposed_move]:
         return False
-    if(ultimo==proximo):
+    if last_move == proposed_move:
         return False
-    if((proximo==4)or(ultimo==4)):
+    if (proposed_move in MIDDLE_SLOTS) or (last_move in MIDDLE_SLOTS):
         return True
-    oposto=(8,7,6,5,4,3,2,1,0)
-    if(proximo in (1,3,5,7)):
-        if(board[4]):
+    opposite_positions = tuple(reversed(range(TOTAL_SLOTS)))
+    if proposed_move in EDGE_SLOTS:
+        if configuration_grid[4] == EMPTY_SLOT:
             return True
-        elif(ultimo==oposto[proximo]):
-            return False
-        else:
-            return True
-    else:
-        if(ultimo in (1,3,5,7)):
-            return True
-        elif(ultimo==oposto[proximo]):
-            if(board[4]):
-                return True
-            else:
-                return False
-        else:
-            horizontal=(2,0,8,6)
-            vertical=(6,8,0,2)
-            obstaculos=((1,3),(1,5),(7,3),(7,5))
-            cantoDestino=identificaCanto(proximo)
-            if(ultimo==vertical[cantoDestino]):
-                if(board[obstaculos[cantoDestino][1]]):
-                    return True
-                else:
-                    return False
-            elif(ultimo==horizontal[cantoDestino]):
-                if(board[obstaculos[cantoDestino][0]]):
-                    return True
-                else:
-                    return False        
-    
-def calcula(board,ultimo,total,imp):
-    grau=qualGrau(board)
-    if(grau>=4):
-        total+=1
-        if(imp):
-            imprimeBoard(board)
-            print(total)
-            print("")
-    if(grau==9):
-        return(total)
-    for n in range(9):
-        if(possivel(board,ultimo,n)):
-            newBoard=copiaLista(board)
-            newBoard[n]=grau+1
-            total=calcula(newBoard,n,total,imp)
-    return(total)
+        return last_move != opposite_positions[proposed_move]
+    if last_move in EDGE_SLOTS:
+        return True
+    if last_move == opposite_positions[proposed_move]:
+        return configuration_grid[4] == EMPTY_SLOT
+    cantoDestino = is_corner(proposed_move)
+    if last_move == VERTICAL_SYMMETRY[cantoDestino]:
+        obstacle = OBSTACLES[cantoDestino][1]
+        return configuration_grid[obstacle] != EMPTY_SLOT
+    if last_move == HORIZONTAL_SYMMETRY[cantoDestino]:
+        obstacle = OBSTACLES[cantoDestino][0]
+        return configuration_grid[obstacle] != EMPTY_SLOT
+    return True
+
+
+def count_valid_configurations(
+    configuration_grid: list[int], last_index: int, valid_configuration_count: int
+) -> int:
+    configuration_degree = calculate_configuration_degree(configuration_grid)
+    if configuration_degree >= MINIMAL_CONFIGURATION_DEGREE:
+        valid_configuration_count += 1
+        if ALLOW_PRINT:
+            render_board(configuration_grid)
+            print(f"{valid_configuration_count}\n")
+    if configuration_degree == TOTAL_SLOTS:
+        return valid_configuration_count
+    for slot_index in range(TOTAL_SLOTS):
+        if not is_move_valid(configuration_grid, last_index, slot_index):
+            continue
+        updated_configuration = configuration_grid.copy()
+        updated_configuration[slot_index] = configuration_degree + 1
+        valid_configuration_count = count_valid_configurations(
+            updated_configuration, slot_index, valid_configuration_count
+        )
+    return valid_configuration_count
 
 
 def main() -> None:
-    total=0
-    for n in range(9):
-        boardOriginal=[0,0,0,0,0,0,0,0,0]
-        boardOriginal[n]=1
-        imp=False
-        total=calcula(boardOriginal,n,total,imp)
-        print(n)
-    print(str(total))
+    valid_configuration_count = 0
+    for slot_position in range(TOTAL_SLOTS):
+        password_configuration = [EMPTY_SLOT] * TOTAL_SLOTS
+        password_configuration[slot_position] = 1
+        valid_configuration_count = count_valid_configurations(
+            password_configuration, slot_position, valid_configuration_count
+        )
+        print(slot_position)
+    print(str(valid_configuration_count))
 
 
 if __name__ == "__main__":
