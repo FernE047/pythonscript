@@ -1,81 +1,86 @@
-from time import time
 import shelve
+from typing import cast
+from censoPokemon import PokemonData
+
+ALL_TYPES = (
+    "Normal",
+    "Fire",
+    "Water",
+    "Grass",
+    "Ice",
+    "Dark",
+    "Steel",
+    "Electric",
+    "Fighting",
+    "Poison",
+    "Ground",
+    "Flying",
+    "Psychic",
+    "Bug",
+    "Rock",
+    "Ghost",
+    "Dragon",
+    "Fairy",
+)
+COLLECTED_CATEGORIES = (
+    "male_rate",
+    "female_rate",
+    "height",
+    "weight_lbs",
+    "weight_kg",
+    "capture_rate",
+    "base_egg_steps",
+    "is_alolan",
+    "quantia_tipo",
+    "genderless",
+    "is_mega",
+)
 
 
 def main() -> None:
-    with shelve.open("BDPokemonNoDetails") as dados:
-        tiposCat = [
-            "Normal",
-            "Fire",
-            "Water",
-            "Grass",
-            "Ice",
-            "Dark",
-            "Steel",
-            "Electric",
-            "Fighting",
-            "Poison",
-            "Ground",
-            "Flying",
-            "Psychic",
-            "Bug",
-            "Rock",
-            "Ghost",
-            "Dragon",
-            "Fairy",
-        ]
-        soma = {}
-        soma["type"] = {}
-        for tipo in tiposCat:
-            soma["type"][tipo] = 0
-        categorias = [
-            "male rate",
-            "female rate",
-            "height",
-            "weight lbs",
-            "weight kg",
-            "capture rate",
-            "base egg steps",
-            "alola",
-            "quantia tipo",
-            "genderless",
-            "mega",
-        ]
+    with shelve.open("BDPokemonNoDetails") as database:
+        counters: dict[str, float] = {}
+        type_counters: dict[str, int] = {}
+        for pkm_type in ALL_TYPES:
+            type_counters[pkm_type] = 0
         total = 0
-        for cat in categorias:
-            soma[cat] = 0
-        for chaves in dados:
+        for category in COLLECTED_CATEGORIES:
+            counters[category] = 0.0
+        for chaves in database:
             total += 1
-            pokemon = dados[chaves]
-            # print(f"{chaves} : {pokemon}")
-            tipos = pokemon["tipo"]
-            for tipo in tipos:
-                soma["type"][tipo] += 1
-            soma["quantia tipo"] += len(tipos)
-            for cat in categorias[2:-4]:
-                soma[cat] += pokemon[cat]
-            if pokemon["male rate"] == -1:
-                soma["genderless"] += 1
+            pokemon = cast(PokemonData, database[chaves])
+            types = pokemon["type"]
+            for pkm_type in types:
+                type_counters[pkm_type] += 1
+            counters["quantia_tipo"] += len(types)
+            for category in COLLECTED_CATEGORIES[2:-4]:
+                counters[category] += pokemon[category]  # type: ignore
+            if pokemon["male_rate"] == -1:
+                counters["genderless"] += 1
             else:
-                soma["male rate"] += pokemon["male rate"]
-                soma["female rate"] += pokemon["female rate"]
-            if pokemon["alola"]:
-                soma["alola"] += 1
-            if pokemon["mega"]:
-                soma["mega"] += 1
-        print(f"male rate : {soma['male rate'] / (total - soma['genderless'])}")
+                counters["male_rate"] += pokemon["male_rate"]
+                counters["female_rate"] += pokemon["female_rate"]
+            if pokemon["is_alolan"]:
+                counters["is_alolan"] += 1
+            if pokemon["is_mega"]:
+                counters["is_mega"] += 1
+        print(f"male_rate : {counters['male_rate'] / (total - counters['genderless'])}")
         print(
-            f"female rate : {soma['female rate'] / (total - soma['genderless'])}"
+            f"female_rate : {counters['female_rate'] / (total - counters['genderless'])}"
         )
-        for cat in categorias[2:-3]:
-            print(f"{cat} : {soma[cat] / total}")
+        for category in COLLECTED_CATEGORIES[2:-3]:
+            print(f"{category} : {counters[category] / total}")
         print("")
-        for tipo in tiposCat:
-            porcentagem = soma["type"][tipo] * 100 / total
-            print(f"{tipo} : {porcentagem}%")
-        print(f"\ngenderless : {soma['genderless'] * 100 / total}%")
-        print(f"\nalola : {soma['alola'] * 100 / (total - soma['alola'])}%")
-        print(f"\nmega : {soma['mega'] * 100 / (total - soma['mega'])}%")
+        for pkm_type in ALL_TYPES:
+            porcentagem = type_counters[pkm_type] * 100 / total
+            print(f"{pkm_type} : {porcentagem}%")
+        print(f"\ngenderless : {counters['genderless'] * 100 / total}%")
+        print(
+            f"\nis_alolan : {counters['is_alolan'] * 100 / (total - counters['is_alolan'])}%"
+        )
+        print(
+            f"\nis_mega : {counters['is_mega'] * 100 / (total - counters['is_mega'])}%"
+        )
         print(f"\ntotal : {total}")
 
 
