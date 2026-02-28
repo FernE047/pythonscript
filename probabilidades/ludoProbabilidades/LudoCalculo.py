@@ -1,82 +1,85 @@
 import time
 
-#common function
+# incomplete code, only adding type hints and Englishirizing everything
 
-def fat(m):
-    res=1
-    if(m>0):
-        for n in range(m,0,-1):
-            res*=n
-    return(res)
-        
-def C(trajeto,pecas):
-    num=fat(trajeto)
-    den=fat(pecas)*fat(trajeto-pecas)
-    return(int(num/den))
-
-def Crep(trajeto,pecas):
-    novoTrajeto=trajeto+pecas-1
-    Total=C(novoTrajeto,pecas)
-    return(Total)
-
-def SpacePiece(space,piece):
-    Total=Crep(space,piece-space)
-    return(Total)
+# common function
 
 
+def calculate_factorial(value: int) -> int:
+    factorial_result = 1
+    if value > 0:
+        for current_number in range(value, 0, -1):
+            factorial_result *= current_number
+    return factorial_result
+
+
+def compute_combinations(path_length: int, game_pieces: int) -> int:
+    numerator_combinations = calculate_factorial(path_length)
+    denominator_combinations = calculate_factorial(game_pieces) * calculate_factorial(
+        path_length - game_pieces
+    )
+    return int(numerator_combinations / denominator_combinations)
+
+
+def compute_repetitions(path_length: int, game_pieces: int) -> int:
+    total_steps_in_game = path_length + game_pieces - 1
+    total = compute_combinations(total_steps_in_game, game_pieces)
+    return total
+
+
+def space_piece(space: int, piece: int) -> int:
+    total = compute_repetitions(space, piece - space)
+    return total
 
 
 def main() -> None:
-    #common variables and constants
 
-    startTime=time.time()
-    endTime=time.time()
-    realTime=endTime-startTime
-    levelBoard=0                    #limite:270 2 cores
+    start_time = time.time()
+    end_time = time.time()
+    real_time = end_time - start_time
+    level_board = 0  # limite:270 2 cores
     while True:
-        startTime=time.time()
-        sharedBoard=8*levelBoard+8
-        totalBoard=9*levelBoard+9
-        Total=[1,0,0,0,0]
-        filas=[0,0,0,0,0]
+        start_time = time.time()
+        shared_board = 8 * level_board + 8
+        total_board = 9 * level_board + 9
+        total = [1, 0, 0, 0, 0]
+        filas = [0, 0, 0, 0, 0]
         for pecasFora in range(4):
-            for pecasDentro in range(1,5-pecasFora):
-                filas[pecasFora]=Crep(levelBoard+1,pecasDentro)
-        sharedMinus=[]
-        for espacosOcupados in range(sharedBoard+1):
-            sharedMinus.append(0)
-            for pecas in range(1,5):
-                sharedMinus[espacosOcupados]+=Crep(totalBoard-espacosOcupados,pecas)
+            for pecasDentro in range(1, 5 - pecasFora):
+                filas[pecasFora] = compute_repetitions(level_board + 1, pecasDentro)
+        shared_minus: list[int] = []
+        for espacosOcupados in range(shared_board + 1):
+            shared_minus.append(0)
+            for pecas in range(1, 5):
+                shared_minus[espacosOcupados] += compute_repetitions(
+                    total_board - espacosOcupados, pecas
+                )
 
-    #1 color calculus
+        # 1 color calculus
 
-        for pecas in range(1,5):
-            Total[1]+=Crep(totalBoard,pecas)
+        for pecas in range(1, 5):
+            total[1] += compute_repetitions(total_board, pecas)
 
-    #2 color calculus
+        # 2 color calculus
 
         for ocuppied in range(5):
-            for pecas in range(ocuppied,5):
-                mult=1
-                mult*=SpacePiece(ocuppied,pecas)
-                mult*=C(sharedBoard,pecas)
-                mult*=sharedMinus[ocuppied]
-                mult*=filas[4-ocuppied]+1
-                Total[2]+=mult
+            for pecas in range(ocuppied, 5):
+                mult = 1
+                mult *= space_piece(ocuppied, pecas)
+                mult *= compute_combinations(shared_board, pecas)
+                mult *= shared_minus[ocuppied]
+                mult *= filas[4 - ocuppied] + 1
+                total[2] += mult
 
-    #3 color calculus
+        # 3 color calculus
 
-        
-
-
-            
-    # Apresentação
-        print(f"\nlevel: {levelBoard}")
-        for elemento in Total:
+        # Apresentação
+        print(f"\nlevel: {level_board}")
+        for elemento in total:
             print(f"{elemento}")
-        endTime=time.time()
-        realTime=endTime-startTime
-        print(f"{realTime}")
+        end_time = time.time()
+        real_time = end_time - start_time
+        print(f"{real_time} seconds")
 
 
 if __name__ == "__main__":
