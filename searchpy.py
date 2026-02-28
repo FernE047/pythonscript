@@ -6,8 +6,11 @@ from typing import Generator
 
 def traverse_directory(directory_path: str = "") -> Generator[str]:
     if directory_path == "":
-        directory_path = os.getcwd()
-    files = os.listdir(directory_path)
+        directory_path = os.getcwd().replace("\\", "/")
+    try:
+        files = os.listdir(directory_path)
+    except PermissionError:
+        return
     for folder in files:
         current_path = f"{directory_path}/{folder}"
         if not os.path.isdir(current_path):
@@ -20,7 +23,7 @@ def traverse_directory(directory_path: str = "") -> Generator[str]:
 def main() -> None:
     files: list[str] = []
     for file_path in traverse_directory():
-        if file_path.find(".py") != -1:
+        if file_path.endswith(".py"):
             files.append(file_path)
             print(file_path)
     print(len(files))
