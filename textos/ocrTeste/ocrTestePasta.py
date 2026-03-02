@@ -1,8 +1,13 @@
-import pytesseract as ocr
+# pytesseract doesn't have type hints, so we ignore it
+import pytesseract as ocr  # type: ignore
 import time
 import os
 
 from PIL import Image
+
+IMAGE_FOLDER = "images"
+WHITESPACES = [" ", "\n", "\t"]
+
 
 
 def print_elapsed_time(seconds: float) -> None:
@@ -35,11 +40,11 @@ def print_elapsed_time(seconds: float) -> None:
     print(f"{sign}{', '.join(parts)}")
 
 
-def tiraEspaçoBranco(texto: str) -> str:
-    for espaco in [" ", "\n", "\t"]:
-        if espaco in texto:
-            texto = texto.replace(espaco, "")
-    return texto
+def remove_whitespace(raw_text: str) -> str:
+    for whitespace_char in WHITESPACES:
+        if whitespace_char in raw_text:
+            raw_text = raw_text.replace(whitespace_char, "")
+    return raw_text
 
 
 def open_image(image_path: str) -> Image.Image:
@@ -49,21 +54,23 @@ def open_image(image_path: str) -> Image.Image:
 
 
 def main() -> None:
-    start = time.time()
-    directory = ""
-    pasta = os.path.join(directory, "PAPPDF", "PDFJaFeitos", "pasadeira Croche Candy")
-    imagens = os.listdir()
-    imagens = [os.path.join(pasta, arquivo) for arquivo in os.listdir(pasta)]
-    for imagem in imagens:
-        print(f"\n{imagem}")
-        phrase = ocr.image_to_string(open_image(imagem), lang="por")
-        phraseBonita = tiraEspaçoBranco(phrase)
+    start_time = time.time()
+    images = os.listdir()
+    images = [
+        os.path.join(IMAGE_FOLDER, arquivo) for arquivo in os.listdir(IMAGE_FOLDER)
+    ]
+    for image in images:
+        print(f"\n{image}")
+        phrase = ocr.image_to_string(open_image(image), lang="por")
+        if not isinstance(phrase, str):
+            continue
+        formatted_phrase = remove_whitespace(phrase)
         print(f"{len(phrase)}")
-        print(f"{len(phraseBonita)}\n")
-        print(phraseBonita)
-    final = time.time()
-    print("demorou ")
-    print_elapsed_time(final - start)
+        print(f"{len(formatted_phrase)}\n")
+        print(formatted_phrase)
+    final_time = time.time()
+    print_elapsed_time(final_time - start_time)
+
 
 
 if __name__ == "__main__":
