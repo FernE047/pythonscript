@@ -5,6 +5,10 @@ import time
 
 # this script is based on a game I used to play. The idea is to find the longest search term that has more results than the previous one. For example, if you start with "a", it will check "a ", "aA", "aB", ..., "aZ", "aa", "ab", ..., and so on, until it finds a term that has fewer results than the previous one. Then it will return the longest term found.
 
+GOOGLE_URL = "https://www.google.com.br/search?q="
+RESULTS_TAG = "#resultStats"
+POSSIBLE_CHARS = tuple(" ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
+
 
 def connect(url: str) -> requests.Response:
     response = requests.get(url)
@@ -13,17 +17,15 @@ def connect(url: str) -> requests.Response:
     return response
 
 
-def fetch_site_data(url: str, css_selector: str) -> bs4.ResultSet[bs4.element.Tag]:
+def fetch_site_data(url: str) -> bs4.ResultSet[bs4.element.Tag]:
     response = connect(url)
     site_soup = bs4.BeautifulSoup(response.text, features="html.parser")
-    tags = site_soup.select(css_selector)
+    tags = site_soup.select(RESULTS_TAG)
     return tags
 
 
 def get_search_results_count(search_query: str) -> int:
-    fetched_data = fetch_site_data(
-        f"https://www.google.com.br/search?q={search_query}", "#resultStats"
-    )
+    fetched_data = fetch_site_data(f"{GOOGLE_URL}{search_query}")
     result_count_regex = re.compile(r"\d{1,3}")
     raw_result_text = fetched_data[0].getText()
     if raw_result_text:
@@ -33,9 +35,7 @@ def get_search_results_count(search_query: str) -> int:
 
 
 def find_longest_term(search_term: str, current_longest_count: int = 0) -> None:
-    possible_search_chars = list(
-        " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-    )
+    possible_search_chars = POSSIBLE_CHARS
     search_results_count: list[int] = []
     max_results_index = 0
     for char in possible_search_chars:
