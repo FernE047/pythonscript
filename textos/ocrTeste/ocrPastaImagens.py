@@ -1,4 +1,5 @@
-import pytesseract as ocr
+# pytesseract doesn't have type hints, so we ignore it
+import pytesseract as ocr  # type: ignore
 import numpy as np
 import cv2
 import time
@@ -6,14 +7,20 @@ import os
 
 from PIL import Image
 
+IMAGE_FOLDER = "images"
+WHITESPACES = [" ", "\n", "\t"]
+ALLOWED_FILE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".bmp", ".gif")
+LANGUAGE = "eng"
+
 
 def get_image_from_folder(image_category: str) -> list[str]:
-    folder = f"imagens/{image_category}"
+    folder = f"{IMAGE_FOLDER}/{image_category}"
     images: list[str] = []
-    if os.path.exists(folder):
-        for filename in os.listdir(folder):
-            if filename.lower().endswith((".png", ".jpg", ".jpeg", ".bmp", ".gif")):
-                images.append(os.path.join(folder, filename))
+    if not os.path.exists(folder):
+        return images
+    for filename in os.listdir(folder):
+        if filename.lower().endswith(ALLOWED_FILE_EXTENSIONS):
+            images.append(os.path.join(folder, filename))
     return images
 
 
@@ -55,45 +62,46 @@ def open_image_as_rgb(image_path: str) -> Image.Image:
         return image_in_memory
 
 
-def melhora(img):
-    imagem = open_image_as_rgb(img)
-    npimagem = np.asarray(imagem).astype(np.uint8)
-    npimagem[:, :, 0] = 0
-    npimagem[:, :, 2] = 0
-    im = cv2.cvtColor(npimagem, cv2.COLOR_RGB2GRAY)
-    ret, thresh = cv2.threshold(im, 127, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-    binimagem = Image.fromarray(thresh)
-    return binimagem
+def enhance_image(image_name: str) -> Image.Image:
+    image = open_image_as_rgb(image_name)
+    np_image = np.asarray(image).astype(np.uint8)
+    np_image[:, :, 0] = 0
+    np_image[:, :, 2] = 0
+    im = cv2.cvtColor(np_image, cv2.COLOR_RGB2GRAY)
+    _, thresh = cv2.threshold(im, 127, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+    bin_image = Image.fromarray(thresh)
+    return bin_image
 
 
-def tiraEspaçoBranco(texto: str) -> str:
-    for espaco in [" ", "\n", "\t"]:
+def remove_whitespace(texto: str) -> str:
+    for espaco in WHITESPACES:
         if espaco in texto:
             texto = texto.replace(espaco, "")
     return texto
 
 
 def main() -> None:
-    start = time.time()
-    print("digite um assunto")
-    assunto = input()
-    print("quantas imagens ler?")
+    start_time = time.time()
+    print(f"enter the sub_folder name in '{IMAGE_FOLDER}' folder:")
+    sub_folder = input()
+    print("how many images to read?")
     user_input = input()
     try:
         quantity = int(user_input)
-        imagens = get_image_from_folder(assunto)[:quantity]
+        images = get_image_from_folder(sub_folder)[:quantity]
     except ValueError:
-        imagens = get_image_from_folder(assunto)
-    for imagem in imagens:
-        print(f"\n{imagem}")
-        imagem = melhora(imagem)
-        phrase = ocr.image_to_string(imagem, lang="eng")
-        phraseBonita = tiraEspaçoBranco(phrase)
-        print(f"{len(phraseBonita)}\n")
-        print(phraseBonita)
-    final = time.time()
-    print("demorou ")
-    print_elapsed_time(final - start)
+        images = get_image_from_folder(sub_folder)
+    for image_name in images:
+        print(f"\n{image_name}")
+        image = enhance_image(image_name)
+        phrase = ocr.image_to_string(image, lang=LANGUAGE)
+        if not isinstance(phrase, str):
+            continue
+        formatted_phrase = remove_whitespace(phrase)
+        print(f"{len(formatted_phrase)}\n")
+        print(formatted_phrase)
+    final_time = time.time()
+    print_elapsed_time(final_time - start_time)
 
 
 if __name__ == "__main__":
