@@ -73,11 +73,11 @@ def enhance_image(image_name: str) -> Image.Image:
     return bin_image
 
 
-def remove_whitespace(texto: str) -> str:
-    for espaco in WHITESPACES:
-        if espaco in texto:
-            texto = texto.replace(espaco, "")
-    return texto
+def remove_whitespace(input_text: str) -> str:
+    for whitespace_character in WHITESPACES:
+        if whitespace_character in input_text:
+            input_text = input_text.replace(whitespace_character, "")
+    return input_text
 
 
 def main() -> None:
