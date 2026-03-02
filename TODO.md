@@ -10,19 +10,19 @@
 - [x] shelve.open(...) with context manager in all scripts too :o
 - [x] and MULTIPROCESSING POOL :v
 - [x] use f-strings everywhere instead of string concatenation
-- [ ] Start using pathlib for path handling
 - [x] Fix all linter errors and warnings (19k+)
 - [x] Add type annotations everywhere
-- [ ] Constants for magic numbers/strings
 - [x] Improve variable and function names by using underline_case
 - [ ] Translate filenames to English: git mv galore :v
 - [ ] Improve README.md to have all projects documented properly
 - [ ] Separate different projects into different folders
 - [ ] Rename files to main.py where applicable
-- [ ] Make all code run faster
 - [ ] Add project description
 - [ ] Add usage instructions
 - [ ] Create .examples
+- [ ] Make all code run faster
+- [ ] Start using pathlib for path handling
+- [ ] Constants for magic numbers/strings
 - [ ] Better .gitignore global and local (venv, pycache, dist, build, etc.)
 - [ ] Add requirements.txt
 - [ ] Celebrate by buying ice cream :D
