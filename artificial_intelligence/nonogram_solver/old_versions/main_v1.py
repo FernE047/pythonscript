@@ -279,7 +279,7 @@ def solve_board(
     return None
 
 
-def solve_piccross_board(
+def solve_nonogram_board(
     board: BoardData,
     hints: HintsData,
     time_counter: TimeCounter,
@@ -312,8 +312,8 @@ def main() -> None:
     time_counter = TimeCounter()
     attempt_counter = AttemptCounter()
     for index in range(8):
-        with open(f"piccross/A{index:03d}.txt") as piccross_file:
-            config = piccross_file.read()
+        with open(f"nonogram/A{index:03d}.txt") as nonogram_file:
+            config = nonogram_file.read()
         horizontal_hints_lines, vertical_hints_lines = config.split("#")
         horizontal_hints: HintAxysData = [
             [int(n) for n in hint.split()]
@@ -327,12 +327,12 @@ def main() -> None:
         for _ in vertical_hints:
             board.append([0 for _ in horizontal_hints])
         all_hints: HintsData = (horizontal_hints, vertical_hints)
-        solution_board = solve_piccross_board(
+        solution_board = solve_nonogram_board(
             board, all_hints, time_counter, attempt_counter
         )
         time_counter.print_elapsed_time()
         if solution_board is not None:
-            save_board_image(solution_board, f"piccross/A{index:03d}")
+            save_board_image(solution_board, f"nonogram/A{index:03d}")
     time_counter.print_elapsed_time()
 
 

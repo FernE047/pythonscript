@@ -158,7 +158,7 @@ def save_board_image(board: BoardData, filename: str) -> None:
     image.close()
 
 
-def solve_piccross_board(game: GameData, time_manager: TimeManager) -> BoardData:
+def solve_nonogram_board(game: GameData, time_manager: TimeManager) -> BoardData:
     print()
     time_manager.start()
     solution_board = solve_board(game)
@@ -187,8 +187,8 @@ def solve_piccross_board(game: GameData, time_manager: TimeManager) -> BoardData
 def main() -> None:
     time_manager = TimeManager()
     for index in range(8):
-        with open(f"piccross/A{index:03d}.txt") as piccross_file:
-            config = piccross_file.read()
+        with open(f"nonogram/A{index:03d}.txt") as nonogram_file:
+            config = nonogram_file.read()
         horizontal_hints_lines, vertical_hints_lines = config.split("#")
         horizontal_hints: HintAxysData = [
             [int(n) for n in hint.split()]
@@ -203,9 +203,9 @@ def main() -> None:
             board.append([0 for _ in horizontal_hints])
         all_hints: HintsData = (horizontal_hints, vertical_hints)
         game: GameData = (board, all_hints)
-        solution_board = solve_piccross_board(game, time_manager)
+        solution_board = solve_nonogram_board(game, time_manager)
         time_manager.print_elapsed_time(print_total=True)
-        save_board_image(solution_board, f"piccross/A{index:03d}")
+        save_board_image(solution_board, f"nonogram/A{index:03d}")
 
 
 if __name__ == "__main__":
