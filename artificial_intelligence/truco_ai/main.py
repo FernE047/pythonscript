@@ -1,6 +1,6 @@
 from typing import Literal
-from EstruturasBaralho import Deck
-from EstruturasBaralho import Card
+from truco_deck import Deck
+from truco_deck import Card
 from random import randint
 
 GameModeOptions = Literal["random", "highest"]
