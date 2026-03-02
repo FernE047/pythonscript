@@ -6,7 +6,7 @@ PERSON_1 = ""
 DATE_PATTERN = r"([0-3][0-9][/][0-1][0-9][/]20[21][09] [0-2][0-9][:][0-5][0-9])"
 
 
-def main() -> None:
+def extract_and_save_messages() -> None:
     message = ""
     with (
         open(INPUT_FILE, "r", encoding="utf-8") as input_file,
@@ -27,7 +27,3 @@ def main() -> None:
                 break
             word = word[1:] + letter
             message += letter
-
-
-if __name__ == "__main__":
-    main()

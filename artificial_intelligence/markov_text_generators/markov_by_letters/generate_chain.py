@@ -41,7 +41,7 @@ def update_chain_file(index: int, keyword: str) -> None:
     rename_file("chain/c.txt", f"chain/{index:03d}.txt")
 
 
-def main() -> None:
+def generate_character_chain() -> None:
     with open("clean_input.txt", "r", encoding="utf-8") as file:
         file.readline()
         for message in file.readlines():
@@ -67,7 +67,3 @@ def main() -> None:
                     update_chain_file(index + 1, f"{character} {next_character}")
                     if next_character == EMPTY_CHAR:
                         break
-
-
-if __name__ == "__main__":
-    main()
