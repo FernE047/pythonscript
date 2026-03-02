@@ -181,7 +181,7 @@ def solve_single_board(board: BoardData, time_manager: TimeManager) -> None:
     counter_manager.display()
 
 
-def main() -> None:
+def solver_no_ui() -> None:
     time_manager = TimeManager()
     filenames = os.listdir("sudokus")
     for filename in filenames:
@@ -190,7 +190,3 @@ def main() -> None:
             board = create_sudoku_board(sudoku_board_raw.read())
         solve_single_board(board, time_manager)
     time_manager.print_elapsed_time()
-
-
-if __name__ == "__main__":
-    main()

@@ -285,7 +285,7 @@ def solve_single_board(board: BoardData, time_manager: TimeManager) -> BoardData
     return solution_board
 
 
-def main() -> None:
+def solver_ui() -> None:
     while True:
         time_manager = TimeManager()
         mode = main_menu()
@@ -309,7 +309,3 @@ def main() -> None:
             board = create_sudoku_board_from_input()
             solve_single_board(board, time_manager)
             print_board(board)
-
-
-if __name__ == "__main__":
-    main()
