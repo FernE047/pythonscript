@@ -1,7 +1,12 @@
-import pytesseract as ocr
+# pytesseract doesn't have type hints, so we ignore it
+import pytesseract as ocr  # type: ignore
 import time
 import os
 from PIL import Image
+
+IMAGE_FOLDER = "jap"
+IMAGE_NAME = "1.png"
+LANGUAGE = "jp"
 
 
 def print_elapsed_time(seconds: float) -> None:
@@ -43,16 +48,14 @@ def open_image_as_rgba(image_path: str) -> Image.Image:
 
 
 def main() -> None:
-    start = time.time()
-    nome = os.path.join("jap", "1.png")
-    print(f"\n{nome}")
-    imagem = open_image_as_rgba(nome)
-    largura, altura = imagem.size
-    # phrase = ocr.image_to_string(imagem, lang="jp")
-    # print(phrase)
-    # final=time.time()
-    # print("demorou ")
-    # print_elapsed_time(final-start)
+    start_time = time.time()
+    image_name = os.path.join(IMAGE_FOLDER, IMAGE_NAME)
+    print(f"\n{image_name}")
+    image = open_image_as_rgba(image_name)
+    phrase = ocr.image_to_string(image, lang=LANGUAGE)
+    print(phrase)
+    final_time = time.time()
+    print_elapsed_time(final_time - start_time)
 
 
 if __name__ == "__main__":
