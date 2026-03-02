@@ -97,13 +97,9 @@ def generate_text(is_title: bool) -> str:
     return " ".join(words)
 
 
-def main() -> None:
+def generate_fanfiction() -> None:
     for _ in range(GENERATED_STORIES):
         generate_text(True)
         print(" : ", end="")
         generate_text(False)
         print("\n")
-
-
-if __name__ == "__main__":
-    main()

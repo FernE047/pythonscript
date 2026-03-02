@@ -104,7 +104,7 @@ def generate_word_chain(text: str) -> list[str]:
     return word_combinations
 
 
-def main() -> None:
+def generate_markov_chain() -> None:
     title_keywords: list[str] = []
     story_keywords: list[str] = []
     filenames = os.listdir("./FanficAnime/stories")
@@ -144,7 +144,3 @@ def main() -> None:
         elapsed_time = (finish_time - start_time) / total
         print(f"falta : {format_elapsed_time(elapsed_time * (total - quantity))}")
     print()
-
-
-if __name__ == "__main__":
-    main()

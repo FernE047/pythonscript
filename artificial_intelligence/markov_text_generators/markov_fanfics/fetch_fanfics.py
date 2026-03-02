@@ -50,7 +50,7 @@ def connect(url: str) -> requests.Response:
     return response
 
 
-def main() -> None:
+def fetch_and_save_fanfics() -> None:
     for category in FANFIC_CATEGORIES:
         url = f"https://www.spiritfanfiction.com/categorias/{category}?pagina="
         for pagina in range(1, MAX_PAGES + 1):
@@ -78,7 +78,3 @@ def main() -> None:
                     except IndexError as _:
                         pass
             time.sleep(SLEEP_BETWEEN_PAGES)
-
-
-if __name__ == "__main__":
-    main()
