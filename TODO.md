@@ -4,17 +4,17 @@
 - [x] Remove all self-made modules and replace them with in-file implementations
 - [x] Add if `__name__ == "__main__":` guards
 - [x] Replace file handling with context managers (with open(...) as f:)
-- [ ] Translate everything to English (search imagem for examples)
+- [x] Translate everything to English (search imagem for examples)
 - [x] Replace full paths with relative paths (search // or C:\ for examples)
 - [x] remove Image.open(...) and replace with context manager in all scripts
 - [x] shelve.open(...) with context manager in all scripts too :o
 - [x] and MULTIPROCESSING POOL :v
 - [x] use f-strings everywhere instead of string concatenation
 - [ ] Start using pathlib for path handling
-- [ ] Fix all linter errors and warnings (19k+)
-- [ ] Add type annotations everywhere
+- [x] Fix all linter errors and warnings (19k+)
+- [x] Add type annotations everywhere
 - [ ] Constants for magic numbers/strings
-- [ ] Improve variable and function names by using underline_case
+- [x] Improve variable and function names by using underline_case
 - [ ] Translate filenames to English: git mv galore :v
 - [ ] Improve README.md to have all projects documented properly
 - [ ] Separate different projects into different folders
