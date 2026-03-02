@@ -1,5 +1,12 @@
 from PIL import Image
-import os
+
+IMAGE_INPUT = "input.jpg"
+THRESHOLD = 20
+MAX_BRIGHTNESS = 255
+MAX_THRESHOLD = MAX_BRIGHTNESS * 3 - THRESHOLD
+HIGHLIGHT_COLOR = (0, 0, 0)
+BACKGROUND_COLOR = (255, 255, 255)
+IMAGE_OUTPUT = "output.jpg"
 
 
 def open_image_as_rgb(image_path: str) -> Image.Image:
@@ -11,21 +18,21 @@ def open_image_as_rgb(image_path: str) -> Image.Image:
 
 
 def main() -> None:
-    nome = "PAPPDF/PDFJaFeitos/pasadeira Croche Candy/2016-12-07-10-11-54.jpg"
-    print(nome)
-    imagem = open_image_as_rgb(nome)
-    width, height = imagem.size
-    imagemNew = imagem.copy()
-    tolerancia = 20
+    print(IMAGE_INPUT)
+    image = open_image_as_rgb(IMAGE_INPUT)
+    width, height = image.size
+    output_image = image.copy()
     for x in range(width):
         for y in range(height):
-            pixel = imagem.getpixel((x, y))
-            teste = pixel[0] + pixel[1] + pixel[2]
-            if teste >= (255 * 3 - tolerancia):
-                imagemNew.putpixel((x, y), (0, 0, 0))
+            pixel = image.getpixel((x, y))
+            if not isinstance(pixel, tuple) or len(pixel) != 3:
+                continue
+            color_intensity_sum = sum(pixel)
+            if color_intensity_sum >= MAX_THRESHOLD:
+                output_image.putpixel((x, y), HIGHLIGHT_COLOR)
             else:
-                imagemNew.putpixel((x, y), (255, 255, 255))
-    imagemNew.save("pictureTolerancia.jpg")
+                output_image.putpixel((x, y), BACKGROUND_COLOR)
+    output_image.save(IMAGE_OUTPUT)
 
 
 if __name__ == "__main__":
