@@ -1,48 +1,54 @@
-import os
+HTML_FILE = "mimimidias - Youtube.html"
+OUTPUT_FILE = "mimimidiasLINK.txt"
+NOT_ALLOWED_CHARS = (" ", "\n", "\t", '"')
+END_TITLE = '"'
+TITLE_TAG = "title="
+HREF_TAG = "href="
 
-def leLetra(arq):
-    return(arq.read(1))
+def read_char(html_content: list[str]) -> str:
+    return html_content.pop(0)
 
-def lePalavra(arq):
-    palavra=""
-    letra=leLetra(arq)
-    while(letra not in [" ","\n","\t",'"']):
-        palavra+=letra
-        letra=leLetra(arq)
-    return(palavra)
 
-def proximaOcorrencia(arq,ocorrencia):
-    palavra=lePalavra(arq)
-    while(palavra!=ocorrencia):
-        palavra=lePalavra(arq)
+def read_word(html_content: list[str]) -> str:
+    word = ""
+    char = read_char(html_content)
+    while char not in NOT_ALLOWED_CHARS:
+        word += char
+        char = read_char(html_content)
+    return word
 
-def leLinha(arq):
-    palavra=""
-    letra=leLetra(arq)
-    while(letra!="\n"):
-        palavra+=letra
-        letra=leLetra(arq)
-    return(palavra)
+
+def find_next_occurrence(html_content: list[str], search_term: str) -> None:
+    current_word = read_word(html_content)
+    while current_word != search_term:
+        current_word = read_word(html_content)
+
+
+def extract_title(html_content: list[str]) -> str:
+    title = ""
+    char = read_char(html_content)
+    while (char) and (char != END_TITLE):
+        title += char
+        char = read_char(html_content)
+    return title
 
 
 def main() -> None:
-    titulos=open("mimimidias - Youtube.html","r",encoding="utf8")
-    newTitulos=open("mimimidiasLINK.txt","w",encoding="utf8")
+    with open(HTML_FILE, "r", encoding="utf8") as html_file:
+        html_content = list(html_file.read())
+    titles: list[str] = []
     while True:
         try:
-            proximaOcorrencia(titulos,"title=")
-            proximaOcorrencia(titulos,"href=")
-            titulo=""
-            letra=leLetra(titulos)
-            while((letra)and(letra!='"')):
-                titulo+=letra
-                letra=leLetra(titulos)
-            print(titulo)
-            newTitulos.write(f"{titulo}\n")
-        except:
+            find_next_occurrence(html_content, TITLE_TAG)
+            find_next_occurrence(html_content, HREF_TAG)
+            title = extract_title(html_content)
+            print(title)
+            titles.append(title)
+        except Exception:
             break
-    newTitulos.close()
-    titulos.close()
+    with open(OUTPUT_FILE, "w", encoding="utf8") as title_file:
+        title_file.write("\n".join(titles))
+
 
 if __name__ == "__main__":
     main()
