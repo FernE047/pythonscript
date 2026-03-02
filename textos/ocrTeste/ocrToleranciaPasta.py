@@ -1,8 +1,18 @@
+# pytesseract doesn't have type hints, so we ignore it
+import pytesseract as ocr  # type: ignore
 from PIL import Image
 import os
-import pytesseract as ocr
 import time
 
+WHITESPACES = (" ", "\n", "\t")
+BRIGHTNESS = 255
+MAX_BRIGHTNESS = BRIGHTNESS * 3
+HIGHLIGHT_COLOR = (0, 0, 0)
+BACKGROUND_COLOR = (255, 255, 255)
+IMAGE_FOLDER = "images"
+OUTPUT_FILE = "output.txt"
+THRESHOLD_DEFAULT = 20
+LANGUAGE = "por"
 
 def print_elapsed_time(seconds: float) -> None:
     if seconds < 0:
@@ -34,11 +44,11 @@ def print_elapsed_time(seconds: float) -> None:
     print(f"{sign}{', '.join(parts)}")
 
 
-def tiraEspaçoBranco(texto: str) -> str:
-    for espaco in [" ", "\n", "\t"]:
-        if espaco in texto:
-            texto = texto.replace(espaco, "")
-    return texto
+def remove_whitespace(raw_text: str) -> str:
+    for whitespace in WHITESPACES:
+        if whitespace in raw_text:
+            raw_text = raw_text.replace(whitespace, "")
+    return raw_text
 
 
 def open_image_as_rgb(image_path: str) -> Image.Image:
@@ -49,42 +59,48 @@ def open_image_as_rgb(image_path: str) -> Image.Image:
         return image_in_memory
 
 
-def applyTolerancia(img, tolerancia):
-    imagem = open_image_as_rgb(img)
-    width, height = imagem.size
-    imagemNew = imagem.copy()
+def apply_threshold(image_path: str, threshold: int) -> Image.Image:
+    image = open_image_as_rgb(image_path)
+    width, height = image.size
+    thresholded_image = image.copy()
+    threshold_value = MAX_BRIGHTNESS - threshold
     for x in range(width):
         for y in range(height):
-            pixel = imagem.getpixel((x, y))
-            teste = pixel[0] + pixel[1] + pixel[2]
-            if teste >= (255 * 3 - tolerancia):
-                imagemNew.putpixel((x, y), (0, 0, 0))
+            pixel = image.getpixel((x, y))
+            if not isinstance(pixel, tuple) or len(pixel) < 3:
+                continue
+            pixel_sum = sum(pixel[:3])
+            if pixel_sum >= threshold_value:
+                thresholded_image.putpixel((x, y), HIGHLIGHT_COLOR)
             else:
-                imagemNew.putpixel((x, y), (255, 255, 255))
-    return imagemNew
-
+                thresholded_image.putpixel((x, y), BACKGROUND_COLOR)
+    return thresholded_image
 
 
 def main() -> None:
-    start = time.time()
-    with open("passadeira Candy.txt", "w", encoding="utf-8") as curso:
-        directory = ""
-        pasta = os.path.join(directory, "PAPPDF", "PDFJaFeitos", "pasadeira Croche Candy")
-        imagens = [os.path.join(pasta, arquivo) for arquivo in os.listdir(pasta)]
-        for imagem in imagens:
-            print(f"\n{imagem}")
-            startProcessing = time.time()
-            phrase = ocr.image_to_string(applyTolerancia(imagem, 20), lang="por")
-            phraseBonita = tiraEspaçoBranco(phrase)
-            endProcessing = time.time()
-            print(f"{len(phraseBonita)}")
-            print("procesamento: ")
-            print_elapsed_time(endProcessing - startProcessing)
-            print(phraseBonita)
-            curso.write(f"{phraseBonita}\n\n")
-        final = time.time()
+    start_time = time.time()
+    end_time = time.time()
+    instructions = ""
+    imagens = [os.path.join(IMAGE_FOLDER, arquivo) for arquivo in os.listdir(IMAGE_FOLDER)]
+    for imagem in imagens:
+        print(f"\n{imagem}")
+        processing_start_time = time.time()
+        better_image = apply_threshold(imagem, THRESHOLD_DEFAULT)
+        phrase = ocr.image_to_string(better_image, lang=LANGUAGE)
+        if not isinstance(phrase, str):
+            continue
+        formatted_phrase = remove_whitespace(phrase)
+        end_processing_time = time.time()
+        print(f"{len(formatted_phrase)}")
+        print("procesamento: ")
+        print_elapsed_time(end_processing_time - processing_start_time)
+        print(formatted_phrase)
+        instructions += f"{formatted_phrase}\n\n"
+    with open(OUTPUT_FILE, "w", encoding="utf-8") as output_file:
+        output_file.write(instructions)
+    end_time = time.time()
     print("demorou ")
-    print_elapsed_time(final - start)
+    print_elapsed_time(end_time - start_time)
 
 
 if __name__ == "__main__":
