@@ -3,137 +3,82 @@ import bs4
 import re
 import time
 
+# this script is based on a game I used to play. The idea is to find the lowest search term that has 0 results. For example, if you start with "a", it will check "a ", "aA", "aB", ..., "aZ", "aa", "ab", ..., and so on, until it finds a term that has 0 results. Then it will return the lowest term found.
 
-def conecta(site: str) -> requests.Response:
-    siteBaguncado = requests.get(site)
-    while siteBaguncado.status_code != requests.codes.ok:
-        siteBaguncado = requests.get(site)
-    return siteBaguncado
-
-
-def siteProcura(site: str, html: str) -> bs4.ResultSet[bs4.element.Tag]:
-    siteBaguncado = conecta(site)
-    siteSoup = bs4.BeautifulSoup(siteBaguncado.text, features="html.parser")
-    informacao = siteSoup.select(html)
-    return informacao
+GOOGLE_URL = "https://www.google.com.br/search?q="
+RESULTS_TAG = "#resultStats"
+POSSIBLE_CHARS = tuple("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
 
 
-def resultadosQuantia(termo):
-    informacao = siteProcura(
-        f"https://www.google.com.br/search?q={termo}", "#resultStats"
-    )
-    pegaNumero = re.compile(r"\d{1,3}")
-    textoMisturado = informacao[0].getText()
-    if textoMisturado:
-        numeroTexto = pegaNumero.findall(textoMisturado)
-        numero = int("".join(numeroTexto))
-    else:
-        numero = 0
-    print(numero)
-    return int(numero)
+def connect(url: str) -> requests.Response:
+    response = requests.get(url)
+    while response.status_code != requests.codes.ok:
+        response = requests.get(url)
+    return response
 
 
-def resultadosGoogle(search: str, adicao: str = "") -> bs4.ResultSet[bs4.element.Tag]:
-    musicaSearch = conecta(f"https://www.google.com.br/search?q={search}{adicao}")
-    musicaSearchSoup = bs4.BeautifulSoup(musicaSearch.text, features="html.parser")
-    informacao = musicaSearchSoup.select(".r")
-    return informacao
+def fetch_site_data(url: str) -> bs4.ResultSet[bs4.element.Tag]:
+    response = connect(url)
+    site_soup = bs4.BeautifulSoup(response.text, features="html.parser")
+    tags = site_soup.select(RESULTS_TAG)
+    return tags
 
 
-def encontrarZero(termo):
-    proxima = [
-        "A",
-        "B",
-        "C",
-        "D",
-        "E",
-        "F",
-        "G",
-        "H",
-        "I",
-        "J",
-        "K",
-        "L",
-        "M",
-        "N",
-        "O",
-        "P",
-        "Q",
-        "R",
-        "S",
-        "T",
-        "U",
-        "V",
-        "W",
-        "X",
-        "Y",
-        "Z",
-        "a",
-        "b",
-        "c",
-        "d",
-        "e",
-        "f",
-        "g",
-        "h",
-        "i",
-        "j",
-        "k",
-        "l",
-        "m",
-        "n",
-        "o",
-        "p",
-        "q",
-        "r",
-        "s",
-        "t",
-        "u",
-        "v",
-        "w",
-        "x",
-        "y",
-        "z",
-    ]
-    contagem = []
-    menor = 0
-    for letra in proxima:
-        contagem.append(0)
-    for letra in range(len(proxima)):
-        termo = list(termo)
-        termo.append(proxima[letra])
-        termo = str("".join(termo))
-        print(termo)
-        quantidade = resultadosQuantia(termo)
-        if quantidade == 0:
-            print("\n\n O Termo +termo+ tem 0 resultados")
-            return 0
-        else:
-            if quantidade == 1:
-                sites = resultadosGoogle(termo)
-                for site in sites:
-                    print(str(site))
-            contagem[letra] = quantidade
-            if quantidade <= contagem[menor]:
-                menor = letra
-        termo = list(termo)
-        del termo[(len(termo) - 1)]
-        termo = "".join(termo)
-    termo = list(termo)
-    termo.append(proxima[menor])
-    termo = str("".join(termo))
-    return encontrarZero(termo)
+def get_search_results_count(search_query: str) -> int:
+    fetched_data = fetch_site_data(f"{GOOGLE_URL}{search_query}")
+    result_count_regex = re.compile(r"\d{1,3}")
+    raw_result_text = fetched_data[0].getText()
+    if raw_result_text:
+        result_count_matches = result_count_regex.findall(raw_result_text)
+        return int("".join(result_count_matches))
+    return 0
 
+
+def fetch_google_results(search: str) -> bs4.ResultSet[bs4.element.Tag]:
+    response = connect(f"{GOOGLE_URL}{search}")
+    results = bs4.BeautifulSoup(response.text, features="html.parser")
+    search_results = results.select(".r")
+    return search_results
+
+
+def find_zero_search(search_term: str) -> None:
+    result_counts: list[int] = []
+    lowest_count_index = 0
+    for char in POSSIBLE_CHARS:
+        result_counts.append(0)
+    for char_index, char in enumerate(POSSIBLE_CHARS):
+        search_chars = list(search_term)
+        search_chars.append(char)
+        search_term = str("".join(search_chars))
+        print(search_term)
+        results_count = get_search_results_count(search_term)
+        if results_count == 0:
+            print(f"\n\n The Term {search_term} has 0 results")
+            return 
+        if results_count == 1:
+            urls = fetch_google_results(search_term)
+            for url in urls:
+                print(url)
+        result_counts[char_index] = results_count
+        if results_count <= result_counts[lowest_count_index]:
+            lowest_count_index = char_index
+        search_chars = list(search_term)
+        del search_chars[(len(search_chars) - 1)]
+        search_term = "".join(search_chars)
+    search_chars = list(search_term)
+    search_chars.append(POSSIBLE_CHARS[lowest_count_index])
+    search_term = str("".join(search_chars))
+    return find_zero_search(search_term)
 
 
 def main() -> None:
-    print("digite o termo de pesquisa")
-    termoInicial = input()
-    startTime = time.time()
-    encontrarZero(termoInicial)
-    endTime = time.time()
-    realTime = endTime - startTime
-    print(f"levou {realTime} segundos")
+    print("enter the initial term:")
+    initial_term = input()
+    start_time = time.time()
+    find_zero_search(initial_term)
+    end_time = time.time()
+    real_time = end_time - start_time
+    print(f"it took {real_time} seconds")
 
 
 if __name__ == "__main__":
