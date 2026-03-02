@@ -60,7 +60,7 @@ def get_filename() -> str:
     return filename
 
 
-def main() -> None:
+def generate_chain() -> None:
     filename = get_filename()
     with open(f"{filename}.txt", "r", encoding="UTF-8") as file:
         lines = file.readlines()[:-1]
@@ -94,7 +94,3 @@ def main() -> None:
         for index, quantity in enumerate(character_frequency_map):
             character_count_file.write(f"{index} ")
             character_count_file.write(f"{quantity}\n")
-
-
-if __name__ == "__main__":
-    main()

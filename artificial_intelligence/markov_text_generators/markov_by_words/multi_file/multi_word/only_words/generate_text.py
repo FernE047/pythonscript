@@ -55,11 +55,7 @@ def get_filename() -> str:
     return filename
 
 
-def main() -> None:
+def generate_text() -> None:
     filename = get_filename()
     for index in range(WORDS_GENERATED):
         print(f"{index} : {generate_word(filename)}")
-
-
-if __name__ == "__main__":
-    main()

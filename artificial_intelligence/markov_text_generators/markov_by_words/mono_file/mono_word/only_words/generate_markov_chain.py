@@ -106,7 +106,7 @@ def get_filename() -> str:
     return filename
 
 
-def main() -> None:
+def generate_chain() -> None:
     filename = get_filename()
     start_time = time()
     with open(f"{filename}.txt", "r", encoding="UTF-8") as file:
@@ -164,7 +164,3 @@ def main() -> None:
     print(word_length)
     end_time = time()
     print(format_elapsed_time(end_time - start_time))
-
-
-if __name__ == "__main__":
-    main()

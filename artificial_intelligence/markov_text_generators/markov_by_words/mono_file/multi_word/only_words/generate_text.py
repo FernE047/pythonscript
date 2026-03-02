@@ -53,11 +53,7 @@ def get_filename() -> str:
     return filename
 
 
-def main() -> None:
+def generate_text() -> None:
     filename = get_filename()
     for _ in range(WORDS_GENERATED):
         print(generate_word(f"{filename}/chain.txt"))
-
-
-if __name__ == "__main__":
-    main()

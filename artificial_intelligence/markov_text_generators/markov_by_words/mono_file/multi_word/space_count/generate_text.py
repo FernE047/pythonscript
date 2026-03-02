@@ -68,7 +68,7 @@ def get_filename() -> str:
     return filename
 
 
-def main() -> None:
+def generate_text() -> None:
     filename = get_filename()
     word_occurrence_map: list[int] = []
     with open(f"{filename}/c.txt", "r", encoding="UTF-8") as markov_chain_file:
@@ -87,7 +87,3 @@ def main() -> None:
         for b in range(word_quantities):
             generated_words.append(generate_word(f"{filename}/{b:03d}.txt"))
         print(" ".join(generated_words))
-
-
-if __name__ == "__main__":
-    main()

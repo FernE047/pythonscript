@@ -54,7 +54,7 @@ def get_filename() -> str:
     return filename
 
 
-def main() -> None:
+def generate_chain() -> None:
     filename = get_filename()
     with open(f"{filename}.txt", "r", encoding="UTF-8") as file:
         lines = file.readlines()
@@ -107,7 +107,3 @@ def main() -> None:
     with open(f"{filename}/c.txt", "w", encoding="UTF-8") as output_chain_file:
         for index, quantity in enumerate(word_frequency_map):
             output_chain_file.write(f"{index} {quantity}\n")
-
-
-if __name__ == "__main__":
-    main()
