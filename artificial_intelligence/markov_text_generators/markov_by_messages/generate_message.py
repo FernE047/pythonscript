@@ -39,10 +39,6 @@ def generate_message() -> str:
     return message
 
 
-def main() -> None:
+def generate_markov_messages() -> None:
     for index in range(WORDS_GENERATED):
         print(f"{index} : {generate_message()}")
-
-
-if __name__ == "__main__":
-    main()

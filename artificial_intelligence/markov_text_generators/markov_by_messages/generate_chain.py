@@ -39,7 +39,7 @@ def update_keyword_count(index: int, keywords: list[str]) -> None:
             file_write.write(f"{' '.join(keywords)} 1\n")
 
 
-def main() -> None:
+def generate_markov_chain() -> None:
     with open("sohMensagens.txt", "r", encoding="utf-8") as file:
         message = file.readline()
         while message:
@@ -60,7 +60,3 @@ def main() -> None:
                     if next_word == EMPTY_CHAR:
                         break
             message = file.readline()
-
-
-if __name__ == "__main__":
-    main()

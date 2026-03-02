@@ -7,7 +7,7 @@ MIN_WHATSAPP_MESSAGE_LENGTH = 16
 TABULATION_SPACES = 4
 
 
-def main() -> None:
+def fetch_messages() -> None:
     pattern = DATE_PATTERN
     message = ""
     with (
@@ -29,7 +29,3 @@ def main() -> None:
                 break
             word = word[1:] + letter
             message += letter
-
-
-if __name__ == "__main__":
-    main()
