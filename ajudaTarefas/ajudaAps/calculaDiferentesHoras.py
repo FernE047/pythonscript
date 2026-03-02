@@ -14,7 +14,7 @@ def get_integer_input(message: str) -> int:
         try:
             return int(input(f"{message}\n").strip())
         except ValueError:
-            pass
+            print("invalid input, try again")
 
 
 def prompt_for_yes_no(message: str) -> Literal["y", "n", "0"]:
