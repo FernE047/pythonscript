@@ -16,7 +16,7 @@ def open_image_as_rgba(image_path: str) -> Image.Image:
         return image_in_memory
 
 
-def main() -> None:
+def process_sprites() -> None:
     images = os.listdir(IMAGE_FOLDER)
     image_names = [os.path.join(IMAGE_FOLDER, image) for image in images]
     x_heat: list[int] = []
@@ -39,7 +39,3 @@ def main() -> None:
         database["x"] = x_heat
         database["y"] = y_heat
         database["z"] = z_heat
-
-
-if __name__ == "__main__":
-    main()

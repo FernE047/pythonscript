@@ -1,6 +1,6 @@
-#type: ignore
+# type: ignore
 
-#plt doesn't have good type hints for strict mode, so we ignore all type errors in this file
+# plt doesn't have good type hints for strict mode, so we ignore all type errors in this file
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -91,7 +91,7 @@ ALL_PLOT_COLORS = (
 )
 
 
-def main() -> None:
+def display_preprocessed_heatmap() -> None:
     with shelve.open("./dadosPreProcessados") as database:
         xHeat = database["x"]
         yHeat = database["y"]
@@ -141,7 +141,3 @@ def main() -> None:
         plt.xlabel("X Label")
         plt.ylabel("Y Label")
         plt.show()
-
-
-if __name__ == "__main__":
-    main()
