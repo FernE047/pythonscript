@@ -523,13 +523,3 @@ def get_greatest_2_and_3_factors(input_values: list[int]) -> int:
             break
         three_factor_exponent += 1
     return (2**two_factor_exponent) * (3**three_factor_exponent)
-
-
-def main() -> None:
-    for collatz_number in range(7):
-        print(f"\n\ncollatz {collatz_number}\n\n")
-        print(load_collatz(collatz_number))
-
-
-if __name__ == "__main__":
-    main()

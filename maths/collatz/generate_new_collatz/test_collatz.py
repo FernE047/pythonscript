@@ -1,6 +1,6 @@
 from typing import Callable
 
-from estruturas import load_collatz
+from structures import load_collatz
 
 
 def branching(current_value: int, collatz_level: int) -> None:

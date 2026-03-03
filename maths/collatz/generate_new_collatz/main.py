@@ -1,6 +1,6 @@
-from estruturas import load_collatz
-from estruturas import Collatz_Function
-from estruturas import Rule
+from structures import load_collatz
+from structures import Collatz_Function
+from structures import Rule
 from time import time
 
 
