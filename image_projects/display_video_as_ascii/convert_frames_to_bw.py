@@ -49,12 +49,8 @@ def frame_to_text(image: str) -> None:
     display_image.save(image)
 
 
-def main() -> None:
+def convert_frames_to_bw() -> None:
     frames_raw = os.listdir(FRAMES_FOLDER)
     frames = [f"{FRAMES_FOLDER}/{frame}" for frame in frames_raw]
     for frame in frames:
         frame_to_text(frame)
-
-
-if __name__ == "__main__":
-    main()

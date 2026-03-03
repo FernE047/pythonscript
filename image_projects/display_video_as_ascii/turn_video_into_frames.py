@@ -10,7 +10,7 @@ FFMPEG_PATH = "ffmpeg"
 FRAMES_TEMPLATE = f"thumb_%06d{EXTENSION_USED}"
 
 
-def main() -> None:
+def turn_video_into_frames() -> None:
     subprocess.run([FFMPEG_PATH, "-i", VIDEO_NAME, FRAMES_TEMPLATE, "-hide_banner"])
     print("Done, moving files...")
     frames_raw = os.listdir(FRAMES_FOLDER)
@@ -20,7 +20,3 @@ def main() -> None:
         if extension != EXTENSION_USED:
             continue
         shutil.move(frame, OUTPUT_FOLDER)
-
-
-if __name__ == "__main__":
-    main()

@@ -58,7 +58,7 @@ def frame_to_text(image: str) -> str:
     return image_text
 
 
-def main() -> None:
+def display_video() -> None:
     frames_raw = os.listdir(FRAMES_FOLDER)
     frames = [f"{FRAMES_FOLDER}/{frame}" for frame in frames_raw]
     for frame in frames:
@@ -67,7 +67,3 @@ def main() -> None:
         subprocess.run(CLEAR_COMMAND, shell=True)
         backspaces = backspace_count * "\b"
         print(f"{frame_text}{backspaces}", end="", flush=True)
-
-
-if __name__ == "__main__":
-    main()
