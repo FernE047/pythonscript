@@ -1,2 +1,4 @@
+# TODO:
+
  - optimize line sorting
  - make a better add background because of smudges

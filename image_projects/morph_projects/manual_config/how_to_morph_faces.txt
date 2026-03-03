@@ -1,1 +1,10 @@
-cabelo,orelha,testa, bochecha,labioSup,labioInf,queixo,narizAteTesta,olhos
+follow this sequence when morphing faces:
+
+1. hair
+2. ear
+3. cheeks
+4. superior lips
+5. inferior lips
+6. chin
+7. nose and forehead
+8. eyes
