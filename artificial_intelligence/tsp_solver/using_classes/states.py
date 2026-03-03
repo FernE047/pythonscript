@@ -1,5 +1,5 @@
 from typing import Any
-from artificialInteligence.TSP.comEstruturas.grafos import Graph
+from graphs import Graph
 
 SPACE_BETWEEN_STATES = 6
 

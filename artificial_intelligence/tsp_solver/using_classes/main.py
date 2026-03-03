@@ -1,6 +1,6 @@
-from grafos import Graph
-from grafos import get_graph_from_file
-from estados import State
+from graphs import Graph
+from graphs import get_graph_from_file
+from states import State
 
 
 GRAPH_EXAMPLE = [
