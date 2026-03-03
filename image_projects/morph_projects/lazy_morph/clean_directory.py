@@ -69,14 +69,10 @@ def save_layers(image_name: str) -> None:
     image.save(f"./{image_name}.png")
 
 
-def main() -> None:
+def clean_project_folder() -> None:
     print("ATTENTION THE FOLDER CONTENTS WILL BE DELETED !!!!!")
     input("Press Enter to continue... (ctrl + C to cancel)")
     clear_folder(FRAMES_FOLDER)
     clear_folder(RESIZED_FOLDER)
     save_layers("source")
     save_layers("target")
-
-
-if __name__ == "__main__":
-    main()

@@ -1,17 +1,22 @@
-import subprocess
-import gc
 from time import time
+from typing import Callable
+from clean_directory import clean_project_folder
+from generate_config import generate_config
+from recolor_frames import recolor_frames
+from morph import morph
+from correct_frames import correct_frames
+from generate_gif import generate_gif
 
 # esse algoritmo faz o morph completo
 
 EXECUTABLE = "python"
 STEPS = (
-    ("./preparaMorph.py ", "clean directory"),
-    ("./analisaEFazConfig.py ", "make configurations"),
-    ("./recolor.py ", "recolor"),
-    ("./morpher.py ", "make animations"),
-    ("./corrigeFrames.py ", "frame correction"),
-    ("./fazGif.py ", "make Gif"),
+    (clean_project_folder, "clean directory"),
+    (generate_config, "make configurations"),
+    (recolor_frames, "recolor"),
+    (morph, "make animations"),
+    (correct_frames, "frame correction"),
+    (generate_gif, "make Gif"),
 )
 
 
@@ -45,10 +50,10 @@ def print_elapsed_time(seconds: float) -> None:
     print(f"{sign}{', '.join(parts)}")
 
 
-def execute_process(command: str, name: str) -> None:
+def execute_process(command: Callable[[], None], name: str) -> None:
     print(f"starting {name}")
     start_time = time()
-    subprocess.call(f"{EXECUTABLE} {command}", shell=True)
+    command()
     end_time = time()
     elapsed_time = end_time - start_time
     print(f"\n{name} finished")
@@ -64,7 +69,6 @@ def main() -> None:
         end_time = time()
         elapsed_time = end_time - start_time
         print_elapsed_time(elapsed_time)
-        gc.collect()
 
 
 if __name__ == "__main__":

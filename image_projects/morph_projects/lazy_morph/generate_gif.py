@@ -28,7 +28,7 @@ def open_image(image_path: str) -> Image.Image:
         return image_in_memory
 
 
-def main() -> None:
+def generate_gif() -> None:
     frames = get_frames_from_folder(FRAMES_FOLDER)
     frames.remove(RESIZED_FOLDER)
     for filename in frames:
@@ -51,7 +51,3 @@ def main() -> None:
         for _ in range(ATTENTION_INTERVAL):
             colocaImagemNoGif(writer, last_frame)
     print("Gif created successfully!")
-
-
-if __name__ == "__main__":
-    main()

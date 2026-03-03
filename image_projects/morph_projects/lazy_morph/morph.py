@@ -118,11 +118,7 @@ def create_first_and_last_frames() -> None:
     move_image(TARGET_IMAGE, f"frame{FRAMES_TOTAL + 1:03d}.png")
 
 
-def main() -> None:
+def morph() -> None:
     create_first_and_last_frames()
     with multiprocessing.Pool(os.cpu_count()) as cpu_pool:
         cpu_pool.map(makeFrame, range(FRAMES_TOTAL))
-
-
-if __name__ == "__main__":
-    main()

@@ -493,7 +493,7 @@ class Area:
         return int(largest_size)
 
 
-def main() -> None:
+def generate_config() -> None:
     print("Fazendo Analise : ")
     initial_image = open_image_as_rgba(FIRST_IMAGE_PATH)
     initial_area = Area(initial_image)
@@ -502,7 +502,3 @@ def main() -> None:
     with open(CONFIG_FILE_PATH, "w", encoding="utf-8") as config_file:
         initial_area.write_region_data(last_area, config_file)
         print("\nAnalise Terminada : ")
-
-
-if __name__ == "__main__":
-    main()
