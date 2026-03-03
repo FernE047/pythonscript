@@ -1,5 +1,5 @@
 from process_sprite import process_sprites
-from display_heatmap import display_preprocessed_heatmap
+from display_heatmap import display_preprocessed_heatmap #type: ignore
 
 
 def main() -> None:
