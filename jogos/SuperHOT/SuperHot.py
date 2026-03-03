@@ -15,21 +15,21 @@ def main() -> None:
                     pyautogui.click(400, 400)
                     pyautogui.press("pause")
                     a = 1
-                else:
-                    if b:
-                        pyautogui.click(400, 400)
-                        b = 0
-                    else:
-                        pyautogui.click(1100, 400)
-                        b = 1
-            else:
-                if a == 0:
-                    a = 0
-                else:
+                    continue
+                if b:
                     pyautogui.click(400, 400)
-                    pyautogui.press("pause")
-                    pyautogui.click(1100, 400)
-                    a = 0
+                    b = 0
+                    continue
+                pyautogui.click(1100, 400)
+                b = 1
+                continue
+            if a == 0:
+                a = 0
+                continue
+            pyautogui.click(400, 400)
+            pyautogui.press("pause")
+            pyautogui.click(1100, 400)
+            a = 0
     except KeyboardInterrupt:
         print("\nDone.")
 
