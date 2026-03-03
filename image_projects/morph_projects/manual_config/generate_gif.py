@@ -39,7 +39,7 @@ def resize(image_file_path: str) -> None:
         image.save(image_file_path)
 
 
-def main() -> None:
+def generate_gif() -> None:
     frames = [
         f"{FRAME_FOLDER}/{frame_name}" for frame_name in os.listdir(f"{FRAME_FOLDER}")
     ]
@@ -62,7 +62,3 @@ def main() -> None:
         for _ in range(GIF_START_DELAY):
             colocaImagemNoGif(writer, last_frame)
     print("Gif created successfully!")
-
-
-if __name__ == "__main__":
-    main()

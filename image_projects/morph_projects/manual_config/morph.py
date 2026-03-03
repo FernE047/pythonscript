@@ -109,11 +109,7 @@ def save_frame(frame: Image.Image, index: int) -> None:
     frame.save(filename)
 
 
-def main() -> None:
+def morph() -> None:
     create_first_and_last_frames()
     with multiprocessing.Pool(os.cpu_count()) as cpu_pool:
         cpu_pool.map(inrerpolate_frames, range(1, FINAL_FRAME))
-
-
-if __name__ == "__main__":
-    main()

@@ -699,11 +699,7 @@ def configPart(part_index: int) -> None:
         print(f"\tPart Completed : {part_index}")
 
 
-def main() -> None:
+def generate_config() -> None:
     total_parts = len(os.listdir(TARGET_FOLDER))
     with multiprocessing.Pool(os.cpu_count()) as cpu_pool:
         cpu_pool.map(configPart, range(total_parts))
-
-
-if __name__ == "__main__":
-    main()

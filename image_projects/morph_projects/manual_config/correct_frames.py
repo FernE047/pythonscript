@@ -233,11 +233,7 @@ def corrigeFrame(index: int) -> None:
     print(f"\tFrame fixed : {index}")
 
 
-def main() -> None:
+def correct_frames() -> None:
     quantiaFrames = len(os.listdir(FRAMES_FOLDER))
     with multiprocessing.Pool(os.cpu_count()) as cpu_pool:
         cpu_pool.map(corrigeFrame, range(1, quantiaFrames - 1))
-
-
-if __name__ == "__main__":
-    main()

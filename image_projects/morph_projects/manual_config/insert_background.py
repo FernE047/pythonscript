@@ -1,6 +1,6 @@
 from PIL import Image
-from morpher import interpolate_tuples
-from corrigeFrames import fix_trapped_pixels
+from morph import interpolate_tuples
+from correct_frames import fix_trapped_pixels
 import os
 
 CoordData = tuple[int, int]
@@ -56,7 +56,7 @@ def generate_background(image_name: str) -> Image.Image:
     return image
 
 
-def main() -> None:
+def insert_background_frames() -> None:
     background_source = generate_background("source")
     background_target = generate_background("target")
     frames = [f"{FRAME_FOLDER}/{file}" for file in os.listdir(FRAME_FOLDER)]
@@ -80,7 +80,3 @@ def main() -> None:
                 frame.putpixel(coord, interpolated_pixel)
         print(frame_index)
         frame.save(frame_name)
-
-
-if __name__ == "__main__":
-    main()

@@ -44,12 +44,8 @@ def save_layers(name: str, folder: str) -> None:
         new_image.close()
 
 
-def main() -> None:
+def clean_project_folder() -> None:
     for folder in FOLDERS_TO_CLEAN:
         clean_folder(folder)
     save_layers(SOURCE_PDN, SOURCE_FOLDER)
     save_layers(TARGET_PDN, TARGET_FOLDER)
-
-
-if __name__ == "__main__":
-    main()

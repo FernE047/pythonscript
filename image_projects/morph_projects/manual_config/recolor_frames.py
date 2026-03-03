@@ -14,7 +14,7 @@ def open_image_as_rgba(image_path: str) -> Image.Image:
         return image_in_memory
 
 
-def main() -> None:
+def recolor_frames() -> None:
 
     source_image = open_image_as_rgba(SOURCE_IMAGE)
     target_image = open_image_as_rgba(TARGET_IMAGE)
@@ -45,7 +45,3 @@ def main() -> None:
     source_recolor.save(source_recolor_name)
     target_recolor.save(target_recolor_name)
     print("R E C O L O R E D   :D")
-
-
-if __name__ == "__main__":
-    main()
