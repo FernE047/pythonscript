@@ -17,11 +17,11 @@
 - [x] Separate different projects into different folders
 - [x] Rename files to main.py where applicable
 - [x] Improve README.md to have all projects documented properly
-- [ ] delete old_versions folders because they are already on git history by this point.
+- [x] delete old_versions folders because they are already on git history by this point.
+- [ ] Start using pathlib for path handling
 - [ ] Create a README.md for each project with a description and usage instructions
 - [ ] Create .examples where applicable with example inputs and outputs
 - [ ] Make all code run faster
-- [ ] Start using pathlib for path handling
 - [ ] Constants for magic numbers/strings
 - [ ] Add requirements.txt
 - [ ] Celebrate by buying ice cream :D
