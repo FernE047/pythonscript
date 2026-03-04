@@ -17,6 +17,7 @@
 - [x] Separate different projects into different folders
 - [x] Rename files to main.py where applicable
 - [x] Improve README.md to have all projects documented properly
+- [ ] delete old_versions folders because they are already on git history by this point.
 - [ ] Create a README.md for each project with a description and usage instructions
 - [ ] Create .examples where applicable with example inputs and outputs
 - [ ] Make all code run faster
