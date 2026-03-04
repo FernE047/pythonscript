@@ -16,13 +16,11 @@
 - [x] Translate filenames to English: git mv galore :v
 - [x] Separate different projects into different folders
 - [x] Rename files to main.py where applicable
-- [ ] Improve README.md to have all projects documented properly
-- [ ] Add project description
-- [ ] Add usage instructions
-- [ ] Create .examples
+- [x] Improve README.md to have all projects documented properly
+- [ ] Create a README.md for each project with a description and usage instructions
+- [ ] Create .examples where applicable with example inputs and outputs
 - [ ] Make all code run faster
 - [ ] Start using pathlib for path handling
 - [ ] Constants for magic numbers/strings
-- [ ] Better .gitignore global and local (venv, pycache, dist, build, etc.)
 - [ ] Add requirements.txt
 - [ ] Celebrate by buying ice cream :D
