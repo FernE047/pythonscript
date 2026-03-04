@@ -13,9 +13,9 @@
 - [x] Fix all linter errors and warnings (19k+)
 - [x] Add type annotations everywhere
 - [x] Improve variable and function names by using underline_case
-- [ ] Translate filenames to English: git mv galore :v
-- [ ] Separate different projects into different folders
-- [ ] Rename files to main.py where applicable
+- [x] Translate filenames to English: git mv galore :v
+- [x] Separate different projects into different folders
+- [x] Rename files to main.py where applicable
 - [ ] Improve README.md to have all projects documented properly
 - [ ] Add project description
 - [ ] Add usage instructions
