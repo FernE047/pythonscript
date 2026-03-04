@@ -1,17 +1,17 @@
 import math
 
 LIMITE = -100
-DEFAULT_BASE = 11
+DEFAULT_BASE = math.pi
 
 
-def convert_to_base(number: int) -> str:
+def convert_to_base(number: float) -> str:
     base_digits: list[str] = []
     highest_exponent = int(math.log(number, DEFAULT_BASE))
     for exponent in range(highest_exponent, LIMITE - 1, -1):
         base_term = DEFAULT_BASE**exponent
         base_factor = number // base_term
         number -= base_factor * base_term
-        base_digits.append(str(base_factor))
+        base_digits.append(str(int(base_factor)))
         if exponent == 0:
             base_digits.append(",")
     base_number_string = "".join(base_digits)
