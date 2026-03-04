@@ -1,6 +1,6 @@
 import shelve
 from typing import cast
-from censoPokemon import PokemonData
+from main import PokemonData
 
 ALL_TYPES = (
     "Normal",
