@@ -1,3 +1,4 @@
+from pathlib import Path
 from random import randint
 from numpy.random import choice
 
@@ -5,7 +6,7 @@ WORDS_GENERATED = 1000
 EMPTY_CHAR = "¨"
 
 
-def generate_char(filename: str, previous_char: str = EMPTY_CHAR) -> str:
+def generate_char(filename: Path, previous_char: str = EMPTY_CHAR) -> str:
     with open(filename, "r", encoding="UTF-8") as file:
         lines = file.readlines()
     character_weights: dict[str, int] = {}
@@ -27,7 +28,7 @@ def generate_char(filename: str, previous_char: str = EMPTY_CHAR) -> str:
     return ""
 
 
-def generate_word(filename: str) -> str:
+def generate_word(filename: Path) -> str:
     generated_chars: list[str] = []
     char = generate_char(filename)
     while char != EMPTY_CHAR:
@@ -53,14 +54,14 @@ def normalize_statistics(frequency_map: list[int]) -> list[float]:
     return frequency_normalized
 
 
-def get_filename() -> str:
+def get_filename() -> Path:
     is_filename_valid = True
-    filename = "default"
+    filename = Path("default")
     while is_filename_valid:
         print("type the file name (without .txt): ")
-        filename = input()
+        filename = Path(input())
         try:
-            with open(f"{filename}.txt", "r", encoding="UTF-8") as _:
+            with open(filename.with_suffix(".txt"), "r", encoding="UTF-8") as _:
                 pass
         except Exception as _:
             print("invalid name")
@@ -71,7 +72,7 @@ def get_filename() -> str:
 def generate_text() -> None:
     filename = get_filename()
     word_occurrence_map: list[int] = []
-    with open(f"{filename}/c.txt", "r", encoding="UTF-8") as markov_chain_file:
+    with open(filename / "c.txt", "r", encoding="UTF-8") as markov_chain_file:
         linha = markov_chain_file.readline()[:-1].split()
         while linha:
             word_occurrence_map.append(int(linha[-1]))
@@ -85,5 +86,5 @@ def generate_text() -> None:
             p=word_frequencies_map,
         )[0]
         for b in range(word_quantities):
-            generated_words.append(generate_word(f"{filename}/{b:03d}.txt"))
+            generated_words.append(generate_word(filename / f"{b:03d}.txt"))
         print(" ".join(generated_words))

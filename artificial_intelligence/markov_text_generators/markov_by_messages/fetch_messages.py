@@ -1,7 +1,8 @@
+from pathlib import Path
 import re
 
-INPUT_FILE = "ConversaDoWhatsApp.txt"
-OUTPUT_FILE = "sohMensagens.txt"
+INPUT_FILE = Path("ConversaDoWhatsApp.txt")
+OUTPUT_FILE = Path("sohMensagens.txt")
 DATE_PATTERN = r"([0-3][0-9][/][0-1][0-9][/]20[21][09] [0-2][0-9][:][0-5][0-9])"
 MIN_WHATSAPP_MESSAGE_LENGTH = 16
 TABULATION_SPACES = 4

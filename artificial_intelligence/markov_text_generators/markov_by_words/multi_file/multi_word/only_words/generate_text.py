@@ -1,11 +1,12 @@
 from random import randint
+from pathlib import Path
 
 WORDS_GENERATED = 1000
 EMPTY_CHAR = "¨"
 
 
-def generate_char(filename: str, index: int, previous_char: str = "") -> str:
-    with open(f"{filename}/{index:03d}.txt", encoding="utf-8") as file:
+def generate_char(filename: Path, index: int, previous_char: str = "") -> str:
+    with open(filename / f"{index:03d}.txt", encoding="utf-8") as file:
         lines = file.readlines()
     character_weights: dict[str, int] = {}
     for line in lines:
@@ -31,7 +32,7 @@ def generate_char(filename: str, index: int, previous_char: str = "") -> str:
     return ""
 
 
-def generate_word(filename: str) -> str:
+def generate_word(filename: Path) -> str:
     generated_word = ""
     char = generate_char(filename, 0)
     while char != EMPTY_CHAR:
@@ -40,14 +41,14 @@ def generate_word(filename: str) -> str:
     return generated_word
 
 
-def get_filename() -> str:
+def get_filename() -> Path:
     is_filename_valid = True
-    filename = "default"
+    filename = Path("default")
     while is_filename_valid:
         print("type the file name (without .txt): ")
-        filename = input()
+        filename = Path(input())
         try:
-            with open(f"{filename}.txt", "r", encoding="UTF-8") as _:
+            with open(filename.with_suffix(".txt"), "r", encoding="UTF-8") as _:
                 pass
         except Exception as _:
             print("invalid name")

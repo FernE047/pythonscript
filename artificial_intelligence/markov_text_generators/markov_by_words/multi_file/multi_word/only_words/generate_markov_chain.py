@@ -1,5 +1,6 @@
 import os
 from collections import Counter
+from pathlib import Path
 from time import time
 
 AlterationsData = dict[int, list[list[str]]]
@@ -36,7 +37,7 @@ def print_elapsed_time(seconds: float) -> None:
     print(f"{sign}{', '.join(parts)}")
 
 
-def rename_file(source_filename: str, destination_filename: str) -> None:
+def rename_file(source_filename: Path, destination_filename: Path) -> None:
     with (
         open(source_filename, "r", encoding="utf-8") as source_file,
         open(destination_filename, "w", encoding="utf-8") as destination_file,
@@ -45,15 +46,15 @@ def rename_file(source_filename: str, destination_filename: str) -> None:
         destination_file.write(content)
 
 
-def update_chain(filename: str, index: int, chain_element: list[list[str]]) -> None:
+def update_chain(filename: Path, index: int, chain_element: list[list[str]]) -> None:
     update_chain_file(filename, index, chain_element)
-    rename_file(filename, f"/{index:03d}.txt")
+    rename_file(filename / "c.txt", filename / f"{index:03d}.txt")
 
 
 def update_chain_file(
-    filename: str, index: int, chain_element: list[list[str]]
+    filename: Path, index: int, chain_element: list[list[str]]
 ) -> None:
-    with open(f"{filename}/c.txt", "w", encoding="UTF-8") as file_write:
+    with open(filename / "c.txt", "w", encoding="UTF-8") as file_write:
         counter = Counter([str(a) for a in chain_element])
         if f"{index:03d}.txt" not in os.listdir(filename):
             unique_terms: list[list[str]] = []
@@ -62,7 +63,7 @@ def update_chain_file(
                     file_write.write(f"{' '.join(term + [str(counter[str(term)])])}\n")
                     unique_terms.append(term)
                     return
-        with open(f"{filename}/{index:03d}.txt", "r", encoding="UTF-8") as file_read:
+        with open(filename / f"{index:03d}.txt", "r", encoding="UTF-8") as file_read:
             lines = file_read.readlines()
         for line in lines:
             if not line.strip():
@@ -85,19 +86,19 @@ def update_chain_file(
                 unique_terms.append(term)
 
 
-def update_chain_files(filename: str, alterations: AlterationsData) -> None:
+def update_chain_files(filename: Path, alterations: AlterationsData) -> None:
     for index in alterations:
         update_chain(filename, index, alterations[index])
 
 
-def get_filename() -> str:
+def get_filename() -> Path:
     is_filename_valid = True
-    filename = "default"
+    filename = Path("default")
     while is_filename_valid:
         print("type the file name (without .txt): ")
-        filename = input()
+        filename = Path(input())
         try:
-            with open(f"{filename}.txt", "r", encoding="UTF-8") as _:
+            with open(filename.with_suffix(".txt"), "r", encoding="UTF-8") as _:
                 pass
         except Exception as _:
             print("invalid name")
@@ -108,7 +109,7 @@ def get_filename() -> str:
 def generate_chain() -> None:
     filename = get_filename()
     start_time = time()
-    with open(f"{filename}.txt", "r", encoding="UTF-8") as file:
+    with open(filename.with_suffix(".txt"), "r", encoding="UTF-8") as file:
         lines = file.readlines()
     count = 0
     alterations: AlterationsData = {}

@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from time import time
 from typing import cast
 
@@ -36,7 +37,7 @@ def print_elapsed_time(seconds: float) -> None:
     print(f"{sign}{', '.join(parts)}")
 
 
-def rename_file(source_filename: str, destination_filename: str) -> None:
+def rename_file(source_filename: Path, destination_filename: Path) -> None:
     with (
         open(source_filename, "r", encoding="utf-8") as source_file,
         open(destination_filename, "w", encoding="utf-8") as destination_file,
@@ -45,13 +46,13 @@ def rename_file(source_filename: str, destination_filename: str) -> None:
         destination_file.write(content)
 
 
-def update_chain_file(filename: str, chain_terms: list[ChainData]) -> None:
+def update_chain_file(filename: Path, chain_terms: list[ChainData]) -> None:
     update_chain_file_contents(filename, chain_terms)
-    rename_file(f"{filename}/c.txt", f"{filename}/chain.txt")
+    rename_file(filename / "c.txt", filename / "chain.txt")
 
 
-def update_chain_file_contents(filename: str, chain_terms: list[ChainData]) -> None:
-    with open(f"{filename}/c.txt", "w", encoding="UTF-8") as file_write:
+def update_chain_file_contents(filename: Path, chain_terms: list[ChainData]) -> None:
+    with open(filename / "c.txt", "w", encoding="UTF-8") as file_write:
 
         def write_terms(terms: ChainData, frequency: int) -> None:
             terms_flat = " ".join(terms)
@@ -61,7 +62,7 @@ def update_chain_file_contents(filename: str, chain_terms: list[ChainData]) -> N
             for terms in chain_terms:
                 write_terms(terms, 1)
             return
-        with open(f"{filename}/chain.txt", "r", encoding="UTF-8") as file_read:
+        with open(filename / "chain.txt", "r", encoding="UTF-8") as file_read:
             lines = file_read.readlines()
         for line in lines:
             if not line.strip():
@@ -82,14 +83,14 @@ def update_chain_file_contents(filename: str, chain_terms: list[ChainData]) -> N
             write_terms(terms, 1)
 
 
-def get_filename() -> str:
+def get_filename() -> Path:
     is_filename_valid = True
-    filename = "default"
+    filename = Path("default")
     while is_filename_valid:
         print("type the file name (without .txt): ")
-        filename = input()
+        filename = Path(input())
         try:
-            with open(f"{filename}.txt", "r", encoding="UTF-8") as _:
+            with open(filename.with_suffix(".txt"), "r", encoding="UTF-8") as _:
                 pass
         except Exception as _:
             print("invalid name")
@@ -100,7 +101,7 @@ def get_filename() -> str:
 def generate_chain() -> None:
     filename = get_filename()
     start_time = time()
-    with open(f"{filename}.txt", "r", encoding="UTF-8") as file:
+    with open(filename.with_suffix(".txt"), "r", encoding="UTF-8") as file:
         lines = file.readlines()
     line_length = 0
     for line in lines:

@@ -1,9 +1,13 @@
 import os
+from pathlib import Path
 
 EMPTY_CHAR = "¨"
+INPUT_FILE = Path("clean_input.txt")
+CHAIN_FOLDER = Path("chain")
+MAIN_CHAIN_FILE = CHAIN_FOLDER / "c.txt"
 
 
-def rename_file(source_filename: str, destination_filename: str) -> None:
+def rename_file(source_filename: Path, destination_filename: Path) -> None:
     with (
         open(source_filename, "r", encoding="utf-8") as source_file,
         open(destination_filename, "w", encoding="utf-8") as destination_file,
@@ -13,11 +17,11 @@ def rename_file(source_filename: str, destination_filename: str) -> None:
 
 
 def update_term_count(index: int, keyword: str) -> None:
-    with open("chain/c.txt", "w", encoding="utf-8") as file_write:
-        if f"{index:03d}.txt" not in os.listdir("chain"):
+    with open(MAIN_CHAIN_FILE, "w", encoding="utf-8") as file_write:
+        if f"{index:03d}.txt" not in os.listdir(CHAIN_FOLDER):
             file_write.write(f"{keyword} 1\n")
             return
-        with open(f"chain/{index:03d}.txt", "r", encoding="utf-8") as file_read:
+        with open(CHAIN_FOLDER / f"{index:03d}.txt", "r", encoding="utf-8") as file_read:
             lines = file_read.readlines()
         keyword_found = False
         index = len(keyword)
@@ -38,11 +42,11 @@ def update_chain_file(index: int, keyword: str) -> None:
     if keyword == "":
         print(index)
     update_term_count(index, keyword)
-    rename_file("chain/c.txt", f"chain/{index:03d}.txt")
+    rename_file(MAIN_CHAIN_FILE, CHAIN_FOLDER / f"{index:03d}.txt")
 
 
 def generate_character_chain() -> None:
-    with open("clean_input.txt", "r", encoding="utf-8") as file:
+    with open(INPUT_FILE, "r", encoding="utf-8") as file:
         file.readline()
         for message in file.readlines():
             message_length = len(message)

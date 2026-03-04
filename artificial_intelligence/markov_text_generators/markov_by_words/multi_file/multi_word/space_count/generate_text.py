@@ -1,3 +1,4 @@
+from pathlib import Path
 from random import randint
 from typing import Any
 from numpy.random import choice
@@ -15,9 +16,9 @@ def print_debug(*args: Any) -> None:
 
 
 def generate_char(
-    filename: str, index: int, space_index: int, previous_char: str = ""
+    filename: Path, index: int, space_index: int, previous_char: str = ""
 ) -> str:
-    with open(f"{filename}/{index:03d}.txt", encoding="utf-8") as file:
+    with open(filename / f"{index:03d}.txt", encoding="utf-8") as file:
         lines = file.readlines()
     character_weights: dict[str, int] = {}
     for line in lines:
@@ -44,7 +45,7 @@ def generate_char(
     return ""
 
 
-def generate_word(filename: str, space_index: int) -> str:
+def generate_word(filename: Path, space_index: int) -> str:
     generated_word = ""
     char = generate_char(filename, 0, space_index)
     while char != EMPTY_CHAR:
@@ -70,14 +71,14 @@ def normalize_statistics(frequency_map: list[int]) -> list[float]:
     return frequency_normalized
 
 
-def get_filename() -> str:
+def get_filename() -> Path:
     is_filename_valid = True
-    filename = "default"
+    filename = Path("default")
     while is_filename_valid:
         print("type the file name (without .txt): ")
-        filename = input()
+        filename = Path(input())
         try:
-            with open(f"{filename}.txt", "r", encoding="UTF-8") as _:
+            with open(filename.with_suffix(".txt"), "r", encoding="UTF-8") as _:
                 pass
         except Exception as _:
             print("invalid name")
@@ -88,7 +89,7 @@ def get_filename() -> str:
 def generate_text() -> None:
     filename = get_filename()
     word_occurrence_map: list[int] = []
-    with open(f"{filename}/c.txt", "r", encoding="UTF-8") as markov_chain_file:
+    with open(filename / "c.txt", "r", encoding="UTF-8") as markov_chain_file:
         lines = markov_chain_file.readlines()
     for line in lines:
         line = line.strip()

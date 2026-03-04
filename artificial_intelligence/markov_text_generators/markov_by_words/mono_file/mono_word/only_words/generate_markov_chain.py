@@ -1,5 +1,6 @@
 import os
 from collections import Counter
+from pathlib import Path
 from time import time
 from typing import cast
 
@@ -39,7 +40,7 @@ def format_elapsed_time(seconds: float) -> str:
     return f"{sign}{', '.join(parts)}"
 
 
-def rename_file(source_filename: str, destination_filename: str) -> None:
+def rename_file(source_filename: Path, destination_filename: Path) -> None:
     with (
         open(source_filename, "r", encoding="utf-8") as source_file,
         open(destination_filename, "w", encoding="utf-8") as destination_file,
@@ -48,13 +49,13 @@ def rename_file(source_filename: str, destination_filename: str) -> None:
         destination_file.write(content)
 
 
-def update_chain_file(filename: str, keywords: list[ChainData]) -> None:
+def update_chain_file(filename: Path, keywords: list[ChainData]) -> None:
     update_keywords_in_chain(filename, keywords)
-    rename_file(f"{filename}/c.txt", f"{filename}/chain.txt")
+    rename_file(filename / "c.txt", filename / "chain.txt")
 
 
-def update_keywords_in_chain(filename: str, keyword_tuples: list[ChainData]) -> None:
-    with open(f"{filename}/c.txt", "w", encoding="UTF-8") as file_write:
+def update_keywords_in_chain(filename: Path, keyword_tuples: list[ChainData]) -> None:
+    with open(filename / "c.txt", "w", encoding="UTF-8") as file_write:
         counter = Counter([" ".join(keyword_tuple) for keyword_tuple in keyword_tuples])
         unique_keywords: set[ChainData] = set()
         if "chain.txt" not in os.listdir(filename):
@@ -67,7 +68,7 @@ def update_keywords_in_chain(filename: str, keyword_tuples: list[ChainData]) -> 
                     )
                     unique_keywords.add(keyword_tuple)
             return
-        with open(f"{filename}/chain.txt", "r", encoding="UTF-8") as file_read:
+        with open(filename / "chain.txt", "r", encoding="UTF-8") as file_read:
             lines = file_read.readlines()
         for line in lines:
             if not line.strip():
@@ -91,14 +92,14 @@ def update_keywords_in_chain(filename: str, keyword_tuples: list[ChainData]) -> 
                 unique_keywords.add(keyword_tuple)
 
 
-def get_filename() -> str:
+def get_file_path() -> Path:
     is_filename_valid = True
-    filename = "default"
+    filename = Path("default")
     while is_filename_valid:
         print("type the file name (without .txt): ")
-        filename = input()
+        filename = Path(input())
         try:
-            with open(f"{filename}.txt", "r", encoding="UTF-8") as _:
+            with open(filename.with_suffix(".txt"), "r", encoding="UTF-8") as _:
                 pass
         except Exception as _:
             print("invalid name")
@@ -107,9 +108,9 @@ def get_filename() -> str:
 
 
 def generate_chain() -> None:
-    filename = get_filename()
+    file_path = get_file_path()
     start_time = time()
-    with open(f"{filename}.txt", "r", encoding="UTF-8") as file:
+    with open(file_path.with_suffix(".txt"), "r", encoding="UTF-8") as file:
         lines = file.readlines()
     word_frequency: list[int] = []
     word_length = 0
@@ -152,13 +153,13 @@ def generate_chain() -> None:
                         break
                 previous_character = current_character
         if count == 100:
-            update_chain_file(filename, update_chain_values)
+            update_chain_file(file_path, update_chain_values)
             update_chain_values = []
             count = 0
         else:
             count += 1
-    update_chain_file(filename, update_chain_values)
-    with open(f"{filename}/length.txt", "w", encoding="UTF-8") as arqInput:
+    update_chain_file(file_path, update_chain_values)
+    with open(file_path / "length.txt", "w", encoding="UTF-8") as arqInput:
         for index, quantity in enumerate(word_frequency):
             arqInput.write(f"{index} {quantity}\n")
     print(word_length)

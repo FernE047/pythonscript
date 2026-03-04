@@ -1,9 +1,10 @@
+from pathlib import Path
 from random import randint
 
 WORDS_GENERATED = 1000
 EMPTY_CHAR = "¨"
 
-def generate_char(filename: str, previous_chars: list[str] | None = None) -> str:
+def generate_char(filename: Path, previous_chars: list[str] | None = None) -> str:
     if previous_chars is None:
         previous_chars = []
     while len(previous_chars) != 2:
@@ -29,7 +30,7 @@ def generate_char(filename: str, previous_chars: list[str] | None = None) -> str
     return ""
 
 
-def generate_word(filename: str) -> str:
+def generate_word(filename: Path) -> str:
     generated_chars: list[str] = []
     char = generate_char(filename)
     while char != EMPTY_CHAR:
@@ -38,14 +39,14 @@ def generate_word(filename: str) -> str:
     return "".join(generated_chars)
 
 
-def get_filename() -> str:
+def get_filename() -> Path:
     is_filename_valid = True
-    filename = "default"
+    filename = Path("default")
     while is_filename_valid:
         print("type the file name (without .txt): ")
-        filename = input()
+        filename = Path(input())
         try:
-            with open(f"{filename}.txt", "r", encoding="UTF-8") as _:
+            with open(filename.with_suffix(".txt"), "r", encoding="UTF-8") as _:
                 pass
         except Exception as _:
             print("invalid name")
@@ -55,5 +56,6 @@ def get_filename() -> str:
 
 def generate_text() -> None:
     filename = get_filename()
+    chain_path = filename / "chain.txt"
     for _ in range(WORDS_GENERATED):
-        print(generate_word(f"{filename}/chain.txt"))
+        print(generate_word(chain_path))

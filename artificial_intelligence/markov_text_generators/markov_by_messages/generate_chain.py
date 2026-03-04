@@ -1,9 +1,13 @@
 import os
+from pathlib import Path
 
 EMPTY_CHAR = "¨"
+INPUT_FILE = Path("sohMensagens.txt")
+CHAIN_FOLDER = Path("chain")
+MAIN_CHAIN_FILE = CHAIN_FOLDER / "c.txt"
 
 
-def rename_file(source_filename: str, destination_filename: str) -> None:
+def rename_file(source_filename: Path, destination_filename: Path) -> None:
     with (
         open(source_filename, "r", encoding="utf-8") as source_file,
         open(destination_filename, "w", encoding="utf-8") as destination_file,
@@ -14,15 +18,17 @@ def rename_file(source_filename: str, destination_filename: str) -> None:
 
 def update_chain_file(index: int, keywords: list[str]) -> None:
     update_keyword_count(index, keywords)
-    rename_file("chain/c.txt", f"chain/{index:03d}.txt")
+    rename_file(MAIN_CHAIN_FILE, CHAIN_FOLDER / f"{index:03d}.txt")
 
 
 def update_keyword_count(index: int, keywords: list[str]) -> None:
-    with open("chain/c.txt", "w", encoding="utf-8") as file_write:
-        if f"{index:03d}.txt" not in os.listdir("chain"):
+    with open(MAIN_CHAIN_FILE, "w", encoding="utf-8") as file_write:
+        if f"{index:03d}.txt" not in os.listdir(CHAIN_FOLDER):
             file_write.write(f"{' '.join(keywords)} 1\n")
             return
-        with open(f"chain/{index:03d}.txt", "r", encoding="utf-8") as file_read:
+        with open(
+            CHAIN_FOLDER / f"{index:03d}.txt", "r", encoding="utf-8"
+        ) as file_read:
             lines = file_read.readlines()
         keyword_exists = False
         for line in lines:
@@ -40,7 +46,7 @@ def update_keyword_count(index: int, keywords: list[str]) -> None:
 
 
 def generate_markov_chain() -> None:
-    with open("sohMensagens.txt", "r", encoding="utf-8") as file:
+    with open(INPUT_FILE, "r", encoding="utf-8") as file:
         message = file.readline()
         while message:
             words = message.split()

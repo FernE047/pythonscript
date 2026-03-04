@@ -1,13 +1,15 @@
 import os
+from pathlib import Path
 from typing import cast
 
 ChainData = tuple[str, str, str]
 
 
 EMPTY_CHAR = "¨"
+CHAIN_NAME = "c.txt"
 
 
-def rename_file(source_filename: str, destination_filename: str) -> None:
+def rename_file(source_filename: Path, destination_filename: Path) -> None:
     with (
         open(source_filename, "r", encoding="utf-8") as source_file,
         open(destination_filename, "w", encoding="utf-8") as destination_file,
@@ -16,18 +18,18 @@ def rename_file(source_filename: str, destination_filename: str) -> None:
         destination_file.write(content)
 
 
-def update_chain_file(filename: str, keywords: ChainData, index: int) -> None:
+def update_chain_file(filename: Path, keywords: ChainData, index: int) -> None:
     update_keyword_count(filename, keywords, index)
-    rename_file(f"{filename}/c.txt", f"{filename}/{index:03d}.txt")
+    rename_file(filename / CHAIN_NAME, filename / f"{index:03d}.txt")
 
 
-def update_keyword_count(filename: str, keywords: ChainData, index: int) -> None:
-    with open(f"{filename}/c.txt", "w", encoding="UTF-8") as fileWrite:
+def update_keyword_count(filename: Path, keywords: ChainData, index: int) -> None:
+    with open(filename / CHAIN_NAME, "w", encoding="UTF-8") as fileWrite:
         keywords_flat = " ".join(keywords)
         if f"{index:03d}.txt" not in os.listdir(filename):
             fileWrite.write(f"{keywords_flat} 1\n")
             return
-        with open(f"{filename}/{index:03d}.txt", "r", encoding="UTF-8") as file_read:
+        with open(filename / f"{index:03d}.txt", "r", encoding="UTF-8") as file_read:
             lines = file_read.readlines()
         keyword_found = False
         for line in lines:
@@ -43,14 +45,14 @@ def update_keyword_count(filename: str, keywords: ChainData, index: int) -> None
             fileWrite.write(f"{keywords_flat} 1\n")
 
 
-def get_filename() -> str:
+def get_filename() -> Path:
     is_filename_valid = True
-    filename = "default"
+    filename = Path("default")
     while is_filename_valid:
         print("type the file name (without .txt): ")
-        filename = input()
+        filename = Path(input())
         try:
-            with open(f"{filename}.txt", "r", encoding="UTF-8") as _:
+            with open(filename.with_suffix(".txt"), "r", encoding="UTF-8") as _:
                 pass
         except Exception as _:
             print("invalid name")
@@ -60,7 +62,7 @@ def get_filename() -> str:
 
 def generate_chain() -> None:
     filename = get_filename()
-    with open(f"{filename}.txt", "r", encoding="UTF-8") as file:
+    with open(filename.with_suffix(".txt"), "r", encoding="UTF-8") as file:
         lines = file.readlines()
     word_frequency: list[int] = []
     length = 0
@@ -110,7 +112,7 @@ def generate_chain() -> None:
                 if next_character == EMPTY_CHAR:
                     break
                 previous_character = character
-    with open(f"{filename}/c.txt", "w", encoding="UTF-8") as frequency_output_file:
+    with open(filename / CHAIN_NAME, "w", encoding="UTF-8") as frequency_output_file:
         for index, quantity in enumerate(word_frequency):
             frequency_output_file.write(f"{index} {quantity}\n")
     print(length)

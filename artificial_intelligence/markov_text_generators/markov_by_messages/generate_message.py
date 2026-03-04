@@ -1,10 +1,12 @@
+from pathlib import Path
 from random import randint
 
 EMPTY_CHAR = "¨"
 WORDS_GENERATED = 1000
+CHAIN_FOLDER = Path("chain")
 
 def fetch_word_from_chain(index: int, previous_word: str = "") -> str:
-    with open(f"chain/{index:03d}.txt", "r", encoding="utf-8") as file:
+    with open(CHAIN_FOLDER / f"{index:03d}.txt", "r", encoding="utf-8") as file:
         lines = file.readlines()
     word_frequency_map: dict[str, int] = {}
     for line in lines:
