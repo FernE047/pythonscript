@@ -20,15 +20,15 @@ I reworked all the scripts to make them readable, and I am planning to keep impr
 
 there's way too much projects, so each subfolder will have their own README.md describing the projects inside it and each each project folder will also have a README.md describing the project and how to use it. below is a list of subfolders and a brief description of what they contain:
 
- - ```image_projects/``` : ⭐⭐⭐⭐⭐ : all projects that are related to image processing, like filters, edge detection, etc. this is the folder with the most projects and the most complete ones too.
- - ```maths/``` : ⭐⭐⭐⭐ : all projects that are related to mathematics, like number theory, algebra, calculus, etc. collatz is a highlight of this folder.
- - ```artificial_intelligence/``` : ⭐⭐⭐ : most of the projects are puzzle or game solvers, there are game AIs and some markov chains too
- - ```computer_science/``` : ⭐⭐⭐ : all projects that are related to computer science, like data structures, algorithms, complexity analysis, etc. 
- - ```games/``` : ⭐⭐⭐ : all projects that are games or game related, like tictactoe, ludo, blackjack, etc. some of them are complete and some of them are incomplete.
- - ```probabilities/``` : ⭐⭐ : all projects that are related to probability and statistics. we have a bunch of scripts to counting and simulating probabilities.
- - ```text_projects/``` : ⭐⭐ : all projects that are related to text processing, like OCR, text generation, etc.
- - ```audio/``` : ⭐ : the only audio project is a tts that reads inverted text.
- - ```automation/``` : ⭐ : this folder contains scripts that automate some tasks, like downloading whatsapp data, searching for internships, but it all useless now because it uses pyautogui with hardcoded coordinates, so it only used to work on my old computer that I don't have anymore, but I will keep it here for nostalgia reasons.
- - ```chess/``` : ⭐ : the only chess project is a unorthodox chess engine, it is incomplete.
- - ```helpers/``` : ⭐ : a mix match of scripts that are not really projects, but they are useful for tasks I used to do at the time.
- - ```web/``` : ⭐ : all projects that are related to web scraping, web automation, etc. most doesn't work anymore because the sites have changed.
+ - [Image Projects](./image_projects/README.md) : ⭐⭐⭐⭐⭐ : all projects that are related to image processing, like filters, edge detection, etc. this is the folder with the most projects and the most complete ones too.
+ - [Maths](./maths/README.md) : ⭐⭐⭐⭐ : all projects that are related to mathematics, like number theory, algebra, calculus, etc. collatz is a highlight of this folder.
+ - [Artificial Intelligence](./artificial_intelligence/README.md) : ⭐⭐⭐ : most of the projects are puzzle or game solvers, there are game AIs and some markov chains too
+ - [Computer Science](./computer_science/README.md) : ⭐⭐⭐ : all projects that are related to computer science, like data structures, algorithms, complexity analysis, etc. 
+ - [Games](./games/README.md) : ⭐⭐⭐ : all projects that are games or game related, like tictactoe, ludo, blackjack, etc. some of them are complete and some of them are incomplete.
+ - [Probabilities](./probabilities/README.md) : ⭐⭐ : all projects that are related to probability and statistics. we have a bunch of scripts to counting and simulating probabilities.
+ - [Text Projects](./text_projects/README.md) : ⭐⭐ : all projects that are related to text processing, like OCR, text generation, etc.
+ - [Audio](./audio/inverted_text_audio/README.md) : ⭐ : the only audio project is a tts that reads inverted text.
+ - [Automation](./automation/README.md) : ⭐ : this folder contains scripts that automate some tasks, like downloading whatsapp data, searching for internships, but it all useless now because it uses pyautogui with hardcoded coordinates, so it only used to work on my old computer that I don't have anymore, but I will keep it here for nostalgia reasons.
+ - [Chess](./chess/unorthodox_chess_game/README.md) : ⭐ : the only chess project is a unorthodox chess engine, it is incomplete.
+ - [Helpers](./helpers/README.md) : ⭐ : a mix match of scripts that are not really projects, but they are useful for tasks I used to do at the time.
+ - [Web](./web/README.md) : ⭐ : all projects that are related to web scraping, web automation, etc. most doesn't work anymore because the sites have changed.
