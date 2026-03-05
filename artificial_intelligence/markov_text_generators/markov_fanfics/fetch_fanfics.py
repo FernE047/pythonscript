@@ -1,8 +1,8 @@
+from pathlib import Path
 from typing import cast
 import requests
 import bs4
 import time
-import os
 
 FANFIC_CATEGORIES = [
     "naruto",
@@ -69,9 +69,11 @@ def fetch_and_save_fanfics() -> None:
                 title = cast(str, title_tag)
                 if title.find(TITLE_PREFIX) != -1:
                     titles.append(title[TITLE_PREFIX_LENGTH:])
+            stories_folder = Path("stories")
+            stories_folder.mkdir(exist_ok=True)
             for index in range(STORIES_PER_PAGE):
-                stories_amount = len(os.listdir("stories"))
-                with open(f"stories/fanfic{stories_amount:04d}.txt", "w") as file:
+                stories_amount = len(list(stories_folder.iterdir()))
+                with open(stories_folder / f"fanfic{stories_amount:04d}.txt", "w") as file:
                     try:
                         file.write(f"{titles[index]} : {summary[index]}")
                         print(f"{titles[index]}\n")

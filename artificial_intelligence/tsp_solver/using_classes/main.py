@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from graphs import Graph
 from graphs import get_graph_from_file
 from states import State
@@ -118,7 +120,8 @@ def main() -> None:
     counter_manager.reset_all()
     solution_state.show_path()
     for max_nodes in range(1, MAX_NODES + 1):
-        graph = get_graph_from_file("grafo0004.txt", limit=max_nodes)
+        graph_path = Path("grafo0004.txt")
+        graph = get_graph_from_file(graph_path, limit=max_nodes)
         initial_state = State(graph)
         solution_state = depth_first_search(initial_state, counter_manager)
         solution_state.show_path()

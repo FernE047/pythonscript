@@ -1,30 +1,31 @@
-import os
+from pathlib import Path
 import subprocess
 
-DIRECTORY = "C:/JavaProgs"
+DIRECTORY = Path("C:") / "JavaProgs"
 
 
-def contains_java_file(folder: str) -> bool:
-    for filename in [f"{DIRECTORY}/{arq}" for arq in os.listdir(folder)]:
-        if filename.find(".java") != -1:
+def contains_java_file(folder: Path) -> bool:
+    filenames = list(folder.iterdir())
+    for filename in filenames:
+        if filename.suffix == ".java":
             return True
     return False
 
 
-def create_batch_file(filename: str) -> None:
-    project_name = filename[filename.rfind("/") + 1 : filename.rfind(".")]
-    batch_name = f"{DIRECTORY}/{project_name}.bat"
+def create_batch_file(filename: Path) -> None:
+    project_name = filename.stem
+    batch_name = DIRECTORY / f"{project_name}.bat"
     print(batch_name)
-    java_name = f"{filename}/{project_name}"
+    java_name = filename / f"{project_name}"
     with open(batch_name, "w", encoding="utf-8") as file:
         file.write(f"@echo off\njava {java_name} %*")
 
 
-def create_batch_project(project_folder: str) -> None:
-    project_name = project_folder[project_folder.rfind("/") + 1 :]
-    batch_name = f"{DIRECTORY}/{project_name}.bat"
+def create_batch_project(project_folder: Path) -> None:
+    project_name = project_folder.stem
+    batch_name = DIRECTORY / f"{project_name}.bat"
     print(batch_name)
-    java_name = f"{project_folder}/teste.Teste"
+    java_name = project_folder / "teste.Teste"
     with open(batch_name, "w", encoding="utf-8") as file:
         file.write(f"@echo off\njava {java_name} %*")
 
@@ -35,8 +36,8 @@ def run_command(command: str) -> None:
 
 
 def main() -> None:
-    folders = os.listdir(DIRECTORY)
-    folder_list = [f"{DIRECTORY}/{folder}" for folder in folders]
+    folders = list(DIRECTORY.iterdir())
+    folder_list = [DIRECTORY / folder for folder in folders]
     for folder in folder_list:
         if contains_java_file(folder):
             run_command(f"javac {folder}/*.java")

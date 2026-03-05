@@ -1,14 +1,16 @@
+from pathlib import Path
+
 from PIL import Image
 import os
 
-IMAGES_FOLDER = "images"
+IMAGES_FOLDER = Path("images")
+IMAGES_FOLDER.mkdir(exist_ok=True)
 EXTENSIONS_AVAILABLE = (".png", ".jpg", ".jpeg", ".bmp", ".gif")
 COLOR_DISTANCE_THRESHOLD = 256 * 3
 PALETTE_COMMAND_PREFIX = "palette"
 FOLDER_COMMAND_PREFIX = "folder"
-PALETTE_FOLDER = "palette"
-if not os.path.exists(PALETTE_FOLDER):
-    os.makedirs(PALETTE_FOLDER)
+PALETTE_FOLDER = Path("palette")
+PALETTE_FOLDER.mkdir(exist_ok=True)
 SAVE_IMAGE_THRESHOLD = 100
 EXIT_INPUT = "0"
 MAX_COLOR_CHANNELS = 3
@@ -35,28 +37,28 @@ def get_pixel(image: Image.Image, coord: CoordData) -> PixelData:
     return pixel
 
 
-def get_image_from_folder(image_sub_folder: str) -> list[str]:
-    folder = f"{IMAGES_FOLDER}/{image_sub_folder}"
-    images: list[str] = []
-    if not os.path.exists(folder):
+def get_image_from_folder(image_sub_folder: str) -> list[Path]:
+    folder = IMAGES_FOLDER / image_sub_folder
+    images: list[Path] = []
+    if not folder.exists():
         return images
-    for filename in os.listdir(folder):
-        if filename.lower().endswith(EXTENSIONS_AVAILABLE):
-            images.append(os.path.join(folder, filename))
+    for filename in folder.iterdir():
+        if filename.suffix.lower() in EXTENSIONS_AVAILABLE:
+            images.append(filename)
     return images
 
 
-def get_image(image_sub_folder: str) -> str:
-    folder = f"{IMAGES_FOLDER}/{image_sub_folder}"
-    if not os.path.exists(folder):
-        return ""
-    for filename in os.listdir(folder):
-        if filename.lower().endswith(EXTENSIONS_AVAILABLE):
-            return os.path.join(folder, filename)
-    return ""
+def get_image(image_sub_folder: str) -> Path:
+    folder = IMAGES_FOLDER / image_sub_folder
+    if not folder.exists():
+        return Path("")
+    for filename in folder.iterdir():
+        if filename.suffix.lower() in EXTENSIONS_AVAILABLE:
+            return filename
+    return Path("")
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":
@@ -64,7 +66,7 @@ def open_image_as_rgba(image_path: str) -> Image.Image:
         return image_in_memory
 
 
-def fetch_palette(image_name: str) -> PaletteData:
+def fetch_palette(image_name: Path) -> PaletteData:
     print("fetching palette, please wait, it can take a while")
     image = open_image_as_rgba(image_name)
     width, height = image.size
@@ -76,7 +78,7 @@ def fetch_palette(image_name: str) -> PaletteData:
     return palette
 
 
-def fetch_palettes(images: list[str]) -> PaletteData:
+def fetch_palettes(images: list[Path]) -> PaletteData:
     print("fetching palettes, please wait, it can take a while")
     palette: PaletteData = set()
     for image_name in images:
@@ -91,9 +93,9 @@ def fetch_palettes(images: list[str]) -> PaletteData:
 
 
 def apply_color_palette(
-    nome: str, color_palette: PaletteData, image_path: str
+    output_path: Path, color_palette: PaletteData, input_path: Path
 ) -> Image.Image:
-    image = open_image_as_rgba(image_path)
+    image = open_image_as_rgba(input_path)
     width, height = image.size
     color_mapped_image = image.copy()
     print(width)
@@ -101,9 +103,9 @@ def apply_color_palette(
     for x in range(width):
         if x % SAVE_IMAGE_THRESHOLD == 0:
             print(x)
-            image_name, extension = os.path.splitext(nome)
+            image_name, extension = os.path.splitext(output_path)
             try:
-                color_mapped_image.save(nome)
+                color_mapped_image.save(output_path)
             except PermissionError:
                 color_mapped_image.save(f"{image_name}_output{extension}")
         for y in range(height):
@@ -153,7 +155,7 @@ def get_palette_from_input() -> tuple[str, PaletteData]:
         return image_name, color_palette
     command, name = input_folder.split(" ", 1)
     if command == PALETTE_COMMAND_PREFIX:
-        color_palette = fetch_palette(f"{PALETTE_FOLDER}/{name}.png")
+        color_palette = fetch_palette(PALETTE_FOLDER / f"{name}.png")
         image_name += name.title()
         return image_name, color_palette
     if command == FOLDER_COMMAND_PREFIX:
@@ -173,16 +175,16 @@ def main() -> None:
         )
         input_folder = input()
         images = get_image_from_folder(input_folder)
-        for index, image in enumerate(images):
-            print(f"{index}  -  {image}")
+        for index, input_image in enumerate(images):
+            print(f"{index}  -  {input_image}")
         num_imagem = get_int_input("\nWhich image?", 0, len(images) - 1)
-        image = images[num_imagem]
+        input_image = images[num_imagem]
         image_name = f"{input_folder.title()}{image_name}_{num_imagem}.png"
-        image_name = os.path.join("images", image_name)
-        print(image)
-        color_mapped_image = apply_color_palette(image_name, color_palette, image)
-        color_mapped_image.save(image_name)
-        print(f"image saved as {image_name}")
+        image_path = IMAGES_FOLDER / image_name
+        print(input_image)
+        color_mapped_image = apply_color_palette(image_path, color_palette, input_image)
+        color_mapped_image.save(image_path)
+        print(f"image saved as {image_path}")
         print(f"\nEnter {EXIT_INPUT} to exit, or anything else to continue")
         user_input = input()
         if user_input == EXIT_INPUT:

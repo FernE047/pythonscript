@@ -1,6 +1,6 @@
+from pathlib import Path
 from typing import Literal, cast
 from time import time
-import os
 
 CellData = Literal[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 SudokuGridData = list[list[CellData]]
@@ -183,10 +183,11 @@ def solve_single_board(board: BoardData, time_manager: TimeManager) -> None:
 
 def solver_no_ui() -> None:
     time_manager = TimeManager()
-    filenames = os.listdir("sudokus")
+    sudoku_folder = Path("sudokus")
+    filenames = list(sudoku_folder.iterdir())
     for filename in filenames:
         print(f"{filename}\n")
-        with open(f"sudokus/{filename}", "r", encoding="utf-8") as sudoku_board_raw:
+        with open(filename, "r", encoding="utf-8") as sudoku_board_raw:
             board = create_sudoku_board(sudoku_board_raw.read())
         solve_single_board(board, time_manager)
     time_manager.print_elapsed_time()

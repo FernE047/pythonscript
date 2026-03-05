@@ -1,9 +1,11 @@
+from pathlib import Path
+
 from PIL import Image, ImageGrab
 
 # this code was an attempt to read an image and make a representation of the minesweeper board, but it was not successful, the colors of the pixels were not consistent on windows 7.
 # the code is incomplete and not used, but it is kept here for reference and future attempts to read the minesweeper board from an image.
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":
@@ -30,9 +32,10 @@ def main() -> None:
         raise Exception("No image in clipboard")
     if isinstance(image, list):
         raise Exception("Clipboard contains multiple items, expected an image")
-    image.save("screen.png")
+    image_path = Path("screen.png")
+    image.save(image_path)
     image.close()
-    image = open_image_as_rgba("screen.png")
+    image = open_image_as_rgba(image_path)
     print("0 - 9X9")
     print("1 - 16X16")
     print("2 - 16X30")

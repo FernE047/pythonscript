@@ -1,3 +1,6 @@
+from pathlib import Path
+
+
 CoordData = tuple[int, int]
 
 
@@ -41,7 +44,7 @@ class Graph:
         return self.size
 
 
-def get_graph_from_file(filename: str, limit: None | int = None) -> Graph:
+def get_graph_from_file(filename: Path, limit: None | int = None) -> Graph:
     with open(filename, "r", encoding="utf-8") as file:
         lines = file.readlines()
     vertices: list[tuple[float, float]] = []
@@ -65,8 +68,7 @@ def get_graph_from_file(filename: str, limit: None | int = None) -> Graph:
         for y, destination in enumerate(vertices):
             coord = (x, y)
             distance = (
-                (destination[0] - source[0]) ** 2
-                + (destination[1] - source[1]) ** 2
+                (destination[0] - source[0]) ** 2 + (destination[1] - source[1]) ** 2
             ) ** 0.5
             graph.set_element(coord, distance, False)
     return graph

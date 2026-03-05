@@ -1,13 +1,13 @@
+from pathlib import Path
 from PIL import Image
-import os
 
-IMAGES_FOLDER = "imagens"
-SUBFOLDER_DEFAULT = "pokedex_no_background"
+IMAGES_FOLDER = Path("imagens")
+SUBFOLDER_DEFAULT = IMAGES_FOLDER / "pokedex_no_background"
 MAX_COLOR_CHANNELS = 4
 MAX_BRIGHTNESS = 256
 TRANSPARENT = (0, 0, 0, 0)
 ALLOWED_IMAGE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".bmp", ".gif")
-PALETTE_FOLDER = "palette"
+PALETTE_FOLDER = Path("palette")
 PALETTE_OUTPUT = "palette_pokemons.png"
 
 PixelData = tuple[int, ...]
@@ -29,17 +29,16 @@ def get_pixel(image: Image.Image, coord: CoordData) -> PixelData:
     return pixel
 
 
-def get_image_from_folder(image_category: str) -> list[str]:
-    folder = f"{IMAGES_FOLDER}/{image_category}"
-    images: list[str] = []
-    if os.path.exists(folder):
-        for filename in os.listdir(folder):
-            if filename.lower().endswith(ALLOWED_IMAGE_EXTENSIONS):
-                images.append(os.path.join(folder, filename))
+def get_image_from_folder(folder: Path) -> list[Path]:
+    images: list[Path] = []
+    if folder.exists():
+        for filename in folder.iterdir():
+            if filename.suffix.lower() in ALLOWED_IMAGE_EXTENSIONS:
+                images.append(filename)
     return images
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":
@@ -64,7 +63,7 @@ def main() -> None:
         paletteImg = Image.new("RGBA", (len(palette), altura), TRANSPARENT)
     for index, color in enumerate(palette):
         paletteImg.putpixel((index % MAX_BRIGHTNESS, index // MAX_BRIGHTNESS), color)
-    paletteImg.save(os.path.join(PALETTE_FOLDER, PALETTE_OUTPUT))
+    paletteImg.save(PALETTE_FOLDER / PALETTE_OUTPUT)
 
 
 if __name__ == "__main__":

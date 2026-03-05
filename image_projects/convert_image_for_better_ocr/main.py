@@ -1,13 +1,15 @@
+from pathlib import Path
+
 import numpy as np
 import cv2
 
 from PIL import Image
 
-INPUT_IMAGE_PATH = "input.jpg"
-OUTPUT_IMAGE_PATH = "output.jpg"
+INPUT_IMAGE_PATH = Path("input.jpg")
+OUTPUT_IMAGE_PATH = Path("output.jpg")
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":

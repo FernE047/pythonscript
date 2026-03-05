@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 from time import time
 from PIL import Image
 
@@ -8,7 +8,7 @@ MAX_COLOR_CHANNELS = 4
 ALLOWED_FILE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".bmp", ".gif")
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":
@@ -16,14 +16,16 @@ def open_image_as_rgba(image_path: str) -> Image.Image:
         return image_in_memory
 
 
-def get_image_from_folder(folder: str) -> list[str]:
-    images: list[str] = []
-    if not os.path.exists(folder):
+def get_image_from_folder(folder: Path) -> list[Path]:
+    images: list[Path] = []
+    if not folder.exists():
         return images
-    for filename in os.listdir(folder):
-        if not filename.lower().endswith(ALLOWED_FILE_EXTENSIONS):
+    for filename in folder.iterdir():
+        if filename.is_dir():
             continue
-        images.append(os.path.join(folder, filename))
+        if not filename.name.lower().endswith(ALLOWED_FILE_EXTENSIONS):
+            continue
+        images.append(filename)
     return images
 
 
@@ -72,7 +74,7 @@ def save_image(image_name: str, image: Image.Image) -> None:
             index += 1
 
 
-def get_largest_image_size(image_names: list[str]) -> tuple[int, int]:
+def get_largest_image_size(image_names: list[Path]) -> tuple[int, int]:
     max_width = 0
     max_height = 0
     for image_name in image_names:
@@ -89,7 +91,7 @@ def get_largest_image_size(image_names: list[str]) -> tuple[int, int]:
 
 def main() -> None:
     print("enter the name of the image folder")
-    folder = input()
+    folder = Path(input())
     image_names = get_image_from_folder(folder)
     size = get_largest_image_size(image_names)
     width, height = size

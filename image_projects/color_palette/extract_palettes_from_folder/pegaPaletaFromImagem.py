@@ -1,12 +1,12 @@
+from pathlib import Path
 from PIL import Image
-import os
 
 IMAGES_FOLDER = "imagens"
 MAX_COLOR_CHANNELS = 4
 MAX_BRIGHTNESS = 256
 TRANSPARENT = (0, 0, 0, 0)
 ALLOWED_IMAGE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".bmp", ".gif")
-PALETTE_FOLDER = "palette"
+PALETTE_FOLDER = Path("palette")
 
 PixelData = tuple[int, ...]
 PaletteData = set[PixelData]
@@ -27,17 +27,17 @@ def get_pixel(image: Image.Image, coord: CoordData) -> PixelData:
     return pixel
 
 
-def get_image_from_folder(sub_folder: str) -> list[str]:
-    folder = f"{IMAGES_FOLDER}/{sub_folder}"
-    images: list[str] = []
-    if os.path.exists(folder):
-        for filename in os.listdir(folder):
-            if filename.lower().endswith(ALLOWED_IMAGE_EXTENSIONS):
-                images.append(os.path.join(folder, filename))
+def get_image_from_folder(sub_folder: str) -> list[Path]:
+    folder = Path(IMAGES_FOLDER) / sub_folder
+    images: list[Path] = []
+    if folder.exists():
+        for filename in folder.iterdir():
+            if filename.suffix.lower() in ALLOWED_IMAGE_EXTENSIONS:
+                images.append(filename)
     return images
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":
@@ -72,7 +72,7 @@ def main() -> None:
     print(selected_image_name)
     print("image name for palette")
     user_input = input()
-    color_palette_image.save(os.path.join(PALETTE_FOLDER, f"palette_{user_input}.png"))
+    color_palette_image.save(PALETTE_FOLDER / f"palette_{user_input}.png")
 
 
 if __name__ == "__main__":

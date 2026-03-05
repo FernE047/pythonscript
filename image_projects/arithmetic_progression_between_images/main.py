@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from PIL import Image
 
 MAX_BRIGHTNESS = 255
@@ -19,7 +21,8 @@ def get_user_image() -> Image.Image:
     while True:
         user_input = input("Enter the image name (with extension): ")
         try:
-            imagem = open_image_as_rgba(user_input)
+            path = Path(user_input)
+            imagem = open_image_as_rgba(path)
             return imagem
         except Exception as _:
             print("Invalid file, please try again")
@@ -35,7 +38,7 @@ def get_pixel(imagem: Image.Image, coord: tuple[int, int]) -> tuple[int, ...]:
     return pixel
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":

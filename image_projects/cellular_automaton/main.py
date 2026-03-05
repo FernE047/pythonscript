@@ -1,4 +1,5 @@
 from enum import Enum
+from pathlib import Path
 from PIL import Image
 
 CoordData = tuple[int, int]
@@ -68,14 +69,14 @@ def is_pixel_black(pixel: float | tuple[int, ...] | None) -> bool:
     return False
 
 
-def open_image(image_path: str) -> Image.Image:
+def open_image(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         return image_in_memory
 
 
 def main() -> None:
-    current_frame = open_image("frame_000.png")
+    current_frame = open_image(Path("frame_000.png"))
     has_black_pixels = True
     frame_index = 0
     while has_black_pixels:
@@ -91,7 +92,7 @@ def main() -> None:
                     continue
                 if (max(current_coord) < MAX_SIZE) and (min(current_coord) >= 0):
                     next_frame.putpixel(current_coord, BLACK)
-        filename = f"frame_{frame_index:03d}.png"
+        filename = Path(f"frame_{frame_index:03d}.png")
         print(filename)
         next_frame.save(filename)
         current_frame = open_image(filename)

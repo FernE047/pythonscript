@@ -1,7 +1,9 @@
 from enum import Enum
+from pathlib import Path
 from PIL import Image
 
-#TODO: Constants 
+# TODO: Constants
+
 
 class Direction(Enum):
     UP = 0
@@ -156,7 +158,7 @@ class Node:
             # if the entity is a ghost, it can move freely
             return True
         map_size = game_map.size
-        #tests if the coordinate is out of bounds
+        # tests if the coordinate is out of bounds
         for axis_index in range(2):
             if self.coord[axis_index] < 0:
                 return False
@@ -231,7 +233,9 @@ class GameEntity:
         if direction is not None:
             self.direction = direction
 
-    def nextTurn(self, game_entities: list["GameEntity"], game_map: Image.Image) -> None:
+    def nextTurn(
+        self, game_entities: list["GameEntity"], game_map: Image.Image
+    ) -> None:
         color = get_pixel(game_map, self.coord)
         game_map.putpixel((self.coord), (255, 255, 255, 255))
         print(self.coord)
@@ -404,28 +408,31 @@ def parse_map(game_map: Image.Image) -> list[GameEntity]:
     return game_entities
 
 
-def open_image(image_path: str) -> Image.Image:
+def open_image(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         return image_in_memory
 
 
 def main() -> None:
-    image = open_image("input.png")
+    input_path = Path("input.png")
+    image = open_image(input_path)
     game_entities = parse_map(image)
     a = 0
+    animation_path = Path("anima")
+    animation_path.mkdir(exist_ok=True)
     while True:
         for game_entity in game_entities[1:]:
             print("b")
             print(game_entity.type)
             game_entity.nextTurn(game_entities, image)
-        image.save(f"anima/frame{a}.png")
+        image.save(animation_path / f"frame{a}.png")
         a += 1
         if get_pixel(image, game_entities[0].coord) not in (
             (255, 0, 0, 255),
             (255, 0, 0),
         ):
-            #TODO: I probably stopped coding here. I know for a fact this project is incomplete
+            # TODO: I probably stopped coding here. I know for a fact this project is incomplete
             break
 
 

@@ -1,6 +1,8 @@
+from pathlib import Path
 import shelve
 
-
+SYSTEM_PATH = Path("system") / "system"
+DATABASE_PATH = Path("books_database")
 BookData = tuple[str, str, str, str, str, int, int, str]
 
 
@@ -24,12 +26,12 @@ def make_menu(options: list[str] | list[BookData]) -> int:
 
 class System:
     def __init__(self) -> None:
-        self.shelf = shelve.open("./system/system")
+        self.shelf = shelve.open(SYSTEM_PATH)
         self.categories: list[str] = self.shelf.get("categories", [])
         self.db_quantity: int = self.shelf.get("db_quantity", 0)
 
     def open_shelf(self) -> None:
-        self.shelf = shelve.open("./system/system")
+        self.shelf = shelve.open(SYSTEM_PATH)
 
     def close_shelf(self) -> None:
         self.shelf.close()
@@ -109,7 +111,7 @@ def get_books_by_location(book_locations: list[tuple[int, int]]) -> list[BookDat
     books: list[BookData] = []
     if book_locations:
         for locations in book_locations:
-            database = shelve.open(f"./books_database/book_db{locations[0]:04d}")
+            database = shelve.open(DATABASE_PATH / f"book_db{locations[0]:04d}")
             books.append(database["books"][locations[1]])
             database.close()
     return books
@@ -171,7 +173,7 @@ def search_books(
 ) -> list[tuple[int, int]]:
     found_books: list[tuple[int, int]] = []
     for index in range(system.db_quantity + 1):
-        database = shelve.open(f"./books_database/book_db{index:04d}")
+        database = shelve.open(DATABASE_PATH / f"book_db{index:04d}")
         books = database["books"]
         for book_index, book in enumerate(books):
             if comparison_type == 1:
@@ -257,10 +259,10 @@ def query_books(
 
 
 def insert_book(system: System) -> bool:
-    database = shelve.open(f"./books_database/book_db{system.db_quantity:04d}")
+    database = shelve.open(DATABASE_PATH / f"book_db{system.db_quantity:04d}")
     book_database: list[BookData] = database.get("books", [])
     if len(book_database) >= 10:
-        database = shelve.open(f"./books_database/book_db{system.db_quantity + 1:04d}")
+        database = shelve.open(DATABASE_PATH / f"book_db{system.db_quantity + 1:04d}")
         book_database = []
         system.db_quantity += 1
     if system.is_categories_empty():
@@ -406,7 +408,7 @@ def update_book_details(
         "pages",
         "location",
     ]
-    database = shelve.open(f"./books_database/book_db{location[0]:04d}")
+    database = shelve.open(DATABASE_PATH / f"book_db{location[0]:04d}")
     books = database["books"]
     novo_book = books[location[1]]
     display_books([novo_book])
@@ -461,7 +463,7 @@ def update_book_details(
 
 def replace_category(old_name: str, new_name: str, system: System) -> None:
     for index in range(system.db_quantity + 1):
-        database = shelve.open(f"./books_database/book_db{index:04d}")
+        database = shelve.open(DATABASE_PATH / f"book_db{index:04d}")
         books = database["books"]
         for book in books:
             if book[1] == old_name:
@@ -478,7 +480,7 @@ def remove_book(system: System) -> None:
     if not book_change:
         return
     address = book_location[1][book_change - 1]
-    database = shelve.open(f"./books_database/book_db{address[0]:04d}")
+    database = shelve.open(DATABASE_PATH / f"book_db{address[0]:04d}")
     books = database["books"]
     del books[address[1]]
     database["books"] = books

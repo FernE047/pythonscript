@@ -2,7 +2,7 @@ import os
 from PIL import Image
 
 
-def open_image(image_path: str) -> Image.Image:
+def open_image(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         return image_in_memory

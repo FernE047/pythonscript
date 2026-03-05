@@ -1,5 +1,10 @@
+from pathlib import Path
+
+
 def main() -> None:
-    with open("input.txt", "r") as caption_txt, open("output.str", "w") as caption_str:
+    input_path = Path("input.txt")
+    output_path = Path("output.str")
+    with open(input_path, "r") as caption_txt, open(output_path, "w") as caption_str:
         line = ""
         character = "a"
         line_index = 1

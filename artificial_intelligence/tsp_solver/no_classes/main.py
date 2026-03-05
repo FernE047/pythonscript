@@ -1,3 +1,4 @@
+from pathlib import Path
 from time import time
 
 # not sure if this one works. V02 is more reliable
@@ -147,7 +148,7 @@ def print_elapsed_time(seconds: float) -> None:
     print(f"{sign}{', '.join(parts)}")
 
 
-def get_graph_from_file(filename: str, nodes_limit: int | None = None) -> GraphData:
+def get_graph_from_file(filename: Path, nodes_limit: int | None = None) -> GraphData:
     with open(filename, "r", encoding="utf-8") as file:
         lines = file.read().splitlines()
         vertices: list[VertexData] = []
@@ -241,7 +242,8 @@ def main() -> None:
     graph = GRAPH_EXAMPLE_2
     solve(graph)
     for node_limit in range(1, MAX_NODES + 1):
-        graph = get_graph_from_file("grafo0004.txt", nodes_limit=node_limit)
+        graph_path = Path("grafo004.txt")
+        graph = get_graph_from_file(graph_path, nodes_limit=node_limit)
         solve(graph)
 
 

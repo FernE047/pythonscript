@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 from time import time
 
 EMPTY_CHAR = "¨"
@@ -39,7 +39,7 @@ def format_elapsed_time(seconds: float) -> str:
     return f"{sign}{', '.join(parts)}"
 
 
-def rename_file(source_filename: str, destination_filename: str) -> None:
+def rename_file(source_filename: Path, destination_filename: Path) -> None:
     with (
         open(source_filename, "r", encoding="utf-8") as source_file,
         open(destination_filename, "w", encoding="utf-8") as destination_file,
@@ -49,21 +49,23 @@ def rename_file(source_filename: str, destination_filename: str) -> None:
 
 
 def update_chain_file(keywords: list[str], is_title: bool) -> None:
+    folder = Path("FanficAnime")
     if is_title:
-        directory = f"./FanficAnime/chainTitle/{CHAINSIZE}"
+        folder /= "chainTitle"
     else:
-        directory = f"./FanficAnime/chainStory/{CHAINSIZE}"
-    update_keyword_counts(keywords, directory)
-    rename_file(f"{directory}/c.txt", f"{directory}/chain.txt")
+        folder /= "chainStory"
+    folder /= f"{CHAINSIZE}"
+    update_keyword_counts(keywords, folder)
+    rename_file(folder / "c.txt", folder / "chain.txt")
 
 
-def update_keyword_counts(keywords: list[str], directory: str) -> None:
-    with open(f"{directory}/c.txt", "w", encoding="utf-8") as file_write:
-        if "chain.txt" not in os.listdir(directory):
+def update_keyword_counts(keywords: list[str], directory: Path) -> None:
+    with open(directory / "c.txt", "w", encoding="utf-8") as file_write:
+        if "chain.txt" not in [f.name for f in directory.iterdir()]:
             for keyword in keywords:
                 file_write.write(f"{keyword} 1\n")
             return
-        with open(f"{directory}/chain.txt", "r", encoding="utf-8") as file_read:
+        with open(directory / "chain.txt", "r", encoding="utf-8") as file_read:
             lines = file_read.readlines()
         for line in lines:
             words = line.split()
@@ -107,13 +109,15 @@ def generate_word_chain(text: str) -> list[str]:
 def generate_markov_chain() -> None:
     title_keywords: list[str] = []
     story_keywords: list[str] = []
-    filenames = os.listdir("./FanficAnime/stories")
+    stories_folder = Path("FanficAnime") / "stories"
+    filenames = list(stories_folder.iterdir())
     total = len(filenames)
     quantity = 0
     start_time = time()
     for name in filenames:
+        file_path = stories_folder / name
         quantity += 1
-        with open(f"./FanficAnime/stories/{name}", "r", encoding="utf-8") as file:
+        with open(file_path, "r", encoding="utf-8") as file:
             story_components = file.readline().split(" : ")
             if story_components[:-1]:
                 titulo = " : ".join(story_components[:-1])

@@ -1,3 +1,4 @@
+from pathlib import Path
 from time import time
 from typing import Literal
 from PIL import Image
@@ -148,13 +149,13 @@ def solve_board(game: GameData) -> BoardData:
     return game[0]
 
 
-def save_board_image(board: BoardData, filename: str) -> None:
+def save_board_image(board: BoardData, filename: Path) -> None:
     image = Image.new("RGBA", (len(board[0]), len(board)), EMPTY_CELL_COLOR)
     for y, row in enumerate(board):
         for x, cell in enumerate(row):
             if cell == 1:
                 image.putpixel((x, y), FILLED_CELL_COLOR)
-    image.save(f"{filename}.png")
+    image.save(filename.with_suffix(".png"))
     image.close()
 
 
@@ -186,8 +187,10 @@ def solve_nonogram_board(game: GameData, time_manager: TimeManager) -> BoardData
 
 def main() -> None:
     time_manager = TimeManager()
+    nonogram_folder = Path("nonogram")
     for index in range(8):
-        with open(f"nonogram/A{index:03d}.txt") as nonogram_file:
+        filename = nonogram_folder / f"A{index:03d}.txt"
+        with open(filename) as nonogram_file:
             config = nonogram_file.read()
         horizontal_hints_lines, vertical_hints_lines = config.split("#")
         horizontal_hints: HintAxysData = [
@@ -205,7 +208,7 @@ def main() -> None:
         game: GameData = (board, all_hints)
         solution_board = solve_nonogram_board(game, time_manager)
         time_manager.print_elapsed_time(print_total=True)
-        save_board_image(solution_board, f"nonogram/A{index:03d}")
+        save_board_image(solution_board, filename)
 
 
 if __name__ == "__main__":

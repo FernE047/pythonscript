@@ -1,12 +1,14 @@
+from pathlib import Path
+
 from PIL import Image
 
-IMAGE_A = "a.jpg"
-IMAGE_B = "b.jpg"
-OUTPUT_IMAGE = "c8.jpg"
+IMAGE_A = Path("a.jpg")
+IMAGE_B = Path("b.jpg")
+OUTPUT_IMAGE = Path("c8.jpg")
 BACKGROUND_COLOR = (255, 255, 255)
 
 
-def open_image_as_rgb(image_path: str) -> Image.Image:
+def open_image_as_rgb(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGB":

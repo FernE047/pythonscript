@@ -1,10 +1,10 @@
-import os
+from pathlib import Path
 from typing import List, cast
 from PIL import Image
 import copy
 
 
-def open_image_as_rgb(image_path: str) -> Image.Image:
+def open_image_as_rgb(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGB":
@@ -35,9 +35,9 @@ def open_image_by_name(message: str) -> Image.Image:
         try:
             print(message)
             user_input = input()
-            image_name = user_input
+            image_name = Path(user_input)
             if user_input.find("/") == -1:
-                image_name = os.path.join("images", user_input)
+                image_name = Path("images") / user_input
             return open_image_as_rgb(image_name)
 
         except Exception as _:
@@ -114,7 +114,7 @@ def main() -> None:
     while not (is_image_hidable(image_to_hide, source_image)):
         image_to_hide = open_image_by_name("enter the name of the image to hide")
     stego_image = hide_image(image_to_hide, source_image)
-    filename = os.path.join("output_steg.jpg")
+    filename = Path("output_steg.jpg")
     print(f"saving stego image as {filename}")
     stego_image.save(filename)
 

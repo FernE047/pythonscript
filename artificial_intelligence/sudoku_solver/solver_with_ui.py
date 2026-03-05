@@ -1,6 +1,6 @@
+from pathlib import Path
 from typing import Literal, cast
 from time import time
-import os
 
 menuModeOptions = Literal[0, 1, 2, 3]
 userInputOptions = Literal[
@@ -292,17 +292,19 @@ def solver_ui() -> None:
         if mode == 0:
             break
         if mode == 3:
-            filenames = os.listdir("sudokus")
-            for filename in filenames:
-                print(f"{filename}\n")
+            sudoku_folder = Path("sudokus")
+            file_paths = list(sudoku_folder.iterdir())
+            for file_path in file_paths:
+                print(f"{file_path}\n")
                 with open(
-                    f"sudokus/{filename}", "r", encoding="utf-8"
+                    file_path, "r", encoding="utf-8"
                 ) as sudoku_board_raw:
                     board = create_sudoku_board(sudoku_board_raw.read())
                 solve_single_board(board, time_manager)
         elif mode == 2:
-            filename = input("what is the anme of the file? (without .txt)")
-            with open(f"{filename}.txt", "r", encoding="utf-8") as sudoku_board_raw:
+            filename = input("what is the name of the file? (without .txt)")
+            file_path = Path("sudokus") / f"{filename}.txt"
+            with open(file_path, "r", encoding="utf-8") as sudoku_board_raw:
                 board = create_sudoku_board(sudoku_board_raw.read())
             solve_single_board(board, time_manager)
         else:

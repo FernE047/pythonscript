@@ -1,11 +1,12 @@
 from io import TextIOWrapper
 import os
+from pathlib import Path
 from typing import Literal
 
 # I used to have a batch file for each python script to run it directly from terminal.
 
 
-def read_python(filename: str, imported_modules: list[str]) -> None:
+def read_python(filename: Path, imported_modules: list[str]) -> None:
     def add_imported_modules(line: str) -> None:
         if line in imported_modules:
             return
@@ -38,7 +39,7 @@ def read_python(filename: str, imported_modules: list[str]) -> None:
         add_imported_modules(line)
 
 
-def get_python_version(filename: str) -> str | Literal[False]:
+def get_python_version(filename: Path) -> str | Literal[False]:
     try:
         with open(filename, "r", encoding="utf-8") as file:
             line = file.readline()
@@ -49,7 +50,7 @@ def get_python_version(filename: str) -> str | Literal[False]:
     return "python"
 
 
-def check_no_batch_flag(filename: str) -> bool:
+def check_no_batch_flag(filename: Path) -> bool:
     try:
         with open(filename, "r", encoding="utf-8") as file:
             line = file.readline()
@@ -61,9 +62,11 @@ def check_no_batch_flag(filename: str) -> bool:
 
 
 def create_batch_file(folders: list[str]) -> None:
-    batch_name = f"C:/pythonscript/{folders[-1][:-3]}.bat"
+    batch_name = Path("C:") / "pythonscript" / f"{folders[-1][:-3]}.bat"
     print(batch_name)
-    python_filename = "/".join(folders)
+    python_filename = Path(folders[0])
+    for folder in folders[1:]:
+        python_filename /= folder
     if not check_no_batch_flag(python_filename):
         python_exe = get_python_version(python_filename)
         with open(batch_name, "w", encoding="utf-8") as file:
@@ -117,15 +120,15 @@ def explore_directory(
                 folder_list.pop()
 
 
-def generate_index(filename: str, folder_limit: int | None = None) -> None:
+def generate_index(filename: Path, folder_limit: int | None = None) -> None:
     print(filename)
     with open(filename, "w", encoding="utf-8") as file:
         explore_directory(file, folder_limit=folder_limit)
 
 
 def main() -> None:
-    generate_index("hyper_index.txt")
-    generate_index("index.txt", folder_limit=1)
+    generate_index(Path("hyper_index.txt"))
+    generate_index(Path("index.txt"), folder_limit=1)
 
 
 if __name__ == "__main__":

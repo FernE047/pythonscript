@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Any
 from PIL import Image
 import pyautogui
@@ -465,9 +466,10 @@ class Opponent:
                         image.putpixel((letter_x, letter_y), (0, 0, 0, 255))
             is_same_letter = False
             letter_index = 0
+            alphabet_folder = Path("./alfabeto1")
             for current_letter_index in range(1, 38):
                 try:
-                    image_to_compare = open_image_as_rgba(f"./alfabeto1/{current_letter_index}.png")
+                    image_to_compare = open_image_as_rgba(alphabet_folder / f"{current_letter_index}.png")
                 except Exception:
                     image_to_compare = False
                 if image_to_compare:
@@ -486,7 +488,7 @@ class Opponent:
                 print(opponent_name)
                 print("qual o numero dessa letra?")
                 letter_index = int(input())
-                image.save(f"./alfabeto1/{letter_index}.png")
+                image.save(alphabet_folder / f"{letter_index}.png")
             opponent_name += decrypt_font_character(letter_index)
             x += 10
         for letra in range(len(opponent_name) - 1, 0, -1):
@@ -520,7 +522,7 @@ class Opponent:
         self.health_points = self.scanVidaInimigo()
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":

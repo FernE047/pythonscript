@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Literal, overload
 from send2trash import send2trash
 import random
@@ -64,10 +65,10 @@ def int_input(
 # the user can study the modules in random order
 
 
-def print_module(module_path: str) -> None:
+def print_module(module_path: Path) -> None:
     with (
-        open(f"{module_path}/answer.txt", "r") as answers_file,
-        open(f"{module_path}/question.txt", "r") as questions_file,
+        open(module_path / "answer.txt", "r") as answers_file,
+        open(module_path / "question.txt", "r") as questions_file,
     ):
         answers_line = answers_file.readline()
         questions_line = questions_file.readline()
@@ -81,21 +82,27 @@ def print_module(module_path: str) -> None:
             index += 1
 
 
-def edit_module(folder: str, module: str) -> None:
+def edit_module(folder: Path, module: str) -> None:
     opcoes = ["Back", "New", "Edit", "Delete"]
     user_choice = choose_from_options("escolha uma opcao : ", opcoes)
-    path_module = f"{folder}/{module}"
+    path_module = folder / module
+    answer_path = path_module / "answer"
+    answer_txt = answer_path.with_suffix(".txt")
+    question_path = path_module / "question"
+    question_txt = question_path.with_suffix(".txt")
     if user_choice in ["Edit", "Delete"]:
         print_module(path_module)
-        line_count = count_lines(f"{path_module}/answer.txt")
+        answer_temp = answer_path.with_suffix(".txt.tmp")
+        question_temp = question_path.with_suffix(".txt.tmp")
+        line_count = count_lines(answer_txt)
         index_edit = int_input(
             "type the index you want to edit", minimum_value=1, maximum_value=line_count
         )
         with (
-            open(f"{path_module}/answer.txt", "r") as answers_file,
-            open(f"{path_module}/question.txt", "r") as questions_file,
-            open(f"{path_module}/answer.txt.tmp", "w") as answers_fileTemp,
-            open(f"{path_module}/question.txt.tmp", "w") as questions_fileTemp,
+            open(answer_txt, "r") as answers_file,
+            open(question_txt, "r") as questions_file,
+            open(answer_temp, "w") as answers_fileTemp,
+            open(question_temp, "w") as questions_fileTemp,
         ):
             answers_line = answers_file.readline()
             questions_line = questions_file.readline()
@@ -116,21 +123,15 @@ def edit_module(folder: str, module: str) -> None:
                 answers_line = answers_file.readline()
                 questions_line = questions_file.readline()
                 index += 1
-        send2trash(f"{path_module}/answer.txt")
-        send2trash(f"{path_module}/question.txt")
-        os.rename(
-            f"{path_module}/answer.txt.tmp",
-            f"{path_module}/answer.txt",
-        )
-        os.rename(
-            f"{path_module}/question.txt.tmp",
-            f"{path_module}/question.txt",
-        )
+        send2trash(answer_txt)
+        send2trash(question_txt)
+        answer_temp.rename(answer_txt)
+        question_temp.rename(question_txt)
     if user_choice == "New":
         print_module(path_module)
         with (
-            open(f"{path_module}/answer.txt", "a") as answers_file,
-            open(f"{path_module}/question.txt", "a") as questions_file,
+            open(answer_txt, "a") as answers_file,
+            open(question_txt, "a") as questions_file,
         ):
             while True:
                 question_word = input("type the question word")
@@ -141,8 +142,8 @@ def edit_module(folder: str, module: str) -> None:
                 answers_file.write(f"{answer_word}\n")
 
 
-def delete_module(folder: str, module: str) -> None:
-    send2trash(f"{folder}/{module}")
+def delete_module(folder: Path, module: str) -> None:
+    send2trash(folder / module)
     print(f"Module Deleted {module}")
 
 
@@ -174,21 +175,23 @@ def make_question(
     return answer
 
 
-def count_lines(fileName: str) -> int:
+def count_lines(fileName: Path) -> int:
     with open(fileName, "r") as file:
         lines = file.read().splitlines()
     return len(lines)
 
 
-def study_module(folder: str, module: str) -> None:
-    module_path = f"{folder}/{module}"
-    quantity = count_lines(f"{module_path}/answer.txt")
+def study_module(folder: Path, module: str) -> None:
+    module_path = folder / module
+    answer_txt = module_path / "answer.txt"
+    quantity = count_lines(answer_txt)
     options = ["Back", "Questions", "Answers", "Questions & Answers"]
     user_choice = choose_from_options("choose a mode : ", options)
     print("type 0 anywhere to exit")
+    question_txt = module_path / "question.txt"
     with (
-        open(f"{module_path}/answer.txt", "r") as answers_file,
-        open(f"{module_path}/question.txt", "r") as questions_file,
+        open(answer_txt, "r") as answers_file,
+        open(question_txt, "r") as questions_file,
     ):
         answers = answers_file.read().splitlines()
         questions = questions_file.read().splitlines()
@@ -199,17 +202,20 @@ def study_module(folder: str, module: str) -> None:
             return
 
 
-def new_module(folder: str, evaluation_folder: str, module: str) -> None:
-    path_module = f"{folder}/{module}"
+def new_module(folder: Path, evaluation_folder: Path, module: str) -> None:
+    path_module = folder / module
     print(path_module)
-    if os.path.exists(path_module):
+    if path_module.exists():
         print("já existe")
         return
-    os.makedirs(path_module)
-    os.makedirs(f"{evaluation_folder}/{module}")
+    path_module.mkdir()
+    evaluation_module = evaluation_folder / module
+    evaluation_module.mkdir(exist_ok=True)
+    answer_txt = path_module / "answer.txt"
+    question_txt = path_module / "question.txt"
     with (
-        open(f"{path_module}/answer.txt", "w") as answers_file,
-        open(f"{path_module}/question.txt", "w") as questions_file,
+        open(answer_txt, "w") as answers_file,
+        open(question_txt, "w") as questions_file,
     ):
         print("type 0 to stop")
         while True:
@@ -221,7 +227,9 @@ def new_module(folder: str, evaluation_folder: str, module: str) -> None:
             answers_file.write(f"{word}\n")
 
 
-def random_study(folder: str, mode: str) -> None:  # TODO implement partial modular mode
+def random_study(
+    folder: Path, mode: str
+) -> None:  # TODO implement partial modular mode
     modules = os.listdir(folder)
     options = ["Back", "Questions", "Answers", "Questions & Answers"]
     choice = choose_from_options("choose a mode : ", options)
@@ -243,7 +251,7 @@ def random_study(folder: str, mode: str) -> None:  # TODO implement partial modu
     while True:
         if mode == "Total":
             quantities: list[int] = [
-                count_lines(f"{folder}/{a}/answer.txt") for a in modules
+                count_lines(folder / module / "answer.txt") for module in modules
             ]
             sum_ = 0
             index = -1
@@ -254,11 +262,13 @@ def random_study(folder: str, mode: str) -> None:  # TODO implement partial modu
             module = modules[index]
         else:
             module = modules[random.randint(0, len(modules) - 1)]
-        module_path = f"{folder}/{module}"
-        index = random.randint(0, count_lines(f"{module_path}/answer.txt") - 1)
+        module_path = folder / module
+        answer_txt = module_path / "answer.txt"
+        question_txt = module_path / "question.txt"
+        index = random.randint(0, count_lines(answer_txt) - 1)
         with (
-            open(f"{module_path}/answer.txt", "r") as answers_file,
-            open(f"{module_path}/question.txt", "r") as questions_file,
+            open(answer_txt, "r") as answers_file,
+            open(question_txt, "r") as questions_file,
         ):
             answers = answers_file.read().splitlines()
             questions = questions_file.read().splitlines()
@@ -268,25 +278,30 @@ def random_study(folder: str, mode: str) -> None:  # TODO implement partial modu
 
 
 def main() -> None:
+    categories_folder = Path("./categories")
+    categories_folder.mkdir(exist_ok=True)
+    evaluations_folder = Path("./evaluations")
+    evaluations_folder.mkdir(exist_ok=True)
     while True:
         user_choice = choose_from_options(
-            "choose a category : ", ["Exit", "Create New"] + os.listdir("./categories")
+            "choose a category : ",
+            ["Exit", "Create New"] + os.listdir(categories_folder),
         )
         if user_choice == "Exit":
             return
         if user_choice == "Create New":
             new_category_name = input("type the new category name : ")
-            folder = f"./categories/{new_category_name.title()}"
-            evaluation_folder = f"./evaluations/{new_category_name.title()}"
+            folder = categories_folder / new_category_name.title()
+            evaluation_folder = evaluations_folder / new_category_name.title()
             print(folder)
-            if not os.path.exists(folder):
-                os.makedirs(folder)
-                os.makedirs(evaluation_folder)
+            if not folder.exists():
+                folder.mkdir()
+                evaluation_folder.mkdir()
             else:
                 print("already exists")
             continue
-        folder = f"./categories/{user_choice}"
-        evaluation_folder = f"./evaluations/{user_choice}"
+        folder = categories_folder / user_choice
+        evaluation_folder = evaluations_folder / user_choice
         while True:
             options = ["Back"]
             options += ["Modules"]
@@ -317,7 +332,7 @@ def main() -> None:
                     options += ["Delete"]
                     user_choice = choose_from_options("choose an option : ", options)
                     if user_choice == "View":
-                        print_module(f"{folder}/{module}")
+                        print_module(folder / module)
                     if user_choice == "Edit":
                         edit_module(folder, module)
                     if user_choice == "Delete":

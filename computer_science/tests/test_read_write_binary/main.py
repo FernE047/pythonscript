@@ -1,10 +1,11 @@
 import os
+from pathlib import Path
 
 
 def main() -> None:
-    diretorio = os.getcwd()
-    imagens = [os.path.join(diretorio, imagem) for imagem in os.listdir()]
-    with open(os.path.join(diretorio, "copia.py"), "wb") as novoArquivo:
+    diretorio = Path(os.getcwd())
+    imagens = [diretorio / imagem for imagem in os.listdir()]
+    with open(diretorio / "copia.py", "wb") as novoArquivo:
         with open(imagens[0], "rb") as arquivo:
             novoArquivo.write(arquivo.read())
         with open(imagens[0], "rb") as arquivo:

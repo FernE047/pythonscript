@@ -1,7 +1,10 @@
-def write_lines(name: str) -> None:
-    with open(f"{name}.txt", "r") as file:
+from pathlib import Path
+
+
+def write_lines(file_path: Path) -> None:
+    with open(file_path.with_suffix(".txt"), "r") as file:
         text = file.read()
-    with open(f"{name}NoTabs.txt", "w") as output_file:
+    with open(file_path.with_suffix("NoTabs.txt"), "w") as output_file:
         output_file.write("<")
         for character in list(text)[1:]:
             if character == "<":
@@ -9,14 +12,14 @@ def write_lines(name: str) -> None:
             output_file.write(character)
 
 
-def make_tabulation(name: str, ident: str, tabs: bool = False) -> None:
+def make_tabulation(name: Path, ident: str, tabs: bool = False) -> None:
     if tabs:
-        filename = f"{name}.txt"
+        filename = name.with_suffix(".txt")
     else:
-        filename = f"{name}NoTabs.txt"
+        filename = name.with_suffix("NoTabs.txt")
     with open(filename, "r") as file:
         lines = file.readlines()
-    with open(f"{name}Final.txt", "w") as output_file:
+    with open(name.with_suffix("Final.txt"), "w") as output_file:
         level = -1
         if ident == "0":
             ident = "\t"
@@ -45,7 +48,7 @@ def main() -> None:
         if user_choice == "0":
             return
         print("file name (without extension)")
-        name = input()
+        name = Path(input())
         print("character for indentation")
         print("0 - tab")
         print("1 - space")

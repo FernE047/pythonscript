@@ -1,7 +1,8 @@
+from pathlib import Path
 from random import randint
 
 
-DIRECTORY = "./FanficAnime/"
+DIRECTORY = Path("FanficAnime")
 TAMANHO = 1
 EMPTY_CHAR = "¨"
 GENERATED_STORIES = 1000
@@ -9,10 +10,10 @@ GENERATED_STORIES = 1000
 def generate_initial_words(is_title: bool) -> list[str]:
     initial_word = generate_word(is_title)
     if is_title:
-        directory = f"{DIRECTORY}chainTitle/{TAMANHO}"
+        directory = DIRECTORY / "chainTitle" / f"{TAMANHO}"
     else:
-        directory = f"{DIRECTORY}chainStory/{TAMANHO}"
-    filename = f"{directory}/chain.txt"
+        directory = DIRECTORY / "chainStory" / f"{TAMANHO}"
+    filename = directory / "chain.txt"
     with open(filename, "r", encoding="utf-8") as file:
         lines = file.readlines()
     word_frequency_map: dict[str, int] = {}
@@ -46,11 +47,11 @@ def generate_word(is_title: bool, previous_words: list[str] | None = None) -> st
     if previous_words is None:
         previous_words = [EMPTY_CHAR for _ in range(TAMANHO)]
     if is_title:
-        directory = f"{DIRECTORY}chainTitle/{TAMANHO}"
+        directory = DIRECTORY / "chainTitle" / f"{TAMANHO}"
     else:
-        directory = f"{DIRECTORY}chainStory/{TAMANHO}"
+        directory = DIRECTORY / "chainStory" / f"{TAMANHO}"
     previous = " ".join(previous_words)
-    filename = f"{directory}/chain.txt"
+    filename = directory / "chain.txt"
     with open(filename, "r", encoding="utf-8") as file:
         lines = file.readlines()
     word_frequency_map: dict[str, int] = {}
