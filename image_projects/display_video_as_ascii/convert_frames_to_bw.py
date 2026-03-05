@@ -1,10 +1,11 @@
+from pathlib import Path
+
 from PIL import Image
-import os
 
 LEVEL_COUNT = 8
 MAX_BRIGHTNESS = 256
 BRIGHTNESS_STEP = MAX_BRIGHTNESS // LEVEL_COUNT
-FRAMES_FOLDER = "./video"
+FRAMES_FOLDER = Path("video")
 DISPLAY_HEIGHT_DEFAULT = 0
 DISPLAY_WIDTH_DEFAULT = 80
 
@@ -20,13 +21,13 @@ def get_pixel(image: Image.Image, coord: CoordData) -> float | int:
     return pixel
 
 
-def open_image(image_path: str) -> Image.Image:
+def open_image(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         return image_in_memory
 
 
-def frame_to_text(image: str) -> None:
+def frame_to_text(image: Path) -> None:
     display_height = DISPLAY_HEIGHT_DEFAULT
     display_width = DISPLAY_WIDTH_DEFAULT
     color_image = open_image(image)
@@ -50,7 +51,11 @@ def frame_to_text(image: str) -> None:
 
 
 def convert_frames_to_bw() -> None:
-    frames_raw = os.listdir(FRAMES_FOLDER)
-    frames = [f"{FRAMES_FOLDER}/{frame}" for frame in frames_raw]
+    frames_raw = list(FRAMES_FOLDER.iterdir())
+    frames = [
+        frame
+        for frame in frames_raw
+        if frame.is_file() and frame.suffix.lower() in (".jpg", ".jpeg", ".png")
+    ]
     for frame in frames:
         frame_to_text(frame)

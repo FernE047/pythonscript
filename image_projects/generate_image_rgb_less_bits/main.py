@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from PIL import Image
 
 IMAGE_COUNT = 2
@@ -7,7 +9,7 @@ DEFAULT_COLOR = (0, 0, 0)
 COLOR_CHANNELS = 3
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":
@@ -17,11 +19,11 @@ def open_image_as_rgba(image_path: str) -> Image.Image:
 
 def main() -> None:
     for input_index in range(IMAGE_COUNT):
-        input_name = f"A{input_index:03d}.png"
-        image = open_image_as_rgba(input_name)
+        input_path = Path(f"A{input_index:03d}.png")
+        image = open_image_as_rgba(input_path)
         size = image.size
         width, height = size
-        print(f"\nimage {input_name} size: {size}\n")
+        print(f"\nimage {input_path} size: {size}\n")
         for bit in range(1, TOTAL_BITS):
             output_image = Image.new("RGBA", size)
             bit_position = 2**bit
@@ -44,8 +46,9 @@ def main() -> None:
                         )
                     output_image.putpixel(coord, tuple(output_pixel))
             output_name = f"A{input_index:03d}{bit:01d}.png"
-            output_image.save(output_name)
-            print(f"finalizado {output_name}\n")
+            output_path = Path(output_name)
+            output_image.save(output_path)
+            print(f"finalizado {output_path}\n")
 
 
 if __name__ == "__main__":

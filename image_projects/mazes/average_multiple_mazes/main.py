@@ -1,11 +1,12 @@
+from pathlib import Path
 from PIL import Image
 from os import listdir
 
 WHITE = (255, 255, 255, 255)
-LABYRINTH_FOLDER = "pureLabyrinth"
+MAZE_FOLDER = Path("pure_mazes")
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":
@@ -16,8 +17,8 @@ def open_image_as_rgba(image_path: str) -> Image.Image:
 def main() -> None:
     white_count: list[int] = []
     black_count: list[int] = []
-    for arq in listdir(LABYRINTH_FOLDER):
-        image = open_image_as_rgba(f"{LABYRINTH_FOLDER}/{arq}")
+    for arq in MAZE_FOLDER.iterdir():
+        image = open_image_as_rgba(arq)
         width, height = image.size
         if width > 500:
             continue

@@ -1,5 +1,6 @@
 from PIL import Image
 from colorsys import rgb_to_hsv
+from pathlib import Path
 
 BACKGROUND_COLOR = (255, 255, 255, 255)
 HIGHLIGHT_COLOR = (0, 0, 0, 255)
@@ -26,7 +27,7 @@ def get_hsv_value_difference(
     return abs(hsv_a[2] - hsv_b[2])
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":
@@ -37,7 +38,8 @@ def open_image_as_rgba(image_path: str) -> Image.Image:
 def main() -> None:
     for input_index in range(INPUT_IMAGE_COUNT):
         input_name = f"A{input_index:03d}0.jpg"
-        imagem = open_image_as_rgba(input_name)
+        input_path = Path(input_name)
+        imagem = open_image_as_rgba(input_path)
         width, height = imagem.size
         print(f"\nimage {input_name} size: {imagem.size}\n")
         for output_index in range(1, OUTPUT_IMAGE_COUNT + 1):
@@ -62,8 +64,9 @@ def main() -> None:
                             output_image.putpixel((x, y), HIGHLIGHT_COLOR)
                             break
             output_name = f"A{input_index:03d}{output_index:01d}.png"
-            output_image.save(output_name)
-            print(f"{output_name} was created")
+            output_path = Path(output_name)
+            output_image.save(output_path)
+            print(f"{output_path} was created")
 
 
 if __name__ == "__main__":

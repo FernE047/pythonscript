@@ -1,9 +1,9 @@
-import os
 from PIL import Image
 import math
+from pathlib import Path
 
-MUSIC_FOLDER = "./musicas/"
-OUTPUT_FOLDER = "./circle/"
+MUSIC_FOLDER = Path("musicas")
+OUTPUT_FOLDER = Path("circle")
 DEFAULT_NAIL_COUNT = 25
 RESIZE_FACTOR = 4
 DEFAULT_IMAGE_WIDTH = RESIZE_FACTOR * DEFAULT_NAIL_COUNT
@@ -25,8 +25,10 @@ def get_nail_coordinates(
     radius = canvas_width // 2 - PADDING
     nail_angle = FULL_CIRCLE_ANGLE / nail_count
     radian = nail_angle * nail_index * math.pi / HALF_CIRCLE_ANGLE
+
     def find_circle_position(alt_radian: float) -> int:
         return int(radius * alt_radian) + radius + PADDING
+
     x = find_circle_position(math.cos(radian))
     y = find_circle_position(math.sin(radian))
     coord = (x, y)
@@ -93,17 +95,16 @@ def get_image_size(nail_count: int) -> tuple[int, int]:
 
 
 def main() -> None:
-    if not os.path.exists(OUTPUT_FOLDER):
-        os.makedirs(OUTPUT_FOLDER)
-    for filename in os.listdir(MUSIC_FOLDER):
-        if not filename.endswith(".txt"):
+    OUTPUT_FOLDER.mkdir(exist_ok=True)
+    for filename in MUSIC_FOLDER.iterdir():
+        if not filename.suffix == ".txt":
             continue
-        full_path = os.path.join(MUSIC_FOLDER, filename)
-        with open(full_path, "r", encoding="utf-8") as file:
+        with open(filename, "r", encoding="utf-8") as file:
             song_lyrics = file.read().lower()
-        image_name, _ = os.path.splitext(filename)
+        image_name = filename.stem
         image = generate_image(song_lyrics)
-        image.save(os.path.join(OUTPUT_FOLDER, f"{image_name}.png"))
+        output_path = OUTPUT_FOLDER / f"{image_name}.png"
+        image.save(output_path)
 
 
 if __name__ == "__main__":

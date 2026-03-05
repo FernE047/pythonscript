@@ -1,7 +1,8 @@
 from PIL import Image
+from pathlib import Path
 
 BACKGROUND_COLOR = (255, 255, 255, 255)
-OUTPUT_IMAGE_NAME = "output"
+OUTPUT_IMAGE_NAME = Path("output")
 OUTPUT_EXTENSION = ".png"
 
 CoordData = tuple[int, int]
@@ -21,7 +22,7 @@ def get_pixel(image: Image.Image, coord: CoordData) -> PixelData:
     return pixel
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":
@@ -30,7 +31,7 @@ def open_image_as_rgba(image_path: str) -> Image.Image:
 
 
 def main() -> None:
-    image = open_image_as_rgba("input.png")
+    image = open_image_as_rgba(Path("input.png"))
     size = image.size
     width, height = size
     squashed_image = Image.new("RGBA", size, BACKGROUND_COLOR)
@@ -47,10 +48,10 @@ def main() -> None:
                 current_color = scan_color
         current_y += 1
         current_x = 0
-    direction = "top_bottom_left_right"
-    file_name = f"{OUTPUT_IMAGE_NAME}_{direction}{OUTPUT_EXTENSION}"
-    print(file_name)
-    squashed_image.save(file_name)
+    direction = f"_top_bottom_left_right{OUTPUT_EXTENSION}"
+    file_path = OUTPUT_IMAGE_NAME.with_suffix(direction)
+    print(file_path)
+    squashed_image.save(file_path)
     squashed_image = Image.new("RGBA", size, BACKGROUND_COLOR)
     current_x = 0
     current_y = 0
@@ -65,10 +66,10 @@ def main() -> None:
                 current_color = scan_color
         current_x += 1
         current_y = 0
-    direction = "left_right_top_bottom"
-    file_name = f"{OUTPUT_IMAGE_NAME}_{direction}{OUTPUT_EXTENSION}"
-    print(file_name)
-    squashed_image.save(file_name)
+    direction = f"_left_right_top_bottom{OUTPUT_EXTENSION}"
+    file_path = OUTPUT_IMAGE_NAME.with_suffix(direction)
+    print(file_path)
+    squashed_image.save(file_path)
 
     squashed_image = Image.new("RGBA", size, BACKGROUND_COLOR)
     current_x = width - 1
@@ -83,10 +84,10 @@ def main() -> None:
                 current_color = scan_color
         current_y += 1
         current_x = width - 1
-    direction = "top_bottom_right_left"
-    file_name = f"{OUTPUT_IMAGE_NAME}_{direction}{OUTPUT_EXTENSION}"
-    print(file_name)
-    squashed_image.save(file_name)
+    direction = f"_top_bottom_right_left{OUTPUT_EXTENSION}"
+    file_path = OUTPUT_IMAGE_NAME.with_suffix(direction)
+    print(file_path)
+    squashed_image.save(file_path)
 
     squashed_image = Image.new("RGBA", size, BACKGROUND_COLOR)
     current_x = 0
@@ -101,10 +102,10 @@ def main() -> None:
                 current_color = scan_color
         current_x += 1
         current_y = height - 1
-    direction = "left_right_bottom_top"
-    file_name = f"{OUTPUT_IMAGE_NAME}_{direction}{OUTPUT_EXTENSION}"
-    print(file_name)
-    squashed_image.save(file_name)
+    direction = f"_left_right_bottom_top{OUTPUT_EXTENSION}"
+    file_path = OUTPUT_IMAGE_NAME.with_suffix(direction)
+    print(file_path)
+    squashed_image.save(file_path)
 
 
 if __name__ == "__main__":

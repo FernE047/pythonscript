@@ -1,9 +1,11 @@
+from pathlib import Path
+
 from PIL import Image
 import os
 import gc
 
-INPUT_IMAGE_FOLDER = "./funny_images"
-OUTPUT_IMAGE_FOLDER = f"{INPUT_IMAGE_FOLDER}/graficos"
+INPUT_IMAGE_FOLDER = Path("funny_images")
+OUTPUT_IMAGE_FOLDER = INPUT_IMAGE_FOLDER / "graficos"
 BACKGROUND_COLOR = (255, 255, 255, 255)
 HIGHLIGHT_COLOR = (0, 0, 0, 255)
 INITIAL_ATTEMPT = 1
@@ -15,7 +17,7 @@ LOGGING_OUTPUT_THRESHOLD = 10
 SCALING_FACTOR = 10
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":
@@ -23,7 +25,7 @@ def open_image_as_rgba(image_path: str) -> Image.Image:
         return image_in_memory
 
 
-def generate_brightness_histogram(img: str, scaling_attempt: int = INITIAL_ATTEMPT) -> Image.Image:
+def generate_brightness_histogram(img: Path, scaling_attempt: int = INITIAL_ATTEMPT) -> Image.Image:
     imagem = open_image_as_rgba(img)
     width, height = imagem.size
     tamanho = width * height
@@ -63,17 +65,17 @@ def generate_brightness_histogram(img: str, scaling_attempt: int = INITIAL_ATTEM
 
 def main() -> None:
     print(INPUT_IMAGE_FOLDER)
-    images = os.listdir(INPUT_IMAGE_FOLDER)
+    images = list(INPUT_IMAGE_FOLDER.iterdir())
     try:
         output_folder = OUTPUT_IMAGE_FOLDER
-        os.makedirs(output_folder, exist_ok=True)
+        output_folder.mkdir(exist_ok=True)
     except Exception:
         output_folder = INPUT_IMAGE_FOLDER
     for image in images:
-        output_image = generate_brightness_histogram(f"{INPUT_IMAGE_FOLDER}/{image}")
-        image_name, extension = os.path.splitext(image)
+        output_image = generate_brightness_histogram(INPUT_IMAGE_FOLDER / image)
+        image_name, extension = os.path.splitext(image.name)
         output_name = f"{image_name}_graf{extension}"
-        output_image.save(os.path.join(output_folder, output_name))
+        output_image.save(output_folder / output_name)
     print(gc.collect())
     # I used to love gc.collect because I have leaked memory in the past using C programs. I know it's not really needed in Python but at the past I was very traumatized by memory leaks.
 

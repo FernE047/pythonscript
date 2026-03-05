@@ -1,4 +1,5 @@
 from math import sqrt
+from pathlib import Path
 from PIL import Image
 
 BACKGROUND_COLOR = (255, 255, 255, 255)
@@ -30,7 +31,7 @@ def euclidean_distance_between_pixels(
     return sqrt(total_squared_distance)
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":
@@ -41,7 +42,8 @@ def open_image_as_rgba(image_path: str) -> Image.Image:
 def main() -> None:
     for input_index in range(1, INPUT_IMAGE_COUNT + 1):
         input_name = f"A{input_index:03d}_source.jpg"
-        image = open_image_as_rgba(input_name)
+        input_path = Path(input_name)
+        image = open_image_as_rgba(input_path)
         width, height = image.size
         print(f"\nimage {input_name} size: {image.size}\n")
         output_image = Image.new("RGBA", image.size, BACKGROUND_COLOR)
@@ -83,8 +85,9 @@ def main() -> None:
                 pixel_color = (color, color, color, MAX_BRIGHTNESS)
                 output_image.putpixel((x, y), pixel_color)
         output_name = f"A{input_index:03d}_output.png"
-        output_image.save(output_name)
-        print(f"{output_name} was created")
+        output_path = Path(output_name)
+        output_image.save(output_path)
+        print(f"{output_path} was created")
 
 
 if __name__ == "__main__":

@@ -1,11 +1,12 @@
+from pathlib import Path
 import shelve
-import os
 from PIL import Image
 
 BLACK = (0, 0, 0, 255)
+DIRECTORY = Path.cwd()
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":
@@ -13,13 +14,12 @@ def open_image_as_rgba(image_path: str) -> Image.Image:
         return image_in_memory
 
 
-def get_images_from_folder(folder: str) -> list[str]:
-    images = os.listdir(folder)
-    images_path = [os.path.join(folder, image) for image in images]
-    return images_path
+def get_images_from_folder(folder: Path) -> list[Path]:
+    images = [image for image in folder.iterdir() if image.is_file()]
+    return images
 
 
-def get_images_average_size(images_path: list[str]) -> int:
+def get_images_average_size(images_path: list[Path]) -> int:
     length_total = 0
     for image_path in images_path:
         image = open_image_as_rgba(image_path)
@@ -29,13 +29,15 @@ def get_images_average_size(images_path: list[str]) -> int:
 
 
 def main() -> None:
-    diretory = os.getcwd()
-    folder = os.path.join(diretory, "imagens")
+    folder = DIRECTORY / "imagens"
     images_path = get_images_from_folder(folder)
     for category_folder in ["artist", "album"]:
-        folder = os.path.join(diretory, category_folder)
-        folders = os.listdir(folder)
-        folders_path = [os.path.join(folder, folder_name) for folder_name in folders]
+        folder = DIRECTORY / category_folder
+        folders_path = [
+            folder / folder_name
+            for folder_name in folder.iterdir()
+            if folder_name.is_dir()
+        ]
         for folder_path in folders_path:
             images_path += get_images_from_folder(folder_path)
     average_length = get_images_average_size(images_path)
@@ -61,7 +63,7 @@ def main() -> None:
                     continue
                 z_heat[average_length * x + y] += 1
 
-    with shelve.open(os.path.join(diretory, "dadosPreProcessados")) as database:
+    with shelve.open(DIRECTORY / "dadosPreProcessados") as database:
         database["x"] = x_heat
         database["y"] = y_heat
         database["z"] = z_heat

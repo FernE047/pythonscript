@@ -1,10 +1,12 @@
+from pathlib import Path
 from PIL import Image
-import os
 
 RED = (255, 0, 0, 255)
 BLACK = (0, 0, 0, 255)
+DATA_FOLDER = Path("data")
 
-def generate_image(lyrics:str) -> Image.Image| None:
+
+def generate_image(lyrics: str) -> Image.Image | None:
     words = lyrics.split(" ")
     word_counter = len(words)
     print(f"Word Count: {word_counter}\n")
@@ -19,22 +21,21 @@ def generate_image(lyrics:str) -> Image.Image| None:
     return image
 
 
-
 def main() -> None:
-    lyrics_folder = "./data/lyrics/"
-    image_folder = "./data/images/"
-    if not os.path.exists(image_folder):
-        os.makedirs(image_folder)
-    for filename in os.listdir(lyrics_folder):
-        if not filename.endswith(".txt"):
+    lyrics_folder = DATA_FOLDER / "lyrics"
+    image_folder = DATA_FOLDER / "images"
+    image_folder.mkdir(exist_ok=True)
+    for filename in lyrics_folder.iterdir():
+        if not filename.name.endswith(".txt"):
             continue
-        full_path = os.path.join(lyrics_folder, filename)
+        full_path = lyrics_folder / filename
         with open(full_path, "r", encoding="utf-8") as f:
             lyrics = f.read()
         image = generate_image(lyrics)
         if image is not None:
-            image_path = os.path.join(image_folder, f"{filename[:-4]}.png")
+            image_path = image_folder / f"{filename.stem}.png"
             image.save(image_path)
+
 
 if __name__ == "__main__":
     main()

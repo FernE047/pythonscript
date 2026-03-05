@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 from PIL import Image
 
 
@@ -9,11 +9,12 @@ def open_image(image_path: Path) -> Image.Image:
 
 
 def main() -> None:
-    diretorio = os.getcwd()
-    base = os.path.join(diretorio, "imagensBase")
-    imagens = os.listdir(base)
-    imagensCaminho = [os.path.join(base, imagem) for imagem in imagens]
+    diretorio = Path.cwd()
+    base = diretorio / "imagensBase"
+    imagensCaminho = [imagem for imagem in base.iterdir() if imagem.is_file()]
     imageNumber = 0
+    output_folder = diretorio / "pokemon"
+    output_folder.mkdir(exist_ok=True)
     for imagemCaminho in imagensCaminho:
         print(imagemCaminho)
         imagem = open_image(imagemCaminho)
@@ -21,9 +22,7 @@ def main() -> None:
         for y in range(int(altura / 103)):
             for x in range(int(largura / 96)):
                 pokemon = imagem.crop((96 * x, 103 * y, 96 * (x + 1), 103 * y + 96))
-                pokemon.save(
-                    os.path.join(diretorio, "pokemon", f"pokemon{imageNumber:03d}.png")
-                )
+                pokemon.save(output_folder / f"pokemon{imageNumber:03d}.png")
                 imageNumber += 1
 
 

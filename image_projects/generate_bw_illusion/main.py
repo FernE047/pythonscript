@@ -1,7 +1,7 @@
+from pathlib import Path
 from PIL import Image
-import os
 
-IMAGES_FOLDER = "imagens"
+IMAGES_FOLDER = Path("imagens")
 ALLOWED_IMAGE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".bmp", ".gif")
 EXCLUDED_DIVISORS = (3, 4, 5)
 STEP = 50
@@ -23,17 +23,20 @@ def get_pixel(image: Image.Image, coord: CoordData) -> PixelData:
     return pixel
 
 
-def get_image_from_folder(sub_folder: str) -> list[str]:
-    folder = f"{IMAGES_FOLDER}/{sub_folder}"
-    images: list[str] = []
-    if os.path.exists(folder):
-        for filename in os.listdir(folder):
-            if filename.lower().endswith(ALLOWED_IMAGE_EXTENSIONS):
-                images.append(os.path.join(folder, filename))
+def get_image_from_folder(sub_folder: str) -> list[Path]:
+    folder = IMAGES_FOLDER / sub_folder
+    images: list[Path] = []
+    if not folder.exists():
+        return []
+    for filename in folder.iterdir():
+        if filename.is_file() and filename.name.lower().endswith(
+            ALLOWED_IMAGE_EXTENSIONS
+        ):
+            images.append(filename)
     return images
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":
@@ -55,11 +58,13 @@ def main() -> None:
                 if y % STEP in EXCLUDED_DIVISORS:
                     continue
                 color = get_pixel(image, (x, y))
-                average_color = tuple(3 * [int((color[0] + color[1] + color[2]) / 3)] + [255])
+                average_color = tuple(
+                    3 * [int((color[0] + color[1] + color[2]) / 3)] + [255]
+                )
                 image.putpixel((x, y), average_color)
-        new_name = f"pbi_{image_index:03d}.png"
-        image.save(new_name)
-        print(f"{new_name} done")
+        new_path = Path(f"pbi_{image_index:03d}.png")
+        image.save(new_path)
+        print(f"{new_path} done")
 
 
 if __name__ == "__main__":

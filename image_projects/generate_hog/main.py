@@ -1,11 +1,11 @@
 from colorsys import hsv_to_rgb
 from enum import Enum
-import os
+from pathlib import Path
 from PIL import Image
 
-IMAGE_FOLDER = "./images/pokedex_no_background"
+IMAGE_FOLDER = Path("images") / "pokedex_no_background"
 ALLOWED_FILE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".bmp", ".gif")
-IMAGE_OUTPUT = "./output/pokemon"
+IMAGE_OUTPUT = Path("output") / "pokemon"
 EXTENSION_OUTPUT = ".png"
 INDEX_DEFAULT = 1
 
@@ -45,7 +45,7 @@ def get_pixel(image: Image.Image, coord: CoordData) -> int:
     return pixel
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":
@@ -53,18 +53,19 @@ def open_image_as_rgba(image_path: str) -> Image.Image:
         return image_in_memory
 
 
-def get_image(index_chosen: int = INDEX_DEFAULT) -> str:
-    if not os.path.exists(IMAGE_FOLDER):
-        return ""
+def get_image(index_chosen: int = INDEX_DEFAULT) -> Path:
+    if not IMAGE_FOLDER.exists():
+        raise ValueError(f"Image folder {IMAGE_FOLDER} does not exist")
     index = 0
-    for filename in os.listdir(IMAGE_FOLDER):
-        _, extension = os.path.splitext(filename)
-        if extension not in ALLOWED_FILE_EXTENSIONS:
+    for filename in IMAGE_FOLDER.iterdir():
+        if not filename.is_file():
+            continue
+        if filename.suffix.lower() not in ALLOWED_FILE_EXTENSIONS:
             continue
         index += 1
         if index == index_chosen:
-            return f"{IMAGE_FOLDER}/{filename}"
-    return ""
+            return filename
+    raise ValueError(f"Image with index {index_chosen} not found in {IMAGE_FOLDER}")
 
 
 def apply_direction(coord: CoordData | None, direction: Direction) -> CoordData:
@@ -141,8 +142,8 @@ def main() -> None:
     image_hog = Image.new("L", image.size, 0)
     image_grayscale = convert_to_grayscale(image)
     hogify(image_grayscale, image_hog)
-    image.save(f"{IMAGE_OUTPUT}_001{EXTENSION_OUTPUT}")
-    image_hog.save(f"{IMAGE_OUTPUT}_000{EXTENSION_OUTPUT}")
+    image.save(IMAGE_OUTPUT.with_suffix(f"_001{EXTENSION_OUTPUT}"))
+    image_hog.save(IMAGE_OUTPUT.with_suffix(f"_000{EXTENSION_OUTPUT}"))
 
 
 if __name__ == "__main__":

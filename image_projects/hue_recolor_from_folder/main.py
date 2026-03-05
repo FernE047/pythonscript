@@ -2,6 +2,8 @@ from PIL import Image
 from colorsys import rgb_to_hsv
 from colorsys import hsv_to_rgb
 
+#TODO: refactor to use pathlib. the wildcard are the hard parts. 
+
 # * is a wildcard
 INPUT_IMAGE = "./pokedexSemFundo/pokemon_*.png"
 OUTPUT_FOLDER = "./pokedexRecolorPokemons/pokemon_*"

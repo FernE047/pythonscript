@@ -1,5 +1,5 @@
+from pathlib import Path
 from PIL import Image
-import os
 
 # this program was made when I used python 3.6, I didn't knew ide at the time and relied on python idle
 # hence the max size that fits into idle is 165
@@ -14,7 +14,7 @@ TERMINAL_SIZE = 60  # if you want to display in terminal
 WHATSAPP_SIZE = 26  # if you want to display in whatsapp
 
 
-def open_image_as_rgb(image_path: str) -> Image.Image:
+def open_image_as_rgb(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGB":
@@ -22,7 +22,7 @@ def open_image_as_rgb(image_path: str) -> Image.Image:
         return image_in_memory
 
 
-def get_image_from_folder() -> list[str]:
+def get_image_from_folder() -> list[Path]:
     print("enter the image folder:")
     image_folder = input()
     print("quantity")
@@ -31,14 +31,14 @@ def get_image_from_folder() -> list[str]:
         quantity = int(user_input)
     except ValueError:
         quantity = None
-    folder = f"images/{image_folder}"
-    images: list[str] = []
-    if not os.path.exists(folder):
+    folder = Path("images") / image_folder
+    images: list[Path] = []
+    if not folder.exists() or not folder.is_dir():
         return images
-    for filename in os.listdir(folder):
-        if not filename.lower().endswith(ACCEPTED_IMAGE_FORMATS):
+    for filename in folder.iterdir():
+        if not filename.name.lower().endswith(ACCEPTED_IMAGE_FORMATS):
             continue
-        images.append(os.path.join(folder, filename))
+        images.append(filename)
         if quantity is not None and len(images) >= quantity:
             return images
     return images

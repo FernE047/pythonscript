@@ -1,15 +1,14 @@
-from os import listdir
+from pathlib import Path
 from PIL import Image
 from time import time
 
 # this script is an attempt to map game levels gameplays into a single level map image. biggest enemy: parallax. I never made it work, but it was fun to try. maybe one day i will try again with a better approach, but for now, this is the code that i have.
 
-#TODO: ugly code. make it better, faster, stronger. (quote by daft punk)
+# TODO: ugly code. make it better, faster, stronger. (quote by daft punk)
 
 PIXEL_CHANNELS = 4
 MAX_BRIGHTNESS = 255
-VIDEO_FOLDER = "./video"
-FRAMES_FOLDER = f"{VIDEO_FOLDER}/"
+VIDEO_FOLDER = Path("video")
 SEARCH_DISTANCE_DEFAULT = 20
 BACKGROUND_COLOR = (255, 255, 255, 0)
 
@@ -74,7 +73,7 @@ def print_elapsed_time(seconds: float) -> None:
     print(f"{sign}{', '.join(parts)}")
 
 
-def open_frame(image_path: str) -> Image.Image:
+def open_frame(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":
@@ -209,12 +208,13 @@ def expand_map(
 def main() -> None:
     search_config = SearchConfig(SEARCH_DISTANCE_DEFAULT)
     total_start_time = time()
-    image_map = open_frame(f"{FRAMES_FOLDER}{listdir(VIDEO_FOLDER)[0]}")
+    frames = list(VIDEO_FOLDER.iterdir())
+    image_map = open_frame(frames[0])
     coord = (0, 0)
     start_time = time()
-    total_frame_count = len(listdir(VIDEO_FOLDER))
-    for n, frame in enumerate(listdir(VIDEO_FOLDER)):
-        current_frame = open_frame(f"{FRAMES_FOLDER}{frame}")
+    total_frame_count = len(frames)
+    for n, frame in enumerate(frames):
+        current_frame = open_frame(frame)
         position_adjustments = compare_frames(
             image_map, current_frame, coord, search_config
         )

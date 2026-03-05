@@ -1,6 +1,8 @@
+from pathlib import Path
+
 from PIL import Image
 
-INPUT_IMAGE = "b.jpg"
+INPUT_IMAGE = Path("b.jpg")
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
@@ -25,7 +27,7 @@ def get_pixel(image: Image.Image, coord: CoordData) -> tuple[int, int, int]:
     return pixel[0], pixel[1], pixel[2]
 
 
-def open_image_as_rgb(image_path: str) -> Image.Image:
+def open_image_as_rgb(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGB":
@@ -33,7 +35,8 @@ def open_image_as_rgb(image_path: str) -> Image.Image:
         return image_in_memory
 
 def main() -> None:
-    input_image = open_image_as_rgb(INPUT_IMAGE)
+    input_path = INPUT_IMAGE
+    input_image = open_image_as_rgb(input_path)
     size = input_image.size
     width, height = size
     faixa = Image.new("RGB", size, "white")
@@ -65,9 +68,9 @@ def main() -> None:
                     faixa.putpixel(coord, BLUE)
                 else:
                     faixa.putpixel(coord, WHITE)
-            
-    faixa.save("bContraste.jpg")
-    print("veja")
+    output_path = Path("bContraste.jpg")
+    faixa.save(output_path)
+    print(f"{output_path} was created")
 
 
 if __name__ == "__main__":
