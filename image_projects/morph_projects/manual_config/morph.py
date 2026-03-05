@@ -1,12 +1,15 @@
 from typing import TypeVar, cast
+from pathlib import Path
 from PIL import Image
 import os
 import multiprocessing
 
-SOURCE_IMAGE = "./inicial.png"
-TARGET_IMAGE = "./final.png"
-CONFIG_FOLDER = "./partes/config/"
-OUTPUT_IMAGE = "./frames/frame.png"
+SOURCE_IMAGE = Path("inicial.png")
+TARGET_IMAGE = Path("final.png")
+PARTS_FOLDER = Path("partes")
+FRAMES_FOLDER = Path("frames")
+CONFIG_FOLDER = PARTS_FOLDER / "config"
+OUTPUT_IMAGE = FRAMES_FOLDER / "frame.png"
 TOTAL_FRAMES = 30
 FINAL_FRAME = TOTAL_FRAMES + 1
 BACKGROUND_COLOR = (255, 255, 255, 0)
@@ -58,7 +61,7 @@ def interpolate_tuples(tuple_source: R, tuple_target: R, frame_index: int) -> R:
     return cast(R, tuple(interpolated_values))
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":
@@ -71,8 +74,8 @@ def inrerpolate_frames(index: int) -> None:
     target_image = open_image_as_rgba(TARGET_IMAGE)
     print(f"generating Frame : {index}")
     frame = Image.new("RGBA", target_image.size, BACKGROUND_COLOR)
-    for filename in os.listdir(CONFIG_FOLDER):
-        with open(f"{CONFIG_FOLDER}{filename}", "r", encoding="utf-8") as file:
+    for filename in CONFIG_FOLDER.iterdir():
+        with open(filename, "r", encoding="utf-8") as file:
             lines = file.read().splitlines()
         for line in lines:
             if not line:
@@ -92,7 +95,7 @@ def inrerpolate_frames(index: int) -> None:
     save_frame(frame, index)
 
 
-def move_image(image_name: str, frame_index: int) -> None:
+def move_image(image_name: Path, frame_index: int) -> None:
     image = open_image_as_rgba(image_name)
     print(f"\n {image_name} size: {image.size}\n")
     save_frame(image, frame_index)

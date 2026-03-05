@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from PIL import Image
 from morph import interpolate_tuples
 from correct_frames import fix_trapped_pixels
@@ -5,14 +7,15 @@ import os
 
 CoordData = tuple[int, int]
 BACKGROUND_COLOR = (255, 255, 255, 0)
-FRAME_FOLDER = "./frames"
+FRAME_FOLDER = Path("frames")
 ALPHA_CHANNEL = 3
 MAX_BRIGHTNESS = 255
-SOURCE_FOLDER = "./partes/iniciais"
-TARGET_FOLDER = "./partes/finais"
+PART_FOLDERS = Path("partes")
+SOURCE_FOLDER = PART_FOLDERS / "iniciais"
+TARGET_FOLDER = PART_FOLDERS / "finais"
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":
@@ -30,11 +33,11 @@ def get_pixel(imagem: Image.Image, coord: CoordData) -> tuple[int, ...]:
     return pixel
 
 
-def generate_background(image_name: str) -> Image.Image:
+def generate_background(image_name: Path) -> Image.Image:
     print("back iniciado")
-    image = open_image_as_rgba(f"./{image_name}.png")
-    directory = SOURCE_FOLDER if image_name == "source" else TARGET_FOLDER
-    for partsName in [f"{directory}/{fileName}" for fileName in os.listdir(directory)]:
+    image = open_image_as_rgba(image_name.with_suffix(".png"))
+    directory = SOURCE_FOLDER if image_name == Path("source") else TARGET_FOLDER
+    for partsName in [directory / fileName for fileName in os.listdir(directory)]:
         parte = open_image_as_rgba(partsName)
         width, height = parte.size
         is_first_occurrence = True
@@ -57,9 +60,9 @@ def generate_background(image_name: str) -> Image.Image:
 
 
 def insert_background_frames() -> None:
-    background_source = generate_background("source")
-    background_target = generate_background("target")
-    frames = [f"{FRAME_FOLDER}/{file}" for file in os.listdir(FRAME_FOLDER)]
+    background_source = generate_background(Path("source"))
+    background_target = generate_background(Path("target"))
+    frames = [FRAME_FOLDER / file for file in os.listdir(FRAME_FOLDER)]
     frames.pop(0)
     frames.pop()
     frames.pop()

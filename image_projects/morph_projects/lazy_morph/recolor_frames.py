@@ -1,13 +1,14 @@
+from pathlib import Path
 from PIL import Image
 
-SOURCE_IMAGE = "./source.png"
-TARGET_IMAGE = "./target.png"
-SOURCE_IMAGE_COLORED = "./source_colored.png"
-TARGET_IMAGE_COLORED = "./target_colored.png"
-CONFIG_FILE = "./config.txt"
+SOURCE_IMAGE = Path("source.png")
+TARGET_IMAGE = Path("target.png")
+SOURCE_IMAGE_COLORED = Path("source_colored.png")
+TARGET_IMAGE_COLORED = Path("target_colored.png")
+CONFIG_FILE = Path("config.txt")
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":

@@ -1,14 +1,16 @@
 from enum import Enum
 from math import sqrt
+from pathlib import Path
 from PIL import Image
 import os
 import multiprocessing
 
 CoordData = tuple[int, int]
 
-SOURCE_FOLDER = "./parts/source"
-TARGET_FOLDER = "./parts/target"
-CONFIG_FOLDER = "./parts/config"
+PARTS_FOLDER = Path("parts")
+SOURCE_FOLDER = PARTS_FOLDER / "source"
+TARGET_FOLDER = PARTS_FOLDER / "target"
+CONFIG_FOLDER = PARTS_FOLDER / "config"
 ROUNDING_EPSILON = 0.1
 # euclidean distance plus a small margin
 NEIGHBORS_MINIMUM_DISTANCE = sqrt(2) + ROUNDING_EPSILON
@@ -81,7 +83,7 @@ def apply_direction(coord: CoordData | None, direction: Direction) -> CoordData:
         return (x + 1, y)
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":
@@ -642,7 +644,7 @@ class ImagePart:
     has_red: bool
     blue_coord: CoordData
 
-    def __init__(self, nome: str) -> None:
+    def __init__(self, nome: Path) -> None:
         image = open_image_as_rgba(nome)
         self.search_colors(image)
         if self.has_red:
@@ -690,9 +692,9 @@ def configPart(part_index: int) -> None:
     print(f"Processing Part : {part_index}")
     file_name = f"{part_index:03d}"
     image_name = f"{file_name}.png"
-    source_part = ImagePart(f"{SOURCE_FOLDER}/{image_name}")
-    target_part = ImagePart(f"{TARGET_FOLDER}/{image_name}")
-    config_name = f"{CONFIG_FOLDER}/{file_name}.txt"
+    source_part = ImagePart(SOURCE_FOLDER / image_name)
+    target_part = ImagePart(TARGET_FOLDER / image_name)
+    config_name = CONFIG_FOLDER / f"{file_name}.txt"
     with open(config_name, "w", encoding="utf-8") as file_config:
         config = source_part.to_config(target_part)
         file_config.write(config)
@@ -700,6 +702,6 @@ def configPart(part_index: int) -> None:
 
 
 def generate_config() -> None:
-    total_parts = len(os.listdir(TARGET_FOLDER))
+    total_parts = len(list(TARGET_FOLDER.iterdir()))
     with multiprocessing.Pool(os.cpu_count()) as cpu_pool:
         cpu_pool.map(configPart, range(total_parts))

@@ -1,19 +1,19 @@
+from pathlib import Path
 from PIL import Image
 import os
 import multiprocessing
 
 FRAMES_TOTAL = 30
-SOURCE_IMAGE = "./source.png"
-TARGET_IMAGE = "./target.png"
-FRAMES_FOLDER = "./frames"
+SOURCE_IMAGE = Path("source.png")
+TARGET_IMAGE = Path("target.png")
+FRAMES_FOLDER = Path("frames")
 TRANSPARENT_WHITE = (255, 255, 255, 0)
-CONFIG_FILE = "./config.txt"
+CONFIG_FILE = Path("config.txt")
 
 CoordData = tuple[int, int]
 PixelData = tuple[int, ...] | float
 
-
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":
@@ -105,12 +105,12 @@ def makeFrame(frame_index: int) -> None:
         )
         frame.putpixel(interpolated_coord, interpolated_color)
     print(f"\tFrame Completed : {frame_index}")
-    frame.save(f"{FRAMES_FOLDER}/frame{frame_index + 1:03d}.png")
+    frame.save(FRAMES_FOLDER / f"frame{frame_index + 1:03d}.png")
 
 
-def move_image(image_name: str, image_rename: str) -> None:
+def move_image(image_name: Path, image_rename: str) -> None:
     image = open_image_as_rgba(image_name)
-    image.save(f"{FRAMES_FOLDER}/{image_rename}")
+    image.save(FRAMES_FOLDER / image_rename)
 
 
 def create_first_and_last_frames() -> None:

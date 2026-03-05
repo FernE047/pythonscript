@@ -1,10 +1,11 @@
+from pathlib import Path
 from PIL import Image, ImageDraw
 
 # this script takes an image and flattens it by using radial lines from the center. it's funny to use on Luigi's images, his nose becomes a big blob. poor mario brother.
 
 IMAGE_NUMBER = "6"
-SOURCE_IMAGE_PATH = f"images_{IMAGE_NUMBER}.jpg"
-OUTPUT_IMAGE_PATH = f"images_graf_{IMAGE_NUMBER}.jpg"
+SOURCE_IMAGE_PATH = Path(f"images_{IMAGE_NUMBER}.jpg")
+OUTPUT_IMAGE_PATH = Path(f"images_graf_{IMAGE_NUMBER}.jpg")
 EVEN_SAFETY_OFFSET = 2
 ODD_SAFETY_OFFSET = 3
 SCALING_FACTOR = 2
@@ -15,7 +16,7 @@ PRINTING_THRESHOLD = 50
 LINE_WIDTH = 1
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":

@@ -1,24 +1,23 @@
+from pathlib import Path
 from PIL import Image
 import send2trash
-import os
 
-FRAMES_FOLDER = "./frames"
-RESIZED_FOLDER = "./frames/resized"
+FRAMES_FOLDER = Path("frames")
+RESIZED_FOLDER = FRAMES_FOLDER / "resized"
 POKEMON_COUNT = 761
-POKEMON_FOLDER = "./imagens/PokedexSemFundo"
+POKEMON_FOLDER = Path("imagens") / "PokedexSemFundo"
+POKEMON_FOLDER.mkdir(exist_ok=True)
 ALLOWED_FILE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".bmp", ".gif")
 
 
-def get_image(index_chosen: int = 1) -> str:
-    if not os.path.exists(POKEMON_FOLDER):
-        raise FileNotFoundError(f"Folder not found: {POKEMON_FOLDER}")
+def get_image(index_chosen: int = 1) -> Path:
     index = 0
-    for filename in os.listdir(POKEMON_FOLDER):
-        if not filename.lower().endswith(ALLOWED_FILE_EXTENSIONS):
+    for filename in POKEMON_FOLDER.iterdir():
+        if filename.suffix.lower() not in ALLOWED_FILE_EXTENSIONS:
             continue
         index += 1
         if index == index_chosen:
-            return os.path.join(POKEMON_FOLDER, filename)
+            return POKEMON_FOLDER / filename
     raise ValueError(f"Image with index {index_chosen} not found in {POKEMON_FOLDER}")
 
 
@@ -40,17 +39,16 @@ def get_user_integer(
             print("invalid value, please try again")
 
 
-def clear_folder(folder: str) -> None:
-    if not os.path.exists(folder):
-        os.makedirs(folder)
-    files = [f"{folder}/{a}" for a in os.listdir(folder)]
+def clear_folder(folder: Path) -> None:
+    folder.mkdir(exist_ok=True)
+    files = list(folder.iterdir())
     if RESIZED_FOLDER in files:
         files.pop(files.index(RESIZED_FOLDER))
     for file in files:
         send2trash.send2trash(file)
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":

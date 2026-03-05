@@ -1,5 +1,5 @@
 from enum import Enum
-import os
+from pathlib import Path
 from PIL import Image
 
 BACKGROUND_COLOR = (255, 255, 255, 255)
@@ -10,7 +10,7 @@ COLORS = {
     2: (0, 255, 0, 255),
     3: (255, 0, 0, 255),
 }
-INPUT_FILE = "labyrinth.png"
+INPUT_FILE = Path("labyrinth.png")
 
 
 class Direction(Enum):
@@ -35,7 +35,7 @@ def apply_direction(coord: CoordData, direction: Direction) -> CoordData:
         return (x - 1, y)
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":
@@ -59,9 +59,8 @@ def main() -> None:
                 orthogonal_neighbors.append(new_coord)
             color_index = len(orthogonal_neighbors)
             labyrinth_image.putpixel(coord, COLORS[color_index])
-    file_count = len(os.listdir())
-    image_name, extension = os.path.splitext(INPUT_FILE)
-    output_name = f"{image_name}_{file_count:03d}{extension}"
+    file_count = len(list(Path().iterdir()))
+    output_name = Path(f"{INPUT_FILE.stem}_{file_count:03d}{INPUT_FILE.suffix}")
     labyrinth_image.save(output_name)
 
 

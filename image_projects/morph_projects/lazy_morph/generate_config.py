@@ -1,11 +1,12 @@
 from enum import Enum
 from io import TextIOWrapper
 from math import sqrt
+from pathlib import Path
 from PIL import Image
 
-FIRST_IMAGE_PATH = "./inicial.png"
-LAST_IMAGE_PATH = "./final.png"
-CONFIG_FILE_PATH = "./config.txt"
+FIRST_IMAGE_PATH = Path("inicial.png")
+LAST_IMAGE_PATH = Path("final.png")
+CONFIG_FILE_PATH = Path("config.txt")
 ROUNDING_EPSILON = 0.1
 # euclidean distance plus a small margin
 NEIGHBORS_MINIMUM_DISTANCE = sqrt(2) + ROUNDING_EPSILON
@@ -85,7 +86,7 @@ def get_pixel_alpha(pixel: float | tuple[int, ...] | None) -> int:
     return OPAQUE_ALPHA_VALUE
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":

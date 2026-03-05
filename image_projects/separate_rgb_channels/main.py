@@ -1,8 +1,10 @@
+from pathlib import Path
+
 from PIL import Image
 import os
 
 
-def open_image_as_rgb(image_path: str) -> Image.Image:
+def open_image_as_rgb(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGB":
@@ -13,7 +15,7 @@ def open_image_as_rgb(image_path: str) -> Image.Image:
 def main() -> None:
     os.chdir("faixas")
     for index in range(1, 11):
-        input_image = open_image_as_rgb(f"a{index}.jpg")
+        input_image = open_image_as_rgb(Path(f"a{index}.jpg"))
         size = input_image.size
         width, height = input_image.size
         base_image = Image.new("RGB", size, "white")
@@ -29,9 +31,9 @@ def main() -> None:
                 faixa[0].putpixel((x, y), pixel_red)
                 faixa[1].putpixel((x, y), pixel_green)
                 faixa[2].putpixel((x, y), pixel_blue)
-        faixa[0].save(f"b{index}-red.jpg")
-        faixa[1].save(f"b{index}-green.jpg")
-        faixa[2].save(f"b{index}-blue.jpg")
+        faixa[0].save(Path(f"b{index}-red.jpg"))
+        faixa[1].save(Path(f"b{index}-green.jpg"))
+        faixa[2].save(Path(f"b{index}-blue.jpg"))
         print(index)
 
 

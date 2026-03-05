@@ -18,7 +18,7 @@
 - [x] Rename files to main.py where applicable
 - [x] Improve README.md to have all projects documented properly
 - [x] delete old_versions folders because they are already on git history by this point.
-- [O] Start using pathlib for path handling (search "open(" I stopped at the fetch_fanfics.py script)
+- [O] Start using pathlib for path handling (search "open(" I stopped at the display_heatmap.py script)
 - [ ] Create a README.md for each project with a description and usage instructions
 - [ ] Create .examples where applicable with example inputs and outputs
 - [ ] Make all code run faster

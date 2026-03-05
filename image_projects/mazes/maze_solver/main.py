@@ -1,12 +1,13 @@
 from enum import Enum
 import os
+from pathlib import Path
 from PIL import Image
 from time import time
 
 BACKGROUND_COLOR = (255, 255, 255, 255)
 END_COLOR = (255, 0, 0, 255)
 INITIAL_POSITION = (1, 1)
-INPUT_MAZE = "labyrinth.png"
+INPUT_MAZE = Path("labyrinth.png")
 MAX_DIRECTIONS = 4
 OPPOSITE_DIRECTION_SHIFT = MAX_DIRECTIONS // 2
 DISTANCE_BETWEEN_FREE_CELLS = 2
@@ -115,7 +116,7 @@ def possible_directions(coord: CoordData, image: Image.Image) -> list[Direction]
     return valid_directions
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":

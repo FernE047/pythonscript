@@ -1,9 +1,10 @@
 from enum import Enum
 import os
+from pathlib import Path
 from PIL import Image
 import multiprocessing
 
-FRAMES_FOLDER = "./frames"
+FRAMES_FOLDER = Path("frames")
 
 CoordData = tuple[int, int]
 
@@ -24,7 +25,7 @@ OPAQUE_ALPHA_VALUE = 255
 TRANSPARENT_ALPHA_VALUE = 0
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":
@@ -219,7 +220,7 @@ def fix_trapped_pixels(
 
 def corrigeFrame(index: int) -> None:
     print(f"Fixing Frame : {index}")
-    filename = f"{FRAMES_FOLDER}/frame{index:03d}.png"
+    filename = FRAMES_FOLDER / f"frame{index:03d}.png"
     image = open_image_as_rgba(filename)
     transparent_pixels = get_border_transparent_pixels(image)
     find_all_transparent_pixels(image, transparent_pixels)
@@ -233,6 +234,6 @@ def corrigeFrame(index: int) -> None:
 
 
 def correct_frames() -> None:
-    quantiaFrames = len(os.listdir(FRAMES_FOLDER))
+    quantiaFrames = len(list(FRAMES_FOLDER.iterdir()))
     with multiprocessing.Pool(os.cpu_count()) as cpu_pool:
         cpu_pool.map(corrigeFrame, range(1, quantiaFrames - 1))

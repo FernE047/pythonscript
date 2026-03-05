@@ -9,7 +9,7 @@ import shelve
 MAX_TICKS = 7
 TICK_SIZE = 127
 TICK_ARRAY = np.sort(np.array([TICK_SIZE * i for i in range(MAX_TICKS + 1)]))
-ALL_PLOT_COLORS = (
+ALL_PLOT_COLORS = 
     "viridis",
     "plasma",
     "inferno",

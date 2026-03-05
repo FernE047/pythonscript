@@ -1,8 +1,9 @@
+from pathlib import Path
 from PIL import Image
 from random import randint
 from time import time
 
-IMAGE_INPUT = "input.png"
+IMAGE_INPUT = Path("input.png")
 WHITE: tuple[int, ...] = (255, 255, 255, 255)
 NOT_WHITE: tuple[int, ...] = (0, 0, 0, 255)
 
@@ -97,7 +98,7 @@ def shuffle_image_by_percentage(image: Image.Image, randomness: float) -> Image.
     return shuffled_image
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":
@@ -115,7 +116,8 @@ def main() -> None:
         elapsed_time = end_time - start_time
         print(f"Randomness percentage : {percentage}%\n")
         print_elapsed_time(elapsed_time)
-        shuffled_image.save(f"output_{percentage:03d}.png")
+        output_path = Path(f"output_{percentage:03d}.png")
+        shuffled_image.save(output_path)
         elapsed_times.append(elapsed_time)
     sorted_times = sorted(elapsed_times)
     print("Resultados : ")

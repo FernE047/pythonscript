@@ -1,8 +1,8 @@
-import os
+from pathlib import Path
 from PIL import Image
 
-IMAGE_FOLDER = "./pokemon/pokedexSemFundo"
-OUTPUT_IMAGE = "./heatMap.png"
+IMAGE_FOLDER = Path("pokemon") / "pokedexSemFundo"
+OUTPUT_IMAGE = Path("heatMap.png")
 TRANSPARENT = (0, 0, 0, 0)
 BACKGROUND_COLOR = (0, 255, 255, 255)  # color: cyan
 SPRITE_RESOLUTION = 96
@@ -14,7 +14,7 @@ GREEN_CHANNEL = 1
 BLUE_CHANNEL = 2
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":
@@ -23,8 +23,8 @@ def open_image_as_rgba(image_path: str) -> Image.Image:
 
 
 def main() -> None:
-    imagens = os.listdir(IMAGE_FOLDER)
-    imagensCaminho = [os.path.join(IMAGE_FOLDER, imagem) for imagem in imagens]
+    imagens = IMAGE_FOLDER.iterdir()
+    imagensCaminho = [imagem for imagem in imagens]
     heatMap = Image.new("RGBA", SPRITE_SIZE, BACKGROUND_COLOR)
     for imagemCaminho in imagensCaminho:
         print(imagemCaminho)

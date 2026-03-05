@@ -1,3 +1,4 @@
+from pathlib import Path
 import shelve
 from PIL import Image
 from numpy.random import shuffle
@@ -9,7 +10,7 @@ BLACK = (0, 0, 0, 255)
 WHITE = (255, 255, 255, 255)
 RED = (255, 0, 0, 255)
 MIN_BRANCH = 2
-DATABASE_PATH = "./numero"
+DATABASE_PATH = Path("numero")
 
 
 class Direction(Enum):
@@ -92,7 +93,8 @@ def main() -> None:
                     current_position[1] -= 1
                     spiral.putpixel((current_position[0], current_position[1]), BLACK)
         image_index += 1
-        spiral.save(f"./imagem{image_index}.png")
+        image_path = Path(f"imagem{image_index}.png")
+        spiral.save(image_path)
         database["image_index"] = image_index
 
 

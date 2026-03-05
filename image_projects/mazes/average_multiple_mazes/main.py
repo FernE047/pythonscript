@@ -1,6 +1,5 @@
 from pathlib import Path
 from PIL import Image
-from os import listdir
 
 WHITE = (255, 255, 255, 255)
 MAZE_FOLDER = Path("pure_mazes")

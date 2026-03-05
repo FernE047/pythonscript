@@ -1,12 +1,13 @@
+from pathlib import Path
+
 from PIL import Image
-import os
 
-SOURCE_IMAGE = "./inicial.png"
-TARGET_IMAGE = "./final.png"
-CONFIG_FOLDER = "./partes/config/"
+SOURCE_IMAGE = Path("inicial.png")
+TARGET_IMAGE = Path("final.png")
+CONFIG_FOLDER = Path("partes") / "config"
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":
@@ -22,8 +23,8 @@ def recolor_frames() -> None:
 
     source_recolor = source_image.copy()
     target_recolor = target_image.copy()
-    for fileName in os.listdir(CONFIG_FOLDER):
-        with open(os.path.join(CONFIG_FOLDER, fileName), "r", encoding="utf-8") as file:
+    for fileName in CONFIG_FOLDER.iterdir():
+        with open(fileName, "r", encoding="utf-8") as file:
             lines = file.readlines()
         for line in lines:
             coords_str = line.split(" ")
@@ -40,8 +41,8 @@ def recolor_frames() -> None:
             source_recolor.putpixel(coord_source, pixel_target)
             target_recolor.putpixel(coord_target, pixel_source)
 
-    source_recolor_name = SOURCE_IMAGE.replace(".png", "_colored.png")
-    target_recolor_name = TARGET_IMAGE.replace(".png", "_colored.png")
+    source_recolor_name = SOURCE_IMAGE.with_suffix("_colored.png")
+    target_recolor_name = TARGET_IMAGE.with_suffix("_colored.png")
     source_recolor.save(source_recolor_name)
     target_recolor.save(target_recolor_name)
     print("R E C O L O R E D   :D")
