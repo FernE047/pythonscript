@@ -1,8 +1,12 @@
+from pathlib import Path
 import random
 from generate_chain import CHAIN_FOLDER
 
 EMPTY_CHAR = "¨"
 GENERATED_MESSAGES = 1000
+OUTPUT_FOLDER = Path("out")
+OUTPUT_FOLDER.mkdir(exist_ok=True)
+OUTPUT_FILE = OUTPUT_FOLDER / "generated_messages.txt"
 
 
 def build_character_frequency_map(
@@ -49,5 +53,9 @@ def generate_message() -> str:
 
 
 def generate_messages() -> None:
-    for index in range(GENERATED_MESSAGES):
-        print(f"{index} : {generate_message()}")
+    with open(OUTPUT_FILE, "w", encoding="utf-8") as file:
+        for index in range(GENERATED_MESSAGES):
+            message = generate_message()
+            output = f"{index} : {message}"
+            print(output)
+            file.write(f"{output}\n")
