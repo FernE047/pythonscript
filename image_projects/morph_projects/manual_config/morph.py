@@ -107,7 +107,8 @@ def create_first_and_last_frames() -> None:
 
 
 def save_frame(frame: Image.Image, index: int) -> None:
-    output_name, extension = os.path.splitext(OUTPUT_IMAGE)
+    output_name = OUTPUT_IMAGE.stem
+    extension = OUTPUT_IMAGE.suffix
     filename = f"{output_name}_{index:03d}{extension}"
     frame.save(filename)
 

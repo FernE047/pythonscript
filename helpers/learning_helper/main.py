@@ -2,7 +2,6 @@ from pathlib import Path
 from typing import Literal, overload
 from send2trash import send2trash
 import random
-import os
 
 # TODO: add constants for file paths and other strings, there is A LOT of magic strings in this code, it is really hard to maintain, I need to change that
 
@@ -230,7 +229,7 @@ def new_module(folder: Path, evaluation_folder: Path, module: str) -> None:
 def random_study(
     folder: Path, mode: str
 ) -> None:  # TODO implement partial modular mode
-    modules = os.listdir(folder)
+    modules = list(folder.iterdir())
     options = ["Back", "Questions", "Answers", "Questions & Answers"]
     choice = choose_from_options("choose a mode : ", options)
     print("type 0 anywhere to exit")
@@ -240,7 +239,7 @@ def random_study(
         while True:
             options = ["Conclude Selection"]
             index = choose_from_options(
-                "choose which modules to remove : ", options + modules, mode="number"
+                "choose which modules to remove : ", options + [module.name for module in modules], mode="number"
             )
             if index == 0:
                 break
@@ -251,7 +250,7 @@ def random_study(
     while True:
         if mode == "Total":
             quantities: list[int] = [
-                count_lines(folder / module / "answer.txt") for module in modules
+                count_lines(module / "answer.txt") for module in modules
             ]
             sum_ = 0
             index = -1
@@ -262,7 +261,7 @@ def random_study(
             module = modules[index]
         else:
             module = modules[random.randint(0, len(modules) - 1)]
-        module_path = folder / module
+        module_path = module
         answer_txt = module_path / "answer.txt"
         question_txt = module_path / "question.txt"
         index = random.randint(0, count_lines(answer_txt) - 1)
@@ -278,14 +277,14 @@ def random_study(
 
 
 def main() -> None:
-    categories_folder = Path("./categories")
+    categories_folder = Path("categories")
     categories_folder.mkdir(exist_ok=True)
-    evaluations_folder = Path("./evaluations")
+    evaluations_folder = Path("evaluations")
     evaluations_folder.mkdir(exist_ok=True)
     while True:
         user_choice = choose_from_options(
             "choose a category : ",
-            ["Exit", "Create New"] + os.listdir(categories_folder),
+            ["Exit", "Create New"] + [category.name for category in categories_folder.iterdir()],
         )
         if user_choice == "Exit":
             return
@@ -305,7 +304,7 @@ def main() -> None:
         while True:
             options = ["Back"]
             options += ["Modules"]
-            if len(os.listdir(folder)) != 0:
+            if len(list(folder.iterdir())) != 0:
                 options += ["Random"]
             user_choice = choose_from_options("choose an option : ", options)
             if user_choice == "Back":
@@ -314,7 +313,7 @@ def main() -> None:
                 while True:
                     options = ["Back"]
                     options += ["New"]
-                    categories = os.listdir(folder)
+                    categories = [category.name for category in folder.iterdir()]
                     user_choice = choose_from_options(
                         "choose an option : ", options + categories
                     )
@@ -340,7 +339,7 @@ def main() -> None:
                     if user_choice == "Study":
                         study_module(folder, module)
             if user_choice == "Random":
-                modules = os.listdir(folder)
+                modules = list(folder.iterdir())
                 options = ["Back", "Total"]
                 if len(modules) > 1:
                     options.extend(["Simple", "Partial Total", "Partial Simple"])

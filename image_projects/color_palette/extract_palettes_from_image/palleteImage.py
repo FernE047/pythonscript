@@ -1,7 +1,5 @@
 from pathlib import Path
-
 from PIL import Image
-import os
 
 IMAGES_FOLDER = Path("images")
 IMAGES_FOLDER.mkdir(exist_ok=True)
@@ -103,11 +101,11 @@ def apply_color_palette(
     for x in range(width):
         if x % SAVE_IMAGE_THRESHOLD == 0:
             print(x)
-            image_name, extension = os.path.splitext(output_path)
             try:
                 color_mapped_image.save(output_path)
             except PermissionError:
-                color_mapped_image.save(f"{image_name}_output{extension}")
+                output_path = Path(f"{output_path.stem}_output{output_path.suffix}")
+                color_mapped_image.save(output_path)
         for y in range(height):
             pixel = get_pixel(color_mapped_image, (x, y))
             if pixel in color_palette:

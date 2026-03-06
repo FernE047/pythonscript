@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 from typing import cast
 
@@ -17,17 +16,17 @@ def rename_file(source_filename: Path, destination_filename: Path) -> None:
         destination_file.write(content)
 
 
-def update_chain(filename: Path, chain_terms: ChainData, index: int) -> None:
-    update_chain_file(filename, chain_terms, index)
-    rename_file(filename / "c.txt", filename / f"{index:03d}.txt")
+def update_chain(folder: Path, chain_terms: ChainData, index: int) -> None:
+    update_chain_file(folder, chain_terms, index)
+    rename_file(folder / "c.txt", folder / f"{index:03d}.txt")
 
 
-def update_chain_file(filename: Path, chain_terms: ChainData, index: int) -> None:
-    with open(filename / "c.txt", "w", encoding="UTF-8") as file_write:
-        if f"{index:03d}.txt" not in os.listdir(filename):
+def update_chain_file(folder: Path, chain_terms: ChainData, index: int) -> None:
+    with open(folder / "c.txt", "w", encoding="UTF-8") as file_write:
+        if not any(f"{index:03d}.txt" == file.name for file in folder.iterdir()):
             file_write.write(f"{' '.join(chain_terms)} 1\n")
             return
-        with open(filename / f"{index:03d}.txt", "r", encoding="UTF-8") as file_read:
+        with open(folder / f"{index:03d}.txt", "r", encoding="UTF-8") as file_read:
             lines = file_read.readlines()
         term_exists = False
         for line in lines:

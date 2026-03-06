@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 EMPTY_CHAR = "¨"
@@ -23,7 +22,7 @@ def update_chain_file(index: int, keywords: list[str]) -> None:
 
 def update_keyword_count(index: int, keywords: list[str]) -> None:
     with open(MAIN_CHAIN_FILE, "w", encoding="utf-8") as file_write:
-        if f"{index:03d}.txt" not in os.listdir(CHAIN_FOLDER):
+        if not any(f"{index:03d}.txt" == file.name for file in CHAIN_FOLDER.iterdir()):
             file_write.write(f"{' '.join(keywords)} 1\n")
             return
         with open(

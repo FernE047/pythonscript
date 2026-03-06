@@ -1,11 +1,10 @@
 import math
+from pathlib import Path
 from PIL import Image
-import os
 
-PALLETE_FOLDER = "paleta"
-if not os.path.exists(PALLETE_FOLDER):
-    os.makedirs(PALLETE_FOLDER)
-PALLETE_IMAGE = os.path.join(PALLETE_FOLDER, "paletaBW4.png")
+PALLETE_FOLDER = Path("paleta")
+PALLETE_FOLDER.mkdir(exist_ok=True)
+PALLETE_IMAGE = PALLETE_FOLDER / "paletaBW4.png"
 MAX_BRIGHTNESS = 256
 MAX_SIZE = math.ceil(math.sqrt(MAX_BRIGHTNESS))
 TRANSPARENT = (0, 0, 0, 0)

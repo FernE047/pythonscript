@@ -1,5 +1,5 @@
+from pathlib import Path
 from PIL import Image
-import os
 
 RANDOM_INDEX_SEED = 29
 MAX_SIZE = 5000
@@ -40,11 +40,11 @@ def generate_next_fractal(
 
 
 def generate_fractals(matrix: list[list[int]], name: str) -> None:
-    new_folder = os.path.join(os.getcwd(), name.title())
-    os.makedirs(new_folder)
+    new_folder =  Path.cwd() / name.title()
+    new_folder.mkdir(parents=True, exist_ok=True)
     reference_image = convert_matrix_to_image(matrix)
     fractal_image: Image.Image = reference_image
-    save_path = os.path.join(new_folder, f"{name.title()}_01.png")
+    save_path = new_folder / f"{name.title()}_01.png"
     fractal_image.save(save_path)
     fractal_index = 2
     while True:
@@ -52,7 +52,7 @@ def generate_fractals(matrix: list[list[int]], name: str) -> None:
         if new_fractal is None:
             print(f"done {fractal_index} fractals\n")
             return
-        save_path = os.path.join(new_folder, f"{name.title()}_{fractal_index:02d}.png")
+        save_path = new_folder / f"{name.title()}_{fractal_index:02d}.png"
         new_fractal.save(save_path)
         fractal_image = new_fractal
         fractal_index += 1

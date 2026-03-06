@@ -1,10 +1,9 @@
 # cria um programa python
-import os
 from pathlib import Path
 import subprocess
 from time import time
 
-arquivosQuantia = len(os.listdir())
+arquivosQuantia = len(list(Path.cwd().glob("clone*.py")))
 if arquivosQuantia < 10:
     nomeClone = Path(f"clone{int(time() * 100)}.py")
     original = Path("original.py")

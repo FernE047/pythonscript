@@ -1,14 +1,13 @@
-import os
 from pathlib import Path
 
 
 def main() -> None:
-    diretorio = Path(os.getcwd())
-    imagens = [diretorio / imagem for imagem in os.listdir()]
+    diretorio = Path.cwd()
+    image_path = list(diretorio.iterdir())[0]
     with open(diretorio / "copia.py", "wb") as novoArquivo:
-        with open(imagens[0], "rb") as arquivo:
+        with open(image_path, "rb") as arquivo:
             novoArquivo.write(arquivo.read())
-        with open(imagens[0], "rb") as arquivo:
+        with open(image_path, "rb") as arquivo:
             byte = arquivo.read(1)
             while byte:
                 novoArquivo.write(byte)

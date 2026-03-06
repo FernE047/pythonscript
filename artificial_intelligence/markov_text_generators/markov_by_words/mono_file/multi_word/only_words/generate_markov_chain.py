@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 from time import time
 from typing import cast
@@ -46,23 +45,22 @@ def rename_file(source_filename: Path, destination_filename: Path) -> None:
         destination_file.write(content)
 
 
-def update_chain_file(filename: Path, chain_terms: list[ChainData]) -> None:
-    update_chain_file_contents(filename, chain_terms)
-    rename_file(filename / "c.txt", filename / "chain.txt")
+def update_chain_file(folder: Path, chain_terms: list[ChainData]) -> None:
+    update_chain_file_contents(folder, chain_terms)
+    rename_file(folder / "c.txt", folder / "chain.txt")
 
 
-def update_chain_file_contents(filename: Path, chain_terms: list[ChainData]) -> None:
-    with open(filename / "c.txt", "w", encoding="UTF-8") as file_write:
+def update_chain_file_contents(folder: Path, chain_terms: list[ChainData]) -> None:
+    with open(folder / "c.txt", "w", encoding="UTF-8") as file_write:
 
         def write_terms(terms: ChainData, frequency: int) -> None:
             terms_flat = " ".join(terms)
             file_write.write(f"{terms_flat} {frequency}\n")
-
-        if "chain.txt" not in os.listdir(filename):
+        if not any("chain.txt" == file.name for file in folder.iterdir()):
             for terms in chain_terms:
                 write_terms(terms, 1)
             return
-        with open(filename / "chain.txt", "r", encoding="UTF-8") as file_read:
+        with open(folder / "chain.txt", "r", encoding="UTF-8") as file_read:
             lines = file_read.readlines()
         for line in lines:
             if not line.strip():

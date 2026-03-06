@@ -1,5 +1,4 @@
 from io import TextIOWrapper
-import os
 from pathlib import Path
 from typing import Literal
 
@@ -61,10 +60,10 @@ def check_no_batch_flag(filename: Path) -> bool:
     return False
 
 
-def create_batch_file(folders: list[str]) -> None:
-    batch_name = Path("C:") / "pythonscript" / f"{folders[-1][:-3]}.bat"
+def create_batch_file(folders: list[Path]) -> None:
+    batch_name = Path("C:") / "pythonscript" / f"{folders[-1].stem}.bat"
     print(batch_name)
-    python_filename = Path(folders[0])
+    python_filename = folders[0]
     for folder in folders[1:]:
         python_filename /= folder
     if not check_no_batch_flag(python_filename):
@@ -73,26 +72,26 @@ def create_batch_file(folders: list[str]) -> None:
             file.write(f"@echo off\n{python_exe} {python_filename} %*")
 
 
-def filter_batch_files(file_list: list[str]) -> list[str]:
-    filtered_files: list[str] = []
+def filter_batch_files(file_list: list[Path]) -> list[Path]:
+    filtered_files: list[Path] = []
     for file in file_list:
-        if file.lower().find(".bat") == -1:
+        if file.suffix.lower() != ".bat":
             filtered_files.append(file)
     return filtered_files
 
 
 def explore_directory(
     output_file: TextIOWrapper,
-    current_folder: str | None = None,
-    folder_list: list[str] | None = None,
+    current_folder: Path | None = None,
+    folder_list: list[Path] | None = None,
     folder_limit: int | None = None,
 ) -> None:
     if current_folder is not None:
-        files = os.listdir(current_folder)
+        files = list(current_folder.iterdir())
     else:
-        files = os.listdir("C:/pythonscript")
+        files = list((Path("C:") / "pythonscript").iterdir())
     if folder_list is None:
-        folder_list = ["C:", "pythonscript"]
+        folder_list = [Path("C:"), Path("pythonscript")]
     if folder_limit is not None:
         if len(folder_list) > folder_limit:
             return None
@@ -100,20 +99,20 @@ def explore_directory(
     if len(files) > 100:
         return None
     for file in files:
-        if file.find(".") == -1:
+        if file.is_dir():
             output_file.write(f"{len(folder_list) * '\t'}{file}\n")
             folder_list.append(file)
             explore_directory(
                 output_file,
-                current_folder="/".join(folder_list),
+                current_folder=file,
                 folder_list=folder_list,
                 folder_limit=folder_limit,
             )
             folder_list.pop()
         else:
-            if file.find("txt") != -1:
+            if file.suffix == ".txt":
                 output_file.write(f"{len(folder_list) * '\t'}{file}\n")
-            if file[-3:] == ".py":
+            if file.suffix == ".py":
                 output_file.write(f"{len(folder_list) * '\t'}{file}\n")
                 folder_list.append(file)
                 create_batch_file(folder_list)

@@ -1,4 +1,3 @@
-import os
 from collections import Counter
 from pathlib import Path
 from time import time
@@ -44,15 +43,15 @@ def rename_file(source_filename: Path, destination_filename: Path) -> None:
         destination_file.write(content)
 
 
-def update_chain(filename: Path, file_index: int, terms: list[list[str]]) -> None:
-    update_chain_file(filename, file_index, terms)
-    rename_file(filename / "c.txt", filename / f"{file_index:03d}.txt")
+def update_chain(folder: Path, file_index: int, terms: list[list[str]]) -> None:
+    update_chain_file(folder, file_index, terms)
+    rename_file(folder / "c.txt", folder / f"{file_index:03d}.txt")
 
 
-def update_chain_file(filename: Path, file_index: int, terms: list[list[str]]) -> None:
-    with open(filename / "c.txt", "w", encoding="UTF-8") as file_write:
+def update_chain_file(folder: Path, file_index: int, terms: list[list[str]]) -> None:
+    with open(folder / "c.txt", "w", encoding="UTF-8") as file_write:
         counter = Counter([str(a) for a in terms])
-        if f"{file_index:03d}.txt" not in os.listdir(filename):
+        if not any(f"{file_index:03d}.txt" == file.name for file in folder.iterdir()):
             unique_terms: list[list[str]] = []
             for term in terms:
                 if term not in unique_terms:
@@ -60,7 +59,7 @@ def update_chain_file(filename: Path, file_index: int, terms: list[list[str]]) -
                     unique_terms.append(term)
             return
         with open(
-            filename / f"{file_index:03d}.txt", "r", encoding="UTF-8"
+            folder / f"{file_index:03d}.txt", "r", encoding="UTF-8"
         ) as file_read:
             lines = file_read.readlines()[:-1]
         for line in lines:
@@ -83,9 +82,9 @@ def update_chain_file(filename: Path, file_index: int, terms: list[list[str]]) -
                 unique_terms.append(term)
 
 
-def update_chain_files(filename: Path, alterations: dict[int, list[list[str]]]) -> None:
+def update_chain_files(folder: Path, alterations: dict[int, list[list[str]]]) -> None:
     for file_index in alterations:
-        update_chain(filename, file_index, alterations[file_index])
+        update_chain(folder, file_index, alterations[file_index])
 
 
 def get_filename() -> Path:
@@ -104,9 +103,9 @@ def get_filename() -> Path:
 
 
 def generate_chain() -> None:
-    filename = get_filename()
+    folder = get_filename()
     start_time = time()
-    with open(filename.with_suffix(".txt"), "r", encoding="UTF-8") as file:
+    with open(folder.with_suffix(".txt"), "r", encoding="UTF-8") as file:
         lines = file.readlines()
     count = 0
     alterations: dict[int, list[list[str]]] = {}
@@ -168,13 +167,13 @@ def generate_chain() -> None:
                 previous_char = current_char
                 print(word_length)
         if count == 100:
-            update_chain_files(filename, alterations)
+            update_chain_files(folder, alterations)
             alterations = {}
             count = 0
         else:
             count += 1
-    update_chain_files(filename, alterations)
-    with open(filename / "c.txt", "w", encoding="UTF-8") as word_count_file:
+    update_chain_files(folder, alterations)
+    with open(folder / "c.txt", "w", encoding="UTF-8") as word_count_file:
         for index, quantity in enumerate(word_frequency_map):
             word_count_file.write(f"{index} ")
             word_count_file.write(f"{quantity}\n")

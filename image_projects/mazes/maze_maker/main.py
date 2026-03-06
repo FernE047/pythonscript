@@ -1,12 +1,12 @@
 from enum import Enum
-import os
+from pathlib import Path
 from PIL import Image
 from random import randint
 from numpy.random import permutation
 
 BACKGROUND_COLOR = (255, 255, 255, 255)
 WALL_COLOR = (0, 0, 0, 255)
-OUTPUT_IMAGE = "labyrinth.png"
+OUTPUT_IMAGE = Path("labyrinth.png")
 MAX_DIRECTIONS = 4
 DEFAULT_WIDTH = 25
 DEFAULT_HEIGHT = 25
@@ -74,8 +74,9 @@ def main() -> None:
     labyrinth.putpixel((1, 1), BACKGROUND_COLOR)
     while open_vertices:
         generate_labyrinth(labyrinth, open_vertices)
-    file_count = len(os.listdir())
-    image_name, extension = os.path.splitext(OUTPUT_IMAGE)
+    file_count = len(list(Path(".").iterdir()))
+    image_name = OUTPUT_IMAGE.stem
+    extension = OUTPUT_IMAGE.suffix
     name = f"{image_name}_{file_count:03d}{extension}"
     print(name)
     labyrinth.save(name)

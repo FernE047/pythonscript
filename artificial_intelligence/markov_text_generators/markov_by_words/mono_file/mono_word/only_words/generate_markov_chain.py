@@ -1,4 +1,3 @@
-import os
 from collections import Counter
 from pathlib import Path
 from time import time
@@ -58,7 +57,7 @@ def update_keywords_in_chain(filename: Path, keyword_tuples: list[ChainData]) ->
     with open(filename / "c.txt", "w", encoding="UTF-8") as file_write:
         counter = Counter([" ".join(keyword_tuple) for keyword_tuple in keyword_tuples])
         unique_keywords: set[ChainData] = set()
-        if "chain.txt" not in os.listdir(filename):
+        if not any("chain.txt" == file.name for file in filename.iterdir()):
             for keyword_tuple in keyword_tuples:
                 if keyword_tuple not in unique_keywords:
                     keyword_tuple_flat = " ".join(keyword_tuple)

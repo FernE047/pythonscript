@@ -1,6 +1,6 @@
+from pathlib import Path
 from PIL import Image
 import random
-import os
 
 OCEAN_COLOR = (0, 128, 255, 255)
 LAND_COLOR = (0, 255, 74, 255)
@@ -10,9 +10,6 @@ DEFAULT_HEIGHT = 100
 DEFAULT_SEED = 20
 DEFAULT_PERCENTAGE = 50
 MAX_LAND_PERCENTAGE = 90
-
-
-
 
 
 def find_available_land(is_x_first: bool, size_a: int, size_b_range: tuple[int, int, int], mapa: Image.Image) -> list[tuple[int, int]]:
@@ -63,7 +60,7 @@ def main() -> None:
     while True:
         print("\nenter the data to create the map\n")
         print("map name")
-        name = input()
+        path = Path(input())
         width = get_user_int("width", DEFAULT_WIDTH)
         height = get_user_int("height", DEFAULT_HEIGHT)
         seed = get_user_int("seed", DEFAULT_SEED)
@@ -76,8 +73,8 @@ def main() -> None:
         map_image = Image.new("RGBA", size, OCEAN_COLOR)
         land_count = seed
         seed_map_with_land(width, height, land_count, map_image)
-        os.makedirs(name, exist_ok=True)
-        map_image.save(os.path.join(name, "map_0.png"))
+        path.mkdir(exist_ok=True)
+        map_image.save(path / "map_0.png")
         map_iteration = 1
         map_area = width * height
         percentages = make_percentages(land_count, map_area)
@@ -90,7 +87,7 @@ def main() -> None:
             percentages = make_percentages(land_count, map_area)
             land_coverage = percentages[1]
             print(f"map : {map_iteration}\npercentage : {land_coverage}%\n")
-            map_image.save(os.path.join(name, f"map_{map_iteration}.png"))
+            map_image.save(path / f"map_{map_iteration}.png")
             map_iteration += 1
         print("\nmap done!!\n")
         print("to exit, type 0")

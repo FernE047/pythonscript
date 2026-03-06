@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 EMPTY_CHAR = "¨"
@@ -18,7 +17,7 @@ def rename_file(source_filename: Path, destination_filename: Path) -> None:
 
 def update_term_count(index: int, keyword: str) -> None:
     with open(MAIN_CHAIN_FILE, "w", encoding="utf-8") as file_write:
-        if f"{index:03d}.txt" not in os.listdir(CHAIN_FOLDER):
+        if not any(f"{index:03d}.txt" == file.name for file in CHAIN_FOLDER.iterdir()):
             file_write.write(f"{keyword} 1\n")
             return
         with open(CHAIN_FOLDER / f"{index:03d}.txt", "r", encoding="utf-8") as file_read:

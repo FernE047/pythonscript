@@ -1,6 +1,5 @@
 from pathlib import Path
 import imageio
-import os
 from PIL import Image
 
 FRAME_FOLDER = Path("frames")
@@ -46,13 +45,10 @@ def generate_gif() -> None:
     frames.remove(RESIZED_FOLDER)
     for frame in frames:
         resize(frame)
-    unique_id_file = len(os.listdir("./"))
+    unique_id_file = len(list(Path(".").iterdir()))
     gif_name = Path(f"Morph_{unique_id_file:03d}.gif")
     with imageio.get_writer(gif_name, mode="I") as writer:  # type:ignore
-        frames = [
-            RESIZED_FOLDER / frame_name
-            for frame_name in os.listdir(f"{RESIZED_FOLDER}/")
-        ]
+        frames = [frame_name for frame_name in RESIZED_FOLDER.iterdir()]
         first_frame = frames.pop(0)
         for _ in range(GIF_START_DELAY):
             colocaImagemNoGif(writer, first_frame)

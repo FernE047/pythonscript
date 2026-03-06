@@ -1,5 +1,4 @@
 from enum import Enum
-import os
 from pathlib import Path
 from PIL import Image
 from time import time
@@ -198,7 +197,8 @@ def main() -> None:
         labyrinth.putpixel(coord, END_COLOR)
         coord = apply_direction(coord, direction)
         labyrinth.putpixel(coord, END_COLOR)
-    image_name, extension = os.path.splitext(INPUT_MAZE)
+    image_name = INPUT_MAZE.stem
+    extension = INPUT_MAZE.suffix
     name = f"{image_name}_solved{extension}"
     print(name)
     labyrinth.save(name)

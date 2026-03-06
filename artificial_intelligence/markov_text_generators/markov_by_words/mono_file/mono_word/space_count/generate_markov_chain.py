@@ -1,4 +1,4 @@
-import os
+
 from pathlib import Path
 from typing import cast
 
@@ -26,7 +26,7 @@ def update_chain_file(filename: Path, keywords: ChainData, index: int) -> None:
 def update_keyword_count(filename: Path, keywords: ChainData, index: int) -> None:
     with open(filename / CHAIN_NAME, "w", encoding="UTF-8") as fileWrite:
         keywords_flat = " ".join(keywords)
-        if f"{index:03d}.txt" not in os.listdir(filename):
+        if not any(f"{index:03d}.txt" == file.name for file in filename.iterdir()):
             fileWrite.write(f"{keywords_flat} 1\n")
             return
         with open(filename / f"{index:03d}.txt", "r", encoding="UTF-8") as file_read:

@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 EMPTY_CHAR = "¨"
@@ -20,7 +19,7 @@ def update_chain(filename: Path, index: int, chain_element: str) -> None:
 
 def update_chain_file(filename: Path, index: int, chain_element: str) -> None:
     with open(filename / "c.txt", "w", encoding="UTF-8") as file_write:
-        if f"{index:03d}.txt" not in os.listdir(filename):
+        if not any(f"{index:03d}.txt" == file.name for file in filename.iterdir()):
             file_write.write(f"{chain_element} 1\n")
             return
         with open(filename / f"{index:03d}.txt", "r", encoding="UTF-8") as file_read:

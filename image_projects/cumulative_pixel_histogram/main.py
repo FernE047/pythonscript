@@ -1,7 +1,5 @@
 from pathlib import Path
-
 from PIL import Image
-import os
 import gc
 
 INPUT_IMAGE_FOLDER = Path("funny_images")
@@ -65,16 +63,14 @@ def generate_brightness_histogram(img: Path, scaling_attempt: int = INITIAL_ATTE
 
 def main() -> None:
     print(INPUT_IMAGE_FOLDER)
-    images = list(INPUT_IMAGE_FOLDER.iterdir())
     try:
         output_folder = OUTPUT_IMAGE_FOLDER
         output_folder.mkdir(exist_ok=True)
     except Exception:
         output_folder = INPUT_IMAGE_FOLDER
-    for image in images:
-        output_image = generate_brightness_histogram(INPUT_IMAGE_FOLDER / image)
-        image_name, extension = os.path.splitext(image.name)
-        output_name = f"{image_name}_graf{extension}"
+    for image_path in INPUT_IMAGE_FOLDER.iterdir():
+        output_image = generate_brightness_histogram(image_path)
+        output_name = f"{image_path.stem}_graf{image_path.suffix}"
         output_image.save(output_folder / output_name)
     print(gc.collect())
     # I used to love gc.collect because I have leaked memory in the past using C programs. I know it's not really needed in Python but at the past I was very traumatized by memory leaks.

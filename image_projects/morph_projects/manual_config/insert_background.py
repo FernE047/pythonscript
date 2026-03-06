@@ -1,9 +1,7 @@
 from pathlib import Path
-
 from PIL import Image
 from morph import interpolate_tuples
 from correct_frames import fix_trapped_pixels
-import os
 
 CoordData = tuple[int, int]
 BACKGROUND_COLOR = (255, 255, 255, 0)
@@ -37,8 +35,8 @@ def generate_background(image_name: Path) -> Image.Image:
     print("back iniciado")
     image = open_image_as_rgba(image_name.with_suffix(".png"))
     directory = SOURCE_FOLDER if image_name == Path("source") else TARGET_FOLDER
-    for partsName in [directory / fileName for fileName in os.listdir(directory)]:
-        parte = open_image_as_rgba(partsName)
+    for parts_path in [file_path for file_path in directory.iterdir()]:
+        parte = open_image_as_rgba(parts_path)
         width, height = parte.size
         is_first_occurrence = True
         for x in range(width):
@@ -62,7 +60,7 @@ def generate_background(image_name: Path) -> Image.Image:
 def insert_background_frames() -> None:
     background_source = generate_background(Path("source"))
     background_target = generate_background(Path("target"))
-    frames = [FRAME_FOLDER / file for file in os.listdir(FRAME_FOLDER)]
+    frames = [file for file in FRAME_FOLDER.iterdir()]
     frames.pop(0)
     frames.pop()
     frames.pop()
