@@ -1,5 +1,8 @@
-HTML_FILE = "mimimidias - Youtube.html"
-OUTPUT_FILE = "mimimidiasLINK.txt"
+from pathlib import Path
+
+
+HTML_FILE = Path("mimimidias - Youtube.html")
+OUTPUT_FILE = Path("mimimidiasLINK.txt")
 NOT_ALLOWED_CHARS = (" ", "\n", "\t", '"')
 END_TITLE = '"'
 TITLE_TAG = "title="

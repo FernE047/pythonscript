@@ -1,15 +1,17 @@
+from pathlib import Path
+
 from PIL import Image
 
-IMAGE_INPUT = "input.jpg"
+IMAGE_INPUT = Path("input.jpg")
 THRESHOLD = 20
 MAX_BRIGHTNESS = 255
 MAX_THRESHOLD = MAX_BRIGHTNESS * 3 - THRESHOLD
 HIGHLIGHT_COLOR = (0, 0, 0)
 BACKGROUND_COLOR = (255, 255, 255)
-IMAGE_OUTPUT = "output.jpg"
+IMAGE_OUTPUT = Path("output.jpg")
 
 
-def open_image_as_rgb(image_path: str) -> Image.Image:
+def open_image_as_rgb(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGB":

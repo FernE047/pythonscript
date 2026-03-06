@@ -1,12 +1,14 @@
+from pathlib import Path
 from PIL import Image
 
 # pytesseract doesn't have type hints, so we ignore it
 import pytesseract as ocr  # type: ignore
 import time
-import os
 
 MENU_COLOR = (100, 191, 96)
 MENU_BOX = (34, 909, 671, 1072)
+INPUT_PATH = Path("jap") / "1.png"
+CROPPED_IMAGE_PATH = Path("image_cropped.png")
 
 
 def print_elapsed_time(seconds: float) -> None:
@@ -39,14 +41,14 @@ def print_elapsed_time(seconds: float) -> None:
     print(f"{sign}{', '.join(parts)}")
 
 
-def open_image(image_path: str) -> Image.Image:
+def open_image(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         return image_in_memory
 
 
-def find_pixel_coordinates(name: str) -> None:
-    image = open_image(name)
+def find_pixel_coordinates(path: Path) -> None:
+    image = open_image(path)
     larg, alt = image.size
     for x in range(larg):
         for y in range(alt):
@@ -57,11 +59,10 @@ def find_pixel_coordinates(name: str) -> None:
 
 def main() -> None:
     start_time = time.time()
-    name = os.path.join("jap", "1.png")
-    print(f"\n{name}")
-    image = open_image(name)
+    print(f"\n{INPUT_PATH}")
+    image = open_image(INPUT_PATH)
     image_crop = image.crop(MENU_BOX)
-    image_crop.save("image_cropped.png")
+    image_crop.save(CROPPED_IMAGE_PATH)
     phrase = ocr.image_to_string(image_crop, lang="jp")
     print(phrase)
     final_time = time.time()

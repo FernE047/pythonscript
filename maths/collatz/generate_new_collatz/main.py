@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from structures import load_collatz
 from structures import Collatz_Function
 from structures import Rule
@@ -85,7 +87,7 @@ def main() -> None:
                         continue
                     new_rule = Rule(new_formato_2, formula_4, "core")
                     next_collatz.append_rule(new_rule)
-        filename = f"collatz{collatz_level}de{collatz_level + 1}.txt"
+        filename = Path(f"collatz{collatz_level}de{collatz_level + 1}.txt")
         with open(filename, "w", encoding="utf-8") as proof_file:
             proof_file.write(text_proof)
         end_time = time()

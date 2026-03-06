@@ -1,4 +1,8 @@
+from pathlib import Path
+
 from PIL import Image
+
+POKEDEX_FOLDER = Path("pokedex")
 
 # this code is used to transform a pokemon into a square image, it's incomplete.
 
@@ -28,7 +32,7 @@ def detectCorners(image: Image.Image) -> tuple[int, int, int, int]:
     return (low_x, high_x, low_y, high_y)
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":
@@ -38,7 +42,7 @@ def open_image_as_rgba(image_path: str) -> Image.Image:
 
 def main() -> None:
     for index in range(762):
-        filename = f"pokedex/pokemon{index:03d}.png"
+        filename = POKEDEX_FOLDER / f"pokemon{index:03d}.png"
         print(filename)
         image = open_image_as_rgba(filename)
         width, height = image.size  # type: ignore

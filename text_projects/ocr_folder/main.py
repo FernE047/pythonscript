@@ -1,26 +1,27 @@
 # pytesseract doesn't have type hints, so we ignore it
 import pytesseract as ocr  # type: ignore
+from pathlib import Path
 import numpy as np
 import cv2
 import time
-import os
 
 from PIL import Image
 
-IMAGE_FOLDER = "images"
+IMAGE_FOLDER = Path("images")
+IMAGE_FOLDER.mkdir(exist_ok=True)
 WHITESPACES = [" ", "\n", "\t"]
 ALLOWED_FILE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".bmp", ".gif")
 LANGUAGE = "eng"
 
 
-def get_image_from_folder(image_category: str) -> list[str]:
-    folder = f"{IMAGE_FOLDER}/{image_category}"
-    images: list[str] = []
-    if not os.path.exists(folder):
-        return images
-    for filename in os.listdir(folder):
-        if filename.lower().endswith(ALLOWED_FILE_EXTENSIONS):
-            images.append(os.path.join(folder, filename))
+def get_image_from_folder(image_category: str) -> list[Path]:
+    folder = IMAGE_FOLDER / image_category
+    images: list[Path] = []
+    for filename in folder.iterdir():
+        if filename.is_dir():
+            continue
+        if filename.suffix.lower() in ALLOWED_FILE_EXTENSIONS:
+            images.append(filename)
     return images
 
 
@@ -54,7 +55,7 @@ def print_elapsed_time(seconds: float) -> None:
     print(f"{sign}{', '.join(parts)}")
 
 
-def open_image_as_rgb(image_path: str) -> Image.Image:
+def open_image_as_rgb(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGB":
@@ -62,8 +63,8 @@ def open_image_as_rgb(image_path: str) -> Image.Image:
         return image_in_memory
 
 
-def enhance_image(image_name: str) -> Image.Image:
-    image = open_image_as_rgb(image_name)
+def enhance_image(image_path: Path) -> Image.Image:
+    image = open_image_as_rgb(image_path)
     np_image = np.asarray(image).astype(np.uint8)
     np_image[:, :, 0] = 0
     np_image[:, :, 2] = 0
@@ -91,9 +92,9 @@ def main() -> None:
         images = get_image_from_folder(sub_folder)[:quantity]
     except ValueError:
         images = get_image_from_folder(sub_folder)
-    for image_name in images:
-        print(f"\n{image_name}")
-        image = enhance_image(image_name)
+    for image_path in images:
+        print(f"\n{image_path}")
+        image = enhance_image(image_path)
         phrase = ocr.image_to_string(image, lang=LANGUAGE)
         if not isinstance(phrase, str):
             continue

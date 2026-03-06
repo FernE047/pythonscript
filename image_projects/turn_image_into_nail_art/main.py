@@ -1,7 +1,9 @@
+from pathlib import Path
+
 from PIL import Image, ImageDraw
 
-INPUT_IMAGE = "input.png"
-OUTPUT_IMAGE = "output.png"
+INPUT_IMAGE = Path("input.png")
+OUTPUT_IMAGE = Path("output.png")
 SAFETY_OFFSET = 2
 BACKGROUND_COLOR = (0, 0, 0, 0)
 LINE_COLOR = (0, 0, 0, 255)
@@ -13,7 +15,7 @@ MAX_BRIGHTNESS_TOTAL = MAX_BRIGHTNESS * COLOR_CHANNELS
 CoordData = tuple[int, int]
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":

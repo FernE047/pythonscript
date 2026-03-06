@@ -1,11 +1,10 @@
 # pytesseract doesn't have type hints, so we ignore it
 import pytesseract as ocr  # type: ignore
 import time
-import os
 from PIL import Image
+from pathlib import Path
 
-IMAGE_FOLDER = "jap"
-IMAGE_NAME = "1.png"
+IMAGE_PATH = Path("jap") / "1.png"
 LANGUAGE = "jp"
 
 
@@ -39,7 +38,7 @@ def print_elapsed_time(seconds: float) -> None:
     print(f"{sign}{', '.join(parts)}")
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":
@@ -49,9 +48,8 @@ def open_image_as_rgba(image_path: str) -> Image.Image:
 
 def main() -> None:
     start_time = time.time()
-    image_name = os.path.join(IMAGE_FOLDER, IMAGE_NAME)
-    print(f"\n{image_name}")
-    image = open_image_as_rgba(image_name)
+    print(f"\n{IMAGE_PATH}")
+    image = open_image_as_rgba(IMAGE_PATH)
     phrase = ocr.image_to_string(image, lang=LANGUAGE)
     print(phrase)
     final_time = time.time()

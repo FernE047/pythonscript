@@ -1,11 +1,11 @@
 from typing import Literal, TypedDict, cast, overload
 import webbrowser
-
+from pathlib import Path
 from bs4 import ResultSet
 from bs4.element import Tag
 
 MAX_PAGE = 10
-
+CHROME_PATH = Path("C:") / "Program Files (x86)" / "Google" / "Chrome" / "Application" / "chrome.exe"
 
 class jobListingData(TypedDict):
     title: str
@@ -111,9 +111,7 @@ def main() -> None:
         "programadores",
         "Web",
     ]
-    browser = webbrowser.get(
-        "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s"
-    )
+    browser = webbrowser.get(f"{CHROME_PATH} %s")
     final_job_listings: list[jobListingData] = []
     for site in sites:
         for page in range(1, MAX_PAGE + 1):

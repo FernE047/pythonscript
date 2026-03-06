@@ -1,6 +1,9 @@
+from pathlib import Path
 from PIL import Image
 
 BACKGROUND_COLOR = (255, 255, 255, 255)
+INPUT_PATH = Path("input.png")
+OUTPUT_PATH = Path("output.png")
 
 
 def build_complex(width: int, x: int, height: int, y: int) -> complex:
@@ -10,7 +13,7 @@ def build_complex(width: int, x: int, height: int, y: int) -> complex:
 
 
 def main() -> None:
-    input_image = Image.open("input.png")
+    input_image = Image.open(INPUT_PATH)
     width, height = input_image.size
     min_height = 0.0
     max_height = 0.0
@@ -43,7 +46,7 @@ def main() -> None:
             new_y = int((new_height - 1) / 2 - pixel_complex.imag)
             pixelIm = (new_x, new_y)
             complex_image.putpixel(pixelIm, corIm)
-    complex_image.save("output.png")
+    complex_image.save(OUTPUT_PATH)
 
 
 if __name__ == "__main__":

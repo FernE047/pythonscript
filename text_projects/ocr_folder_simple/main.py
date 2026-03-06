@@ -1,11 +1,11 @@
 # pytesseract doesn't have type hints, so we ignore it
 import pytesseract as ocr  # type: ignore
+from pathlib import Path
 import time
-import os
 
 from PIL import Image
 
-IMAGE_FOLDER = "images"
+IMAGE_FOLDER = Path("images")
 WHITESPACES = [" ", "\n", "\t"]
 
 
@@ -47,7 +47,7 @@ def remove_whitespace(raw_text: str) -> str:
     return raw_text
 
 
-def open_image(image_path: str) -> Image.Image:
+def open_image(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         return image_in_memory
@@ -55,13 +55,9 @@ def open_image(image_path: str) -> Image.Image:
 
 def main() -> None:
     start_time = time.time()
-    images = os.listdir()
-    images = [
-        os.path.join(IMAGE_FOLDER, arquivo) for arquivo in os.listdir(IMAGE_FOLDER)
-    ]
-    for image in images:
-        print(f"\n{image}")
-        phrase = ocr.image_to_string(open_image(image), lang="por")
+    for image_path in IMAGE_FOLDER.iterdir():
+        print(f"\n{image_path}")
+        phrase = ocr.image_to_string(open_image(image_path), lang="por")
         if not isinstance(phrase, str):
             continue
         formatted_phrase = remove_whitespace(phrase)

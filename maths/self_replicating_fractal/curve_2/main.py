@@ -1,7 +1,8 @@
+from pathlib import Path
 from PIL import Image
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":
@@ -16,8 +17,8 @@ def main() -> None:
     cores = (vermelho, azul, preto)
 
     for numeroCurva in range(0, 11):
-        nome = f"curva{numeroCurva}.png"
-        img = open_image_as_rgba(nome)
+        curve_path = Path(f"curva{numeroCurva}.png")
+        img = open_image_as_rgba(curve_path)
         larg, alt = img.size
         cont = 0
         area = larg * alt

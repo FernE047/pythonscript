@@ -1,5 +1,9 @@
+from pathlib import Path
+
+
 ALLOW_USER_INPUT = False
 SPACE_LIMIT = 10
+INPUT_PATH = Path("no_cycles.txt")
 
 
 def generate_cycle(current_term: str) -> list[str]:
@@ -42,7 +46,7 @@ def solve_for_term(term: str) -> None:
 
 
 def solve_with_file() -> None:
-    with open("no_cycles.txt", "r", encoding="utf-8") as file:
+    with open(INPUT_PATH, "r", encoding="utf-8") as file:
         non_periodic_terms = [line.strip() for line in file]
     for term in non_periodic_terms:
         if not term.isdigit():

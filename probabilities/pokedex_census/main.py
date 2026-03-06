@@ -1,3 +1,4 @@
+from pathlib import Path
 from time import time
 import shelve
 from typing import Any, TypedDict, cast
@@ -8,6 +9,7 @@ SEREBII_URL = "https://www.serebii.net/pokedex-sm/{0:03d}.shtml"
 TOTAL = 809
 PRIMAL_CASES = (383,)
 ULTRA_CASES = (800,)
+DATABASE_PATH = Path("BDPokemonNoDetails")
 
 
 class PokemonData(TypedDict):
@@ -236,7 +238,7 @@ def process_pokemon_record(database: shelve.Shelf[Any], pokemon_index: int) -> N
 
 
 def main() -> None:
-    with shelve.open("BDPokemonNoDetails") as database:
+    with shelve.open(DATABASE_PATH) as database:
         try:
             for pokemon_index in range(TOTAL + 1):
                 start_time = time()

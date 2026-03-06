@@ -1,6 +1,8 @@
+from pathlib import Path
 from typing import Literal, overload
-
 from PIL import Image
+
+FIRST_CURVE_PATH = Path("curva0.png")
 
 vermelho = (255, 0, 0, 255)
 azul = (0, 0, 255, 255)
@@ -42,7 +44,7 @@ def acharCor(
 
 
 def captarSalvar(
-    nome: str, img: Image.Image
+    nome: Path, img: Image.Image
 ) -> tuple[tuple[int, int], tuple[int, int]]:
     global cores
     tamanho = img.size
@@ -68,7 +70,7 @@ def captarSalvar(
     return ((left, up), (right, down))
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":
@@ -83,10 +85,10 @@ def main() -> None:
     curvaNova.putpixel((meio, meio - 1), azul)
     curvaNova.putpixel((meio, meio), preto)
     curvaNova.putpixel((meio, meio + 1), vermelho)
-    captarSalvar("curva0.png", curvaNova)
+    captarSalvar(FIRST_CURVE_PATH, curvaNova)
     for numeroCurva in range(0, 15):
-        nome = f"curva{numeroCurva}.png"
-        curvaAtual = open_image_as_rgba(nome)
+        curve_path = Path(f"curva{numeroCurva}.png")
+        curvaAtual = open_image_as_rgba(curve_path)
         newTamanho = int(newTamanho * fracaoPerfeita)
         meio = int(newTamanho / 2 + 1)
         carimbo = curvaAtual.copy()
@@ -121,8 +123,9 @@ def main() -> None:
             (posicao[0] - azulComprimentoRotate2, posicao[1] - azulAlturaRotate2),
             carimboRotate2,
         )
-        captarSalvar(f"curva{numeroCurva + 1}.png", curvaNova)
-        print(f"curva{numeroCurva + 1}.png")
+        output_path = Path(f"curva{numeroCurva + 1}.png")
+        captarSalvar(output_path, curvaNova)
+        print(output_path)
 
 
 if __name__ == "__main__":

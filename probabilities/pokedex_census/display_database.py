@@ -1,6 +1,9 @@
+from pathlib import Path
 import shelve
 from typing import cast
 from main import PokemonData
+
+DATABASE_PATH = Path("BDPokemonNoDetails")
 
 ALL_TYPES = (
     "Normal",
@@ -38,7 +41,7 @@ COLLECTED_CATEGORIES = (
 
 
 def main() -> None:
-    with shelve.open("BDPokemonNoDetails") as database:
+    with shelve.open(DATABASE_PATH) as database:
         counters: dict[str, float] = {}
         type_counters: dict[str, int] = {}
         for pkm_type in ALL_TYPES:

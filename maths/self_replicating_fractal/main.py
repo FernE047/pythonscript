@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Literal, overload
 
 from PIL import Image
@@ -6,6 +7,7 @@ RED = (255, 0, 0, 255)
 BLUE = (0, 0, 255, 255)
 BLACK = (0, 0, 0, 255)
 COLORS = (RED, BLUE, BLACK)
+FIRST_CURVE_PATH = Path("curva0.png")
 
 
 @overload
@@ -40,7 +42,7 @@ def find_color(
 
 
 def captarSalvar(
-    name: str, image: Image.Image
+    name: Path, image: Image.Image
 ) -> tuple[tuple[int, int], tuple[int, int]]:
     global COLORS
     tamanho = image.size
@@ -65,7 +67,7 @@ def captarSalvar(
     return ((left, up), (right, down))
 
 
-def open_image_as_rgba(image_path: str) -> Image.Image:
+def open_image_as_rgba(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGBA":
@@ -80,10 +82,10 @@ def main() -> None:
     curvaNova.putpixel((meio, meio - 1), BLUE)
     curvaNova.putpixel((meio, meio), BLACK)
     curvaNova.putpixel((meio, meio + 1), RED)
-    captarSalvar("curva0.png", curvaNova)
+    captarSalvar(FIRST_CURVE_PATH, curvaNova)
     for numeroCurva in range(0, 10):
-        nome = f"curva{numeroCurva}.png"
-        curvaAtual = open_image_as_rgba(nome)
+        curve_path = Path(f"curva{numeroCurva}.png")
+        curvaAtual = open_image_as_rgba(curve_path)
         newTamanho = newTamanho * 2 - 1
         meio = int(newTamanho / 2 + 1)
         azulComprimento, azulAltura = find_color(curvaAtual, BLUE)
@@ -115,8 +117,9 @@ def main() -> None:
             (posicao[0] - azulComprimentoRotate, posicao[1] - azulAlturaRotate),
             carimboRotate,
         )
-        captarSalvar(f"curva{numeroCurva + 1}.png", curvaNova)
-        print(f"curva{numeroCurva + 1}.png")
+        output_path = Path(f"curva{numeroCurva + 1}.png")
+        captarSalvar(output_path, curvaNova)
+        print(output_path)
 
 
 if __name__ == "__main__":

@@ -1,6 +1,9 @@
+from pathlib import Path
 import shelve
 from math import log
 from typing import Literal
+
+DATABASE_PATH = Path("collatzRegras")
 
 EquationTypeOptions = Literal["core", "generative", "passive"]
 
@@ -458,7 +461,7 @@ class Collatz_Function:
         for equation_type in self.get_equation_type():
             for rule in self.get_rules([equation_type]):
                 collatz_rules_list.append((rule.to_raw(), equation_type))
-        with shelve.open("collatzRegras") as database:
+        with shelve.open(DATABASE_PATH) as database:
             database[f"collatz{index}"] = collatz_rules_list
 
     def dysplay(self) -> str:
@@ -486,7 +489,7 @@ class Collatz_Function:
 
 
 def load_collatz(index: int) -> Collatz_Function:
-    with shelve.open("collatzRegras") as database:
+    with shelve.open(DATABASE_PATH) as database:
         collatz = Collatz_Function()
         for simple_rule in database[f"collatz{index}"]:
             argument = simple_rule[0]

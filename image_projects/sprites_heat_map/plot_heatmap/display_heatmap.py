@@ -2,6 +2,8 @@
 
 # plt doesn't have good type hints for strict mode, so we ignore all type errors in this file
 
+from pathlib import Path
+
 import matplotlib.pyplot as plt
 import numpy as np
 import shelve
@@ -9,7 +11,8 @@ import shelve
 MAX_TICKS = 7
 TICK_SIZE = 127
 TICK_ARRAY = np.sort(np.array([TICK_SIZE * i for i in range(MAX_TICKS + 1)]))
-ALL_PLOT_COLORS = 
+DATABASE_PATH = Path("dadosPreProcessados")
+ALL_PLOT_COLORS = (
     "viridis",
     "plasma",
     "inferno",
@@ -92,7 +95,7 @@ ALL_PLOT_COLORS =
 
 
 def display_preprocessed_heatmap() -> None:
-    with shelve.open("./dadosPreProcessados") as database:
+    with shelve.open(DATABASE_PATH) as database:
         xHeat = database["x"]
         yHeat = database["y"]
         zHeat = database["z"]

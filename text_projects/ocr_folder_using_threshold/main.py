@@ -1,7 +1,8 @@
 # pytesseract doesn't have type hints, so we ignore it
+from pathlib import Path
+
 import pytesseract as ocr  # type: ignore
 from PIL import Image
-import os
 import time
 
 WHITESPACES = (" ", "\n", "\t")
@@ -9,8 +10,8 @@ BRIGHTNESS = 255
 MAX_BRIGHTNESS = BRIGHTNESS * 3
 HIGHLIGHT_COLOR = (0, 0, 0)
 BACKGROUND_COLOR = (255, 255, 255)
-IMAGE_FOLDER = "images"
-OUTPUT_FILE = "output.txt"
+IMAGE_FOLDER = Path("images")
+OUTPUT_FILE = Path("output.txt")
 THRESHOLD_DEFAULT = 20
 LANGUAGE = "por"
 
@@ -51,7 +52,7 @@ def remove_whitespace(raw_text: str) -> str:
     return raw_text
 
 
-def open_image_as_rgb(image_path: str) -> Image.Image:
+def open_image_as_rgb(image_path: Path) -> Image.Image:
     with Image.open(image_path) as image:
         image_in_memory = image.copy()
         if image.mode != "RGB":
@@ -59,7 +60,7 @@ def open_image_as_rgb(image_path: str) -> Image.Image:
         return image_in_memory
 
 
-def apply_threshold(image_path: str, threshold: int) -> Image.Image:
+def apply_threshold(image_path: Path, threshold: int) -> Image.Image:
     image = open_image_as_rgb(image_path)
     width, height = image.size
     thresholded_image = image.copy()
@@ -81,11 +82,10 @@ def main() -> None:
     start_time = time.time()
     end_time = time.time()
     instructions = ""
-    imagens = [os.path.join(IMAGE_FOLDER, arquivo) for arquivo in os.listdir(IMAGE_FOLDER)]
-    for imagem in imagens:
-        print(f"\n{imagem}")
+    for image_path in IMAGE_FOLDER.iterdir():
+        print(f"\n{image_path}")
         processing_start_time = time.time()
-        better_image = apply_threshold(imagem, THRESHOLD_DEFAULT)
+        better_image = apply_threshold(image_path, THRESHOLD_DEFAULT)
         phrase = ocr.image_to_string(better_image, lang=LANGUAGE)
         if not isinstance(phrase, str):
             continue
