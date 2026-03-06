@@ -4,6 +4,7 @@ import shelve
 from typing import Any, TypedDict, cast
 import requests
 import bs4
+from datetime import timedelta
 
 SEREBII_URL = "https://www.serebii.net/pokedex-sm/{0:03d}.shtml"
 TOTAL = 809
@@ -24,36 +25,6 @@ class PokemonData(TypedDict):
     base_egg_steps: int
     is_alolan: bool
     is_mega: bool
-
-
-def print_elapsed_time(seconds: float) -> None:
-    if seconds < 0:
-        seconds = -seconds
-        sign = "-"
-    else:
-        sign = ""
-    total_ms = int(round(seconds * 1000))
-    ms = total_ms % 1000
-    total_s = total_ms // 1000
-    s = total_s % 60
-    total_min = total_s // 60
-    m = total_min % 60
-    total_h = total_min // 60
-    h = total_h % 24
-    d = total_h // 24
-    parts: list[str] = []
-
-    def add(value: int, singular: str, plural: str) -> None:
-        if value:
-            parts.append(f"{value} {singular if value == 1 else plural}")
-
-    add(d, "day", "days")
-    add(h, "hour", "hours")
-    add(m, "minute", "minutes")
-    add(s, "second", "seconds")
-    if ms or not parts:
-        parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(f"{sign}{', '.join(parts)}")
 
 
 def get_pokemon_type(
@@ -244,9 +215,11 @@ def main() -> None:
                 start_time = time()
                 process_pokemon_record(database, pokemon_index)
                 duracao = time() - start_time
-                print_elapsed_time(duracao)
+                elapsed_time_str = str(timedelta(seconds=duracao))
+                print(f"Elapsed time: {elapsed_time_str}")
                 print("falta = ")
-                print_elapsed_time(duracao * (TOTAL - pokemon_index))
+                remaining_time_str = str(timedelta(seconds=duracao * (TOTAL - pokemon_index)))
+                print(f"Estimated remaining time: {remaining_time_str}")
         except Exception as e:
             print(e)
 

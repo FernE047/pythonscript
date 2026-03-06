@@ -4,6 +4,7 @@ from PIL import Image
 import pyautogui
 import time
 import random
+from datetime import timedelta
 
 # this code is too dependant on global Coordinates and Colors. I started doing it, but I give up.
 
@@ -184,36 +185,6 @@ class Database:
         new_attack = AttackMove(name=check_attack, power=0, accuracy=0, pp=0)
         self.attack_moves.append(new_attack)
         return new_attack
-
-
-def print_elapsed_time(seconds: float) -> None:
-    if seconds < 0:
-        seconds = -seconds
-        sign = "-"
-    else:
-        sign = ""
-    total_ms = int(round(seconds * 1000))
-    ms = total_ms % 1000
-    total_s = total_ms // 1000
-    s = total_s % 60
-    total_min = total_s // 60
-    m = total_min % 60
-    total_h = total_min // 60
-    h = total_h % 24
-    d = total_h // 24
-    parts: list[str] = []
-
-    def add(value: int, singular: str, plural: str) -> None:
-        if value:
-            parts.append(f"{value} {singular if value == 1 else plural}")
-
-    add(d, "day", "days")
-    add(h, "hour", "hours")
-    add(m, "minute", "minutes")
-    add(s, "second", "seconds")
-    if ms or not parts:
-        parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(f"{sign}{', '.join(parts)}")
 
 
 # menus
@@ -582,13 +553,13 @@ def main() -> None:
         close_emulator()
         end_time = time.time()
         elapsed_time = end_time - start_time
-        print("Success\n Elapsed time:")
-        print_elapsed_time(elapsed_time)
+        elapsed_time_str = str(timedelta(seconds=elapsed_time))
+        print(f"Success\n Elapsed time: {elapsed_time_str}")
     except KeyboardInterrupt:
         end_time = time.time()
         elapsed_time = end_time - start_time
-        print("Interrupted. Elapsed time:")
-        print_elapsed_time(elapsed_time)
+        elapsed_time_str = str(timedelta(seconds=elapsed_time))
+        print(f"Interrupted. Elapsed time: {elapsed_time_str}")
         print("\nDone.")
 
 

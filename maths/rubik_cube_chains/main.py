@@ -1,38 +1,9 @@
 import math
 from time import time
 import gc
+from datetime import timedelta
 
 MAX_ITERATIONS = 1000
-
-
-def print_elapsed_time(seconds: float) -> None:
-    if seconds < 0:
-        seconds = -seconds
-        sign = "-"
-    else:
-        sign = ""
-    total_ms = int(round(seconds * 1000))
-    ms = total_ms % 1000
-    total_s = total_ms // 1000
-    s = total_s % 60
-    total_min = total_s // 60
-    m = total_min % 60
-    total_h = total_min // 60
-    h = total_h % 24
-    d = total_h // 24
-    parts: list[str] = []
-
-    def add(value: int, singular: str, plural: str) -> None:
-        if value:
-            parts.append(f"{value} {singular if value == 1 else plural}")
-
-    add(d, "day", "days")
-    add(h, "hour", "hours")
-    add(m, "minute", "minutes")
-    add(s, "second", "seconds")
-    if ms or not parts:
-        parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(f"{sign}{', '.join(parts)}")
 
 
 def create_permutation_list(initial_list: list[int], index: int) -> list[int]:
@@ -63,10 +34,12 @@ def analyze_categories(num_permutations: int) -> dict[str, int]:
         end_time = time()
         elapsed_time = end_time - start_time
         print(f"{MAX_ITERATIONS} executions took : ")
-        print_elapsed_time(elapsed_time)
+        elapsed_time_str = str(timedelta(seconds=elapsed_time))
+        print(f"Elapsed time: {elapsed_time_str}")
         print("Estimated Total Execution Time : ")
         prediction = elapsed_time * (math.factorial(num_permutations) / MAX_ITERATIONS)
-        print_elapsed_time(prediction)
+        prediction_str = str(timedelta(seconds=prediction))
+        print(f"Elapsed time: {prediction_str}")
         iteration_count = MAX_ITERATIONS + 1
         break
     return categories
@@ -99,7 +72,10 @@ def main() -> None:
         for category in category_analysis:
             print(f"{category:8s} : {category_analysis[category]}")
         print("Total Execution Time : ")
-        print_elapsed_time(time() - start_time)
+        end_time = time()
+        elapsed_time = end_time - start_time
+        elapsed_time_str = str(timedelta(seconds=elapsed_time))
+        print(f"Elapsed time: {elapsed_time_str}")
     except KeyboardInterrupt:
         print(gc.collect())
 

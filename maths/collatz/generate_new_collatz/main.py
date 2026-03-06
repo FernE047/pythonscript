@@ -4,36 +4,7 @@ from structures import load_collatz
 from structures import Collatz_Function
 from structures import Rule
 from time import time
-
-
-def print_elapsed_time(seconds: float) -> None:
-    if seconds < 0:
-        seconds = -seconds
-        sign = "-"
-    else:
-        sign = ""
-    total_ms = int(round(seconds * 1000))
-    ms = total_ms % 1000
-    total_s = total_ms // 1000
-    s = total_s % 60
-    total_min = total_s // 60
-    m = total_min % 60
-    total_h = total_min // 60
-    h = total_h % 24
-    d = total_h // 24
-    parts: list[str] = []
-
-    def add(value: int, singular: str, plural: str) -> None:
-        if value:
-            parts.append(f"{value} {singular if value == 1 else plural}")
-
-    add(d, "day", "days")
-    add(h, "hour", "hours")
-    add(m, "minute", "minutes")
-    add(s, "second", "seconds")
-    if ms or not parts:
-        parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(f"{sign}{', '.join(parts)}")
+from datetime import timedelta
 
 
 def main() -> None:
@@ -95,11 +66,13 @@ def main() -> None:
         print(next_collatz)
         next_collatz.save_collatz_rules(collatz_level + 1)
         execution_times.append(end_time - start_time)
-        print_elapsed_time(execution_times[-1])
+        elapsed_time_str = str(timedelta(seconds=execution_times[-1]))
+        print(f"Elapsed time: {elapsed_time_str}")
         print("\n")
     if len(execution_times) > 1:
         print("total : ")
-        print_elapsed_time(sum(execution_times))
+        total_elapsed_time_str = str(timedelta(seconds=sum(execution_times)))
+        print(f"Elapsed time: {total_elapsed_time_str}")
 
 
 if __name__ == "__main__":

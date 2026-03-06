@@ -1,5 +1,6 @@
 from pathlib import Path
 from time import time
+from datetime import timedelta
 
 # not sure if this one works. V02 is more reliable
 
@@ -118,36 +119,6 @@ class CounterManager:
             counter.display()
 
 
-def print_elapsed_time(seconds: float) -> None:
-    if seconds < 0:
-        seconds = -seconds
-        sign = "-"
-    else:
-        sign = ""
-    total_ms = int(round(seconds * 1000))
-    ms = total_ms % 1000
-    total_s = total_ms // 1000
-    s = total_s % 60
-    total_min = total_s // 60
-    m = total_min % 60
-    total_h = total_min // 60
-    h = total_h % 24
-    d = total_h // 24
-    parts: list[str] = []
-
-    def add(value: int, singular: str, plural: str) -> None:
-        if value:
-            parts.append(f"{value} {singular if value == 1 else plural}")
-
-    add(d, "day", "days")
-    add(h, "hour", "hours")
-    add(m, "minute", "minutes")
-    add(s, "second", "seconds")
-    if ms or not parts:
-        parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(f"{sign}{', '.join(parts)}")
-
-
 def get_graph_from_file(filename: Path, nodes_limit: int | None = None) -> GraphData:
     with open(filename, "r", encoding="utf-8") as file:
         lines = file.read().splitlines()
@@ -185,8 +156,8 @@ def print_solution_summary(
     print()
     solution_state.walk_path()
     counter_manager.display_all()
-    print_elapsed_time(duration)
-    print("\n\n\n")
+    elapsed_time_str = str(timedelta(seconds=duration))
+    print(f"\nElapsed time: {elapsed_time_str}\n\n\n")
 
 
 def depth_first_search(

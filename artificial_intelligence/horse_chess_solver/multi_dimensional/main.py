@@ -1,37 +1,8 @@
 from time import time
+from datetime import timedelta
 
 
 MatrizData = bool | list["MatrizData"]
-
-
-def format_elapsed_time(seconds: float) -> str:
-    if seconds < 0:
-        seconds = -seconds
-        sign = "-"
-    else:
-        sign = ""
-    total_ms = int(round(seconds * 1000))
-    ms = total_ms % 1000
-    total_s = total_ms // 1000
-    s = total_s % 60
-    total_min = total_s // 60
-    m = total_min % 60
-    total_h = total_min // 60
-    h = total_h % 24
-    d = total_h // 24
-    parts: list[str] = []
-
-    def add(value: int, singular: str, plural: str) -> None:
-        if value:
-            parts.append(f"{value} {singular if value == 1 else plural}")
-
-    add(d, "day", "days")
-    add(h, "hour", "hours")
-    add(m, "minute", "minutes")
-    add(s, "second", "seconds")
-    if ms or not parts:
-        parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    return f"{sign}{', '.join(parts)}"
 
 
 class Board:
@@ -83,7 +54,7 @@ def resolve_one_board(board: Board) -> None:
     end = time()
     print(f"\ntries: {tries}")
     duration = end - begin
-    print(f"\n{format_elapsed_time(duration)}\n\n\n")
+    print(f"\n{str(timedelta(seconds=duration))}\n\n\n")
 
 
 def main() -> None:

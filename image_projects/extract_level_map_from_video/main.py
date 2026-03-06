@@ -1,6 +1,7 @@
 from pathlib import Path
 from PIL import Image
 from time import time
+from datetime import timedelta
 
 # this script is an attempt to map game levels gameplays into a single level map image. biggest enemy: parallax. I never made it work, but it was fun to try. maybe one day i will try again with a better approach, but for now, this is the code that i have.
 
@@ -41,36 +42,6 @@ class SearchConfig:
 
     def get_values(self) -> tuple[int, int, int, int]:
         return self.search_distance, self.total_distance, self.step_y, self.step_x
-
-
-def print_elapsed_time(seconds: float) -> None:
-    if seconds < 0:
-        seconds = -seconds
-        sign = "-"
-    else:
-        sign = ""
-    total_ms = int(round(seconds * 1000))
-    ms = total_ms % 1000
-    total_s = total_ms // 1000
-    s = total_s % 60
-    total_min = total_s // 60
-    m = total_min % 60
-    total_h = total_min // 60
-    h = total_h % 24
-    d = total_h // 24
-    parts: list[str] = []
-
-    def add(value: int, singular: str, plural: str) -> None:
-        if value:
-            parts.append(f"{value} {singular if value == 1 else plural}")
-
-    add(d, "day", "days")
-    add(h, "hour", "hours")
-    add(m, "minute", "minutes")
-    add(s, "second", "seconds")
-    if ms or not parts:
-        parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(f"{sign}{', '.join(parts)}")
 
 
 def open_frame(image_path: Path) -> Image.Image:
@@ -234,11 +205,13 @@ def main() -> None:
         duracao = fim - start_time
         start_time = time()
         print(f"{n} : ")
-        print_elapsed_time(duracao * (total_frame_count - n))
+        elapsed_time_str = str(timedelta(seconds=duracao * (total_frame_count - n)))
+        print(f"Elapsed time: {elapsed_time_str}")
         image_map.save("mapa.png")
     fimTotal = time()
     duracao = fimTotal - total_start_time
-    print_elapsed_time(duracao)
+    elapsed_time_str = str(timedelta(seconds=duracao))
+    print(f"Elapsed time: {elapsed_time_str}")
     image_map.save("mapa.png")
 
 

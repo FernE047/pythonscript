@@ -1,6 +1,7 @@
 import random
 import time
 from typing import Any
+from datetime import timedelta
 
 IS_DEBUG = False
 IS_INPUT_ALLOWED = False
@@ -21,36 +22,6 @@ def get_input(prompt: str, default: int) -> int:
             print(f"Invalid input, using default value. (default: {default})")
     print_debug(f"{prompt} (default: {default})")
     return default
-
-
-def print_elapsed_time(seconds: float) -> None:
-    if seconds < 0:
-        seconds = -seconds
-        sign = "-"
-    else:
-        sign = ""
-    total_ms = int(round(seconds * 1000))
-    ms = total_ms % 1000
-    total_s = total_ms // 1000
-    s = total_s % 60
-    total_min = total_s // 60
-    m = total_min % 60
-    total_h = total_min // 60
-    h = total_h % 24
-    d = total_h // 24
-    parts: list[str] = []
-
-    def add(value: int, singular: str, plural: str) -> None:
-        if value:
-            parts.append(f"{value} {singular if value == 1 else plural}")
-
-    add(d, "day", "days")
-    add(h, "hour", "hours")
-    add(m, "minute", "minutes")
-    add(s, "second", "seconds")
-    if ms or not parts:
-        parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(f"{sign}{', '.join(parts)}")
 
 
 def is_board_clean(board: list[int]) -> bool:
@@ -123,7 +94,9 @@ def main() -> None:
         print(f"\n\naverage: {sum(game_results) / total_game_count}")
         print(f"maximum: {max(game_results)}")
         print(f"minimum: {min(game_results)}")
-        print_elapsed_time(end_time - start_time)
+        elapsed_time = end_time - start_time
+        elapsed_time_str = str(timedelta(seconds=elapsed_time))
+        print(f"Elapsed time: {elapsed_time_str}")
         if input("\nPress Enter to play again or type anything else to exit."):
             break
 

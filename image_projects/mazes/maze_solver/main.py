@@ -2,6 +2,7 @@ from enum import Enum
 from pathlib import Path
 from PIL import Image
 from time import time
+from datetime import timedelta
 
 BACKGROUND_COLOR = (255, 255, 255, 255)
 END_COLOR = (255, 0, 0, 255)
@@ -46,36 +47,6 @@ def apply_direction(
 def get_next_direction(direction: Direction) -> Direction:
     next_value = (direction.value + 1) % MAX_DIRECTIONS
     return Direction(next_value)
-
-
-def print_elapsed_time(seconds: float) -> None:
-    if seconds < 0:
-        seconds = -seconds
-        sign = "-"
-    else:
-        sign = ""
-    total_ms = int(round(seconds * 1000))
-    ms = total_ms % 1000
-    total_s = total_ms // 1000
-    s = total_s % 60
-    total_min = total_s // 60
-    m = total_min % 60
-    total_h = total_min // 60
-    h = total_h % 24
-    d = total_h // 24
-    parts: list[str] = []
-
-    def add(value: int, singular: str, plural: str) -> None:
-        if value:
-            parts.append(f"{value} {singular if value == 1 else plural}")
-
-    add(d, "day", "days")
-    add(h, "hour", "hours")
-    add(m, "minute", "minutes")
-    add(s, "second", "seconds")
-    if ms or not parts:
-        parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    print(f"{sign}{', '.join(parts)}")
 
 
 def get_opposite_coord(coord: CoordData, direction: Direction) -> CoordData:
@@ -188,7 +159,8 @@ def main() -> None:
     end_time = time()
     print(f"paths tested : {paths_count}")
     print(f"iterations made : {iterations}")
-    print_elapsed_time(end_time - start_time)
+    elapsed_time_str = str(timedelta(seconds=end_time - start_time))
+    print(f"Elapsed time: {elapsed_time_str}")
     path.pop()
     coord = INITIAL_POSITION
     labyrinth.putpixel(coord, END_COLOR)

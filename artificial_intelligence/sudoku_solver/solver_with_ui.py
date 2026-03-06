@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Literal, cast
 from time import time
+from datetime import timedelta
 
 menuModeOptions = Literal[0, 1, 2, 3]
 userInputOptions = Literal[
@@ -51,35 +52,8 @@ class TimeManager:
         self.print_elapsed_time()
 
     def print_elapsed_time(self) -> None:
-        elapsed_time = self.elapsed_time
-        if elapsed_time < 0:
-            elapsed_time = -elapsed_time
-            sign = "-"
-        else:
-            sign = ""
-        total_ms = int(round(elapsed_time * 1000))
-        ms = total_ms % 1000
-        total_s = total_ms // 1000
-        s = total_s % 60
-        total_min = total_s // 60
-        m = total_min % 60
-        total_h = total_min // 60
-        h = total_h % 24
-        d = total_h // 24
-        parts: list[str] = []
-
-        def add(value: int, singular: str, plural: str) -> None:
-            if value:
-                parts.append(f"{value} {singular if value == 1 else plural}")
-
-        add(d, "day", "days")
-        add(h, "hour", "hours")
-        add(m, "minute", "minutes")
-        add(s, "second", "seconds")
-        if ms or not parts:
-            parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-        text = ", ".join(parts)
-        print(f"\n{sign}{text}\n\n\n")
+        elapsed_time_str = str(timedelta(seconds=self.elapsed_time))
+        print(f"\nElapsed time: {elapsed_time_str}")
 
 
 class CounterManager:

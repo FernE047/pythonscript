@@ -1,42 +1,13 @@
 from pathlib import Path
 from time import time
+from datetime import timedelta
 
 EMPTY_CHAR = "¨"
 OVERFLOWLIMIT = 50000
 CHAINSIZE = 1
 ALLOWED_CHARS = (".", "-", ",", "!", "?", "(", "—", ")", ":", "...", "..", "/", "/")
-REPLACE_BY_QUOTE = ('“', '”', "'")
+REPLACE_BY_QUOTE = ("“", "”", "'")
 REPLACE_BY_SPACE = ("\n", "\t")
-
-
-def format_elapsed_time(seconds: float) -> str:
-    if seconds < 0:
-        seconds = -seconds
-        sign = "-"
-    else:
-        sign = ""
-    total_ms = int(round(seconds * 1000))
-    ms = total_ms % 1000
-    total_s = total_ms // 1000
-    s = total_s % 60
-    total_min = total_s // 60
-    m = total_min % 60
-    total_h = total_min // 60
-    h = total_h % 24
-    d = total_h // 24
-    parts: list[str] = []
-
-    def add(value: int, singular: str, plural: str) -> None:
-        if value:
-            parts.append(f"{value} {singular if value == 1 else plural}")
-
-    add(d, "day", "days")
-    add(h, "hour", "hours")
-    add(m, "minute", "minutes")
-    add(s, "second", "seconds")
-    if ms or not parts:
-        parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-    return f"{sign}{', '.join(parts)}"
 
 
 def rename_file(source_filename: Path, destination_filename: Path) -> None:
@@ -133,9 +104,9 @@ def generate_markov_chain() -> None:
             finish_time = time()
             elapsed_time = (finish_time - start_time) / quantity
             print(name)
-            print(f"duração média : {format_elapsed_time(elapsed_time)}")
-            print(f"tempo Passado : {format_elapsed_time(finish_time - start_time)}")
-            print(f"falta : {format_elapsed_time(elapsed_time * (total - quantity))}")
+            print(f"duração média : {timedelta(seconds=elapsed_time)}")
+            print(f"tempo Passado : {timedelta(seconds=finish_time - start_time)}")
+            print(f"falta : {timedelta(seconds=elapsed_time * (total - quantity))}")
             print()
     print("concluindo...")
     if len(title_keywords) > OVERFLOWLIMIT:
@@ -146,5 +117,5 @@ def generate_markov_chain() -> None:
         story_keywords = []
         finish_time = time()
         elapsed_time = (finish_time - start_time) / total
-        print(f"falta : {format_elapsed_time(elapsed_time * (total - quantity))}")
+        print(f"falta : {timedelta(seconds=elapsed_time * (total - quantity))}")
     print()

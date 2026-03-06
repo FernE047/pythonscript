@@ -2,6 +2,7 @@ from pathlib import Path
 from time import time
 from typing import Literal
 from PIL import Image
+from datetime import timedelta
 
 CellData = Literal[-1, 0, 1]
 # -1 = empty cell
@@ -33,37 +34,10 @@ class TimeManager:
         self.total_time += self.elapsed_time
 
     def print_elapsed_time(self, print_total: bool = False) -> None:
-        elapsed_time = self.elapsed_time
         if print_total:
-            elapsed_time = self.total_time
-        if elapsed_time < 0:
-            elapsed_time = -elapsed_time
-            sign = "-"
+            print(f"\nTotal time: {str(timedelta(seconds=self.total_time))}\n\n\n")
         else:
-            sign = ""
-        total_ms = int(round(elapsed_time * 1000))
-        ms = total_ms % 1000
-        total_s = total_ms // 1000
-        s = total_s % 60
-        total_min = total_s // 60
-        m = total_min % 60
-        total_h = total_min // 60
-        h = total_h % 24
-        d = total_h // 24
-        parts: list[str] = []
-
-        def add(value: int, singular: str, plural: str) -> None:
-            if value:
-                parts.append(f"{value} {singular if value == 1 else plural}")
-
-        add(d, "day", "days")
-        add(h, "hour", "hours")
-        add(m, "minute", "minutes")
-        add(s, "second", "seconds")
-        if ms or not parts:
-            parts.append(f"{ms} millisecond" if ms == 1 else f"{ms} milliseconds")
-        text = ", ".join(parts)
-        print(f"\n{sign}{text}\n\n\n")
+            print(f"\nElapsed time: {str(timedelta(seconds=self.elapsed_time))}\n\n\n")
 
 
 def calculate_space(dica: HintData) -> int:
