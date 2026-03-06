@@ -39,7 +39,6 @@ def update_keyword_count(keyword: str, lines: list[str]) -> list[str]:
         count = int(line[index + 1 :]) + 1
         new_lines.append(f"{line[: index + 1]}{count}\n")
         keyword_found = True
-        break
     if not keyword_found:
         new_lines.append(f"{keyword} 1\n")
     return new_lines
@@ -54,7 +53,7 @@ def process_message(message: str, index: int) -> None:
         return
     if index == 0:
         update_chain_file(index, character)
-    if message_length > 1:
+    if message_length >= 1:
         try:
             next_character = message[index + 1]
         except IndexError:
