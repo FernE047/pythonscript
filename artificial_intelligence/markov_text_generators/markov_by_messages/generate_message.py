@@ -33,14 +33,17 @@ def fetch_word_from_chain(index: int, previous_word: str = "") -> str:
 
 
 def generate_message() -> str:
-    message = ""
-    letter = fetch_word_from_chain(0)
-    while letter != EMPTY_CHAR:
-        message += letter
-        letter = fetch_word_from_chain(len(message), letter)
-    return message
+    message: list[str] = []
+    word = fetch_word_from_chain(0)
+    while word != EMPTY_CHAR:
+        message.append(word)
+        word = fetch_word_from_chain(len(message), word)
+    return " ".join(message)
 
 
 def generate_markov_messages() -> None:
     for index in range(WORDS_GENERATED):
         print(f"{index} : {generate_message()}")
+
+if __name__ == "__main__":
+    generate_markov_messages()
