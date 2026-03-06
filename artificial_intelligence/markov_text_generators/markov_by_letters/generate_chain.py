@@ -1,72 +1,69 @@
 from pathlib import Path
+from fetch_messages import CLEAN_INPUT_FILE
 
 EMPTY_CHAR = "¨"
-INPUT_FILE = Path("clean_input.txt")
+INPUT_FILE = CLEAN_INPUT_FILE
 CHAIN_FOLDER = Path("chain")
-MAIN_CHAIN_FILE = CHAIN_FOLDER / "c.txt"
 
-
-def rename_file(source_filename: Path, destination_filename: Path) -> None:
-    with (
-        open(source_filename, "r", encoding="utf-8") as source_file,
-        open(destination_filename, "w", encoding="utf-8") as destination_file,
-    ):
-        content = source_file.read()
-        destination_file.write(content)
-
-
-def update_term_count(index: int, keyword: str) -> None:
-    with open(MAIN_CHAIN_FILE, "w", encoding="utf-8") as file_write:
-        if not any(f"{index:03d}.txt" == file.name for file in CHAIN_FOLDER.iterdir()):
-            file_write.write(f"{keyword} 1\n")
-            return
-        with open(CHAIN_FOLDER / f"{index:03d}.txt", "r", encoding="utf-8") as file_read:
-            lines = file_read.readlines()
-        keyword_found = False
-        index = len(keyword)
-        for line in lines:
-            if not line:
-                continue
-            if line[:index] == keyword:
-                count = int(line[index + 1 :]) + 1
-                file_write.write(f"{line[: index + 1]}{count}\n")
-                keyword_found = True
-            else:
-                file_write.write(line)
-        if not keyword_found:
-            file_write.write(f"{keyword} 1\n")
+def is_chain_file_empty(index: int) -> bool:
+    for file in CHAIN_FOLDER.iterdir():
+        if f"{index:03d}.txt" == file.name:
+            return False
+    return True
 
 
 def update_chain_file(index: int, keyword: str) -> None:
-    if keyword == "":
-        print(index)
-    update_term_count(index, keyword)
-    rename_file(MAIN_CHAIN_FILE, CHAIN_FOLDER / f"{index:03d}.txt")
+    chain_path = CHAIN_FOLDER / f"{index:03d}.txt"
+    if is_chain_file_empty(index):
+        with open(chain_path, "w", encoding="utf-8") as file_write:
+            file_write.write(f"{keyword} 1\n")
+            return
+    with open(chain_path, "r", encoding="utf-8") as file_read:
+        lines = file_read.readlines()
+    new_lines = update_keyword_count(keyword, lines)
+    with open(chain_path, "w", encoding="utf-8") as file_write:
+        file_write.writelines(new_lines)
 
+def update_keyword_count(keyword: str, lines: list[str]) -> list[str]:
+    keyword_found = False
+    index = len(keyword)
+    new_lines: list[str] = []
+    for line in lines:
+        if not line:
+            continue
+        if line[:index] != keyword:
+            new_lines.append(line)
+            continue
+        count = int(line[index + 1 :]) + 1
+        new_lines.append(f"{line[: index + 1]}{count}\n")
+        keyword_found = True
+        break
+    if not keyword_found:
+        new_lines.append(f"{keyword} 1\n")
+    return new_lines
+
+def process_message(message: str, index: int) -> None:
+    message_length = len(message)
+    if index >= message_length:
+        return
+    character = message[index]
+    if index == 0:
+        if character == "\n":
+            character = EMPTY_CHAR
+        update_chain_file(index, character)
+    if message_length > 1:
+        try:
+            next_character = message[index + 1]
+        except IndexError:
+            next_character = EMPTY_CHAR
+        if next_character == "\n":
+            next_character = EMPTY_CHAR
+        update_chain_file(index + 1, f"{character} {next_character}")
 
 def generate_character_chain() -> None:
     with open(INPUT_FILE, "r", encoding="utf-8") as file:
-        file.readline()
-        for message in file.readlines():
-            message_length = len(message)
-            for index in range(message_length):
-                character = message[index]
-                if index == 0:
-                    if character == "\n":
-                        character = EMPTY_CHAR
-                    if character == "<":
-                        character = "~"
-                        update_chain_file(index, character)
-                        update_chain_file(index + 1, f"{character} {EMPTY_CHAR}")
-                        break
-                    update_chain_file(index, character)
-                if message_length > 1:
-                    try:
-                        next_character = message[index + 1]
-                    except IndexError:
-                        next_character = EMPTY_CHAR
-                    if next_character == "\n":
-                        next_character = EMPTY_CHAR
-                    update_chain_file(index + 1, f"{character} {next_character}")
-                    if next_character == EMPTY_CHAR:
-                        break
+        lines = file.readlines()
+    for message in lines:
+        message_length = len(message)
+        for index in range(message_length):
+            process_message(message, index)
