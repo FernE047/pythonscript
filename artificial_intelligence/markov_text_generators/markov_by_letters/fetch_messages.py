@@ -19,7 +19,6 @@ def parse_messages(lines: list[str]) -> list[str]:
         if len(elements) < 2:
             continue
         date_test = elements[0][:DATE_PART_LENGTH]
-        print(date_test)
         if not re.search(DATE_PATTERN, date_test):
             continue
         message = "".join(elements[1:]).strip()
@@ -33,5 +32,4 @@ def extract_and_save_messages() -> None:
     messages = parse_messages(lines)
     with open(CLEAN_INPUT_FILE, "w", encoding="utf-8") as output_file:
         for message in messages:
-            print(message)
             output_file.write(f"{message}\n")
