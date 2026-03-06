@@ -5,6 +5,7 @@ EMPTY_CHAR = "¨"
 INPUT_FILE = CLEAN_INPUT_FILE
 CHAIN_FOLDER = Path("chain")
 
+
 def is_chain_file_empty(index: int) -> bool:
     for file in CHAIN_FOLDER.iterdir():
         if f"{index:03d}.txt" == file.name:
@@ -24,6 +25,7 @@ def update_chain_file(index: int, keyword: str) -> None:
     with open(chain_path, "w", encoding="utf-8") as file_write:
         file_write.writelines(new_lines)
 
+
 def update_keyword_count(keyword: str, lines: list[str]) -> list[str]:
     keyword_found = False
     index = len(keyword)
@@ -42,14 +44,15 @@ def update_keyword_count(keyword: str, lines: list[str]) -> list[str]:
         new_lines.append(f"{keyword} 1\n")
     return new_lines
 
+
 def process_message(message: str, index: int) -> None:
     message_length = len(message)
     if index >= message_length:
         return
     character = message[index]
+    if character == "\n":
+        return
     if index == 0:
-        if character == "\n":
-            character = EMPTY_CHAR
         update_chain_file(index, character)
     if message_length > 1:
         try:
@@ -60,9 +63,10 @@ def process_message(message: str, index: int) -> None:
             next_character = EMPTY_CHAR
         update_chain_file(index + 1, f"{character} {next_character}")
 
+
 def generate_character_chain() -> None:
     with open(INPUT_FILE, "r", encoding="utf-8") as file:
-        lines = file.readlines()
+        lines = [line.strip() for line in file.readlines()]
     for message in lines:
         message_length = len(message)
         for index in range(message_length):
