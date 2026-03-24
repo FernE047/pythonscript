@@ -1,0 +1,4 @@
+stories/*
+out/*
+chain/*
+!.gitkeep
