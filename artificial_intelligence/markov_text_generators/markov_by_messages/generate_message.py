@@ -6,6 +6,9 @@ WORDS_GENERATED = 1000
 CHAIN_FOLDER = Path("chain")
 
 def fetch_word_from_chain(index: int, previous_word: str = "") -> str:
+    chain_path = CHAIN_FOLDER / f"{index:03d}.txt"
+    if not chain_path.exists():
+        return EMPTY_CHAR
     with open(CHAIN_FOLDER / f"{index:03d}.txt", "r", encoding="utf-8") as file:
         lines = file.readlines()
     word_frequency_map: dict[str, int] = {}
@@ -23,6 +26,8 @@ def fetch_word_from_chain(index: int, previous_word: str = "") -> str:
         word_frequency_map[word] = number
     frequencies = list(word_frequency_map.values())
     total = sum(frequencies)
+    if total == 0:
+        return EMPTY_CHAR
     chosen = randint(1, total)
     cumulative_sum = 0
     for index, valor in enumerate(frequencies):
