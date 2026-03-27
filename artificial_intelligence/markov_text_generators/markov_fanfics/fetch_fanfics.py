@@ -28,16 +28,21 @@ FANFIC_CATEGORIES = [
     "high-school-dxd",
     "sword-art-online",
 ]
+FANFIC_URL = "https://www.spiritfanfiction.com/categorias/"
 MAX_PAGES = 100
 STORIES_PER_PAGE = 10
 TITLE_PREFIX = "Fanfic "
+STORIES_FOLDER = Path("stories")
+STORIES_FOLDER.mkdir(exist_ok=True)
 TITLE_PREFIX_LENGTH = 20
 SLEEP_BETWEEN_PAGES = 10
+TITLE_SEPARATOR = " : "
+NOT_ALLOWED_CHARS = ("\n", "\r", TITLE_SEPARATOR)
 
 
 def sanitize_input(text: str) -> str:
-    text = text.replace("\n", " ")
-    text = text.replace("\r", " ")
+    for char in NOT_ALLOWED_CHARS:
+        text = text.replace(char, " ")
     while text.find("  ") != -1:
         text = text.replace("  ", " ")
     return text.strip()
@@ -65,20 +70,18 @@ def fetch_page(url:str, page_number: int) -> None:
         title = cast(str, title_tag)
         if title.find(TITLE_PREFIX) != -1:
             titles.append(title[TITLE_PREFIX_LENGTH:])
-    stories_folder = Path("stories")
-    stories_folder.mkdir(exist_ok=True)
     for index in range(STORIES_PER_PAGE):
-        stories_amount = len(list(stories_folder.iterdir()))
-        with open(stories_folder / f"fanfic{stories_amount:04d}.txt", "w") as file:
+        stories_amount = len(list(STORIES_FOLDER.iterdir()))
+        with open(STORIES_FOLDER / f"fanfic{stories_amount:04d}.txt", "w") as file:
             try:
-                file.write(f"{titles[index]} : {summary[index]}")
+                file.write(f"{titles[index]}{TITLE_SEPARATOR}{summary[index]}")
                 print(f"{titles[index]}\n")
             except IndexError as _:
                 pass
     time.sleep(SLEEP_BETWEEN_PAGES)
 
 def fetch_category(category: str) -> None:
-    url = f"https://www.spiritfanfiction.com/categorias/{category}?pagina="
+    url = f"{FANFIC_URL}{category}?pagina="
     for page_number in range(1, MAX_PAGES + 1):
         print(f"Fetching page {page_number} of category {category}...")
         fetch_page(url, page_number)

@@ -80,13 +80,14 @@ def generate_word_chain(text: str) -> list[str]:
 def generate_markov_chain() -> None:
     title_keywords: list[str] = []
     story_keywords: list[str] = []
-    stories_folder = Path("FanficAnime") / "stories"
+    stories_folder = Path("stories")
     filenames = list(stories_folder.iterdir())
     total = len(filenames)
     quantity = 0
     start_time = time()
-    for name in filenames:
-        file_path = stories_folder / name
+    for file_path in filenames:
+        if not file_path.is_file():
+            continue
         quantity += 1
         with open(file_path, "r", encoding="utf-8") as file:
             story_components = file.readline().split(" : ")
@@ -103,7 +104,7 @@ def generate_markov_chain() -> None:
             story_keywords = []
             finish_time = time()
             elapsed_time = (finish_time - start_time) / quantity
-            print(name)
+            print(file_path)
             print(f"duração média : {timedelta(seconds=elapsed_time)}")
             print(f"tempo Passado : {timedelta(seconds=finish_time - start_time)}")
             print(f"falta : {timedelta(seconds=elapsed_time * (total - quantity))}")
